@@ -1,0 +1,16 @@
+[package]
+name = "gameboy-emulator-ui"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = "4.3.21"
+egui = "0.22.0"
+egui-wgpu = "0.22.0"
+egui-winit = { version = "0.22.0", default-features = false, features = ["links"] }
+gameboy-emulator-core = { path = "../core" }
+pixels = "0.13.0"
+winit = "0.28.6"
+winit_input_helper = "0.14.1"

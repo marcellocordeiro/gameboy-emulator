@@ -1,0 +1,39 @@
+#![allow(dead_code, unused_variables)]
+
+// TODO: everything
+
+#[derive(Default)]
+pub struct Sound {}
+
+impl Sound {
+    // 0xFF10 ~ 0xFF3F
+
+    // 0xFF10..=0xFF26 => 0, // TODO: Sound.
+    // 0xFF30..=0xFF3F => 0, // TODO: Wave pattern.
+
+    pub fn read(&self, address: u16) -> u8 {
+        match address {
+            // TODO: stubs for the DMG.
+            0xFF10 => 0x80,
+            0xFF11 => 0xBF,
+            0xFF12 => 0xF3,
+            0xFF14 => 0xBF,
+            0xFF16 => 0x3F,
+            0xFF17 => 0x00,
+            0xFF19 => 0xBF,
+            0xFF1A => 0x7F,
+            0xFF1C => 0x9F,
+            0xFF1E => 0xBF,
+            0xFF21 => 0x00,
+            0xFF22 => 0x00,
+            0xFF23 => 0xBF,
+            0xFF24 => 0x77,
+            0xFF25 => 0xF3,
+            0xFF26 => 0xF1,
+
+            _ => 0xFF,
+        }
+    }
+
+    pub fn write(&mut self, address: u16, value: u8) {}
+}

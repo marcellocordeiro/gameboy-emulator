@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = [
+  "core",
+  "core-wasm",
+  "ui-native",
+]
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+lto = true
+
+# Reminder to use `cargo clippy`.

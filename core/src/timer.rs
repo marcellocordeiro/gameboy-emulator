@@ -1,0 +1,193 @@
+enum TimaState {
+    Running,
+    Overflow(u8),
+    Loading(u8),
+}
+
+pub struct Timer {
+    system_counter: u16, // [15-8] Divider (R/W).
+    tima: u8,            // Timer counter (R/W).
+    tma: u8,             // Timer modulo (R/W).
+    tac: u8,             // Timer Control (R/W).
+    tima_state: TimaState,
+
+    pub irq: bool,
+}
+
+impl Default for Timer {
+    fn default() -> Self {
+        Self {
+            system_counter: 0,
+            tima: 0,
+            tma: 0,
+            tac: 0,
+            tima_state: TimaState::Running,
+
+            irq: false,
+        }
+    }
+}
+
+impl Timer {
+    pub fn skip_bootrom(&mut self) {
+        self.system_counter = 0xABCC;
+    }
+
+    pub fn tick(&mut self) {
+        self.update_tima_state();
+
+        if !self.timer_enable() {
+            self.system_counter = self.system_counter.wrapping_add(1);
+            return;
+        }
+
+        let clock = self.input_clock();
+
+        let old_rate_bit = self.system_counter & (clock / 2);
+
+        self.increment_system_counter();
+
+        let new_rate_bit = self.system_counter & (clock / 2);
+
+        if (old_rate_bit != 0) && (new_rate_bit == 0) {
+            self.increment_tima();
+        }
+    }
+
+    pub fn read(&self, address: u16) -> u8 {
+        match address {
+            0xFF04 => self.read_div(),
+            0xFF05 => self.read_tima(),
+            0xFF06 => self.tma,
+            0xFF07 => self.read_tac(),
+
+            _ => unreachable!("[timer.rs] Invalid read: {:#06x}", address),
+        }
+    }
+
+    pub fn write(&mut self, address: u16, value: u8) {
+        match address {
+            0xFF04 => self.write_div(),
+            0xFF05 => self.write_tima(value),
+            0xFF06 => self.tma = value,
+            0xFF07 => self.write_tac(value),
+
+            _ => unreachable!(
+                "[timer.rs] Invalid write: ({:#06x}) = {:#04x}",
+                address, value
+            ),
+        }
+    }
+
+    // Read helpers.
+    fn read_div(&self) -> u8 {
+        (self.system_counter >> 8) as u8
+    }
+
+    fn read_tima(&self) -> u8 {
+        match self.tima_state {
+            TimaState::Loading(_) => self.tma,
+            _ => self.tima,
+        }
+    }
+
+    fn read_tac(&self) -> u8 {
+        0b1111_1000 | self.tac
+    }
+
+    // Write helpers.
+    fn write_div(&mut self) {
+        let clock = self.input_clock();
+        let rate_bit = self.system_counter & (clock / 2) != 0;
+
+        self.system_counter = 0;
+
+        if self.timer_enable() && rate_bit {
+            self.increment_tima();
+        }
+    }
+
+    fn write_tima(&mut self, value: u8) {
+        match self.tima_state {
+            TimaState::Running => self.tima = value,
+            TimaState::Overflow(_) => {
+                self.tima = value;
+                self.tima_state = TimaState::Running;
+            }
+            TimaState::Loading(_) => {}
+        }
+    }
+
+    fn write_tac(&mut self, value: u8) {
+        // https://gbdev.io/pandocs/Timer_Obscure_Behaviour.html#relation-between-timer-and-divider-register
+
+        let old_clock = self.input_clock();
+        let old_enable = self.timer_enable();
+
+        self.tac = value;
+
+        let new_clock = self.input_clock();
+        let new_enable = self.timer_enable();
+
+        if (old_enable && (self.system_counter & (old_clock / 2) != 0))
+            && !(new_enable && (self.system_counter & (new_clock / 2) != 0))
+        {
+            self.increment_tima();
+        }
+    }
+
+    // Other helpers.
+    fn increment_system_counter(&mut self) {
+        self.system_counter = self.system_counter.wrapping_add(1);
+    }
+
+    fn increment_tima(&mut self) {
+        self.tima = self.tima.wrapping_add(1);
+
+        if self.tima == 0 {
+            self.tima_state = TimaState::Overflow(3);
+        }
+    }
+
+    fn update_tima_state(&mut self) {
+        match self.tima_state {
+            TimaState::Running => {}
+
+            // IRQ is delayed by 4 cycles.
+            TimaState::Overflow(count) => match count {
+                0 => {
+                    self.irq = true;
+                    self.tima_state = TimaState::Loading(3);
+                }
+
+                value => self.tima_state = TimaState::Overflow(value - 1),
+            },
+
+            // After an overflow and requesting an interruption,
+            // the `tima = tma` load is delayed by 4 cycles.
+            TimaState::Loading(count) => match count {
+                0 => {
+                    self.tima = self.tma;
+                    self.tima_state = TimaState::Running;
+                }
+
+                value => self.tima_state = TimaState::Loading(value - 1),
+            },
+        }
+    }
+
+    fn timer_enable(&self) -> bool {
+        (self.tac & 0b100) != 0
+    }
+
+    fn input_clock(&self) -> u16 {
+        match self.tac & 0b11 {
+            0 => 1024,
+            1 => 16,
+            2 => 64,
+            3 => 256,
+
+            _ => unreachable!(),
+        }
+    }
+}

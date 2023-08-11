@@ -1,0 +1,77 @@
+/* base styles */
+
+.btn {
+  @apply inline-flex justify-center items-center;
+  @apply rounded-md;
+  @apply transition;
+
+  &:active {
+    @apply brightness-75;
+  }
+
+  &:disabled {
+    @apply opacity-50 pointer-events-none;
+  }
+}
+
+/* main variants */
+
+.btn.btn-primary {
+  @apply bg-primary text-primary-foreground shadow;
+
+  &:hover {
+    @apply bg-primary/90;
+  }
+}
+
+.btn.btn-secondary {
+  @apply bg-destructive text-destructive-foreground shadow;
+
+  &:hover {
+    @apply bg-destructive/90;
+  }
+}
+
+.btn.btn-outline {
+  @apply border border-input bg-background shadow-sm;
+
+  &:hover {
+    @apply bg-accent text-accent-foreground;
+  }
+}
+
+.btn.btn-ghost {
+  &:hover {
+    @apply bg-accent text-accent-foreground;
+  }
+}
+
+.btn.btn-link {
+  @apply text-primary underline-offset-4;
+
+  &:hover {
+    @apply underline;
+  }
+}
+
+/* size variants */
+
+.btn.btn-xs {
+  @apply px-2.5 py-1.5 text-xs font-medium;
+}
+
+.btn.btn-sm {
+  @apply px-3 py-2 text-sm font-medium;
+}
+
+.btn.btn-md {
+  @apply px-4 py-2 text-sm font-medium;
+}
+
+.btn.btn-lg {
+  @apply px-4 py-2 text-base font-medium;
+}
+
+.btn.btn-xl {
+  @apply px-6 py-3 text-base font-medium;
+}
