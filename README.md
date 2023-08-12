@@ -47,8 +47,8 @@ cargo build
 
 ```sh
 # Native
-cargo run -- roms/rom.gb
 # Add --release after `run` if debug mode is too slow.
+cargo run -- roms/rom.gb
 
 # Browser
 pnpm i
@@ -57,7 +57,7 @@ pnpm dev
 
 ## Tests
 
-Check `core/tests` for some of the supported tests. Most of blargg's tests are supported but not included (yet) in the test suite. `dmg-acid2` passes.
+Check `gb-core/tests` for some of the supported tests. Most of blargg's tests are supported but not included (yet) in the test suite. `dmg-acid2` passes.
 
 ```sh
 cargo test
