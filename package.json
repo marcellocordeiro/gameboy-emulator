@@ -6,7 +6,7 @@
   "scripts": {
     "wasm": "wasm-pack build ./core-wasm --target web",
     "dev": "pnpm wasm && vite",
-    "build": "tsc && vite build",
+    "build": "tsc && pnpm wasm && vite build",
     "lint": "eslint ./ui-browser/src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier -w ./ui-browser/src",
     "preview": "vite preview"

@@ -9,5 +9,8 @@ const coreCratePath = "./core-wasm";
 // https://vitejs.dev/config/
 export default defineConfig({
   root: "ui-browser",
+  build: {
+    target: "esnext",
+  },
   plugins: [wasmPack(coreCratePath), wasm(), react(), tsconfigPaths()],
 });
