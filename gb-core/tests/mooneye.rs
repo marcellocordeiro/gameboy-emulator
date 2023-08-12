@@ -1,6 +1,6 @@
 use std::time::{Duration, Instant};
 
-use gameboy_emulator_core::GameBoy;
+use gb_core::GameBoy;
 
 const TIMEOUT: Duration = Duration::from_secs(10);
 const BREAK_OPCODE: u8 = 0x40; // LD B,B

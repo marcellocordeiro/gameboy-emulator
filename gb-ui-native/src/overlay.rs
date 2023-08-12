@@ -1,6 +1,4 @@
-use egui::Context;
-
-use gameboy_emulator_core::GameBoy;
+use gb_core::GameBoy;
 
 use crate::widgets::{control::Control, state::State};
 
@@ -24,7 +22,7 @@ impl Overlay {
     }
 
     /// Create the UI using egui.
-    pub(crate) fn ui(&mut self, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
+    pub(crate) fn ui(&mut self, egui_ctx: &egui::Context, gb_ctx: &mut GameBoy) {
         egui::TopBottomPanel::top("top_panel").show(egui_ctx, |ui| {
             egui::menu::bar(ui, |ui| {
                 ui.menu_button("File", |ui| {

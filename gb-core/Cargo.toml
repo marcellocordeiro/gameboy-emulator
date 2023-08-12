@@ -1,5 +1,5 @@
 [package]
-name = "gameboy-emulator-core"
+name = "gb-core"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,3 +10,4 @@ bootrom = []
 
 [dependencies]
 bitflags = "2.4.0"
+log = "0.4.20"

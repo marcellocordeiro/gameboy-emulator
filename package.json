@@ -1,14 +1,14 @@
 {
-  "name": "gameboy-emulator",
+  "name": "gb-ui-browser",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "wasm": "wasm-pack build ./core-wasm --target web",
-    "dev": "pnpm wasm && vite",
-    "build": "tsc && pnpm wasm && vite build",
-    "lint": "eslint ./ui-browser/src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "format": "prettier -w ./ui-browser/src",
+    "dev": "pnpm build:wasm && vite",
+    "build:wasm": "wasm-pack build ./gb-core-wasm --target web",
+    "build": "pnpm build:wasm && tsc && vite build",
+    "lint": "eslint ./gb-ui-browser/src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier -w ./gb-ui-browser/src",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -5,7 +5,7 @@ use winit::event_loop::EventLoop;
 use winit::window::WindowBuilder;
 use winit_input_helper::WinitInputHelper;
 
-use gameboy_emulator_core::{
+use gb_core::{
     constants::{Button, HEIGHT, WIDTH},
     GameBoy,
 };

@@ -16,6 +16,8 @@ fn get_rom(file: String) -> Vec<u8> {
 }
 
 fn main() -> Result<(), pixels::Error> {
+    env_logger::init();
+
     let matches = clap::Command::new("gameboy-emulator")
         .arg(clap::Arg::new("rom").required(true))
         .get_matches();

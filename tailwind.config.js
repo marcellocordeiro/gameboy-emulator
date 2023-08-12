@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 const tailwindConfig = {
-  content: ["./ui-browser/index.html", "./ui-browser/src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./gb-ui-browser/index.html",
+    "./gb-ui-browser/src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     container: {
       center: true,

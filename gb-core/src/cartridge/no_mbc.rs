@@ -1,3 +1,5 @@
+use log::info;
+
 use super::mbc::Mbc;
 
 pub(super) struct NoMbc {
@@ -6,7 +8,7 @@ pub(super) struct NoMbc {
 
 impl NoMbc {
     pub fn new(rom: Vec<u8>) -> Self {
-        println!("No MBC");
+        info!("No MBC");
 
         Self { rom }
     }

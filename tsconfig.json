@@ -21,9 +21,9 @@
     "noFallthroughCasesInSwitch": true,
 
     "paths": {
-      "@/*": ["./ui-browser/src/*"]
+      "@/*": ["./gb-ui-browser/src/*"]
     }
   },
-  "include": ["./ui-browser/src"],
+  "include": ["./gb-ui-browser/src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

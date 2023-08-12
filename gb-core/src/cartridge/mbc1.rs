@@ -1,3 +1,5 @@
+use log::info;
+
 use super::mbc::{Mbc, ONE_KIB, RAM_BANK_SIZE, ROM_BANK_SIZE};
 
 pub(super) struct Mbc1 {
@@ -47,9 +49,9 @@ impl Mbc1 {
             }
         };
 
-        println!("MBC1");
-        println!("ROM banks: {rom_banks}");
-        println!("RAM banks: {ram_banks}");
+        info!("MBC1");
+        info!("ROM banks: {rom_banks}");
+        info!("RAM banks: {ram_banks}");
 
         assert_eq!(rom.len(), (rom_banks / 2) * (32 * ONE_KIB));
 

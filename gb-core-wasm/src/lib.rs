@@ -12,15 +12,29 @@
     clippy::verbose_bit_mask // As per the docs, LLVM may not be able to generate better code.
 )]
 
-use constants::{Button, PALETTE};
-use cpu::Cpu;
+use wasm_bindgen::{prelude::*, Clamped};
+use web_sys::{CanvasRenderingContext2d, ImageData};
 
-pub struct GameBoy {
-    pub cpu: Cpu,
+use gb_core::{
+    constants::{HEIGHT, PALETTE, WIDTH},
+    cpu::Cpu,
+};
+
+#[wasm_bindgen]
+pub fn init_logging() {
+    std::panic::set_hook(Box::new(console_error_panic_hook::hook));
+    console_log::init_with_level(log::Level::Trace).unwrap();
 }
 
+#[wasm_bindgen]
+pub struct GameBoy {
+    cpu: Cpu,
+}
+
+#[wasm_bindgen]
 impl GameBoy {
     #[must_use]
+    #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         let mut cpu = Cpu::default();
 
@@ -46,16 +60,10 @@ impl GameBoy {
         }
     }
 
-    pub fn key_down(&mut self, key: Button) {
-        self.cpu.memory.key_down(key);
-    }
-
-    pub fn key_up(&mut self, key: Button) {
-        self.cpu.memory.key_up(key);
-    }
-
     #[allow(clippy::identity_op)]
-    pub fn draw(&self, frame: &mut [u8]) {
+    pub fn draw(&self, ctx: CanvasRenderingContext2d) {
+        let frame = &mut [0u8; WIDTH * HEIGHT * 4];
+
         let fb = self.cpu.memory.borrow_framebuffer();
 
         for (i, pixel) in fb.iter().enumerate() {
@@ -64,16 +72,8 @@ impl GameBoy {
             frame[(i * 4) + 2] = PALETTE[*pixel as usize];
             frame[(i * 4) + 3] = 0xFF;
         }
+
+        let img_data = ImageData::new_with_u8_clamped_array(Clamped(frame), WIDTH as u32).unwrap();
+        ctx.put_image_data(&img_data, 0.0, 0.0).unwrap();
     }
 }
-
-pub mod constants;
-
-mod cartridge;
-mod cpu;
-mod graphics;
-mod joypad;
-mod memory;
-mod serial;
-mod sound;
-mod timer;

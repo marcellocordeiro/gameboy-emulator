@@ -1,8 +1,9 @@
-import init, { GameBoyWasm } from "core-wasm";
+import init, { init_logging, GameBoy } from "gb-core-wasm";
 import { useCallback, useState } from "react";
 
 await init();
-const gameBoy = new GameBoyWasm();
+init_logging();
+const gameBoy = new GameBoy();
 
 export const WIDTH = 160;
 export const HEIGHT = 144;

@@ -1,9 +1,9 @@
 [workspace]
 resolver = "2"
 members = [
-  "core",
-  "core-wasm",
-  "ui-native",
+  "gb-core",
+  "gb-core-wasm",
+  "gb-ui-native",
 ]
 
 [profile.dev.package."*"]
