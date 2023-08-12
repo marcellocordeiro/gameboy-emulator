@@ -61,7 +61,7 @@ impl GameBoy {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn draw(&self, ctx: CanvasRenderingContext2d) {
+    pub fn draw(&self, ctx: &CanvasRenderingContext2d) {
         let frame = &mut [0u8; WIDTH * HEIGHT * 4];
 
         let fb = self.cpu.memory.borrow_framebuffer();
