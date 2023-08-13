@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "vadimcn.vscode-lldb",
+        "rust-lang.rust-analyzer",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "tamasfe.even-better-toml"
+    ]
+}
