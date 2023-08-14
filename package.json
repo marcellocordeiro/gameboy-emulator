@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "pnpm build:wasm && vite",
     "build:wasm": "wasm-pack build ./gb-core-wasm --target web",
-    "build": "pnpm build:wasm && tsc && vite build",
+    "build": "pnpm build:wasm && tsc && vite build --emptyOutDir",
     "lint": "eslint ./gb-ui-browser/src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier -w ./gb-ui-browser/src",
     "preview": "vite preview"

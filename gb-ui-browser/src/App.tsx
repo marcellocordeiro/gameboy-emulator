@@ -1,33 +1,47 @@
 import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { HEIGHT, WIDTH, useGameBoy } from "@/hooks/use-game-boy";
 import { useRenderer } from "@/hooks/use-renderer";
+import {
+  HEIGHT,
+  WIDTH,
+  draw,
+  loadCartridge,
+  reset,
+  runFrame,
+} from "@/lib/game-boy";
 
 export function App() {
+  const [isLoaded, setIsLoaded] = useState(false);
   const [selectedRom, setSelectedRom] = useState<File | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctx = canvasRef?.current?.getContext("2d");
 
-  const { loaded, loadCartridge, reset, runFrame, draw } = useGameBoy();
-  const { running, setRunning } = useRenderer({ loaded, ctx, runFrame, draw });
+  const { isRunning, setIsRunning } = useRenderer({
+    isLoaded,
+    ctx,
+    runFrame,
+    draw,
+  });
 
   const handleStart = async (file: File) => {
     const buffer = await file.arrayBuffer();
     const data = new Uint8Array(buffer);
 
     loadCartridge(data);
-    setRunning(true);
+    setIsLoaded(true);
+    setIsRunning(true);
   };
 
   const handleStop = () => {
-    setRunning(false);
+    setIsRunning(false);
+    setIsLoaded(false);
     reset();
   };
 
   const handleToggleExecution = () => {
-    setRunning((oldValue) => !oldValue);
+    setIsRunning((oldValue) => !oldValue);
   };
 
   return (
@@ -54,7 +68,9 @@ export function App() {
 
       <div className="flex gap-4">
         <Button
-          disabled={running || (loaded && !running) || selectedRom == null}
+          disabled={
+            isRunning || (isLoaded && !isRunning) || selectedRom == null
+          }
           onClick={() => {
             if (selectedRom != null) {
               handleStart(selectedRom);
@@ -64,12 +80,12 @@ export function App() {
           Start
         </Button>
 
-        <Button disabled={!loaded} onClick={handleStop}>
+        <Button disabled={!isLoaded} onClick={handleStop}>
           Stop
         </Button>
 
-        <Button disabled={!loaded} onClick={handleToggleExecution}>
-          {running ? "Pause" : "Resume"}
+        <Button disabled={!isLoaded} onClick={handleToggleExecution}>
+          {isRunning ? "Pause" : "Resume"}
         </Button>
       </div>
     </main>

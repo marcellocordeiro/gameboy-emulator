@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
-  loaded: boolean;
+  isLoaded: boolean;
   ctx: CanvasRenderingContext2D | undefined | null;
   runFrame: () => void;
   draw: (ctx: CanvasRenderingContext2D) => void;
 }
 
-export function useRenderer({ loaded, ctx, runFrame, draw }: Props) {
-  const [running, setRunning] = useState(false);
+export function useRenderer({ isLoaded, ctx, runFrame, draw }: Props) {
+  const [isRunning, setIsRunning] = useState(false);
   const loopId = useRef(0);
 
   useEffect(() => {
-    if (!loaded || !running || ctx == null) {
+    if (!isLoaded || !isRunning || ctx == null) {
       window.cancelAnimationFrame(loopId.current);
       return;
     }
@@ -27,14 +27,14 @@ export function useRenderer({ loaded, ctx, runFrame, draw }: Props) {
     loopId.current = window.requestAnimationFrame(loop);
 
     return () => {
-      setRunning(false);
+      setIsRunning(false);
       window.cancelAnimationFrame(loopId.current);
     };
-  }, [ctx, draw, loaded, runFrame, running]);
+  }, [ctx, draw, isLoaded, runFrame, isRunning]);
 
   const value = {
-    running,
-    setRunning,
+    isRunning,
+    setIsRunning,
   };
 
   return value;
