@@ -1,4 +1,3 @@
-import wasm from "vite-plugin-wasm";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import wasmPack from "vite-plugin-wasm-pack";
@@ -12,5 +11,5 @@ export default defineConfig({
   build: {
     target: "esnext",
   },
-  plugins: [wasmPack(coreCratePath), wasm(), react(), tsconfigPaths()],
+  plugins: [wasmPack(coreCratePath), react(), tsconfigPaths()],
 });

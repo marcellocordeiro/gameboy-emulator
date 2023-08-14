@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import init, { init_logging, GameBoy } from "gb-core-wasm";
 import { useCallback, useState } from "react";
 
