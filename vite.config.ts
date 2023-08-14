@@ -9,6 +9,7 @@ const coreCratePath = "./gb-core-wasm";
 export default defineConfig({
   root: "gb-ui-browser",
   build: {
+    outDir: "../dist",
     target: "esnext",
   },
   plugins: [wasmPack(coreCratePath), react(), tsconfigPaths()],
