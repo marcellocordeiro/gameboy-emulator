@@ -12,6 +12,8 @@
     clippy::verbose_bit_mask // As per the docs, LLVM may not be able to generate better code.
 )]
 
+#![cfg(target_arch = "wasm32")]
+
 use wasm_bindgen::{prelude::*, Clamped};
 use web_sys::{CanvasRenderingContext2d, ImageData};
 

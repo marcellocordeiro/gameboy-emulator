@@ -8,6 +8,8 @@
     clippy::cast_possible_truncation, // Might be nice to solve this one.
 )]
 
+use app::App;
+
 fn get_rom(file: String) -> Vec<u8> {
     match std::fs::read(file) {
         Ok(bytes) => bytes,
@@ -15,7 +17,7 @@ fn get_rom(file: String) -> Vec<u8> {
     }
 }
 
-fn main() -> Result<(), pixels::Error> {
+fn main() -> Result<(), eframe::Error> {
     env_logger::init();
 
     let matches = clap::Command::new("gameboy-emulator")
@@ -25,10 +27,24 @@ fn main() -> Result<(), pixels::Error> {
     let rom_path = matches.get_one::<String>("rom").expect("required");
     let rom = get_rom(rom_path.to_string());
 
-    app::run(rom)
+    let initial_window_size = eframe::egui::vec2(
+        gb_core::constants::WIDTH as f32 * 2.0,
+        gb_core::constants::WIDTH as f32 * 2.0,
+    );
+
+    let native_options = eframe::NativeOptions {
+        initial_window_size: Some(initial_window_size),
+        resizable: false,
+        ..Default::default()
+    };
+
+    eframe::run_native(
+        "gameboy-emulator",
+        native_options,
+        Box::new(move |cc| Box::new(App::new(cc, rom))),
+    )
 }
 
 mod app;
-mod overlay;
-mod overlay_framework;
-mod widgets;
+mod gui;
+mod key_mappings;

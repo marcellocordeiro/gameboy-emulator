@@ -4,7 +4,6 @@ pub const HEIGHT: usize = 144;
 pub const PALETTE: [u8; 4] = [0xFF, 0xAA, 0x55, 0x00];
 
 #[derive(Clone, Copy)]
-#[repr(u8)]
 pub enum Button {
     A = (1 << 0),
     B = (1 << 1),

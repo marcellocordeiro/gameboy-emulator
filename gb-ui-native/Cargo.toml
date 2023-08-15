@@ -7,12 +7,7 @@ edition = "2021"
 
 [dependencies]
 clap = "4.3.21"
-egui = "0.22.0"
-egui-wgpu = "0.22.0"
-egui-winit = { version = "0.22.0", default-features = false, features = ["links"] }
+eframe = "0.22.0"
 env_logger = "0.10.0"
 gb-core = { path = "../gb-core" }
 log = "0.4.20"
-pixels = "0.13.0"
-winit = "0.28.6"
-winit_input_helper = "0.14.1"

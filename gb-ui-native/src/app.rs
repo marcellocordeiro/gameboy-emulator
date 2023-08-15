@@ -1,180 +1,89 @@
-use pixels::{Error, Pixels, SurfaceTexture};
-use winit::dpi::LogicalSize;
-use winit::event::{Event, VirtualKeyCode};
-use winit::event_loop::EventLoop;
-use winit::window::WindowBuilder;
-use winit_input_helper::WinitInputHelper;
-
+use eframe::{egui, epaint::ColorImage};
 use gb_core::{
     constants::{Button, HEIGHT, WIDTH},
     GameBoy,
 };
 
-use crate::overlay::Overlay;
-use crate::overlay_framework::OverlayFramework;
+use crate::{gui::Gui, key_mappings};
 
-const SCALE: f64 = 3.0;
+const FILTER: egui::TextureOptions = egui::TextureOptions::NEAREST;
 
-pub fn run(rom: Vec<u8>) -> Result<(), Error> {
-    let event_loop = EventLoop::new();
-    let mut input = WinitInputHelper::new();
+pub struct App {
+    gb: GameBoy,
+    texture: egui::TextureHandle,
+    pixels: [u8; WIDTH * HEIGHT * 4],
 
-    let window = {
-        let size = LogicalSize::new((WIDTH as f64) * SCALE, (HEIGHT as f64) * SCALE);
+    gui: Gui,
+}
 
-        WindowBuilder::new()
-            .with_title("gameboy-emulator")
-            .with_inner_size(size)
-            .with_min_inner_size(size)
-            .build(&event_loop)
-            .unwrap()
-    };
+impl App {
+    pub fn new(cc: &eframe::CreationContext, rom: Vec<u8>) -> Self {
+        let mut gb = GameBoy::new();
+        gb.load_cartridge(rom);
 
-    // pixels buffer
-    let mut pixels = {
-        let window_size = window.inner_size();
-        let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
+        let mut pixels = [0; WIDTH * HEIGHT * 4];
 
-        Pixels::new(WIDTH as u32, HEIGHT as u32, surface_texture)?
-    };
+        let texture = {
+            gb.draw(&mut pixels);
 
-    // Set up the egui backend
-    let mut overlay_framework = {
-        let window_size = window.inner_size();
-        let scale_factor = window.scale_factor();
+            let image = ColorImage::from_rgba_unmultiplied([WIDTH, HEIGHT], &pixels);
 
-        OverlayFramework::new(
-            &event_loop,
-            window_size.width,
-            window_size.height,
-            scale_factor as f32,
-            &pixels,
-        )
-    };
+            cc.egui_ctx.load_texture("main", image, FILTER)
+        };
 
-    let mut gb = GameBoy::new();
-    gb.load_cartridge(rom);
+        cc.egui_ctx.set_pixels_per_point(1.0);
 
-    let mut overlay = Overlay::new();
+        Self {
+            gb,
+            texture,
+            pixels,
 
-    event_loop.run(move |event, _, control_flow| {
-        // Handle input events
-        if input.update(&event) {
-            // Close events
-            if input.key_pressed(VirtualKeyCode::Escape) || input.close_requested() {
-                control_flow.set_exit();
-                return;
+            gui: Gui::default(),
+        }
+    }
+
+    fn handle_input(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        ctx.input(|i| {
+            use egui::Key;
+
+            if i.key_pressed(Key::Escape) {
+                frame.close();
             }
 
             for button in Button::to_array() {
-                let key = map_button(button);
+                let key = key_mappings::map_button(button);
 
-                if input.key_pressed(key) {
-                    gb.key_down(button);
-                } else if input.key_released(key) {
-                    gb.key_up(button);
+                if i.key_pressed(key) {
+                    self.gb.key_down(button);
+                } else if i.key_released(key) {
+                    self.gb.key_up(button);
                 }
             }
+        });
+    }
 
-            // Update the scale factor
-            if let Some(scale_factor) = input.scale_factor() {
-                overlay_framework.scale_factor(scale_factor as f32);
-            }
+    fn update_texture(&mut self) {
+        self.gb.draw(&mut self.pixels);
 
-            // Resize the window
-            if let Some(size) = input.window_resized() {
-                if let Err(err) = pixels.resize_surface(size.width, size.height) {
-                    println!("pixels.render() failed: {err}");
-                    control_flow.set_exit();
-                    return;
-                }
-
-                overlay_framework.resize(size.width, size.height);
-            }
-
-            // Update internal state and request a redraw
-            if !overlay.manual_control {
-                gb.run_frame();
-            }
-
-            window.request_redraw();
-        }
-
-        match event {
-            Event::WindowEvent { event, .. } => {
-                // Update egui inputs
-                overlay_framework.handle_event(&event);
-
-                /* if let WindowEvent::KeyboardInput { input, .. } = event {
-                    if let Some(virtual_keycode) = input.virtual_keycode {
-                        if let Some(key) = map_key(virtual_keycode) {
-                            match input.state {
-                                winit::event::ElementState::Pressed => gb.key_down(key),
-                                winit::event::ElementState::Released => gb.key_up(key),
-                            }
-                        }
-                    }
-                } */
-            }
-
-            // Draw the current frame
-            Event::RedrawRequested(_) => {
-                // Draw the world
-                gb.draw(pixels.frame_mut());
-
-                // Prepare egui
-                overlay_framework.prepare(&window, |egui_ctx| {
-                    // Draw the demo application.
-                    overlay.ui(egui_ctx, &mut gb);
-                });
-
-                // Render everything together
-                let render_result = pixels.render_with(|encoder, render_target, context| {
-                    // Render the world texture
-                    context.scaling_renderer.render(encoder, render_target);
-
-                    // Render egui
-                    overlay_framework.render(encoder, render_target, context);
-
-                    Ok(())
-                });
-
-                // Basic error handling
-                if let Err(err) = render_result {
-                    println!("pixels.render() failed: {err}");
-                    control_flow.set_exit();
-                }
-            }
-
-            _ => (),
-        }
-    });
+        let image = ColorImage::from_rgba_unmultiplied([WIDTH, HEIGHT], &self.pixels);
+        self.texture.set(image, FILTER);
+    }
 }
 
-/* fn map_key(virtual_keycode: VirtualKeyCode) -> Option<Button> {
-    match virtual_keycode {
-        VirtualKeyCode::A => Some(Button::A),
-        VirtualKeyCode::S => Some(Button::B),
-        VirtualKeyCode::Left => Some(Button::Left),
-        VirtualKeyCode::Up => Some(Button::Up),
-        VirtualKeyCode::Right => Some(Button::Right),
-        VirtualKeyCode::Down => Some(Button::Down),
-        VirtualKeyCode::Back => Some(Button::Select),
-        VirtualKeyCode::Return => Some(Button::Start),
+impl eframe::App for App {
+    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        ctx.set_pixels_per_point(1.0);
 
-        _ => None,
-    }
-} */
+        if !self.gui.manual_control {
+            self.gb.run_frame();
+        }
 
-fn map_button(button: Button) -> VirtualKeyCode {
-    match button {
-        Button::A => VirtualKeyCode::A,
-        Button::B => VirtualKeyCode::S,
-        Button::Select => VirtualKeyCode::Back,
-        Button::Start => VirtualKeyCode::Return,
-        Button::Right => VirtualKeyCode::Right,
-        Button::Left => VirtualKeyCode::Left,
-        Button::Up => VirtualKeyCode::Up,
-        Button::Down => VirtualKeyCode::Down,
+        self.update_texture();
+        self.handle_input(ctx, frame);
+
+        self.gui.render_ui(frame, ctx, &mut self.gb);
+        self.gui.render_graphics_area(ctx, &self.texture);
+
+        ctx.request_repaint();
     }
 }
