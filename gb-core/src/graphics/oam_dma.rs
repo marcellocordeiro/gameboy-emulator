@@ -1,4 +1,4 @@
-#[derive(Default)]
+#[derive(Debug, Default, PartialEq, Eq)]
 enum Status {
     #[default]
     Idle,
@@ -57,5 +57,36 @@ impl OamDma {
                 Some((source, destination))
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_start_up() {
+        let mut oam_dma = OamDma::default();
+
+        assert_eq!(oam_dma.dma, 0);
+        assert_eq!(oam_dma.offset, 0);
+        assert_eq!(oam_dma.status, Status::Idle);
+
+        // Request
+        oam_dma.start(0x00);
+        assert_eq!(oam_dma.dma, 0);
+        assert_eq!(oam_dma.offset, 0);
+        assert_eq!(oam_dma.status, Status::Requested);
+
+        assert_eq!(oam_dma.advance(), None);
+
+        // Next read is expected to return a (source, destination)
+        let (source, destination) = oam_dma.advance().expect("first read");
+        assert_eq!(source, 0);
+        assert_eq!(destination, 0xFE00);
+
+        assert_eq!(oam_dma.dma, 0);
+        assert_eq!(oam_dma.offset, 0x01);
+        assert_eq!(oam_dma.status, Status::Active);
     }
 }
