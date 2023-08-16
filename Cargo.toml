@@ -3,6 +3,7 @@ resolver = "2"
 members = [
   "gb-core",
   "gb-core-wasm",
+  "gb-opcode-info",
   "gb-ui-native",
 ]
 

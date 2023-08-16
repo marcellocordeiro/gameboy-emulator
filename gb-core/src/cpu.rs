@@ -136,7 +136,7 @@ impl Cpu {
         self.registers.program_counter = self
             .registers
             .program_counter
-            .wrapping_add_signed(offset.into());
+            .wrapping_add_signed(offset as i16);
     }
 
     fn jump_to_isr(&mut self, address: u16) {
@@ -164,7 +164,6 @@ impl fmt::Display for Cpu {
     }
 }
 
-mod opcode_info;
 mod opcode_map;
 mod registers;
 
