@@ -2,6 +2,8 @@ use std::fmt;
 
 use bitflags::bitflags;
 
+pub use self::ime_state::ImeState;
+
 bitflags! {
     #[derive(Default)]
     pub struct Flags: u8 {
@@ -11,35 +13,6 @@ bitflags! {
         const CARRY = 1 << 4;
 
         // Bits 0-3 are unused.
-    }
-}
-
-#[derive(Default, Clone, Copy, PartialEq, Eq)]
-pub enum ImeState {
-    #[default]
-    Disabled,
-    Enabled,
-    Pending,
-}
-
-impl ImeState {
-    pub fn get_status(self) -> bool {
-        match self {
-            Self::Disabled | Self::Pending => false,
-            Self::Enabled => true,
-        }
-    }
-
-    pub fn update_and_get_status(&mut self) -> bool {
-        match self {
-            Self::Disabled => false,
-            Self::Enabled => true,
-            Self::Pending => {
-                *self = Self::Enabled;
-
-                false
-            }
-        }
     }
 }
 
@@ -123,18 +96,6 @@ impl Registers {
     }
 }
 
-impl fmt::Display for ImeState {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let str = match self {
-            Self::Disabled => "☐",
-            Self::Enabled => "☑",
-            Self::Pending => "~",
-        };
-
-        write!(f, "{str}")
-    }
-}
-
 impl fmt::Display for Registers {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let af_line = format!(
@@ -198,3 +159,5 @@ impl fmt::Display for Registers {
         )
     }
 }
+
+mod ime_state;
