@@ -1,3 +1,5 @@
+use arrayvec::ArrayVec;
+
 use super::{SpriteFlags, SpriteObject};
 
 const OAM_SIZE: usize = 0xA0;
@@ -6,14 +8,14 @@ const OAM_SIZE: usize = 0xA0;
 pub struct Oam {
     data: [u8; OAM_SIZE],
 
-    pub(super) sprite_buffer: Vec<SpriteObject>,
+    pub(super) sprite_buffer: ArrayVec<SpriteObject, 10>,
 }
 
 impl Default for Oam {
     fn default() -> Self {
         Self {
             data: [0; OAM_SIZE], // can't default this :(
-            sprite_buffer: Vec::default(),
+            sprite_buffer: ArrayVec::default(),
         }
     }
 }
@@ -32,7 +34,7 @@ impl Oam {
     pub(super) fn get_sprites_in_line(&mut self, ly: u8, obj_height: u8) -> &[SpriteObject] {
         self.sprite_buffer.clear();
 
-        for i in 0..40_usize {
+        for i in 0..(OAM_SIZE / 4) {
             let base_address = i * 4;
 
             let y = self.data[base_address].wrapping_sub(16);
@@ -49,7 +51,7 @@ impl Oam {
                 });
             }
 
-            if self.sprite_buffer.len() == 10 {
+            if self.sprite_buffer.is_full() {
                 break;
             }
         }

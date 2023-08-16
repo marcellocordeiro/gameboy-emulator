@@ -9,5 +9,6 @@ edition = "2021"
 bootrom = []
 
 [dependencies]
+arrayvec = "0.7.4"
 bitflags = "2.4.0"
 log = "0.4.20"
