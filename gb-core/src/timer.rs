@@ -180,3 +180,44 @@ impl Timer {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_initial_state() {
+        let timer = Timer::default();
+
+        assert_eq!(timer.system_counter, 0x0000);
+        assert_eq!(timer.tima, 0x00);
+        assert_eq!(timer.tma, 0x00);
+        assert_eq!(timer.tac, 0x00);
+        assert_eq!(timer.tima_state, TimaState::Running);
+        assert_eq!(timer.irq, false);
+
+        assert_eq!(timer.read_div(), 0x00);
+        assert_eq!(timer.read_tima(), 0x00);
+        assert_eq!(timer.read_tac(), 0xF8);
+    }
+
+    #[test]
+    fn test_skip_bootrom_state() {
+        let mut timer = Timer::default();
+
+        timer.skip_bootrom();
+
+        assert_eq!(timer.system_counter, 0xABCC);
+        assert_eq!(timer.tima, 0x00);
+        assert_eq!(timer.tma, 0x00);
+        assert_eq!(timer.tac, 0x00);
+        assert_eq!(timer.tima_state, TimaState::Running);
+        assert_eq!(timer.irq, false);
+
+        assert_eq!(timer.read_div(), 0xAB);
+        assert_eq!(timer.read_tima(), 0x00);
+        assert_eq!(timer.read_tac(), 0xF8);
+    }
+
+    // TODO: test overflows and interrupts
+}
