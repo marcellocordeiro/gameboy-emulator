@@ -1,8 +1,8 @@
 use log::info;
 
-use super::mbc::{Mbc, ONE_KIB, RAM_BANK_SIZE, ROM_BANK_SIZE};
+use super::mbc::{MbcInterface, ONE_KIB, RAM_BANK_SIZE, ROM_BANK_SIZE};
 
-pub(super) struct Mbc3 {
+pub struct Mbc3 {
     rom: Vec<u8>,
     ram: Vec<u8>,
 
@@ -71,7 +71,7 @@ impl Mbc3 {
     }
 }
 
-impl Mbc for Mbc3 {
+impl MbcInterface for Mbc3 {
     fn read_rom(&self, address: u16) -> u8 {
         if address < 0x4000 {
             return self.rom[address as usize];

@@ -1,8 +1,8 @@
 use log::info;
 
-use super::mbc::Mbc;
+use super::mbc::MbcInterface;
 
-pub(super) struct NoMbc {
+pub struct NoMbc {
     rom: Vec<u8>,
 }
 
@@ -14,7 +14,7 @@ impl NoMbc {
     }
 }
 
-impl Mbc for NoMbc {
+impl MbcInterface for NoMbc {
     fn read_rom(&self, address: u16) -> u8 {
         self.rom[address as usize]
     }

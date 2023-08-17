@@ -27,14 +27,33 @@ Experimental Game Boy emulator written in Rust.
 
 boop
 
-## Setup (browser)
+## Setup
+
+### Rust
 
 ```sh
-# Arch
-sudo pacman -S rust rust-src rust-wasm wasm-pack
+# Install rustup: https://www.rust-lang.org/
 
-# macOS after installing Rust via rustup
+rustup default stable
+
+# Arch
+sudo pacman -S rust rust-src rust-wasm
+```
+
+### wasm-pack
+
+```sh
+# Install wasm-pack from source
+cargo install wasm-pack
+
+# Arch
+sudo pacman -S wasm-pack
+
+# macOS
 brew install wasm-pack
+
+# npm
+npm install -g wasm-pack
 ```
 
 ## Building

@@ -1,9 +1,12 @@
+#[derive(Debug, Default, PartialEq, Eq)]
 enum TimaState {
+    #[default]
     Running,
     Overflow(u8),
     Loading(u8),
 }
 
+#[derive(Debug, Default)]
 pub struct Timer {
     system_counter: u16, // [15-8] Divider (R/W).
     tima: u8,            // Timer counter (R/W).
@@ -12,20 +15,6 @@ pub struct Timer {
     tima_state: TimaState,
 
     pub irq: bool,
-}
-
-impl Default for Timer {
-    fn default() -> Self {
-        Self {
-            system_counter: 0,
-            tima: 0,
-            tma: 0,
-            tac: 0,
-            tima_state: TimaState::Running,
-
-            irq: false,
-        }
-    }
 }
 
 impl Timer {
@@ -37,7 +26,7 @@ impl Timer {
         self.update_tima_state();
 
         if !self.timer_enable() {
-            self.system_counter = self.system_counter.wrapping_add(1);
+            self.increment_system_counter();
             return;
         }
 

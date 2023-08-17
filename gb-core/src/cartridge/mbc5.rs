@@ -1,8 +1,8 @@
 use log::info;
 
-use super::mbc::{Mbc, ONE_KIB, RAM_BANK_SIZE, ROM_BANK_SIZE};
+use super::mbc::{MbcInterface, ONE_KIB, RAM_BANK_SIZE, ROM_BANK_SIZE};
 
-pub(super) struct Mbc5 {
+pub struct Mbc5 {
     rom: Vec<u8>,
     ram: Vec<u8>,
 
@@ -75,7 +75,7 @@ impl Mbc5 {
     }
 }
 
-impl Mbc for Mbc5 {
+impl MbcInterface for Mbc5 {
     fn read_rom(&self, address: u16) -> u8 {
         let mask = self.rom.len() - 1;
 
