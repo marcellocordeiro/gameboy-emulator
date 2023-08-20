@@ -19,8 +19,13 @@ pub struct GameBoy {
     pub cpu: Cpu,
 }
 
+impl Default for GameBoy {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl GameBoy {
-    #[must_use]
     pub fn new() -> Self {
         let mut cpu = Cpu::default();
 
@@ -34,9 +39,10 @@ impl GameBoy {
         *self = GameBoy::new();
     }
 
-    pub fn load_cartridge(&mut self, rom: Vec<u8>) {
+    pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), cartridge::Error> {
         self.reset();
-        self.cpu.memory.load_cartridge(rom);
+
+        self.cpu.memory.load_cartridge(rom)
     }
 
     pub fn run_frame(&mut self) {

@@ -1,5 +1,5 @@
 use crate::{
-    cartridge::Cartridge,
+    cartridge::{self, Cartridge},
     constants::{Button, HEIGHT, WIDTH},
     graphics::Graphics,
     joypad::Joypad,
@@ -29,8 +29,8 @@ pub struct Memory {
 }
 
 impl Memory {
-    pub fn load_cartridge(&mut self, rom: Vec<u8>) {
-        self.cartridge.load_cartridge(rom);
+    pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), cartridge::Error> {
+        self.cartridge.load_cartridge(rom)
     }
 
     pub fn skip_bootrom(&mut self) {

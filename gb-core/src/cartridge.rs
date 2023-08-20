@@ -1,3 +1,5 @@
+pub use self::error::Error;
+
 use self::{
     mbc::{Mbc, MbcInterface},
     mbc1::Mbc1,
@@ -12,8 +14,10 @@ pub struct Cartridge {
 }
 
 impl Cartridge {
-    pub fn load_cartridge(&mut self, rom: Vec<u8>) {
-        self.mbc = Some(Self::get_mbc(rom));
+    pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), self::Error> {
+        self.mbc = Some(Self::get_mbc(rom)?);
+
+        Ok(())
     }
 
     pub fn read_rom(&self, address: u16) -> u8 {
@@ -45,10 +49,12 @@ impl Cartridge {
     }
 
     // todo: make this failable
-    fn get_mbc(rom: Vec<u8>) -> Mbc {
+    fn get_mbc(rom: Vec<u8>) -> Result<Mbc, self::Error> {
         const CARTRIDGE_TYPE_ADDRESS: usize = 0x147;
 
-        let raw_cartridge_type = rom.get(CARTRIDGE_TYPE_ADDRESS).unwrap();
+        let raw_cartridge_type = *rom
+            .get(CARTRIDGE_TYPE_ADDRESS)
+            .ok_or(self::Error::InvalidRom)?;
 
         let mbc: Mbc = match raw_cartridge_type {
             // $00 ROM ONLY
@@ -60,14 +66,14 @@ impl Cartridge {
             // $01 MBC1
             // $02 MBC1+RAM
             // $03 MBC1+RAM+BATTERY
-            0x01..=0x03 => Mbc1::new(rom).into(),
+            0x01..=0x03 => Mbc1::new(rom)?.into(),
 
             // $0F MBC3+TIMER+BATTERY
             // $10 MBC3+TIMER+RAM+BATTERY
             // $11 MBC3
             // $12 MBC3+RAM
             // $13 MBC3+RAM+BATTERY
-            0x0F..=0x13 => Mbc3::new(rom).into(),
+            0x0F..=0x13 => Mbc3::new(rom)?.into(),
 
             // $19 MBC5
             // $1A MBC5+RAM
@@ -75,15 +81,17 @@ impl Cartridge {
             // $1C MBC5+RUMBLE
             // $1D MBC5+RUMBLE+RAM
             // $1E MBC5+RUMBLE+RAM+BATTERY
-            0x19..=0x1E => Mbc5::new(rom).into(),
+            0x19..=0x1E => Mbc5::new(rom)?.into(),
 
-            value => panic!("[cartridge.rs] Unsupported MBC: ({value:#04X})"),
+            code => return Err(self::Error::UnsupportedMbc { code }), // value => panic!("[cartridge.rs] Unsupported MBC: ({value:#04X})"),
         };
 
-        mbc
+        Ok(mbc)
     }
 }
 
+mod error;
+mod info;
 mod mbc;
 mod mbc1;
 mod mbc3;

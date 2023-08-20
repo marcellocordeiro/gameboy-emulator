@@ -7,7 +7,7 @@ const BREAK_OPCODE: u8 = 0x40; // LD B,B
 
 fn run(rom: &[u8]) {
     let mut gb = GameBoy::new();
-    gb.load_cartridge(rom.to_vec());
+    gb.load_cartridge(rom.to_vec()).unwrap();
 
     let start_time = Instant::now();
 

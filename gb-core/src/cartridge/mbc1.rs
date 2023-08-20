@@ -1,6 +1,12 @@
 use log::info;
 
-use super::mbc::{MbcInterface, ONE_KIB, RAM_BANK_SIZE, ROM_BANK_SIZE};
+use super::{
+    info::{
+        get_ram_banks, get_rom_banks, ONE_KIB, RAM_BANKS_CODE_ADDRESS, RAM_BANK_SIZE,
+        ROM_BANKS_CODE_ADDRESS, ROM_BANK_SIZE,
+    },
+    mbc::MbcInterface,
+};
 
 pub struct Mbc1 {
     rom: Vec<u8>,
@@ -15,39 +21,22 @@ pub struct Mbc1 {
 }
 
 impl Mbc1 {
-    pub fn new(rom: Vec<u8>) -> Self {
+    pub fn new(rom: Vec<u8>) -> Result<Self, super::Error> {
         let rom_banks = {
-            let code = rom[0x148];
+            let code = *rom
+                .get(ROM_BANKS_CODE_ADDRESS)
+                .ok_or(super::Error::InvalidRom)?;
 
-            match code {
-                0x00 => 2,   // 32 KiB
-                0x01 => 4,   // 64 KiB
-                0x02 => 8,   // 128 KiB
-                0x03 => 16,  // 256 KiB
-                0x04 => 32,  // 512 KiB
-                0x05 => 64,  // 1 MiB
-                0x06 => 128, // 2 MiB
-                0x07 => 256, // 4 MiB
-                0x08 => 512, // 8 MiB
-
-                _ => panic!("[mbc1.rs] Unsupported number of banks."),
-            }
-        };
+            get_rom_banks(code)
+        }?;
 
         let ram_banks = {
-            let code = rom[0x149];
+            let code = *rom
+                .get(RAM_BANKS_CODE_ADDRESS)
+                .ok_or(super::Error::InvalidRom)?;
 
-            match code {
-                0x00 => 0,
-                0x01 => 1,
-                0x02 => 1,
-                0x03 => 4,
-                0x04 => 16,
-                0x05 => 8,
-
-                _ => panic!("[mbc1.rs] Unsupported number of banks."),
-            }
-        };
+            get_ram_banks(code)
+        }?;
 
         info!("MBC1");
         info!("ROM banks: {rom_banks}");
@@ -55,14 +44,14 @@ impl Mbc1 {
 
         assert_eq!(rom.len(), (rom_banks / 2) * (32 * ONE_KIB));
 
-        Self {
+        Ok(Self {
             rom,
             ram: vec![0; ram_banks * (8 * ONE_KIB)],
             ram_enable: false,
             bank_lo: 0x01,
             bank_hi: 0x00,
             mode: false,
-        }
+        })
     }
 
     fn rom_0x0000_0x3fff_offset(&self) -> usize {

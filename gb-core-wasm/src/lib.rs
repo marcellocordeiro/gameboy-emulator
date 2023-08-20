@@ -11,7 +11,6 @@
     clippy::cast_possible_truncation, // Intentional, but may be possible to mitigate.
     clippy::verbose_bit_mask // As per the docs, LLVM may not be able to generate better code.
 )]
-#![cfg(target_arch = "wasm32")]
 
 use wasm_bindgen::{prelude::*, Clamped};
 use web_sys::{CanvasRenderingContext2d, ImageData};
@@ -34,7 +33,6 @@ pub struct GameBoy {
 
 #[wasm_bindgen]
 impl GameBoy {
-    #[must_use]
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         let mut cpu = Cpu::default();
@@ -51,7 +49,8 @@ impl GameBoy {
 
     pub fn load_cartridge(&mut self, rom: Vec<u8>) {
         self.reset();
-        self.cpu.memory.load_cartridge(rom);
+
+        self.cpu.memory.load_cartridge(rom).unwrap();
     }
 
     pub fn run_frame(&mut self) {

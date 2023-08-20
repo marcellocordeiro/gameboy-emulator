@@ -1,14 +1,13 @@
-// TODO: IRQ
-
 use crate::constants::Button;
 
-use self::line_selection::LineSelection;
+use self::line_selection::{LineSelection, JOYP_SELECTION_MASK};
+
+const JOYP_UNUSED_MASK: u8 = 0b1100_0000;
+const JOYP_BUTTONS_MASK: u8 = 0b0000_1111;
 
 pub struct Joypad {
     joyp: u8,
     buttons: u8,
-
-    line_selection: LineSelection,
 
     pub irq: bool,
 }
@@ -16,10 +15,8 @@ pub struct Joypad {
 impl Default for Joypad {
     fn default() -> Self {
         Self {
-            joyp: 0b1100_1111,
+            joyp: 0b0000_1111,
             buttons: 0x00,
-
-            line_selection: LineSelection::Both,
 
             irq: false,
         }
@@ -30,41 +27,41 @@ impl Joypad {
     // 0xFF00
 
     pub fn read(&self) -> u8 {
-        0b1100_0000 | self.joyp
+        JOYP_UNUSED_MASK | self.joyp
     }
 
     pub fn write(&mut self, value: u8) {
         // Only bits 4 and 5 are writable.
-        self.line_selection = LineSelection::from_joyp_bits(value);
+        self.joyp &= !JOYP_SELECTION_MASK;
+        self.joyp |= value & JOYP_SELECTION_MASK;
 
         self.update_joyp();
     }
 
     fn update_joyp(&mut self) {
-        self.joyp &= 0b1100_0000;
+        use LineSelection::*;
 
-        let buttons_bits = {
-            use LineSelection::*;
-
-            let bits = match self.line_selection {
-                Both => (self.buttons | (self.buttons >> 4)) & 0b1111,
-                Action => self.buttons & 0b1111,
-                Direction => self.buttons >> 4,
-                None => 0b0000,
-            };
-
-            !bits & 0b1111
+        let buttons_bits = match LineSelection::from_joyp_bits(self.joyp) {
+            Both => (self.buttons | (self.buttons >> 4)) & 0b1111,
+            Action => self.buttons & 0b1111,
+            Direction => self.buttons >> 4,
+            None => 0b0000,
         };
 
-        self.joyp |= self.line_selection.to_joyp_bits();
-        self.joyp |= buttons_bits;
+        self.joyp &= !JOYP_BUTTONS_MASK;
+        self.joyp |= !buttons_bits & JOYP_BUTTONS_MASK;
     }
 
     pub fn key_down(&mut self, key: Button) {
-        self.buttons |= key as u8;
-        self.irq = true; // this is wrong.
+        let current_buttons = self.buttons;
+        let new_buttons = self.buttons | (key as u8);
 
-        self.update_joyp();
+        if new_buttons != current_buttons {
+            self.buttons = new_buttons;
+            self.irq = true;
+
+            self.update_joyp();
+        }
     }
 
     pub fn key_up(&mut self, key: Button) {
@@ -91,21 +88,11 @@ mod tests {
     fn test_invalid_write() {
         let mut joypad = Joypad::default();
 
-        let initial_state = (
-            joypad.joyp,
-            joypad.buttons,
-            joypad.line_selection,
-            joypad.irq,
-        );
+        let initial_state = (joypad.joyp, joypad.buttons, joypad.irq);
 
         joypad.write(0b1100_1111);
 
-        let next_state = (
-            joypad.joyp,
-            joypad.buttons,
-            joypad.line_selection,
-            joypad.irq,
-        );
+        let next_state = (joypad.joyp, joypad.buttons, joypad.irq);
 
         assert_eq!(initial_state, next_state);
     }

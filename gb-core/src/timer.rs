@@ -171,10 +171,10 @@ impl Timer {
 
     fn input_clock(&self) -> u16 {
         match self.tac & 0b11 {
-            0 => 1024,
-            1 => 16,
-            2 => 64,
-            3 => 256,
+            0b00 => 1024,
+            0b01 => 16,
+            0b10 => 64,
+            0b11 => 256,
 
             _ => unreachable!(),
         }

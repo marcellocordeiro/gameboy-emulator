@@ -19,7 +19,7 @@ pub struct App {
 impl App {
     pub fn new(cc: &eframe::CreationContext, rom: Vec<u8>) -> Self {
         let mut gb = GameBoy::new();
-        gb.load_cartridge(rom);
+        gb.load_cartridge(rom).unwrap();
 
         let mut pixels = [0; WIDTH * HEIGHT * 4];
 
