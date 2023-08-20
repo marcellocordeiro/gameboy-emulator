@@ -3,6 +3,7 @@ pub use self::error::Error;
 use self::{
     mbc::{Mbc, MbcInterface},
     mbc1::Mbc1,
+    mbc2::Mbc2,
     mbc3::Mbc3,
     mbc5::Mbc5,
     no_mbc::NoMbc,
@@ -68,6 +69,10 @@ impl Cartridge {
             // $03 MBC1+RAM+BATTERY
             0x01..=0x03 => Mbc1::new(rom)?.into(),
 
+            // $05 MBC2
+            // $06 MBC2+BATTERY
+            0x05..=0x06 => Mbc2::new(rom)?.into(),
+
             // $0F MBC3+TIMER+BATTERY
             // $10 MBC3+TIMER+RAM+BATTERY
             // $11 MBC3
@@ -94,6 +99,7 @@ mod error;
 mod info;
 mod mbc;
 mod mbc1;
+mod mbc2;
 mod mbc3;
 mod mbc5;
 mod no_mbc;

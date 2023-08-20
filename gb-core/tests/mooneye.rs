@@ -151,7 +151,6 @@ testcases! {
   // mbc1_multicart_rom_8mb("emulator-only/mbc1/multicart_rom_8Mb");
 
   // MBC2
-  /*
   mbc2_bits_ramg("emulator-only/mbc2/bits_ramg");
   mbc2_bits_romb("emulator-only/mbc2/bits_romb");
   mbc2_bits_unused("emulator-only/mbc2/bits_unused");
@@ -159,7 +158,6 @@ testcases! {
   mbc2_rom_1mb("emulator-only/mbc2/rom_1Mb");
   mbc2_rom_2mb("emulator-only/mbc2/rom_2Mb");
   mbc2_ram("emulator-only/mbc2/ram");
-  */
 
   // MBC5
   mbc5_rom_512kb("emulator-only/mbc5/rom_512kb");
