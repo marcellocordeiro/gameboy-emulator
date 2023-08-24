@@ -1,8 +1,10 @@
 use log::info;
 
+use crate::constants::ONE_KIB;
+
 use super::{
     info::{
-        get_ram_banks, get_rom_banks, ONE_KIB, RAM_BANKS_CODE_ADDRESS, RAM_BANK_SIZE,
+        get_ram_banks, get_rom_banks, RAM_BANKS_CODE_ADDRESS, RAM_BANK_SIZE,
         ROM_BANKS_CODE_ADDRESS, ROM_BANK_SIZE,
     },
     mbc::MbcInterface,
@@ -99,7 +101,7 @@ impl MbcInterface for Mbc1 {
     }
 
     fn read_ram(&self, address: u16) -> u8 {
-        if !self.ram_enable {
+        if !self.ram_enable || self.ram.is_empty() {
             return 0xFF;
         }
 
@@ -136,7 +138,7 @@ impl MbcInterface for Mbc1 {
     }
 
     fn write_ram(&mut self, address: u16, value: u8) {
-        if !self.ram_enable {
+        if !self.ram_enable || self.ram.is_empty() {
             return;
         }
 

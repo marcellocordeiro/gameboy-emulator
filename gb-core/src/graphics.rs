@@ -309,9 +309,6 @@ impl Graphics {
         let should_render_bg = self.lcdc.get_bg_enable();
         let should_render_win = self.lcdc.get_win_enable() && self.wy <= self.ly;
 
-        // Window X position is WX - 7.
-        let adjusted_wx = self.wx.wrapping_sub(7);
-
         if should_render_bg {
             let base_address = if self.lcdc.get_bg_map() {
                 0x9C00_u16
@@ -370,14 +367,17 @@ impl Graphics {
                 0x9800_u16
             };
 
+            // Window X position is WX - 7.
+            let window_x = self.wx.wrapping_sub(7);
+
             let y = self.window_internal_counter as u16;
             let tile_row = y / 8;
 
-            for i in adjusted_wx..(WIDTH as u8) {
+            for i in window_x..(WIDTH as u8) {
                 let x = {
                     let value = self.scx.wrapping_add(i);
-                    if value >= adjusted_wx {
-                        i - adjusted_wx
+                    if value >= window_x {
+                        i - window_x
                     } else {
                         value
                     }

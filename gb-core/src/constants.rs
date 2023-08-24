@@ -1,3 +1,5 @@
+pub const ONE_KIB: usize = 0x400;
+
 pub const WIDTH: usize = 160;
 pub const HEIGHT: usize = 144;
 

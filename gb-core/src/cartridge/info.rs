@@ -1,6 +1,6 @@
 // TODO: better failable returns
 
-pub const ONE_KIB: usize = 0x400;
+use crate::constants::ONE_KIB;
 
 pub const ROM_BANK_SIZE: usize = 16 * ONE_KIB; // 0x4000
 pub const RAM_BANK_SIZE: usize = 8 * ONE_KIB; // 0x2000

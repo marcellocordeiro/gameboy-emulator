@@ -17,13 +17,12 @@ impl Cpu {
 
     pub(super) fn opcode_0x76(&mut self) {
         // HALT
-        match (
-            self.registers.ime.get_status(),
-            self.memory.interrupts.get_queued_irq(),
-        ) {
-            (false, Some(_)) => self.halt_bug = true,
-            _ => self.halt = true,
+
+        if self.registers.ime.get_status() && self.memory.interrupts.get_queued_irq().is_some() {
+            // TODO: implement halt bug
         }
+
+        self.halt = true;
     }
 
     pub(super) fn opcode_0xcb(&mut self) {

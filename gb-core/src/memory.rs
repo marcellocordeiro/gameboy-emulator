@@ -84,7 +84,7 @@ impl Memory {
             0x0000..=0x7FFF => self.cartridge.read_rom(address),
             0x8000..=0x9FFF => self.graphics.read(address),
             0xA000..=0xBFFF => self.cartridge.read_ram(address),
-            0xC000..=0xFDFF => self.wram.read(address),
+            0xC000..=0xFDFF | 0xFF70 => self.wram.read(address),
             0xFE00..=0xFE9F => self.graphics.read(address),
 
             0xFEA0..=0xFEFF => unreachable!("Accessing prohibited area: {:#06x}", address),
@@ -102,7 +102,6 @@ impl Memory {
 
             0xFF51..=0xFF55 => 0xFF, // TODO: (CGB) VRAM DMA.
             0xFF68..=0xFF69 => 0xFF, // TODO: (CGB) BG / OBJ Palettes.
-            0xFF70 => 0xFF,          // TODO: (CGB) WRAM Bank Select.
 
             0xFF80..=0xFFFE => self.hram.read(address),
 
@@ -135,7 +134,7 @@ impl Memory {
             0x0000..=0x7FFF => self.cartridge.write_rom(address, value),
             0x8000..=0x9FFF => self.graphics.write(address, value),
             0xA000..=0xBFFF => self.cartridge.write_ram(address, value),
-            0xC000..=0xFDFF => self.wram.write(address, value),
+            0xC000..=0xFDFF | 0xFF70 => self.wram.write(address, value),
             0xFE00..=0xFE9F => self.graphics.write(address, value),
 
             0xFEA0..=0xFEFF => (), // Prohibited area, but some games will attempt to write here.
@@ -153,7 +152,6 @@ impl Memory {
 
             0xFF51..=0xFF55 => (), // TODO: (CGB) VRAM DMA.
             0xFF68..=0xFF69 => (), // TODO: (CGB) BG / OBJ Palettes.
-            0xFF70 => (),          // TODO: (CGB) WRAM Bank Select.
 
             0xFF80..=0xFFFE => self.hram.write(address, value),
 

@@ -64,11 +64,16 @@ macro_rules! testcases {
     };
 }
 
+// DMG only tests.
+#[cfg(not(feature = "cgb-mode"))]
+testcases! {
+    // boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb");
+    boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb");
+    boot_regs_dmg_abc("acceptance/boot_regs-dmgABC");
+}
+
 testcases! {
   // add_sp_e_timing("acceptance/add_sp_e_timing");
-  // boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb");
-  boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb");
-  boot_regs_dmg_abc("acceptance/boot_regs-dmgABC");
   // call_cc_timing("acceptance/call_cc_timing");
   // call_cc_timing2("acceptance/call_cc_timing2");
   // call_timing("acceptance/call_timing");

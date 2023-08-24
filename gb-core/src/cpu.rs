@@ -10,7 +10,6 @@ pub struct Cpu {
     pub memory: Memory,
 
     pub halt: bool,
-    pub halt_bug: bool,
 
     pub cycles: i32,
 }

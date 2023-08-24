@@ -1,7 +1,9 @@
 use log::info;
 
+use crate::constants::ONE_KIB;
+
 use super::{
-    info::{get_rom_banks, ONE_KIB, ROM_BANKS_CODE_ADDRESS, ROM_BANK_SIZE},
+    info::{get_rom_banks, ROM_BANKS_CODE_ADDRESS, ROM_BANK_SIZE},
     mbc::MbcInterface,
 };
 
