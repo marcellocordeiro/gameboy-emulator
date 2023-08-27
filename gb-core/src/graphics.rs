@@ -308,7 +308,7 @@ impl Graphics {
             };
 
             // Window X position is WX - 7.
-            let window_x = self.wx.wrapping_sub(7);
+            let window_x = self.wx.saturating_sub(7);
 
             let y = self.window_internal_counter as u16;
             let tile_row = y / 8;

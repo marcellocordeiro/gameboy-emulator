@@ -1,10 +1,10 @@
 use crate::{
+    audio::Audio,
     cartridge::{Cartridge, Error as CartridgeError},
     constants::{Button, HEIGHT, WIDTH},
     graphics::Graphics,
     joypad::Joypad,
     serial::Serial,
-    audio::Audio,
     timer::Timer,
 };
 
@@ -102,20 +102,18 @@ impl Memory {
             0xFF40..=0xFF4B => self.graphics.read(address),
 
             0xFF4D => 0xFF, // TODO: (CGB) KEY1: Prepare speed switch.
-            0xFF4F => 0xFF, // TODO: (CGB) VRAM Bank Select.
+            0xFF4F => self.graphics.vram.read_vbk(), // (CGB) VRAM bank selection.
 
             0xFF50 => self.bootrom.read_status(),
 
             0xFF51..=0xFF55 => 0xFF, // TODO: (CGB) VRAM DMA.
             0xFF68..=0xFF69 => 0xFF, // TODO: (CGB) BG / OBJ Palettes.
 
-            0xFF70 => self.wram.read_svbk(), // (CGB) WRAM bank.
+            0xFF70 => self.wram.read_svbk(), // (CGB) WRAM bank selection.
 
             0xFF80..=0xFFFE => self.hram.read(address),
 
             0xFFFF => self.interrupts.read_enable(),
-
-            0xFF56 => 0xFF, // RP: Infrared.
 
             0xFF03 => 0xFF,          // Unused.
             0xFF08 => 0xFF,          // Unused.
@@ -128,6 +126,7 @@ impl Memory {
             0xFF15 => 0xFF,          // Unused.
             0xFF4C => 0xFF,          // Unused.
             0xFF4E => 0xFF,          // Unused.
+            0xFF56 => 0xFF,          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => 0xFF, // Unused.
             0xFF6A..=0xFF6F => 0xFF, // Unused.
             0xFF71..=0xFF7F => 0xFF, // Unused.
@@ -159,20 +158,18 @@ impl Memory {
             0xFF40..=0xFF4B => self.graphics.write(address, value),
 
             0xFF4D => (), // TODO: (CGB) KEY1: Prepare speed switch.
-            0xFF4F => (), // TODO: (CGB) VRAM Bank Select.
+            0xFF4F => self.graphics.vram.write_vbk(value), // (CGB) VRAM bank selection.
 
             0xFF50 => self.bootrom.write_status(value),
 
             0xFF51..=0xFF55 => (), // TODO: (CGB) VRAM DMA.
             0xFF68..=0xFF69 => (), // TODO: (CGB) BG / OBJ Palettes.
 
-            0xFF70 => self.wram.write_svbk(value), // (CGB) WRAM bank.
+            0xFF70 => self.wram.write_svbk(value), // (CGB) WRAM bank selection.
 
             0xFF80..=0xFFFE => self.hram.write(address, value),
 
             0xFFFF => self.interrupts.write_enable(value),
-
-            0xFF56 => (), // RP: Infrared.
 
             0xFF03 => (),          // Unused.
             0xFF08 => (),          // Unused.
@@ -185,6 +182,7 @@ impl Memory {
             0xFF15 => (),          // Unused.
             0xFF4C => (),          // Unused.
             0xFF4E => (),          // Unused.
+            0xFF56 => (),          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => (), // Unused.
             0xFF6A..=0xFF6F => (), // Unused.
             0xFF71..=0xFF7F => (), // Unused.

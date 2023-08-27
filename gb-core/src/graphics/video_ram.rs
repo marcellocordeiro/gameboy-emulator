@@ -44,7 +44,7 @@ impl VideoRam {
 
     pub fn write_vbk(&mut self, value: u8) {
         if cfg!(feature = "cgb-mode") {
-            self.vbk = value & 0b1
+            self.vbk = value & 0b1;
         }
     }
 
