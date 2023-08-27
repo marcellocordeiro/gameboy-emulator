@@ -1,5 +1,7 @@
+use super::{lcd_status::StatusMode, Graphics};
+
 #[cfg(feature = "cgb-mode")]
-const VRAM_BANKS: usize = 1;
+const VRAM_BANKS: usize = 2;
 
 #[cfg(not(feature = "cgb-mode"))]
 const VRAM_BANKS: usize = 1;
@@ -28,5 +30,23 @@ impl VideoRam {
 
     pub fn write(&mut self, address: u16, value: u8) {
         self.data[address as usize - 0x8000] = value;
+    }
+}
+
+impl Graphics {
+    pub fn read_vram(&self, address: u16) -> u8 {
+        if self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing {
+            return 0xFF;
+        }
+
+        self.vram.read(address)
+    }
+
+    pub fn write_vram(&mut self, address: u16, value: u8) {
+        if self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing {
+            return;
+        }
+
+        self.vram.write(address, value);
     }
 }

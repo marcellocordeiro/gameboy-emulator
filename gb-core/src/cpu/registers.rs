@@ -1,20 +1,7 @@
 use std::fmt;
 
-use bitflags::bitflags;
-
+pub use self::flags::Flags;
 pub use self::ime_state::ImeState;
-
-bitflags! {
-    #[derive(Default)]
-    pub struct Flags: u8 {
-        const ZERO = 1 << 7;
-        const N_ADD_SUB = 1 << 6;
-        const HALF_CARRY = 1 << 5;
-        const CARRY = 1 << 4;
-
-        // Bits 0-3 are unused.
-    }
-}
 
 #[derive(Default)]
 pub struct Registers {
@@ -160,4 +147,5 @@ impl fmt::Display for Registers {
     }
 }
 
+mod flags;
 mod ime_state;

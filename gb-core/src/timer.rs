@@ -18,6 +18,13 @@ pub struct Timer {
 }
 
 impl Timer {
+    // 0xFF04 ~ 0xFF07
+
+    // 0xFF04: DIV
+    // 0xFF05: TIMA
+    // 0xFF06: TMA
+    // 0xFF07: TAC
+
     pub fn skip_bootrom(&mut self) {
         self.system_counter = 0xABCC;
     }
@@ -47,7 +54,7 @@ impl Timer {
         match address {
             0xFF04 => self.read_div(),
             0xFF05 => self.read_tima(),
-            0xFF06 => self.tma,
+            0xFF06 => self.read_tma(),
             0xFF07 => self.read_tac(),
 
             _ => unreachable!("[timer.rs] Invalid read: {:#06x}", address),
@@ -58,7 +65,7 @@ impl Timer {
         match address {
             0xFF04 => self.write_div(),
             0xFF05 => self.write_tima(value),
-            0xFF06 => self.tma = value,
+            0xFF06 => self.write_tma(value),
             0xFF07 => self.write_tac(value),
 
             _ => unreachable!(
@@ -68,7 +75,6 @@ impl Timer {
         }
     }
 
-    // Read helpers.
     fn read_div(&self) -> u8 {
         (self.system_counter >> 8) as u8
     }
@@ -80,11 +86,14 @@ impl Timer {
         }
     }
 
+    fn read_tma(&self) -> u8 {
+        self.tma
+    }
+
     fn read_tac(&self) -> u8 {
         0b1111_1000 | self.tac
     }
 
-    // Write helpers.
     fn write_div(&mut self) {
         let clock = self.input_clock();
         let rate_bit = self.system_counter & (clock / 2) != 0;
@@ -107,7 +116,11 @@ impl Timer {
         }
     }
 
-    fn write_tac(&mut self, value: u8) {
+    fn write_tma(&mut self, value: u8) {
+        self.tma = value;
+    }
+
+    pub fn write_tac(&mut self, value: u8) {
         // https://gbdev.io/pandocs/Timer_Obscure_Behaviour.html#relation-between-timer-and-divider-register
 
         let old_clock = self.input_clock();

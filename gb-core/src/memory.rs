@@ -1,10 +1,10 @@
 use crate::{
-    cartridge::{self, Cartridge},
+    cartridge::{Cartridge, Error as CartridgeError},
     constants::{Button, HEIGHT, WIDTH},
     graphics::Graphics,
     joypad::Joypad,
     serial::Serial,
-    sound::Sound,
+    audio::Audio,
     timer::Timer,
 };
 
@@ -19,7 +19,7 @@ pub struct Memory {
 
     cartridge: Cartridge,
     graphics: Graphics,
-    sound: Sound,
+    audio: Audio,
 
     joypad: Joypad,
     serial: Serial,
@@ -29,7 +29,7 @@ pub struct Memory {
 }
 
 impl Memory {
-    pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), cartridge::Error> {
+    pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         self.cartridge.load_cartridge(rom)
     }
 
@@ -82,17 +82,23 @@ impl Memory {
             0x0000..=0x00FF if self.bootrom.is_active() => self.bootrom.read(address),
 
             0x0000..=0x7FFF => self.cartridge.read_rom(address),
-            0x8000..=0x9FFF => self.graphics.read(address),
+            0x8000..=0x9FFF => self.graphics.read_vram(address),
             0xA000..=0xBFFF => self.cartridge.read_ram(address),
-            0xC000..=0xFDFF | 0xFF70 => self.wram.read(address),
-            0xFE00..=0xFE9F => self.graphics.read(address),
+            0xC000..=0xFDFF => self.wram.read(address),
+            0xFE00..=0xFE9F => self.graphics.read_oam(address),
 
             0xFEA0..=0xFEFF => unreachable!("Accessing prohibited area: {:#06x}", address),
 
-            0xFF00..=0xFF00 => self.joypad.read(),
+            // I/O registers.
+            0xFF00 => self.joypad.read(),
+
             0xFF01..=0xFF02 => self.serial.read(address),
             0xFF04..=0xFF07 => self.timer.read(address),
-            0xFF10..=0xFF3F => self.sound.read(address),
+
+            0xFF0F => self.interrupts.read_flags(),
+
+            0xFF10..=0xFF14 => self.audio.read(address),
+            0xFF16..=0xFF3F => self.audio.read(address),
             0xFF40..=0xFF4B => self.graphics.read(address),
 
             0xFF4D => 0xFF, // TODO: (CGB) KEY1: Prepare speed switch.
@@ -103,10 +109,10 @@ impl Memory {
             0xFF51..=0xFF55 => 0xFF, // TODO: (CGB) VRAM DMA.
             0xFF68..=0xFF69 => 0xFF, // TODO: (CGB) BG / OBJ Palettes.
 
+            0xFF70 => self.wram.read_svbk(), // (CGB) WRAM bank.
+
             0xFF80..=0xFFFE => self.hram.read(address),
 
-            // Interrupt.
-            0xFF0F => self.interrupts.read_flags(),
             0xFFFF => self.interrupts.read_enable(),
 
             0xFF56 => 0xFF, // RP: Infrared.
@@ -119,6 +125,7 @@ impl Memory {
             0xFF0C => 0xFF,          // Unused.
             0xFF0D => 0xFF,          // Unused.
             0xFF0E => 0xFF,          // Unused.
+            0xFF15 => 0xFF,          // Unused.
             0xFF4C => 0xFF,          // Unused.
             0xFF4E => 0xFF,          // Unused.
             0xFF57..=0xFF67 => 0xFF, // Unused.
@@ -132,17 +139,23 @@ impl Memory {
             0x0000..=0x00FF if self.bootrom.is_active() => (),
 
             0x0000..=0x7FFF => self.cartridge.write_rom(address, value),
-            0x8000..=0x9FFF => self.graphics.write(address, value),
+            0x8000..=0x9FFF => self.graphics.write_vram(address, value),
             0xA000..=0xBFFF => self.cartridge.write_ram(address, value),
-            0xC000..=0xFDFF | 0xFF70 => self.wram.write(address, value),
-            0xFE00..=0xFE9F => self.graphics.write(address, value),
+            0xC000..=0xFDFF => self.wram.write(address, value),
+            0xFE00..=0xFE9F => self.graphics.write_oam(address, value),
 
             0xFEA0..=0xFEFF => (), // Prohibited area, but some games will attempt to write here.
 
-            0xFF00..=0xFF00 => self.joypad.write(value),
+            // I/O registers.
+            0xFF00 => self.joypad.write(value),
+
             0xFF01..=0xFF02 => self.serial.write(address, value),
             0xFF04..=0xFF07 => self.timer.write(address, value),
-            0xFF10..=0xFF3F => self.sound.write(address, value),
+
+            0xFF0F => self.interrupts.write_flags(value),
+
+            0xFF10..=0xFF14 => self.audio.write(address, value),
+            0xFF16..=0xFF3F => self.audio.write(address, value),
             0xFF40..=0xFF4B => self.graphics.write(address, value),
 
             0xFF4D => (), // TODO: (CGB) KEY1: Prepare speed switch.
@@ -153,9 +166,10 @@ impl Memory {
             0xFF51..=0xFF55 => (), // TODO: (CGB) VRAM DMA.
             0xFF68..=0xFF69 => (), // TODO: (CGB) BG / OBJ Palettes.
 
+            0xFF70 => self.wram.write_svbk(value), // (CGB) WRAM bank.
+
             0xFF80..=0xFFFE => self.hram.write(address, value),
 
-            0xFF0F => self.interrupts.write_flags(value),
             0xFFFF => self.interrupts.write_enable(value),
 
             0xFF56 => (), // RP: Infrared.
@@ -168,6 +182,7 @@ impl Memory {
             0xFF0C => (),          // Unused.
             0xFF0D => (),          // Unused.
             0xFF0E => (),          // Unused.
+            0xFF15 => (),          // Unused.
             0xFF4C => (),          // Unused.
             0xFF4E => (),          // Unused.
             0xFF57..=0xFF67 => (), // Unused.

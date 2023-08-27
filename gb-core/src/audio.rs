@@ -3,9 +3,9 @@
 // TODO: everything
 
 #[derive(Default)]
-pub struct Sound {}
+pub struct Audio {}
 
-impl Sound {
+impl Audio {
     // 0xFF10 ~ 0xFF3F
 
     // 0xFF10..=0xFF26 => 0, // TODO: Sound.

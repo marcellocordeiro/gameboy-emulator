@@ -1,31 +1,13 @@
-use bitflags::bitflags;
-
 use crate::constants::{HEIGHT, WIDTH};
 
 use self::{
+    lcd_control::LcdControl,
+    lcd_status::{LcdStatus, StatusMode},
     oam::Oam,
     oam_dma::OamDma,
-    registers::{LcdControl, LcdStatus, StatusMode},
+    sprite::SpriteFlags,
     video_ram::VideoRam,
 };
-
-#[derive(Default, Clone, Copy)]
-struct SpriteObject {
-    y: u8, // Vertical position + 16.
-    x: u8, // Horizontal position + 8.
-    tile_index: u8,
-    flags: SpriteFlags,
-}
-
-bitflags!(
-    #[derive(Default, Clone, Copy)]
-    struct SpriteFlags: u8 {
-        const PRIORITY = (1 << 7);
-        const Y_FLIP = (1 << 6);
-        const X_FLIP = (1 << 5);
-        const PALETTE_NUMBER = (1 << 4);
-    }
-);
 
 pub struct Graphics {
     // Registers
@@ -96,9 +78,6 @@ impl Graphics {
 
     pub fn read(&self, address: u16) -> u8 {
         match address {
-            0x8000..=0x9FFF => self.read_vram(address),
-            0xFE00..=0xFE9F => self.read_oam(address),
-
             0xFF40 => self.read_lcdc(),
             0xFF41 => self.read_stat(),
             0xFF42 => self.scy,
@@ -120,9 +99,6 @@ impl Graphics {
 
     pub fn write(&mut self, address: u16, value: u8) {
         match address {
-            0x8000..=0x9FFF => self.write_vram(address, value),
-            0xFE00..=0xFE9F => self.write_oam(address, value),
-
             0xFF40 => self.write_lcdc(value),
             0xFF41 => self.write_stat(value),
             0xFF42 => self.scy = value,
@@ -143,42 +119,6 @@ impl Graphics {
                 );
             }
         }
-    }
-
-    pub fn read_vram(&self, address: u16) -> u8 {
-        if self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing {
-            return 0xFF;
-        }
-
-        self.vram.read(address)
-    }
-
-    pub fn read_oam(&self, address: u16) -> u8 {
-        if self.lcdc.get_lcd_enable()
-            && (self.mode == StatusMode::OamScan || self.mode == StatusMode::Drawing)
-        {
-            return 0xFF;
-        }
-
-        self.oam.read(address)
-    }
-
-    pub fn write_vram(&mut self, address: u16, value: u8) {
-        if self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing {
-            return;
-        }
-
-        self.vram.write(address, value);
-    }
-
-    pub fn write_oam(&mut self, address: u16, value: u8) {
-        if self.lcdc.get_lcd_enable()
-            && (self.mode == StatusMode::OamScan || self.mode == StatusMode::Drawing)
-        {
-            return;
-        }
-
-        self.oam.write(address, value);
     }
 
     pub fn tick(&mut self) {
@@ -460,7 +400,7 @@ impl Graphics {
                 let data_lo = self.vram.read(tile_address);
                 let data_hi = self.vram.read(tile_address + 1);
 
-                for x in 0..8 {
+                for x in 0..=7 {
                     let colour_id = {
                         let bit = if sprite.flags.contains(SpriteFlags::X_FLIP) {
                             7 - x
@@ -494,11 +434,15 @@ fn apply_palette(palette: u8, colour_id: u8) -> u8 {
         1 => (palette >> 2) & 0b11,
         2 => (palette >> 4) & 0b11,
         3 => (palette >> 6) & 0b11,
+
         _ => unreachable!(),
     }
 }
 
+mod lcd_control;
+mod lcd_status;
 mod oam;
 mod oam_dma;
 mod registers;
+mod sprite;
 mod video_ram;

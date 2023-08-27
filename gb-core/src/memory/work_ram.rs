@@ -34,8 +34,6 @@ impl WorkRam {
             0xE000..=0xEFFF => self.data[address as usize - 0xE000],
             0xF000..=0xFDFF => self.data[address as usize - 0xE000 + self.bank_offset()], // CGB only.
 
-            0xFF70 => self.read_svbk(),
-
             _ => unreachable!("[work_ram.rs] Read out of bounds: {:#06x}", address),
         }
     }
@@ -49,8 +47,6 @@ impl WorkRam {
             0xE000..=0xEFFF => self.data[address as usize - 0xE000] = value,
             0xF000..=0xFDFF => self.data[address as usize - 0xE000 + self.bank_offset()] = value, // CGB only.
 
-            0xFF70 => self.write_svbk(value),
-
             _ => unreachable!(
                 "[work_ram.rs] Write out of bounds: ({:#06x}) = {:#04x}",
                 address, value
@@ -58,11 +54,7 @@ impl WorkRam {
         }
     }
 
-    fn bank_offset(&self) -> usize {
-        WRAM_BANK_SIZE * (self.svbk as usize)
-    }
-
-    fn read_svbk(&self) -> u8 {
+    pub fn read_svbk(&self) -> u8 {
         if cfg!(feature = "cgb-mode") {
             0b1111_1100 | self.svbk
         } else {
@@ -70,10 +62,14 @@ impl WorkRam {
         }
     }
 
-    fn write_svbk(&mut self, value: u8) {
+    pub fn write_svbk(&mut self, value: u8) {
         if cfg!(feature = "cgb-mode") {
             self.svbk = value & 0b111
         }
+    }
+
+    fn bank_offset(&self) -> usize {
+        WRAM_BANK_SIZE * (self.svbk as usize)
     }
 }
 

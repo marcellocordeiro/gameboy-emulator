@@ -1,3 +1,5 @@
+use super::Graphics;
+
 #[derive(Debug, Default, PartialEq, Eq)]
 enum Status {
     #[default]
@@ -57,6 +59,16 @@ impl OamDma {
                 Some((source, destination))
             }
         }
+    }
+}
+
+impl Graphics {
+    pub fn read_dma(&self) -> u8 {
+        self.oam_dma.dma
+    }
+
+    pub fn write_dma(&mut self, value: u8) {
+        self.oam_dma.start(value);
     }
 }
 

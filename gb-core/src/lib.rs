@@ -73,6 +73,7 @@ impl GameBoy {
     }
 }
 
+pub mod audio;
 pub mod cartridge;
 pub mod constants;
 pub mod cpu;
@@ -80,5 +81,4 @@ pub mod graphics;
 pub mod joypad;
 pub mod memory;
 pub mod serial;
-pub mod sound;
 pub mod timer;

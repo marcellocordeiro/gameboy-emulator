@@ -1,6 +1,10 @@
 use arrayvec::ArrayVec;
 
-use super::{SpriteFlags, SpriteObject};
+use super::{
+    lcd_status::StatusMode,
+    sprite::{SpriteFlags, SpriteObject},
+    Graphics,
+};
 
 const OAM_SIZE: usize = 0xA0;
 
@@ -8,7 +12,7 @@ const OAM_SIZE: usize = 0xA0;
 pub struct Oam {
     data: [u8; OAM_SIZE],
 
-    pub(super) sprite_buffer: ArrayVec<SpriteObject, 10>,
+    sprite_buffer: ArrayVec<SpriteObject, 10>,
 }
 
 impl Default for Oam {
@@ -31,24 +35,24 @@ impl Oam {
         self.data[address as usize - 0xFE00] = value;
     }
 
-    pub(super) fn get_sprites_in_line(&mut self, ly: u8, obj_height: u8) -> &[SpriteObject] {
+    pub fn get_sprites_in_line(&mut self, ly: u8, obj_height: u8) -> &[SpriteObject] {
         self.sprite_buffer.clear();
 
-        for i in 0..(OAM_SIZE / 4) {
-            let base_address = i * 4;
-
-            let y = self.data[base_address].wrapping_sub(16);
-            let x = self.data[base_address + 1].wrapping_sub(8);
-            let tile_index = self.data[base_address + 2];
-            let flags = SpriteFlags::from_bits_truncate(self.data[base_address + 3]);
+        for chunk in self.data.chunks_exact(4) {
+            let y = chunk[0].wrapping_sub(16);
+            let x = chunk[1].wrapping_sub(8);
+            let tile_index = chunk[2];
+            let flags = SpriteFlags::from_bits_truncate(chunk[3]);
 
             if ly.wrapping_sub(y) < obj_height {
-                self.sprite_buffer.push(SpriteObject {
+                let element = SpriteObject {
                     y,
                     x,
                     tile_index,
                     flags,
-                });
+                };
+
+                self.sprite_buffer.push(element);
             }
 
             if self.sprite_buffer.is_full() {
@@ -57,8 +61,30 @@ impl Oam {
         }
 
         // Increasing priority.
-        self.sprite_buffer.sort_by(|&a, &b| a.x.cmp(&b.x));
+        self.sprite_buffer.sort_by(|a, b| a.x.cmp(&b.x));
 
         &self.sprite_buffer
+    }
+}
+
+impl Graphics {
+    pub fn read_oam(&self, address: u16) -> u8 {
+        if self.lcdc.get_lcd_enable()
+            && (self.mode == StatusMode::OamScan || self.mode == StatusMode::Drawing)
+        {
+            return 0xFF;
+        }
+
+        self.oam.read(address)
+    }
+
+    pub fn write_oam(&mut self, address: u16, value: u8) {
+        if self.lcdc.get_lcd_enable()
+            && (self.mode == StatusMode::OamScan || self.mode == StatusMode::Drawing)
+        {
+            return;
+        }
+
+        self.oam.write(address, value);
     }
 }
