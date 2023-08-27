@@ -232,5 +232,66 @@ mod tests {
         assert_eq!(timer.read_tac(), 0xF8);
     }
 
+    // TODO: rewrite this.
+    #[test]
+    #[ignore]
+    fn test_overflow() {
+        let mut timer = Timer::default();
+
+        assert_eq!(timer.tac, 0x00);
+        assert_eq!(timer.timer_enable(), false);
+
+        timer.write_tima(0xFF);
+        timer.write_tac(0b100);
+        timer.write_tma(0xB0);
+
+        assert_eq!(timer.tac, 0b100);
+        assert_eq!(timer.timer_enable(), true);
+        assert_eq!(timer.tima, 0xFF);
+        assert_eq!(timer.tima_state, TimaState::Running);
+
+        for _ in 0..1023 {
+            timer.tick();
+        }
+
+        assert_eq!(timer.system_counter, 1023);
+        assert_eq!(timer.read_div(), 0b0000_0011);
+        assert_eq!(timer.tac, 0b100);
+        assert_eq!(timer.timer_enable(), true);
+        assert_eq!(timer.tima, 0xFF);
+        assert_eq!(timer.tima_state, TimaState::Running);
+
+        timer.tick();
+
+        assert_eq!(timer.tac, 0b100);
+        assert_eq!(timer.timer_enable(), true);
+        assert_eq!(timer.tima, 0);
+        assert_eq!(timer.tima_state, TimaState::Overflow(3));
+
+        timer.tick();
+        timer.tick();
+        timer.tick();
+
+        assert_eq!(timer.tima_state, TimaState::Overflow(0));
+        assert_eq!(timer.tima, 0);
+        assert_eq!(timer.irq, false);
+
+        timer.tick();
+
+        assert_eq!(timer.tima_state, TimaState::Loading(3));
+        assert_eq!(timer.irq, true);
+
+        timer.tick();
+        timer.tick();
+        timer.tick();
+
+        assert_eq!(timer.tima_state, TimaState::Loading(0));
+
+        timer.tick();
+
+        assert_eq!(timer.tima_state, TimaState::Running);
+        assert_eq!(timer.tima, 0xB0);
+    }
+
     // TODO: test overflows and interrupts
 }

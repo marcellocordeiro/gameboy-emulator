@@ -96,9 +96,7 @@ impl MbcInterface for Mbc3 {
                 }
             }
 
-            0x4000..=0x5FFF => {
-                self.ram_rtc_sel = value & 0x0F;
-            }
+            0x4000..=0x5FFF => self.ram_rtc_sel = value & 0x0F,
 
             0x6000..=0x7FFF => (), // todo!("[mbc3.rs] RTC not yet supported."),
 

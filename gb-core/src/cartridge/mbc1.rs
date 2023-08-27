@@ -124,9 +124,7 @@ impl MbcInterface for Mbc1 {
                 }
             }
 
-            0x4000..=0x5FFF => {
-                self.bank_hi = value & 0b11;
-            }
+            0x4000..=0x5FFF => self.bank_hi = value & 0b11,
 
             0x6000..=0x7FFF => self.mode = (value & 0b1) != 0,
 

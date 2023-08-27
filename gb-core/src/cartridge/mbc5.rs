@@ -95,17 +95,11 @@ impl MbcInterface for Mbc5 {
         match address {
             0x0000..=0x1FFF => self.ram_enable = (value & 0b1111) == 0x0A,
 
-            0x2000..=0x2FFF => {
-                self.rom_bank_lo = value;
-            }
+            0x2000..=0x2FFF => self.rom_bank_lo = value,
 
-            0x3000..=0x3FFF => {
-                self.rom_bank_hi = value & 0b1;
-            }
+            0x3000..=0x3FFF => self.rom_bank_hi = value & 0b1,
 
-            0x4000..=0x5FFF => {
-                self.ram_bank = value & 0b1111;
-            }
+            0x4000..=0x5FFF => self.ram_bank = value & 0b1111,
 
             _ => unreachable!(
                 "[mbc5.rs] Invalid write: ({:#06x}) = {:#04x}",
