@@ -17,7 +17,7 @@ pub struct Memory {
     wram: WorkRam,
     hram: HighRam,
 
-    cartridge: Cartridge,
+    cartridge: Option<Cartridge>,
     graphics: Graphics,
     audio: Audio,
 
@@ -30,7 +30,9 @@ pub struct Memory {
 
 impl Memory {
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
-        self.cartridge.load_cartridge(rom)
+        self.cartridge = Some(Cartridge::try_new(rom)?);
+
+        Ok(())
     }
 
     pub fn skip_bootrom(&mut self) {
@@ -81,9 +83,19 @@ impl Memory {
         match address {
             0x0000..=0x00FF if self.bootrom.is_active() => self.bootrom.read(address),
 
-            0x0000..=0x7FFF => self.cartridge.read_rom(address),
+            0x0000..=0x7FFF => self
+                .cartridge
+                .as_ref()
+                .expect("Cartridge should be loaded")
+                .read_rom(address),
+
             0x8000..=0x9FFF => self.graphics.read_vram(address),
-            0xA000..=0xBFFF => self.cartridge.read_ram(address),
+            0xA000..=0xBFFF => self
+                .cartridge
+                .as_ref()
+                .expect("Cartridge should be loaded")
+                .read_ram(address),
+
             0xC000..=0xFDFF => self.wram.read(address),
             0xFE00..=0xFE9F => self.graphics.read_oam(address),
 
@@ -137,9 +149,19 @@ impl Memory {
         match address {
             0x0000..=0x00FF if self.bootrom.is_active() => (),
 
-            0x0000..=0x7FFF => self.cartridge.write_rom(address, value),
+            0x0000..=0x7FFF => self
+                .cartridge
+                .as_mut()
+                .expect("Cartridge should be loaded")
+                .write_rom(address, value),
+
             0x8000..=0x9FFF => self.graphics.write_vram(address, value),
-            0xA000..=0xBFFF => self.cartridge.write_ram(address, value),
+            0xA000..=0xBFFF => self
+                .cartridge
+                .as_mut()
+                .expect("Cartridge should be loaded")
+                .write_ram(address, value),
+
             0xC000..=0xFDFF => self.wram.write(address, value),
             0xFE00..=0xFE9F => self.graphics.write_oam(address, value),
 

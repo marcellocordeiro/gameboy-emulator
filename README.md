@@ -69,6 +69,9 @@ cargo build
 # Add --release after `run` if debug mode is too slow.
 cargo run -- roms/rom.gb
 
+# Native with info logs
+RUST_LOG=info cargo run -- roms/rom.gb
+
 # Browser
 pnpm i
 pnpm dev

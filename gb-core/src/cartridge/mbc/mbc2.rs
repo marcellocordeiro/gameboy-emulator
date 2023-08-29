@@ -1,11 +1,9 @@
-use log::info;
-
-use crate::constants::ONE_KIB;
-
-use super::{
-    info::{get_rom_banks, ROM_BANKS_CODE_ADDRESS, ROM_BANK_SIZE},
-    mbc::MbcInterface,
+use crate::{
+    cartridge::info::{CartridgeType, Info, ROM_BANK_SIZE},
+    constants::ONE_KIB,
 };
+
+use super::MbcInterface;
 
 pub struct Mbc2 {
     rom: Vec<u8>,
@@ -17,26 +15,18 @@ pub struct Mbc2 {
 }
 
 impl Mbc2 {
-    pub fn new(rom: Vec<u8>) -> Result<Self, super::Error> {
-        let rom_banks = {
-            let code = *rom
-                .get(ROM_BANKS_CODE_ADDRESS)
-                .ok_or(super::Error::InvalidRom)?;
+    pub fn new(rom: Vec<u8>, info: &Info) -> Self {
+        let rom_banks = info.rom_banks;
 
-            get_rom_banks(code)
-        }?;
-
-        info!("MBC2");
-        info!("ROM banks: {rom_banks}");
-
+        assert_eq!(info.cartridge_type, CartridgeType::Mbc2);
         assert_eq!(rom.len(), (rom_banks / 2) * (32 * ONE_KIB));
 
-        Ok(Self {
+        Self {
             rom,
             ram: [0; 512],
             ram_enable: false,
             rom_bank: 0x01,
-        })
+        }
     }
 
     fn rom_0x4000_0x7fff_offset(&self) -> usize {

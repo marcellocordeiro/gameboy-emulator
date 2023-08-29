@@ -1,6 +1,6 @@
 use enum_dispatch::enum_dispatch;
 
-use crate::cartridge::{Mbc1, Mbc2, Mbc3, Mbc5, NoMbc};
+pub use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc5::Mbc5, no_mbc::NoMbc};
 
 #[enum_dispatch]
 pub(super) trait MbcInterface {
@@ -19,3 +19,9 @@ pub enum Mbc {
     Mbc3,
     Mbc5,
 }
+
+mod mbc1;
+mod mbc2;
+mod mbc3;
+mod mbc5;
+mod no_mbc;

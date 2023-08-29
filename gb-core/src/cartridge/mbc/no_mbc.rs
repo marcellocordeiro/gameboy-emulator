@@ -1,14 +1,14 @@
-use log::info;
+use crate::cartridge::info::{CartridgeType, Info};
 
-use super::mbc::MbcInterface;
+use super::MbcInterface;
 
 pub struct NoMbc {
     rom: Vec<u8>,
 }
 
 impl NoMbc {
-    pub fn new(rom: Vec<u8>) -> Self {
-        info!("No MBC");
+    pub fn new(rom: Vec<u8>, info: &Info) -> Self {
+        assert_eq!(info.cartridge_type, CartridgeType::NoMbc);
 
         Self { rom }
     }

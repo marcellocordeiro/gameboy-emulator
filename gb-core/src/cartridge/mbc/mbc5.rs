@@ -1,14 +1,9 @@
-use log::info;
-
-use crate::constants::ONE_KIB;
-
-use super::{
-    info::{
-        get_ram_banks, get_rom_banks, RAM_BANKS_CODE_ADDRESS, RAM_BANK_SIZE,
-        ROM_BANKS_CODE_ADDRESS, ROM_BANK_SIZE,
-    },
-    mbc::MbcInterface,
+use crate::{
+    cartridge::info::{CartridgeType, Info, RAM_BANK_SIZE, ROM_BANK_SIZE},
+    constants::ONE_KIB,
 };
+
+use super::MbcInterface;
 
 pub struct Mbc5 {
     rom: Vec<u8>,
@@ -22,37 +17,21 @@ pub struct Mbc5 {
 }
 
 impl Mbc5 {
-    pub fn new(rom: Vec<u8>) -> Result<Self, super::Error> {
-        let rom_banks = {
-            let code = *rom
-                .get(ROM_BANKS_CODE_ADDRESS)
-                .ok_or(super::Error::InvalidRom)?;
+    pub fn new(rom: Vec<u8>, info: &Info) -> Self {
+        let rom_banks = info.rom_banks;
+        let ram_banks = info.ram_banks;
 
-            get_rom_banks(code)
-        }?;
-
-        let ram_banks = {
-            let code = *rom
-                .get(RAM_BANKS_CODE_ADDRESS)
-                .ok_or(super::Error::InvalidRom)?;
-
-            get_ram_banks(code)
-        }?;
-
-        info!("MBC5");
-        info!("ROM banks: {rom_banks}");
-        info!("RAM banks: {ram_banks}");
-
+        assert_eq!(info.cartridge_type, CartridgeType::Mbc5);
         assert_eq!(rom.len(), (rom_banks / 2) * (32 * ONE_KIB));
 
-        Ok(Self {
+        Self {
             rom,
             ram: vec![0; ram_banks * (8 * ONE_KIB)],
             ram_enable: false,
             rom_bank_lo: 0x01,
             rom_bank_hi: 0x00,
             ram_bank: 0x00,
-        })
+        }
     }
 
     fn rom_0x4000_0x7fff_offset(&self) -> usize {
