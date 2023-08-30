@@ -1,6 +1,6 @@
 use self::{
     info::{CartridgeType, CgbFlag, Info},
-    mbc::{Mbc, Mbc1, Mbc2, Mbc3, Mbc5, MbcInterface, NoMbc},
+    mbc::{Mbc, Mbc1, Mbc2, Mbc3, Mbc30, Mbc5, MbcInterface, NoMbc},
 };
 
 pub use self::error::Error;
@@ -16,6 +16,9 @@ impl Cartridge {
         if info.cgb_flag == CgbFlag::CgbOnly {
             todo!("CGB mode not yet implemented.");
         }
+
+        // Panics if the validation fails.
+        info.validate();
 
         let mbc = Self::get_mbc(rom, &info)?;
 
@@ -44,6 +47,7 @@ impl Cartridge {
             CartridgeType::Mbc1 => Mbc1::new(rom, info).into(),
             CartridgeType::Mbc2 => Mbc2::new(rom, info).into(),
             CartridgeType::Mbc3 => Mbc3::new(rom, info).into(),
+            CartridgeType::Mbc30 => Mbc30::new(rom, info).into(),
             CartridgeType::Mbc5 => Mbc5::new(rom, info).into(),
 
             cartridge_type => return Err(self::Error::UnsupportedMbc { cartridge_type }),

@@ -4,7 +4,6 @@
     clippy::cast_lossless,
     clippy::unused_self,
     clippy::similar_names,
-    clippy::multiple_inherent_impl,
     clippy::enum_glob_use,
     clippy::must_use_candidate,
     clippy::missing_panics_doc,

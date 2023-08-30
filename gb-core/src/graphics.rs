@@ -1,4 +1,4 @@
-use crate::constants::{HEIGHT, WIDTH};
+use crate::constants::{Framebuffer, HEIGHT, WIDTH};
 
 use self::{
     lcd_control::LcdControl,
@@ -35,7 +35,7 @@ pub struct Graphics {
     mode: StatusMode,
     cycles: u32,
 
-    pub framebuffer: [u8; WIDTH * HEIGHT],
+    pub framebuffer: Framebuffer,
 }
 
 impl Default for Graphics {
@@ -240,7 +240,7 @@ impl Graphics {
 
     #[allow(clippy::too_many_lines)]
     fn draw_line(&mut self) {
-        let line_start = WIDTH * self.ly as usize;
+        let line_start = WIDTH * (self.ly as usize);
         let line_end = WIDTH + line_start;
 
         let line_pixels = &mut self.framebuffer[line_start..line_end];

@@ -1,8 +1,6 @@
-// TODO: better failable returns
-
 use log::info;
 
-use crate::cartridge::Error as CartridgeError;
+use crate::{cartridge::Error as CartridgeError, constants::ONE_KIB};
 
 use self::{
     cartridge_type::CARTRIDGE_TYPE_ADDRESS,
@@ -14,17 +12,22 @@ use self::{
 };
 
 pub use self::{
-    cartridge_type::CartridgeType, cgb_flag::CgbFlag, ram_size::RAM_BANK_SIZE,
-    rom_size::ROM_BANK_SIZE,
+    cartridge_type::CartridgeType, cgb_flag::CgbFlag, extra_features::ExtraFeature,
+    ram_size::RAM_BANK_SIZE, rom_size::ROM_BANK_SIZE,
 };
 
 pub struct Info {
+    // Header info
     pub title: String,
     pub cartridge_type: CartridgeType,
+    pub extra_features: Vec<ExtraFeature>,
     pub rom_banks: usize,
     pub ram_banks: usize,
     pub cgb_flag: CgbFlag,
     pub sgb_flag: bool,
+
+    // File info
+    pub file_size: usize,
 }
 
 impl TryFrom<&Vec<u8>> for Info {
@@ -59,29 +62,67 @@ impl TryFrom<&Vec<u8>> for Info {
         let rom_banks = get_rom_banks(rom_size_code)?;
         let ram_banks = get_ram_banks(ram_size_code)?;
         let cartridge_type = CartridgeType::try_from((cartridge_type_code, ram_banks))?;
+        let extra_features = ExtraFeature::get_features(cartridge_type_code);
         let cgb_flag = CgbFlag::from(cgb_flag_code);
         let sgb_flag = sgb_flag::from(sgb_flag_code);
 
+        let file_size = rom.len();
+
+        // Print debug info. Maybe show this elsewhere?
         info!("**Cartridge info**");
         info!("Title: {title}");
         info!("Type: {cartridge_type}");
+        info!(
+            "Extra features: {}",
+            extra_features
+                .iter()
+                .map(ExtraFeature::to_string)
+                .collect::<Vec<String>>()
+                .join("+")
+        );
         info!("ROM banks: {rom_banks}");
         info!("RAM banks: {ram_banks}");
         info!("CGB flag: {cgb_flag}");
+        info!("SGB flag: {sgb_flag:?}");
 
         Ok(Self {
             title,
             cartridge_type,
+            extra_features,
             rom_banks,
             ram_banks,
             cgb_flag,
             sgb_flag,
+            file_size,
         })
+    }
+}
+
+impl Info {
+    pub fn validate(&self) {
+        // MBC2 always contains RAM, even when `ram_banks == 0`.
+        if self.cartridge_type != CartridgeType::Mbc2 {
+            let has_ram = self.extra_features.contains(&ExtraFeature::Ram);
+            let has_battery = self.extra_features.contains(&ExtraFeature::Battery);
+
+            assert_eq!(self.ram_banks > 0, has_ram);
+            assert!(has_ram || !has_battery);
+        }
+
+        assert_eq!(
+            self.file_size,
+            self.rom_banks * (16 * ONE_KIB),
+            "ROM length = {} KiB, with ROM banks = {}. Expected {} KiB.",
+            self.file_size,
+            self.file_size / ONE_KIB,
+            self.rom_banks * 16
+        );
     }
 }
 
 mod cartridge_type;
 mod cgb_flag;
+mod extra_features;
 mod ram_size;
 mod rom_size;
 mod sgb_flag;

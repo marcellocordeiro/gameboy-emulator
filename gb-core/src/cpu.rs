@@ -1,5 +1,3 @@
-use std::fmt;
-
 use crate::memory::Memory;
 
 use self::registers::{ImeState, Registers};
@@ -148,8 +146,8 @@ impl Cpu {
     }
 }
 
-impl fmt::Display for Cpu {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl std::fmt::Display for Cpu {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let ie_line = format!("IE: {:#04X}", self.memory.read(0xFFFF));
         let if_line = format!("IF: {:#04X}", self.memory.read(0xFF0F));
 

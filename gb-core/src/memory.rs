@@ -1,7 +1,7 @@
 use crate::{
     audio::Audio,
     cartridge::{Cartridge, Error as CartridgeError},
-    constants::{Button, HEIGHT, WIDTH},
+    constants::{Button, Framebuffer},
     graphics::Graphics,
     joypad::Joypad,
     serial::Serial,
@@ -211,7 +211,7 @@ impl Memory {
         }
     }
 
-    pub fn borrow_framebuffer(&self) -> &[u8; WIDTH * HEIGHT] {
+    pub fn borrow_framebuffer(&self) -> &Framebuffer {
         &self.graphics.framebuffer
     }
 

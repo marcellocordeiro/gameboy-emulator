@@ -1,5 +1,3 @@
-use std::fmt;
-
 pub use self::flags::Flags;
 pub use self::ime_state::ImeState;
 
@@ -83,8 +81,8 @@ impl Registers {
     }
 }
 
-impl fmt::Display for Registers {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl std::fmt::Display for Registers {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let af_line = format!(
             "AF: {:#06X}, A: {:#04X} | F: {:#04X}",
             self.get_af(),

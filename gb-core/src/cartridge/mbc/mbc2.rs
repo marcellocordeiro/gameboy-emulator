@@ -1,7 +1,4 @@
-use crate::{
-    cartridge::info::{CartridgeType, Info, ROM_BANK_SIZE},
-    constants::ONE_KIB,
-};
+use crate::cartridge::info::{CartridgeType, Info, ROM_BANK_SIZE};
 
 use super::MbcInterface;
 
@@ -16,10 +13,7 @@ pub struct Mbc2 {
 
 impl Mbc2 {
     pub fn new(rom: Vec<u8>, info: &Info) -> Self {
-        let rom_banks = info.rom_banks;
-
         assert_eq!(info.cartridge_type, CartridgeType::Mbc2);
-        assert_eq!(rom.len(), (rom_banks / 2) * (32 * ONE_KIB));
 
         Self {
             rom,

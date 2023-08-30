@@ -54,7 +54,7 @@ impl TryFrom<(u8, usize)> for CartridgeType {
             // $11 MBC3
             // $12 MBC3+RAM
             // $13 MBC3+RAM+BATTERY
-            0x0F..=0x13 if ram_size == 64 => Mbc30,
+            0x0F..=0x13 if ram_size == 8 => Mbc30, // 8 banks (64 KiB)
             0x0F..=0x13 => Mbc3,
 
             // $19 MBC5
@@ -89,7 +89,7 @@ impl TryFrom<(u8, usize)> for CartridgeType {
 }
 
 impl std::fmt::Display for CartridgeType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use CartridgeType::*;
 
         let name = match self {

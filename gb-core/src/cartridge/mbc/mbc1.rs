@@ -19,11 +19,9 @@ pub struct Mbc1 {
 
 impl Mbc1 {
     pub fn new(rom: Vec<u8>, info: &Info) -> Self {
-        let rom_banks = info.rom_banks;
-        let ram_banks = info.ram_banks;
-
         assert_eq!(info.cartridge_type, CartridgeType::Mbc1);
-        assert_eq!(rom.len(), (rom_banks / 2) * (32 * ONE_KIB));
+
+        let ram_banks = info.ram_banks;
 
         Self {
             rom,

@@ -4,7 +4,6 @@
     clippy::cast_lossless,
     clippy::unused_self,
     clippy::similar_names,
-    clippy::multiple_inherent_impl,
     clippy::enum_glob_use,
     clippy::must_use_candidate,
     clippy::missing_panics_doc,
@@ -20,10 +19,7 @@
 use app::App;
 
 fn get_rom(file: String) -> Vec<u8> {
-    match std::fs::read(file) {
-        Ok(bytes) => bytes,
-        Err(e) => panic!("{}", e),
-    }
+    std::fs::read(file).unwrap()
 }
 
 fn main() -> Result<(), eframe::Error> {

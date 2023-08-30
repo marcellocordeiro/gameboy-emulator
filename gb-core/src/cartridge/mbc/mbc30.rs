@@ -1,3 +1,5 @@
+// TODO: merge this with MBC3.
+
 use crate::{
     cartridge::info::{CartridgeType, Info, RAM_BANK_SIZE, ROM_BANK_SIZE},
     constants::ONE_KIB,
@@ -5,20 +7,19 @@ use crate::{
 
 use super::MbcInterface;
 
-pub struct Mbc5 {
+pub struct Mbc30 {
     rom: Vec<u8>,
     ram: Vec<u8>,
 
     ram_enable: bool,
 
-    rom_bank_lo: u8,
-    rom_bank_hi: u8,
-    ram_bank: u8,
+    rom_bank: u8,
+    ram_rtc_sel: u8,
 }
 
-impl Mbc5 {
+impl Mbc30 {
     pub fn new(rom: Vec<u8>, info: &Info) -> Self {
-        assert_eq!(info.cartridge_type, CartridgeType::Mbc5);
+        assert_eq!(info.cartridge_type, CartridgeType::Mbc30);
 
         let ram_banks = info.ram_banks;
 
@@ -26,27 +27,22 @@ impl Mbc5 {
             rom,
             ram: vec![0; ram_banks * (8 * ONE_KIB)],
             ram_enable: false,
-            rom_bank_lo: 0x01,
-            rom_bank_hi: 0x00,
-            ram_bank: 0x00,
+            rom_bank: 0x01,
+            ram_rtc_sel: 0x00,
         }
     }
 
     fn rom_0x4000_0x7fff_offset(&self) -> usize {
-        let rom_bank = ((self.rom_bank_hi as usize) << 8) | (self.rom_bank_lo as usize);
-
-        ROM_BANK_SIZE * rom_bank
+        ROM_BANK_SIZE * (self.rom_bank as usize)
     }
 
     fn ram_offset(&self) -> usize {
-        RAM_BANK_SIZE * (self.ram_bank as usize)
+        RAM_BANK_SIZE * ((self.ram_rtc_sel & 0b111) as usize)
     }
 }
 
-impl MbcInterface for Mbc5 {
+impl MbcInterface for Mbc30 {
     fn read_rom(&self, address: u16) -> u8 {
-        let mask = self.rom.len() - 1;
-
         if address < 0x4000 {
             return self.rom[address as usize];
         }
@@ -54,7 +50,7 @@ impl MbcInterface for Mbc5 {
         let offset = self.rom_0x4000_0x7fff_offset();
         let mapped_address = (address as usize - 0x4000) + offset;
 
-        self.rom[mapped_address & mask]
+        self.rom[mapped_address]
     }
 
     fn read_ram(&self, address: u16) -> u8 {
@@ -72,14 +68,19 @@ impl MbcInterface for Mbc5 {
         match address {
             0x0000..=0x1FFF => self.ram_enable = (value & 0b1111) == 0x0A,
 
-            0x2000..=0x2FFF => self.rom_bank_lo = value,
+            0x2000..=0x3FFF => {
+                self.rom_bank = value;
+                if self.rom_bank == 0 {
+                    self.rom_bank = 1;
+                }
+            }
 
-            0x3000..=0x3FFF => self.rom_bank_hi = value & 0b1,
+            0x4000..=0x5FFF => self.ram_rtc_sel = value & 0x0F,
 
-            0x4000..=0x5FFF => self.ram_bank = value & 0b1111,
+            0x6000..=0x7FFF => (), // todo!("[mbc3.rs] RTC not yet supported."),
 
             _ => unreachable!(
-                "[mbc5.rs] Invalid write: ({:#06x}) = {:#04x}",
+                "[mbc3.rs] Invalid write: ({:#06x}) = {:#04x}",
                 address, value
             ),
         }

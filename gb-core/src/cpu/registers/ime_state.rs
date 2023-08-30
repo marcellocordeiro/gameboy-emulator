@@ -1,5 +1,3 @@
-use std::fmt;
-
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum ImeState {
     #[default]
@@ -29,8 +27,8 @@ impl ImeState {
     }
 }
 
-impl fmt::Display for ImeState {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl std::fmt::Display for ImeState {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let str = match self {
             Self::Disabled => "☐",
             Self::Enabled => "☑",

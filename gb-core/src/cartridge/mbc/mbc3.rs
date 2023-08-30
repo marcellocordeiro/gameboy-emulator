@@ -17,11 +17,9 @@ pub struct Mbc3 {
 
 impl Mbc3 {
     pub fn new(rom: Vec<u8>, info: &Info) -> Self {
-        // let rom_banks = info.rom_banks;
-        let ram_banks = info.ram_banks;
-
         assert_eq!(info.cartridge_type, CartridgeType::Mbc3);
-        // assert_eq!(rom.len(), (rom_banks / 2) * (32 * ONE_KIB));
+
+        let ram_banks = info.ram_banks;
 
         Self {
             rom,
@@ -37,7 +35,7 @@ impl Mbc3 {
     }
 
     fn ram_offset(&self) -> usize {
-        RAM_BANK_SIZE * ((self.ram_rtc_sel & 0x03) as usize)
+        RAM_BANK_SIZE * ((self.ram_rtc_sel & 0b111) as usize)
     }
 }
 

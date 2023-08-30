@@ -21,13 +21,13 @@ impl From<u8> for CgbFlag {
 }
 
 impl std::fmt::Display for CgbFlag {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use CgbFlag::*;
 
         let str = match self {
-            DmgMode => "DMG mode.",
-            CgbEnhanced => "CGB enhanced.",
-            CgbOnly => "CGB only.",
+            DmgMode => "DMG mode",
+            CgbEnhanced => "CGB enhanced",
+            CgbOnly => "CGB only",
         };
 
         write!(f, "{str}")
