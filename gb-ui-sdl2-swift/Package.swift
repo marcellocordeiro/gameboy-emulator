@@ -1,16 +1,21 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.8
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
+let packageDirectory = Context.packageDirectory
+
 #if DEBUG
-let lib_path = "-L\(#file)/../../target/debug/"
+let libDirectory = "\(packageDirectory)/../target/debug"
 #else
-let lib_path = "-L\(#file)/../../target/release/"
+let libDirectory = "\(packageDirectory)/../target/release"
 #endif
 
+let staticLibFile = "libgb_core_c.a"
+let linkerFlag = "-l\(libDirectory)/\(staticLibFile)"
+
 let package = Package(
-    name: "gb-ui-sdl2-swift",
+    name: "GameBoyEmulator",
     platforms: [
         .macOS(.v13)
     ],
@@ -19,17 +24,16 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "GameBoy",
+            name: "GameBoyCore",
             dependencies: [],
             linkerSettings: [
-                .unsafeFlags([lib_path]),
-                .linkedLibrary("gb_core_c")
+                .unsafeFlags([linkerFlag]),
             ]
         ),
         .executableTarget(
-            name: "GameBoyEmulator",
+            name: "GameBoy",
             dependencies: [
-                "GameBoy",
+                "GameBoyCore",
                 .product(name: "SDL", package: "SwiftSDL2")
             ]
         )

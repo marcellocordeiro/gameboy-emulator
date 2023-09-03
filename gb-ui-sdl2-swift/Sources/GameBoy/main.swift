@@ -1,5 +1,5 @@
 import Foundation
-import GameBoy
+import GameBoyCore
 import SDL
 
 let filePath = CommandLine.arguments[1]
@@ -21,7 +21,7 @@ guard SDL_Init(SDL_INIT_VIDEO) == 0 else {
 let window = SDL_CreateWindow(
     "gameboy-emulator",
     Int32(SDL_WINDOWPOS_CENTERED_MASK), Int32(SDL_WINDOWPOS_CENTERED_MASK),
-    WIDTH * 2, HEIGHT * 2,
+    WIDTH * 3, HEIGHT * 3,
     SDL_WINDOW_SHOWN.rawValue
 )
 
@@ -51,15 +51,15 @@ while !quit {
         case SDL_QUIT,
              SDL_KEYUP where event.key.keysym.sym == SDLK_ESCAPE.rawValue:
             quit = true
-            
+
         default:
             break
         }
     }
-    
+
     gameboy_run_frame(gb)
     gameboy_draw(gb, &framebuffer)
-    
+
     SDL_UpdateTexture(texture, nil, framebuffer, WIDTH * 4)
     SDL_RenderCopy(renderer, texture, nil, nil)
     SDL_RenderPresent(renderer)
