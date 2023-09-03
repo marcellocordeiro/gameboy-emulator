@@ -6,6 +6,7 @@ pub const WIDTH: usize = 160;
 pub const HEIGHT: usize = 144;
 
 pub type Framebuffer = [u8; WIDTH * HEIGHT];
+pub type Frame = [u8; WIDTH * HEIGHT * std::mem::size_of::<u32>()];
 
 pub const PALETTE: [u8; 4] = [0xFF, 0xAA, 0x55, 0x00];
 

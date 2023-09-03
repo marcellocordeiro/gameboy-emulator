@@ -16,7 +16,7 @@
     clippy::cast_possible_wrap,
 )]
 
-use constants::{Button, PALETTE};
+use constants::{Button, Frame, PALETTE};
 use cpu::Cpu;
 
 pub struct GameBoy {
@@ -65,7 +65,7 @@ impl GameBoy {
     }
 
     #[allow(clippy::identity_op)]
-    pub fn draw(&self, frame: &mut [u8]) {
+    pub fn draw(&self, frame: &mut Frame) {
         let fb = self.cpu.memory.borrow_framebuffer();
 
         for (i, pixel) in fb.iter().enumerate() {

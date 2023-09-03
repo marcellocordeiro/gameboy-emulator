@@ -35,7 +35,7 @@ impl Mbc3 {
     }
 
     fn ram_offset(&self) -> usize {
-        RAM_BANK_SIZE * ((self.ram_rtc_sel & 0b111) as usize)
+        RAM_BANK_SIZE * ((self.ram_rtc_sel & 0b11) as usize)
     }
 }
 
