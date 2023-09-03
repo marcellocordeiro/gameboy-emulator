@@ -18,10 +18,10 @@ extern "C" {
     struct GameBoy;
 
     struct GameBoy* gameboy_new();
-    struct GameBoy* gameboy_reset(struct GameBoy* gb);
-    struct GameBoy* gameboy_load_cartridge(struct GameBoy* gb, const uint8_t* rom, size_t rom_size);
-    struct GameBoy* gameboy_run_frame(struct GameBoy* gb);
-    struct GameBoy* gameboy_draw(struct GameBoy* gb, const uint8_t* frame);
+    void gameboy_reset(struct GameBoy* gb);
+    void gameboy_load_cartridge(struct GameBoy* gb, const uint8_t* rom, size_t rom_size);
+    void gameboy_run_frame(struct GameBoy* gb);
+    void gameboy_draw(struct GameBoy* gb, const uint8_t* frame);
 #ifdef __cplusplus
 }
 #endif
