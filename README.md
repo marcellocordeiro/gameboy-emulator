@@ -2,6 +2,8 @@
 
 Experimental Game Boy emulator written in Rust.
 
+***Disclaimer***: this emulator is an experimental and educational project. The development and use of emulators is legal, as long as no copyrighted content is illegally obtained. This means you are responsible for dumping your own bootroms and games. Please note that there are free open-source and homebrew content available.
+
 ## Features
 
 - [x] CPU
@@ -13,6 +15,7 @@ Experimental Game Boy emulator written in Rust.
   - [x] MBC1
   - [x] MBC2
   - [x] MBC3
+    - [x] MBC30
     - [ ] RTC
   - [x] MBC5
 - [ ] Saving
@@ -26,6 +29,19 @@ Experimental Game Boy emulator written in Rust.
 ## Screenshots
 
 boop
+
+## Repository structure
+
+* **[`.`](/)**: Package/configuration files for all modules.
+* **[`external`](external/)**: External dependencies.
+* **[`gb-core`](gb-core/)**: Main core written in Rust.
+* **[`gb-core-c`](gb-core-c/)**: `gb-core` shims for use in other languages (interoperability). Contains a C/C++ header file with the function declarations.
+* **[`gb-core-wasm`](gb-core-wasm/)**: `gb-core` wrapper targeting WASM.
+* **[`gb-opcode-info`](gb-opcode-info/)**: Contains opcode info for use in other modules.
+* **[`gb-ui-browser`](gb-ui-browser/)**: Browser app written in TypeScript using Vite and React.
+* **[`gb-ui-native`](gb-ui-native/)**: Native app written in Rust.
+* **[`gb-ui-sdl2-c`](gb-ui-sdl2-c/)**: Native app written in C using `gb-core-c` and SDL2.
+* **[`gb-ui-sdl2-swift`](gb-ui-sdl2-swift/)**: Native app written in Swift using `gb-core-c` and SDL2. Likely unsupported on Windows and Linux.
 
 ## Setup
 
@@ -42,6 +58,8 @@ sudo pacman -S rust rust-src rust-wasm
 
 ### wasm-pack
 
+Required to build the browser app.
+
 ```sh
 # Install wasm-pack from source
 cargo install wasm-pack
@@ -56,10 +74,31 @@ brew install wasm-pack
 npm install -g wasm-pack
 ```
 
+### SDL2
+
+Required to build the C and Swift apps.
+
+```sh
+# Arch
+sudo pacman -S sdl2
+
+# macOS
+brew install sdl2
+```
+
 ## Building
 
 ```sh
+# Native
 cargo build
+
+# Browser app
+pnpm build # Will build the Rust dependencies as well
+
+# Swift
+cargo build --release
+cd gb-ui-sdl2-swift
+swift build
 ```
 
 ## Running
@@ -72,9 +111,13 @@ cargo run -- roms/rom.gb
 # Native with info logs
 RUST_LOG=info cargo run -- roms/rom.gb
 
-# Browser
+# Browser app
 pnpm i
 pnpm dev
+
+# Swift
+cd gb-ui-sdl2-swift
+swift run GameBoy ../roms/rom.gb
 ```
 
 ## Tests
