@@ -46,7 +46,7 @@ pub unsafe extern "C" fn gameboy_load_cartridge(
 
     let vec = unsafe { std::slice::from_raw_parts(rom, rom_size as usize).to_vec() };
 
-    gb.load_cartridge(vec).unwrap_unchecked();
+    gb.load_cartridge(vec).unwrap();
 }
 
 #[no_mangle]
