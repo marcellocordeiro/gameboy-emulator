@@ -4,6 +4,9 @@
 import PackageDescription
 
 let packageDirectory = Context.packageDirectory
+let rootDirectory = "\(packageDirectory)/.."
+
+let gbHeaderPath = "\(rootDirectory)/gb-core-c/gb-bindings.h"
 
 #if DEBUG
 let libDirectory = "\(packageDirectory)/../target/debug"
@@ -11,8 +14,17 @@ let libDirectory = "\(packageDirectory)/../target/debug"
 let libDirectory = "\(packageDirectory)/../target/release"
 #endif
 
-let staticLibFile = "libgb_core_c.a"
-let linkerFlag = "-l\(libDirectory)/\(staticLibFile)"
+let staticLibPath = "\(libDirectory)/libgb_core_c.a"
+
+let linkerSettings: [PackageDescription.LinkerSetting]
+#if os(macOS)
+linkerSettings = [
+    .unsafeFlags(["-L\(libDirectory)/"]),
+    .linkedLibrary("gb_core_c")
+]
+#else
+linkerSettings = [.linkedLibrary(staticLibPath)]
+#endif
 
 let package = Package(
     name: "GameBoyEmulator",
@@ -26,9 +38,7 @@ let package = Package(
         .target(
             name: "GameBoyCore",
             dependencies: [],
-            linkerSettings: [
-                .unsafeFlags([linkerFlag]),
-            ]
+            linkerSettings: linkerSettings
         ),
         .executableTarget(
             name: "GameBoy",
