@@ -8,10 +8,4 @@ members = [
   "gb-ui-native",
 ]
 
-[profile.dev.package."*"]
-opt-level = 3
-
-[profile.release]
-lto = true
-
 # Reminder to use `cargo clippy`.
