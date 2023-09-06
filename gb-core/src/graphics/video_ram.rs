@@ -1,9 +1,9 @@
 use super::{lcd_status::StatusMode, Graphics};
 
-#[cfg(not(feature = "cgb-mode"))]
+#[cfg(not(feature = "cgb"))]
 const VRAM_BANKS: usize = 1;
 
-#[cfg(feature = "cgb-mode")]
+#[cfg(feature = "cgb")]
 const VRAM_BANKS: usize = 2;
 
 const VRAM_BANK_SIZE: usize = 0x2000;
@@ -12,6 +12,8 @@ const VRAM_SIZE: usize = VRAM_BANKS * VRAM_BANK_SIZE; // DMG: 8192 (0x2000) / CG
 pub struct VideoRam {
     data: [u8; VRAM_SIZE],
     vbk: u8,
+
+    cgb_mode: bool,
 }
 
 impl Default for VideoRam {
@@ -19,12 +21,18 @@ impl Default for VideoRam {
         Self {
             data: [0; VRAM_SIZE], // can't default this :(
             vbk: 0,
+            cgb_mode: false,
         }
     }
 }
 
 impl VideoRam {
     // 0x8000 ~ 0x9FFF
+
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        self.vbk = 0;
+        self.cgb_mode = value;
+    }
 
     pub fn read(&self, address: u16) -> u8 {
         self.data[address as usize - 0x8000 + self.bank_offset()]
@@ -35,7 +43,7 @@ impl VideoRam {
     }
 
     pub fn read_vbk(&self) -> u8 {
-        if cfg!(feature = "cgb-mode") {
+        if cfg!(feature = "cgb") && self.cgb_mode {
             0b1111_1110 | self.vbk
         } else {
             0xFF
@@ -43,7 +51,7 @@ impl VideoRam {
     }
 
     pub fn write_vbk(&mut self, value: u8) {
-        if cfg!(feature = "cgb-mode") {
+        if cfg!(feature = "cgb") && self.cgb_mode {
             self.vbk = value & 0b1;
         }
     }
@@ -79,7 +87,7 @@ mod tests {
     fn test_my_sanity() {
         let vram = VideoRam::default();
 
-        if cfg!(feature = "cgb-mode") {
+        if cfg!(feature = "cgb") {
             assert_eq!(vram.data.len(), 0x4000);
         } else {
             assert_eq!(vram.data.len(), 0x2000);
@@ -87,9 +95,10 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "cgb-mode")]
+    #[cfg(feature = "cgb")]
     fn test_read_banks() {
         let mut vram = VideoRam::default();
+        vram.set_cgb_mode(true);
 
         let chunks = vram.data.chunks_exact_mut(VRAM_BANK_SIZE);
 
@@ -109,9 +118,10 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "cgb-mode")]
+    #[cfg(feature = "cgb")]
     fn test_write_banks() {
         let mut vram = VideoRam::default();
+        vram.set_cgb_mode(true);
 
         // Bank 0
         for address in 0x8000..=0x9FFF {
@@ -129,7 +139,7 @@ mod tests {
         verify_banks(&mut vram);
     }
 
-    #[cfg(feature = "cgb-mode")]
+    #[cfg(feature = "cgb")]
     fn verify_banks(vram: &mut VideoRam) {
         // Bank 0
         vram.write_vbk(0b1111_1110 | 0b0);

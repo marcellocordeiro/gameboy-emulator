@@ -1,4 +1,4 @@
-use crate::{cartridge::Error as CartridgeError, constants::ONE_KIB};
+use crate::{cartridge::error::Error as CartridgeError, constants::ONE_KIB};
 
 pub const RAM_BANK_SIZE: usize = 8 * ONE_KIB; // 0x2000
 pub const RAM_BANKS_CODE_ADDRESS: usize = 0x0149;

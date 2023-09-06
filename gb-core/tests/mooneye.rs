@@ -65,7 +65,7 @@ macro_rules! testcases {
 }
 
 // DMG only tests.
-#[cfg(not(feature = "cgb-mode"))]
+#[cfg(not(feature = "cgb"))]
 testcases! {
     // boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb");
     boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb");

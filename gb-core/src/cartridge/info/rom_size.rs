@@ -1,4 +1,4 @@
-use crate::{cartridge::Error as CartridgeError, constants::ONE_KIB};
+use crate::{cartridge::error::Error as CartridgeError, constants::ONE_KIB};
 
 pub const ROM_BANK_SIZE: usize = 16 * ONE_KIB; // 0x4000
 pub const ROM_BANKS_CODE_ADDRESS: usize = 0x0148;

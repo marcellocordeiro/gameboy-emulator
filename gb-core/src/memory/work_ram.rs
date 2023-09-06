@@ -1,10 +1,10 @@
 use crate::constants::ONE_KIB;
 
-#[cfg(not(feature = "cgb-mode"))]
+#[cfg(not(feature = "cgb"))]
 /// DMG mode selected.
 const WRAM_BANKS: usize = 2;
 
-#[cfg(feature = "cgb-mode")]
+#[cfg(feature = "cgb")]
 /// CGB mode.
 const WRAM_BANKS: usize = 8;
 
@@ -17,6 +17,8 @@ const WRAM_SIZE: usize = WRAM_BANKS * WRAM_BANK_SIZE;
 pub struct WorkRam {
     data: [u8; WRAM_SIZE],
     svbk: u8, // (CGB) WRAM Bank Select.
+
+    cgb_mode: bool,
 }
 
 impl Default for WorkRam {
@@ -24,6 +26,7 @@ impl Default for WorkRam {
         Self {
             data: [0; WRAM_SIZE], // can't default this :(
             svbk: 0,
+            cgb_mode: false,
         }
     }
 }
@@ -34,6 +37,11 @@ impl WorkRam {
     // 0xC000 ~ 0xCFFF: bank 0.
     // 0xD000 ~ 0xDFFF: Bank 1. In CGB mode, switchable bank 1~7.
     // 0xE000 ~ 0xFDFF: ECHO RAM (prohibited area, but mirrors 0xC000 ~ 0xDDFF).
+
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        self.svbk = 0;
+        self.cgb_mode = value;
+    }
 
     pub fn read(&self, address: u16) -> u8 {
         match address {
@@ -65,7 +73,7 @@ impl WorkRam {
     }
 
     pub fn read_svbk(&self) -> u8 {
-        if cfg!(feature = "cgb-mode") {
+        if cfg!(feature = "cgb") && self.cgb_mode {
             0b1111_1000 | self.svbk
         } else {
             0xFF
@@ -73,7 +81,7 @@ impl WorkRam {
     }
 
     pub fn write_svbk(&mut self, value: u8) {
-        if cfg!(feature = "cgb-mode") {
+        if cfg!(feature = "cgb") && self.cgb_mode {
             self.svbk = value & 0b111;
         }
     }
@@ -92,7 +100,7 @@ mod tests {
     fn test_my_sanity() {
         let wram = WorkRam::default();
 
-        if cfg!(feature = "cgb-mode") {
+        if cfg!(feature = "cgb") {
             assert_eq!(wram.data.len(), 0x8000);
         } else {
             assert_eq!(wram.data.len(), 0x2000);
@@ -100,9 +108,10 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "cgb-mode")]
+    #[cfg(feature = "cgb")]
     fn test_read_banks() {
         let mut wram = WorkRam::default();
+        wram.set_cgb_mode(true);
 
         let chunks = wram.data.chunks_exact_mut(WRAM_BANK_SIZE);
 
@@ -122,9 +131,10 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "cgb-mode")]
+    #[cfg(feature = "cgb")]
     fn test_write_banks() {
         let mut wram = WorkRam::default();
+        wram.set_cgb_mode(true);
 
         // Bank 0
         for address in 0xC000..=0xCFFF {
@@ -168,7 +178,7 @@ mod tests {
         verify_banks(&mut wram);
     }
 
-    #[cfg(feature = "cgb-mode")]
+    #[cfg(feature = "cgb")]
     fn verify_banks(wram: &mut WorkRam) {
         // Bank 0
         for address in 0xC000..=0xCFFF {

@@ -71,6 +71,10 @@ impl Default for Graphics {
 }
 
 impl Graphics {
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        self.vram.set_cgb_mode(value);
+    }
+
     pub fn skip_bootrom(&mut self) {
         self.lcdc = LcdControl::from_bits_truncate(0x91);
         self.bgp = 0xFC;

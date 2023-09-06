@@ -16,6 +16,7 @@
     clippy::cast_possible_wrap,
 )]
 
+use cartridge::error::Error as CartridgeError;
 use constants::{Button, Frame, PALETTE};
 use cpu::Cpu;
 
@@ -43,7 +44,7 @@ impl GameBoy {
         *self = GameBoy::new();
     }
 
-    pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), cartridge::Error> {
+    pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         self.reset();
 
         self.cpu.memory.load_cartridge(rom)

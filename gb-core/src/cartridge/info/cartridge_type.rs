@@ -1,4 +1,4 @@
-use crate::cartridge::Error as CartridgeError;
+use crate::cartridge::error::Error as CartridgeError;
 
 pub const CARTRIDGE_TYPE_ADDRESS: usize = 0x0147;
 

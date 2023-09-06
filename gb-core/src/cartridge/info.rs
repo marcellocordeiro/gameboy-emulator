@@ -1,6 +1,6 @@
 use log::info;
 
-use crate::{cartridge::Error as CartridgeError, constants::ONE_KIB};
+use crate::{cartridge::error::Error as CartridgeError, constants::ONE_KIB};
 
 use self::{
     cartridge_type::CARTRIDGE_TYPE_ADDRESS,

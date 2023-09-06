@@ -1,6 +1,6 @@
 use crate::{
     audio::Audio,
-    cartridge::{Cartridge, Error as CartridgeError},
+    cartridge::{error::Error as CartridgeError, info::CgbFlag, Cartridge},
     constants::{Button, Framebuffer},
     graphics::Graphics,
     joypad::Joypad,
@@ -30,7 +30,21 @@ pub struct Memory {
 
 impl Memory {
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
-        self.cartridge = Some(Cartridge::try_new(rom)?);
+        let cartridge = Cartridge::try_new(rom)?;
+
+        if cfg!(feature = "cgb") && cartridge.in_cgb_mode() {
+            if cartridge.info.cgb_flag == CgbFlag::CgbOnly {
+                todo!("CGB mode not yet implemented.");
+            }
+
+            self.wram.set_cgb_mode(false);
+            self.graphics.set_cgb_mode(false);
+            // TODO: enable this after implementing full CGB support.
+            // self.wram.set_cgb_mode(true);
+            // self.graphics.set_cgb_mode(true);
+        }
+
+        self.cartridge = Some(cartridge);
 
         Ok(())
     }

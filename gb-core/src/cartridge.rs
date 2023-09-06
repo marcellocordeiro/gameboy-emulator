@@ -1,16 +1,16 @@
 use self::{
+    error::Error as CartridgeError,
     info::{CartridgeType, CgbFlag, Info},
     mbc::{Mbc, Mbc1, Mbc2, Mbc3, Mbc30, Mbc5, MbcInterface, NoMbc},
 };
 
-pub use self::error::Error;
-
 pub struct Cartridge {
+    pub info: Info,
     mbc: Mbc,
 }
 
 impl Cartridge {
-    pub fn try_new(rom: Vec<u8>) -> Result<Self, self::Error> {
+    pub fn try_new(rom: Vec<u8>) -> Result<Self, CartridgeError> {
         let info = Info::try_from(&rom)?;
 
         if info.cgb_flag == CgbFlag::CgbOnly {
@@ -22,7 +22,11 @@ impl Cartridge {
 
         let mbc = Self::get_mbc(rom, &info)?;
 
-        Ok(Self { mbc })
+        Ok(Self { info, mbc })
+    }
+
+    pub fn in_cgb_mode(&self) -> bool {
+        self.info.cgb_flag != CgbFlag::DmgMode
     }
 
     pub fn read_rom(&self, address: u16) -> u8 {
@@ -41,7 +45,7 @@ impl Cartridge {
         self.mbc.write_ram(address, value);
     }
 
-    fn get_mbc(rom: Vec<u8>, info: &Info) -> Result<Mbc, self::Error> {
+    fn get_mbc(rom: Vec<u8>, info: &Info) -> Result<Mbc, CartridgeError> {
         let mbc: Mbc = match info.cartridge_type {
             CartridgeType::NoMbc => NoMbc::new(rom, info).into(),
             CartridgeType::Mbc1 => Mbc1::new(rom, info).into(),
@@ -50,13 +54,13 @@ impl Cartridge {
             CartridgeType::Mbc30 => Mbc30::new(rom, info).into(),
             CartridgeType::Mbc5 => Mbc5::new(rom, info).into(),
 
-            cartridge_type => return Err(self::Error::UnsupportedMbc { cartridge_type }),
+            cartridge_type => return Err(CartridgeError::UnsupportedMbc { cartridge_type }),
         };
 
         Ok(mbc)
     }
 }
 
-mod error;
-mod info;
+pub mod error;
+pub mod info;
 mod mbc;
