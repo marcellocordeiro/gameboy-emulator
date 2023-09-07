@@ -33,13 +33,12 @@ fn main() -> Result<(), eframe::Error> {
     let rom = get_rom(rom_path.to_string());
 
     let initial_window_size = eframe::egui::vec2(
-        gb_core::constants::WIDTH as f32 * 3.0,
-        gb_core::constants::WIDTH as f32 * 3.0,
+        gb_core::constants::WIDTH as f32 * 5.0,
+        gb_core::constants::WIDTH as f32 * 5.0,
     );
 
     let native_options = eframe::NativeOptions {
         initial_window_size: Some(initial_window_size),
-        resizable: false,
         ..Default::default()
     };
 

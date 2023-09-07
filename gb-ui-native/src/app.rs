@@ -76,6 +76,7 @@ impl eframe::App for App {
 
         if !self.gui.manual_control {
             self.gb.run_frame();
+            ctx.request_repaint();
         }
 
         self.update_texture();
@@ -83,7 +84,5 @@ impl eframe::App for App {
 
         self.gui.render_ui(frame, ctx, &mut self.gb);
         self.gui.render_graphics_area(ctx, &self.texture);
-
-        ctx.request_repaint();
     }
 }

@@ -9,12 +9,12 @@ pub fn draw(
     manual_control: &mut bool,
 ) {
     Window::new("Control").open(opened).show(egui_ctx, |ui| {
-        if *manual_control {
-            if ui.button("Step").clicked() {
-                gb_ctx.cpu.step();
-            }
-        } else if ui.add_enabled(false, Button::new("Step")).clicked() {
-            unreachable!();
+        if ui
+            .add_enabled(*manual_control, Button::new("Step"))
+            .clicked()
+        {
+            gb_ctx.cpu.step();
+            egui_ctx.request_repaint();
         }
     });
 }
