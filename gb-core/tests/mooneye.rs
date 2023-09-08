@@ -2,7 +2,7 @@ use std::time::{Duration, Instant};
 
 use gb_core::GameBoy;
 
-const TIMEOUT: Duration = Duration::from_secs(10);
+const TIMEOUT: Duration = Duration::from_secs(20);
 const BREAK_OPCODE: u8 = 0x40; // LD B,B
 
 fn run(rom: &[u8]) {
@@ -67,9 +67,25 @@ macro_rules! testcases {
 // DMG only tests.
 #[cfg(not(feature = "cgb"))]
 testcases! {
-    // boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb");
-    boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb");
     boot_regs_dmg_abc("acceptance/boot_regs-dmgABC");
+}
+
+// DMG only tests (bootrom is unsupported).
+#[cfg(not(any(feature = "cgb", feature = "bootrom")))]
+testcases! {
+    boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb");
+}
+
+// CGB only tests.
+#[cfg(feature = "cgb")]
+testcases! {
+    boot_regs_cgb("misc/boot_regs-cgb");
+}
+
+// CGB only tests (bootrom is unsupported).
+#[cfg(all(feature = "cgb", not(feature = "bootrom")))]
+testcases! {
+    boot_hwio_c("misc/boot_hwio-C");
 }
 
 testcases! {

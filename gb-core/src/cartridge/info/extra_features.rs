@@ -8,7 +8,7 @@ pub enum ExtraFeature {
 }
 
 impl ExtraFeature {
-    pub fn get_features(code: u8) -> Vec<ExtraFeature> {
+    pub fn get_features(code: u8) -> Vec<Self> {
         use ExtraFeature::*;
 
         match code {

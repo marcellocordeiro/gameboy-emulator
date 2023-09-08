@@ -17,10 +17,17 @@ impl Cpu {
         self.registers.program_counter = 0x0100;
         self.registers.stack_pointer = 0xFFFE;
 
-        self.registers.set_af(0x01B0);
-        self.registers.set_bc(0x0013);
-        self.registers.set_de(0x00D8);
-        self.registers.set_hl(0x014D);
+        if cfg!(feature = "cgb") {
+            self.registers.set_af(0x1180);
+            self.registers.set_bc(0x0000);
+            self.registers.set_de(0x0008);
+            self.registers.set_hl(0x007C);
+        } else {
+            self.registers.set_af(0x01B0);
+            self.registers.set_bc(0x0013);
+            self.registers.set_de(0x00D8);
+            self.registers.set_hl(0x014D);
+        }
 
         self.memory.skip_bootrom();
     }

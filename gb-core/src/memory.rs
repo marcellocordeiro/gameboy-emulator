@@ -30,7 +30,7 @@ pub struct Memory {
 
 impl Memory {
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
-        let cartridge = Cartridge::try_new(rom)?;
+        let cartridge = Cartridge::new(rom)?;
 
         if cfg!(feature = "cgb") && cartridge.in_cgb_mode() {
             if cartridge.info.cgb_flag == CgbFlag::CgbOnly {
@@ -96,6 +96,9 @@ impl Memory {
     pub fn read(&self, address: u16) -> u8 {
         match address {
             0x0000..=0x00FF if self.bootrom.is_active() => self.bootrom.read(address),
+
+            #[cfg(feature = "cgb")]
+            0x0200..=0x08FF if self.bootrom.is_active() => self.bootrom.read(address),
 
             0x0000..=0x7FFF => self
                 .cartridge

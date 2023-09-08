@@ -10,7 +10,7 @@ pub struct Cartridge {
 }
 
 impl Cartridge {
-    pub fn try_new(rom: Vec<u8>) -> Result<Self, CartridgeError> {
+    pub fn new(rom: Vec<u8>) -> Result<Self, CartridgeError> {
         let info = Info::try_from(&rom)?;
 
         if info.cgb_flag == CgbFlag::CgbOnly {

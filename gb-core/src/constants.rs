@@ -23,7 +23,7 @@ pub enum Button {
 }
 
 impl Button {
-    pub const fn to_array() -> [Button; 8] {
+    pub const fn to_array() -> [Self; 8] {
         use Button::*;
         [A, B, Select, Start, Right, Left, Up, Down]
     }
