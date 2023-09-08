@@ -2,20 +2,29 @@ use eframe::egui;
 use egui::Context;
 use gb_core::GameBoy;
 
-#[derive(Default)]
+use self::{control::Control, graphics_area::GraphicsArea, state::State};
+
 pub struct Gui {
-    pub show_state: bool,
-    pub show_controls: bool,
-    pub manual_control: bool,
+    pub control: Control,
+    pub state: State,
+    pub graphics_area: GraphicsArea,
 }
 
 impl Gui {
-    pub fn render_ui(
-        &mut self,
-        frame: &mut eframe::Frame,
-        egui_ctx: &Context,
-        gb_ctx: &mut GameBoy,
-    ) {
+    pub fn new(egui_ctx: &Context) -> Self {
+        Self {
+            control: Control::default(),
+            state: State::default(),
+            graphics_area: GraphicsArea::new(egui_ctx),
+        }
+    }
+
+    pub fn render(&mut self, frame: &mut eframe::Frame, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
+        self.render_ui(frame, egui_ctx, gb_ctx);
+        self.render_graphics_area(egui_ctx, gb_ctx);
+    }
+
+    fn render_ui(&mut self, frame: &mut eframe::Frame, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
         egui::TopBottomPanel::top("top_panel").show(egui_ctx, |ui| {
             egui::menu::bar(ui, |ui| {
                 ui.menu_button("File", |ui| {
@@ -24,41 +33,21 @@ impl Gui {
                     }
                 });
 
-                if ui
-                    .button(if self.manual_control {
-                        "Manual"
-                    } else {
-                        "Auto"
-                    })
-                    .clicked()
-                {
-                    self.manual_control = !self.manual_control;
-                }
-
-                if ui.button("Toggle control").clicked() {
-                    self.show_controls = !self.show_controls;
-                }
-
-                if ui.button("Toggle state").clicked() {
-                    self.show_state = !self.show_state;
-                }
+                self.control.draw_manual_control_button(ui);
+                self.control.draw_widget_toggle_button(ui);
+                self.state.draw_widget_toggle_button(ui);
             });
         });
 
-        state::draw(egui_ctx, gb_ctx, &mut self.show_state);
-        control::draw(
-            egui_ctx,
-            gb_ctx,
-            &mut self.show_controls,
-            &mut self.manual_control,
-        );
+        self.control.draw(egui_ctx, gb_ctx);
+        self.state.draw(egui_ctx, gb_ctx);
     }
 
-    pub fn render_graphics_area(&mut self, egui_ctx: &Context, texture: &egui::TextureHandle) {
-        graphics_area::draw(egui_ctx, texture);
+    fn render_graphics_area(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
+        self.graphics_area.draw(egui_ctx, gb_ctx);
     }
 }
 
-pub mod control;
+mod control;
 mod graphics_area;
-pub mod state;
+mod state;

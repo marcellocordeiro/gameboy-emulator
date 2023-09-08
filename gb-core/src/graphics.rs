@@ -254,20 +254,20 @@ impl Graphics {
         let should_render_win = self.lcdc.get_win_enable() && self.wy <= self.ly;
 
         if should_render_bg {
-            let base_address = if self.lcdc.get_bg_map() {
-                0x9C00_u16
-            } else {
-                0x9800_u16
-            };
-
             let y = self.scy.wrapping_add(self.ly);
             let tile_row = (y / 8) as u16;
 
             for i in 0..(WIDTH as u8) {
-                let x = self.scx.wrapping_add(i);
+                let x: u8 = self.scx.wrapping_add(i);
                 let tile_col = (x / 8) as u16;
 
                 let tile_address = {
+                    let base_address = if self.lcdc.get_bg_map() {
+                        0x9C00
+                    } else {
+                        0x9800
+                    };
+
                     let mapped_address = base_address + (tile_row * 32 + tile_col);
                     let tile_index = self.vram.read(mapped_address) as u16;
 
@@ -276,7 +276,6 @@ impl Graphics {
                         0x8000 + (tile_index * 16) // Each tile has 16 bytes.
                     } else {
                         // Signed mapping.
-                        // We could use i8s here but adjusting like this is fine.
                         if tile_index < 128 {
                             0x9000 + (tile_index * 16)
                         } else {
@@ -290,7 +289,7 @@ impl Graphics {
                 let data_lo = self.vram.read(tile_address + line);
                 let data_hi = self.vram.read(tile_address + line + 1);
 
-                let colour_id = {
+                let color_id = {
                     let bit = (x % 8) as usize;
 
                     let lo = ((data_lo << bit) >> 7) & 0b1;
@@ -299,18 +298,12 @@ impl Graphics {
                     (hi << 1) | lo
                 };
 
-                bg_priority[i as usize] = colour_id != 0;
-                line_pixels[i as usize] = apply_palette(self.bgp, colour_id);
+                bg_priority[i as usize] = color_id != 0;
+                line_pixels[i as usize] = apply_palette(self.bgp, color_id);
             }
         }
 
         if should_render_win {
-            let base_address = if self.lcdc.get_win_map() {
-                0x9C00_u16
-            } else {
-                0x9800_u16
-            };
-
             // Window X position is WX - 7.
             let window_x = self.wx.saturating_sub(7);
 
@@ -330,6 +323,12 @@ impl Graphics {
                 let tile_col = (x / 8) as u16;
 
                 let tile_address = {
+                    let base_address = if self.lcdc.get_win_map() {
+                        0x9C00
+                    } else {
+                        0x9800
+                    };
+
                     let mapped_address = base_address + (tile_row * 32 + tile_col);
                     let tile_index = self.vram.read(mapped_address) as u16;
 
@@ -338,7 +337,6 @@ impl Graphics {
                         0x8000 + (tile_index * 16) // Each tile has 16 bytes.
                     } else {
                         // Signed mapping.
-                        // We could use i8s here but adjusting like this is fine.
                         if tile_index < 128 {
                             0x9000 + (tile_index * 16)
                         } else {
@@ -352,7 +350,7 @@ impl Graphics {
                 let data_lo = self.vram.read(tile_address + line);
                 let data_hi = self.vram.read(tile_address + line + 1);
 
-                let colour_id = {
+                let color_id = {
                     let bit = (x % 8) as usize;
 
                     let lo = ((data_lo << bit) >> 7) & 0b1;
@@ -361,8 +359,8 @@ impl Graphics {
                     (hi << 1) | lo
                 };
 
-                bg_priority[i as usize] = colour_id != 0;
-                line_pixels[i as usize] = apply_palette(self.bgp, colour_id);
+                bg_priority[i as usize] = color_id != 0;
+                line_pixels[i as usize] = apply_palette(self.bgp, color_id);
             }
         }
 
@@ -405,7 +403,7 @@ impl Graphics {
                 let data_hi = self.vram.read(tile_address + 1);
 
                 for x in 0..=7 {
-                    let colour_id = {
+                    let color_id = {
                         let bit = if sprite.flags.contains(SpriteFlags::X_FLIP) {
                             7 - x
                         } else {
@@ -420,9 +418,9 @@ impl Graphics {
 
                     let mapped_x = sprite.x.wrapping_add(7 - x) as usize;
 
-                    if mapped_x < WIDTH && colour_id != 0 {
+                    if mapped_x < WIDTH && color_id != 0 {
                         if !sprite.flags.contains(SpriteFlags::PRIORITY) || !bg_priority[mapped_x] {
-                            line_pixels[mapped_x] = apply_palette(palette, colour_id);
+                            line_pixels[mapped_x] = apply_palette(palette, color_id);
                         }
                     }
                 }
@@ -432,8 +430,8 @@ impl Graphics {
 }
 
 #[allow(clippy::identity_op)]
-fn apply_palette(palette: u8, colour_id: u8) -> u8 {
-    match colour_id & 0b11 {
+fn apply_palette(palette: u8, color_id: u8) -> u8 {
+    match color_id & 0b11 {
         0 => (palette >> 0) & 0b11,
         1 => (palette >> 2) & 0b11,
         2 => (palette >> 4) & 0b11,
