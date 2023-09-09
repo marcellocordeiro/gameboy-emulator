@@ -2,32 +2,40 @@ use eframe::egui;
 use egui::Context;
 use gb_core::GameBoy;
 
-use self::{control::Control, graphics_area::GraphicsArea, state::State};
+use self::{
+    control::Control, file_loader::FileLoader, screen_area::ScreenArea, state::State, tiles::Tiles,
+};
 
 pub struct Gui {
     pub control: Control,
+    pub file_loader: FileLoader,
     pub state: State,
-    pub graphics_area: GraphicsArea,
+    pub tiles: Tiles,
+    pub screen_area: ScreenArea,
 }
 
 impl Gui {
     pub fn new(egui_ctx: &Context) -> Self {
         Self {
             control: Control::default(),
+            file_loader: FileLoader,
             state: State::default(),
-            graphics_area: GraphicsArea::new(egui_ctx),
+            tiles: Tiles::new(egui_ctx),
+            screen_area: ScreenArea::new(egui_ctx),
         }
     }
 
     pub fn render(&mut self, frame: &mut eframe::Frame, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
         self.render_ui(frame, egui_ctx, gb_ctx);
-        self.render_graphics_area(egui_ctx, gb_ctx);
+        self.render_screen_area(egui_ctx, gb_ctx);
     }
 
     fn render_ui(&mut self, frame: &mut eframe::Frame, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
         egui::TopBottomPanel::top("top_panel").show(egui_ctx, |ui| {
             egui::menu::bar(ui, |ui| {
                 ui.menu_button("File", |ui| {
+                    self.file_loader.draw_button(ui, gb_ctx);
+
                     if ui.button("Quit").clicked() {
                         frame.close();
                     }
@@ -36,18 +44,22 @@ impl Gui {
                 self.control.draw_manual_control_button(ui);
                 self.control.draw_widget_toggle_button(ui);
                 self.state.draw_widget_toggle_button(ui);
+                self.tiles.draw_widget_toggle_button(ui);
             });
         });
 
         self.control.draw(egui_ctx, gb_ctx);
         self.state.draw(egui_ctx, gb_ctx);
+        self.tiles.draw(egui_ctx, gb_ctx);
     }
 
-    fn render_graphics_area(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
-        self.graphics_area.draw(egui_ctx, gb_ctx);
+    fn render_screen_area(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
+        self.screen_area.draw(egui_ctx, gb_ctx);
     }
 }
 
 mod control;
-mod graphics_area;
+mod file_loader;
+mod screen_area;
 mod state;
+mod tiles;

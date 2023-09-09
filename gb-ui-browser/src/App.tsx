@@ -3,8 +3,8 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRenderer } from "@/hooks/use-renderer";
 import {
-  HEIGHT,
-  WIDTH,
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH,
   draw,
   loadCartridge,
   reset,
@@ -49,8 +49,8 @@ export function App() {
       <canvas
         ref={canvasRef}
         className="border"
-        height={HEIGHT}
-        width={WIDTH}
+        height={SCREEN_HEIGHT}
+        width={SCREEN_WIDTH}
       />
 
       <input

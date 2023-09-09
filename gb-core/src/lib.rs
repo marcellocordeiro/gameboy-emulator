@@ -17,7 +17,7 @@
 )]
 
 use cartridge::error::Error as CartridgeError;
-use constants::{Button, Frame, PALETTE};
+use constants::{Button, Frame};
 use cpu::Cpu;
 
 pub struct GameBoy {
@@ -59,23 +59,15 @@ impl GameBoy {
     }
 
     pub fn key_down(&mut self, key: Button) {
-        self.cpu.memory.key_down(key);
+        self.cpu.memory.joypad.key_down(key);
     }
 
     pub fn key_up(&mut self, key: Button) {
-        self.cpu.memory.key_up(key);
+        self.cpu.memory.joypad.key_up(key);
     }
 
-    #[allow(clippy::identity_op)]
     pub fn draw(&self, frame: &mut Frame) {
-        let fb = self.cpu.memory.borrow_framebuffer();
-
-        for (i, pixel) in fb.iter().enumerate() {
-            frame[(i * 4) + 0] = PALETTE[*pixel as usize];
-            frame[(i * 4) + 1] = PALETTE[*pixel as usize];
-            frame[(i * 4) + 2] = PALETTE[*pixel as usize];
-            frame[(i * 4) + 3] = 0xFF;
-        }
+        self.cpu.memory.graphics.draw_into_frame(frame);
     }
 }
 

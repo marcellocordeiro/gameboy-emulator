@@ -18,23 +18,18 @@
 
 use app::App;
 
-fn get_rom(file: String) -> Vec<u8> {
-    std::fs::read(file).unwrap()
-}
-
 fn main() -> Result<(), eframe::Error> {
     env_logger::init();
 
     let matches = clap::Command::new("gameboy-emulator")
-        .arg(clap::Arg::new("rom").required(true))
+        .arg(clap::Arg::new("rom"))
         .get_matches();
 
-    let rom_path = matches.get_one::<String>("rom").expect("required");
-    let rom = get_rom(rom_path.to_string());
+    let rom_path = matches.get_one::<String>("rom").cloned();
 
     let initial_window_size = eframe::egui::vec2(
-        gb_core::constants::WIDTH as f32 * 5.0,
-        gb_core::constants::WIDTH as f32 * 5.0,
+        gb_core::constants::SCREEN_WIDTH as f32 * 5.0,
+        gb_core::constants::SCREEN_HEIGHT as f32 * 5.0,
     );
 
     let native_options = eframe::NativeOptions {
@@ -45,7 +40,7 @@ fn main() -> Result<(), eframe::Error> {
     eframe::run_native(
         "gameboy-emulator",
         native_options,
-        Box::new(move |cc| Box::new(App::new(cc, rom))),
+        Box::new(move |cc| Box::new(App::new(cc, rom_path.as_ref()))),
     )
 }
 

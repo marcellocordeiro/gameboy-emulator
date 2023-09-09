@@ -21,7 +21,7 @@ use wasm_bindgen::{prelude::*, Clamped};
 use web_sys::{CanvasRenderingContext2d, ImageData};
 
 use gb_core::{
-    constants::{HEIGHT, PALETTE, WIDTH},
+    constants::{SCREEN_HEIGHT, SCREEN_WIDTH},
     cpu::Cpu,
 };
 
@@ -67,18 +67,12 @@ impl GameBoy {
 
     #[allow(clippy::identity_op)]
     pub fn draw(&self, ctx: &CanvasRenderingContext2d) {
-        let frame = &mut [0u8; WIDTH * HEIGHT * 4];
+        let frame = &mut [0u8; SCREEN_WIDTH * SCREEN_HEIGHT * 4];
 
-        let fb = self.cpu.memory.borrow_framebuffer();
+        self.cpu.memory.graphics.draw_into_frame(frame);
 
-        for (i, pixel) in fb.iter().enumerate() {
-            frame[(i * 4) + 0] = PALETTE[*pixel as usize];
-            frame[(i * 4) + 1] = PALETTE[*pixel as usize];
-            frame[(i * 4) + 2] = PALETTE[*pixel as usize];
-            frame[(i * 4) + 3] = 0xFF;
-        }
-
-        let img_data = ImageData::new_with_u8_clamped_array(Clamped(frame), WIDTH as u32).unwrap();
+        let img_data =
+            ImageData::new_with_u8_clamped_array(Clamped(frame), SCREEN_WIDTH as u32).unwrap();
         ctx.put_image_data(&img_data, 0.0, 0.0).unwrap();
     }
 }

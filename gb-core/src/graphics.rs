@@ -1,4 +1,4 @@
-use crate::constants::{Framebuffer, HEIGHT, WIDTH};
+use crate::constants::{Frame, Framebuffer, PALETTE, SCREEN_HEIGHT, SCREEN_WIDTH};
 
 use self::{
     lcd_control::LcdControl,
@@ -35,7 +35,7 @@ pub struct Graphics {
     mode: StatusMode,
     cycles: u32,
 
-    pub framebuffer: Framebuffer,
+    framebuffer: Framebuffer,
 }
 
 impl Default for Graphics {
@@ -65,7 +65,7 @@ impl Default for Graphics {
             mode: StatusMode::OamScan,
             cycles: 0,
 
-            framebuffer: [0; WIDTH * HEIGHT],
+            framebuffer: [0; SCREEN_WIDTH * SCREEN_HEIGHT],
         }
     }
 }
@@ -78,6 +78,15 @@ impl Graphics {
     pub fn skip_bootrom(&mut self) {
         self.lcdc = LcdControl::from_bits_truncate(0x91);
         self.bgp = 0xFC;
+    }
+
+    pub fn draw_into_frame(&self, frame: &mut Frame) {
+        for (i, pixel) in self.framebuffer.iter().enumerate() {
+            frame[i * 4] = PALETTE[*pixel as usize];
+            frame[(i * 4) + 1] = PALETTE[*pixel as usize];
+            frame[(i * 4) + 2] = PALETTE[*pixel as usize];
+            frame[(i * 4) + 3] = 0xFF;
+        }
     }
 
     pub fn read(&self, address: u16) -> u8 {
@@ -244,11 +253,11 @@ impl Graphics {
 
     #[allow(clippy::too_many_lines)]
     fn draw_line(&mut self) {
-        let line_start = WIDTH * (self.ly as usize);
-        let line_end = WIDTH + line_start;
+        let line_start = SCREEN_WIDTH * (self.ly as usize);
+        let line_end = SCREEN_WIDTH + line_start;
 
         let line_pixels = &mut self.framebuffer[line_start..line_end];
-        let mut bg_priority = [false; WIDTH];
+        let mut bg_priority = [false; SCREEN_WIDTH];
 
         let should_render_bg = self.lcdc.get_bg_enable();
         let should_render_win = self.lcdc.get_win_enable() && self.wy <= self.ly;
@@ -257,7 +266,7 @@ impl Graphics {
             let y = self.scy.wrapping_add(self.ly);
             let tile_row = (y / 8) as u16;
 
-            for i in 0..(WIDTH as u8) {
+            for i in 0..(SCREEN_WIDTH as u8) {
                 let x: u8 = self.scx.wrapping_add(i);
                 let tile_col = (x / 8) as u16;
 
@@ -310,7 +319,7 @@ impl Graphics {
             let y = self.window_internal_counter as u16;
             let tile_row = y / 8;
 
-            for i in window_x..(WIDTH as u8) {
+            for i in window_x..(SCREEN_WIDTH as u8) {
                 let x = {
                     let value = self.scx.wrapping_add(i);
                     if value >= window_x {
@@ -418,7 +427,7 @@ impl Graphics {
 
                     let mapped_x = sprite.x.wrapping_add(7 - x) as usize;
 
-                    if mapped_x < WIDTH && color_id != 0 {
+                    if mapped_x < SCREEN_WIDTH && color_id != 0 {
                         if !sprite.flags.contains(SpriteFlags::PRIORITY) || !bg_priority[mapped_x] {
                             line_pixels[mapped_x] = apply_palette(palette, color_id);
                         }

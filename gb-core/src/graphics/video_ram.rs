@@ -1,3 +1,5 @@
+use crate::constants::{TileDataFrame, PALETTE, TILES_PER_LINE, TILE_DATA_FRAME_WIDTH};
+
 use super::{lcd_status::StatusMode, Graphics};
 
 #[cfg(not(feature = "cgb"))]
@@ -34,6 +36,25 @@ impl VideoRam {
         self.cgb_mode = value;
     }
 
+    pub fn draw_tile_data0_into_frame(&self, frame: &mut TileDataFrame) {
+        const TILE_DATA_START: usize = 0;
+        const TILE_DATA_END: usize = 0x97FF - 0x8000;
+
+        let tile_data = &self.data[TILE_DATA_START..=TILE_DATA_END];
+
+        Self::draw_tile_data_into_frame(tile_data, frame);
+    }
+
+    #[cfg(feature = "cgb")]
+    pub fn draw_tile_data1_into_frame(&self, frame: &mut TileDataFrame) {
+        const TILE_DATA_START: usize = 0 + VRAM_BANK_SIZE;
+        const TILE_DATA_END: usize = (0x97FF - 0x8000) + VRAM_BANK_SIZE;
+
+        let tile_data = &self.data[TILE_DATA_START..=TILE_DATA_END];
+
+        Self::draw_tile_data_into_frame(tile_data, frame);
+    }
+
     pub fn read(&self, address: u16) -> u8 {
         self.data[address as usize - 0x8000 + self.bank_offset()]
     }
@@ -58,6 +79,44 @@ impl VideoRam {
 
     fn bank_offset(&self) -> usize {
         VRAM_BANK_SIZE * (self.vbk as usize)
+    }
+
+    fn draw_tile_data_into_frame(tile_data: &[u8], frame: &mut TileDataFrame) {
+        const TILE_SIZE: usize = 16;
+
+        let tile_data_chunks = tile_data.chunks_exact(TILE_SIZE);
+
+        for (tile_index, tile) in tile_data_chunks.into_iter().enumerate() {
+            let tile_base_x = (tile_index % TILES_PER_LINE) * 8;
+            let tile_base_y = (tile_index / TILES_PER_LINE) * 8;
+
+            let tile_data_lo_hi_chunks = tile.chunks_exact(2);
+
+            for (byte_line, tile_data_lo_hi) in tile_data_lo_hi_chunks.into_iter().enumerate() {
+                let data_lo = tile_data_lo_hi[0];
+                let data_hi = tile_data_lo_hi[1];
+
+                for bit in 0..=7 {
+                    let color_id = {
+                        let lo = ((data_lo << bit) >> 7) & 0b1;
+                        let hi = ((data_hi << bit) >> 7) & 0b1;
+
+                        (hi << 1) | lo
+                    };
+
+                    let pixel = color_id;
+
+                    let mapped_x = tile_base_x + bit;
+                    let mapped_y = tile_base_y + byte_line;
+                    let mapped_address = (mapped_y * TILE_DATA_FRAME_WIDTH) + mapped_x;
+
+                    frame[mapped_address * 4] = PALETTE[pixel as usize];
+                    frame[(mapped_address * 4) + 1] = PALETTE[pixel as usize];
+                    frame[(mapped_address * 4) + 2] = PALETTE[pixel as usize];
+                    frame[(mapped_address * 4) + 3] = 0xFF;
+                }
+            }
+        }
     }
 }
 

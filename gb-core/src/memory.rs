@@ -1,7 +1,6 @@
 use crate::{
     audio::Audio,
     cartridge::{error::Error as CartridgeError, info::CgbFlag, Cartridge},
-    constants::{Button, Framebuffer},
     graphics::Graphics,
     joypad::Joypad,
     serial::Serial,
@@ -12,18 +11,18 @@ use self::{bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, work_ram
 
 #[derive(Default)]
 pub struct Memory {
-    bootrom: Bootrom,
+    pub bootrom: Bootrom,
 
-    wram: WorkRam,
-    hram: HighRam,
+    pub wram: WorkRam,
+    pub hram: HighRam,
 
-    cartridge: Option<Cartridge>,
-    graphics: Graphics,
-    audio: Audio,
+    pub cartridge: Option<Cartridge>,
+    pub graphics: Graphics,
+    pub audio: Audio,
 
-    joypad: Joypad,
-    serial: Serial,
-    timer: Timer,
+    pub joypad: Joypad,
+    pub serial: Serial,
+    pub timer: Timer,
 
     pub interrupts: Interrupts,
 }
@@ -107,6 +106,7 @@ impl Memory {
                 .read_rom(address),
 
             0x8000..=0x9FFF => self.graphics.read_vram(address),
+
             0xA000..=0xBFFF => self
                 .cartridge
                 .as_ref()
@@ -173,6 +173,7 @@ impl Memory {
                 .write_rom(address, value),
 
             0x8000..=0x9FFF => self.graphics.write_vram(address, value),
+
             0xA000..=0xBFFF => self
                 .cartridge
                 .as_mut()
@@ -226,18 +227,6 @@ impl Memory {
             0xFF6A..=0xFF6F => (), // Unused.
             0xFF71..=0xFF7F => (), // Unused.
         }
-    }
-
-    pub fn borrow_framebuffer(&self) -> &Framebuffer {
-        &self.graphics.framebuffer
-    }
-
-    pub fn key_down(&mut self, key: Button) {
-        self.joypad.key_down(key);
-    }
-
-    pub fn key_up(&mut self, key: Button) {
-        self.joypad.key_up(key);
     }
 }
 

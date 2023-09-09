@@ -6,8 +6,8 @@ await init();
 init_logging();
 const gameBoy = new GameBoy();
 
-export const WIDTH = 160;
-export const HEIGHT = 144;
+export const SCREEN_WIDTH = 160;
+export const SCREEN_HEIGHT = 144;
 
 export function loadCartridge(rom: Uint8Array) {
   gameBoy.load_cartridge(rom);

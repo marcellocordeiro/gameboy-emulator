@@ -37,18 +37,18 @@ int main(int argc, char* argv[]) {
 
   SDL_Window* window = SDL_CreateWindow(
       "gameboy-emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-      WIDTH * 3, HEIGHT * 3, 0
+      SCREEN_WIDTH * 3, SCREEN_HEIGHT * 3, 0
   );
 
   SDL_Renderer* renderer = SDL_CreateRenderer(
       window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED
   );
 
-  SDL_RenderSetLogicalSize(renderer, WIDTH, HEIGHT);
+  SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   SDL_Texture* texture = SDL_CreateTexture(
-      renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, WIDTH,
-      HEIGHT
+      renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH,
+      SCREEN_HEIGHT
   );
 
   int quit = 0;
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
     gameboy_run_frame(gb);
     gameboy_draw(gb, framebuffer);
 
-    SDL_UpdateTexture(texture, NULL, framebuffer, WIDTH * sizeof(uint32_t));
+    SDL_UpdateTexture(texture, NULL, framebuffer, SCREEN_WIDTH * sizeof(uint32_t));
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
   }

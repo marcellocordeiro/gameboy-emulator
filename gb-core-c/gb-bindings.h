@@ -8,9 +8,9 @@
 #include <stddef.h>
 #endif
 
-#define WIDTH 160
-#define HEIGHT 144
-#define FRAMEBUFFER_SIZE ((WIDTH * HEIGHT) * sizeof(uint32_t))
+#define SCREEN_WIDTH 160
+#define SCREEN_HEIGHT 144
+#define FRAMEBUFFER_SIZE ((SCREEN_WIDTH * SCREEN_HEIGHT) * sizeof(uint32_t))
 
 #ifdef __cplusplus
 extern "C" {

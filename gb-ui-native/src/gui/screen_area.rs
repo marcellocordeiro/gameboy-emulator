@@ -1,26 +1,26 @@
 use eframe::egui;
 use egui::{
     epaint::{ColorImage, Vec2},
-    Context,
+    CentralPanel, Context,
 };
 use gb_core::{
-    constants::{HEIGHT, WIDTH},
+    constants::{SCREEN_HEIGHT, SCREEN_WIDTH},
     GameBoy,
 };
 
-pub struct GraphicsArea {
-    pixels: [u8; WIDTH * HEIGHT * 4],
+pub struct ScreenArea {
+    pixels: [u8; SCREEN_WIDTH * SCREEN_HEIGHT * 4],
     texture: egui::TextureHandle,
 }
 
-impl GraphicsArea {
+impl ScreenArea {
     const FILTER: egui::TextureOptions = egui::TextureOptions::NEAREST;
 
     pub fn new(egui_ctx: &Context) -> Self {
-        let pixels = [0; WIDTH * HEIGHT * 4];
+        let pixels = [0; SCREEN_WIDTH * SCREEN_HEIGHT * 4];
 
         let texture = {
-            let image = ColorImage::from_rgba_unmultiplied([WIDTH, HEIGHT], &pixels);
+            let image = ColorImage::from_rgba_unmultiplied([SCREEN_WIDTH, SCREEN_HEIGHT], &pixels);
 
             egui_ctx.load_texture("main", image, Self::FILTER)
         };
@@ -30,10 +30,9 @@ impl GraphicsArea {
 
     pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
         self.update_texture(gb_ctx);
-
         let panel_frame = egui::Frame::default();
 
-        egui::CentralPanel::default()
+        CentralPanel::default()
             .frame(panel_frame)
             .show(egui_ctx, |ui| {
                 let screen_size = ui.available_size();
@@ -52,14 +51,13 @@ impl GraphicsArea {
                 let scaled_width = texture_width * scale;
                 let scaled_height = texture_height * scale;
 
+                let size = Vec2 {
+                    x: scaled_width,
+                    y: scaled_height,
+                };
+
                 ui.centered_and_justified(|ui| {
-                    ui.add(egui::Image::new(
-                        &self.texture,
-                        Vec2 {
-                            x: scaled_width,
-                            y: scaled_height,
-                        },
-                    ));
+                    ui.add(egui::Image::new(&self.texture, size));
                 });
             });
     }
@@ -67,7 +65,7 @@ impl GraphicsArea {
     fn update_texture(&mut self, gb_ctx: &GameBoy) {
         gb_ctx.draw(&mut self.pixels);
 
-        let image = ColorImage::from_rgba_unmultiplied([WIDTH, HEIGHT], &self.pixels);
+        let image = ColorImage::from_rgba_unmultiplied([SCREEN_WIDTH, SCREEN_HEIGHT], &self.pixels);
         self.texture.set(image, Self::FILTER);
     }
 }

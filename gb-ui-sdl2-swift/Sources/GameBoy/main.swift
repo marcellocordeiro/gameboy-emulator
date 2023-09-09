@@ -11,8 +11,8 @@ guard let data = NSData(contentsOfFile: filePath) else {
 let gb = gameboy_new()
 gameboy_load_cartridge(gb, data.bytes, data.length)
 
-let WIDTH = Int32(160)
-let HEIGHT = Int32(144)
+let SCREEN_WIDTH = Int32(160)
+let SCREEN_HEIGHT = Int32(144)
 
 guard SDL_Init(SDL_INIT_VIDEO) == 0 else {
     fatalError("SDL could not initialize! SDL_Error: \(String(cString: SDL_GetError()))")
@@ -21,7 +21,7 @@ guard SDL_Init(SDL_INIT_VIDEO) == 0 else {
 let window = SDL_CreateWindow(
     "gameboy-emulator",
     Int32(SDL_WINDOWPOS_CENTERED_MASK), Int32(SDL_WINDOWPOS_CENTERED_MASK),
-    WIDTH * 3, HEIGHT * 3,
+    SCREEN_WIDTH * 3, SCREEN_HEIGHT * 3,
     SDL_WINDOW_SHOWN.rawValue
 )
 
@@ -31,16 +31,16 @@ let renderer = SDL_CreateRenderer(
     SDL_RENDERER_PRESENTVSYNC.rawValue | SDL_RENDERER_ACCELERATED.rawValue
 )
 
-SDL_RenderSetLogicalSize(renderer, WIDTH, HEIGHT)
+SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT)
 
 let texture = SDL_CreateTexture(
     renderer,
     SDL_PIXELFORMAT_ABGR8888.rawValue,
     Int32(SDL_TEXTUREACCESS_STREAMING.rawValue),
-    WIDTH, HEIGHT
+    SCREEN_WIDTH, SCREEN_HEIGHT
 )
 
-var framebuffer = [UInt8](repeating: 0, count: Int(WIDTH * HEIGHT) * 4)
+var framebuffer = [UInt8](repeating: 0, count: Int(SCREEN_WIDTH * SCREEN_HEIGHT) * 4)
 
 var quit = false
 var event = SDL_Event()
@@ -60,7 +60,7 @@ while !quit {
     gameboy_run_frame(gb)
     gameboy_draw(gb, &framebuffer)
 
-    SDL_UpdateTexture(texture, nil, framebuffer, WIDTH * 4)
+    SDL_UpdateTexture(texture, nil, framebuffer, SCREEN_WIDTH * 4)
     SDL_RenderCopy(renderer, texture, nil, nil)
     SDL_RenderPresent(renderer)
 }

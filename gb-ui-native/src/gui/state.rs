@@ -18,7 +18,7 @@ impl State {
         }
     }
 
-    pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
+    pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
         Window::new("State")
             .open(&mut self.opened)
             .show(egui_ctx, |ui| {

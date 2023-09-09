@@ -9,9 +9,13 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(cc: &eframe::CreationContext, rom: Vec<u8>) -> Self {
+    pub fn new(cc: &eframe::CreationContext, rom_path: Option<&String>) -> Self {
         let mut gb = GameBoy::new();
-        gb.load_cartridge(rom).unwrap();
+
+        if let Some(path) = rom_path {
+            let rom = std::fs::read(path).unwrap();
+            gb.load_cartridge(rom).unwrap();
+        }
 
         cc.egui_ctx.set_pixels_per_point(1.0);
 
@@ -46,7 +50,7 @@ impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         ctx.set_pixels_per_point(1.0);
 
-        if !self.gui.control.manual_control {
+        if !self.gui.control.manual_control && self.gb.cpu.memory.cartridge.is_some() {
             self.gb.run_frame();
             ctx.request_repaint();
         }

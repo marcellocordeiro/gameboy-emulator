@@ -38,7 +38,10 @@ impl Control {
             .open(&mut self.opened)
             .show(egui_ctx, |ui| {
                 if ui
-                    .add_enabled(self.manual_control, Button::new("Step"))
+                    .add_enabled(
+                        self.manual_control && gb_ctx.cpu.memory.cartridge.is_some(),
+                        Button::new("Step"),
+                    )
                     .clicked()
                 {
                     gb_ctx.cpu.step();
