@@ -30,6 +30,7 @@ impl ScreenArea {
 
     pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
         self.update_texture(gb_ctx);
+
         let panel_frame = egui::Frame::default();
 
         CentralPanel::default()
@@ -57,7 +58,7 @@ impl ScreenArea {
                 };
 
                 ui.centered_and_justified(|ui| {
-                    ui.add(egui::Image::new(&self.texture, size));
+                    ui.image(&self.texture, size);
                 });
             });
     }

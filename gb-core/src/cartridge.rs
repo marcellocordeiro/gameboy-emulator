@@ -13,10 +13,6 @@ impl Cartridge {
     pub fn new(rom: Vec<u8>) -> Result<Self, CartridgeError> {
         let info = Info::try_from(&rom)?;
 
-        if info.cgb_flag == CgbFlag::CgbOnly {
-            todo!("CGB mode not yet implemented.");
-        }
-
         // Panics if the validation fails.
         info.validate();
 

@@ -1,5 +1,5 @@
 use eframe::egui;
-use egui::Context;
+use egui::{menu, Context, TopBottomPanel};
 use gb_core::GameBoy;
 
 use self::{
@@ -31,8 +31,8 @@ impl Gui {
     }
 
     fn render_ui(&mut self, frame: &mut eframe::Frame, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
-        egui::TopBottomPanel::top("top_panel").show(egui_ctx, |ui| {
-            egui::menu::bar(ui, |ui| {
+        TopBottomPanel::top("top_panel").show(egui_ctx, |ui| {
+            menu::bar(ui, |ui| {
                 ui.menu_button("File", |ui| {
                     self.file_loader.draw_button(ui, gb_ctx);
 

@@ -15,14 +15,13 @@ impl Control {
     }
 
     pub fn draw_manual_control_button(&mut self, ui: &mut egui::Ui) {
-        if ui
-            .button(if self.manual_control {
-                "Manual"
-            } else {
-                "Auto"
-            })
-            .clicked()
-        {
+        let text = if self.manual_control {
+            "Manual"
+        } else {
+            "Auto"
+        };
+
+        if ui.button(text).clicked() {
             self.manual_control = !self.manual_control;
         }
     }

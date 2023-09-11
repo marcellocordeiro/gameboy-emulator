@@ -14,4 +14,4 @@ rfd = "0.11.4"
 
 [dependencies.gb-core]
 path = "../gb-core"
-# features = ["bootrom"]
+# features = ["bootrom", "cgb"]

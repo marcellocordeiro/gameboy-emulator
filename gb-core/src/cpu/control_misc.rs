@@ -12,7 +12,9 @@ impl Cpu {
     pub(super) fn opcode_0x10(&mut self) {
         // STOP
 
-        // TODO
+        // TODO?
+
+        self.memory.speed.process_speed_switch();
     }
 
     pub(super) fn opcode_0x76(&mut self) {

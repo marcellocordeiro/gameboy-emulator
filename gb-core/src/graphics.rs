@@ -7,6 +7,7 @@ use self::{
     oam_dma::OamDma,
     sprite::SpriteFlags,
     video_ram::VideoRam,
+    vram_dma::VramDma,
 };
 
 pub struct Graphics {
@@ -31,6 +32,7 @@ pub struct Graphics {
     pub oam: Oam,
 
     pub oam_dma: OamDma,
+    pub vram_dma: VramDma,
 
     mode: StatusMode,
     cycles: u32,
@@ -61,6 +63,7 @@ impl Default for Graphics {
             oam: Oam::default(),
 
             oam_dma: OamDma::default(),
+            vram_dma: VramDma::default(),
 
             mode: StatusMode::OamScan,
             cycles: 0,
@@ -97,7 +100,7 @@ impl Graphics {
             0xFF43 => self.scx,
             0xFF44 => self.ly,
             0xFF45 => self.lyc,
-            0xFF46 => self.read_dma(),
+            0xFF46 => self.oam_dma.read(),
             0xFF47 => self.bgp,
             0xFF48 => self.obp0,
             0xFF49 => self.obp1,
@@ -118,7 +121,7 @@ impl Graphics {
             0xFF43 => self.scx = value,
             0xFF44 => println!("[video.rs] LY is read-only."),
             0xFF45 => self.lyc = value,
-            0xFF46 => self.write_dma(value),
+            0xFF46 => self.oam_dma.write(value),
             0xFF47 => self.bgp = value,
             0xFF48 => self.obp0 = value,
             0xFF49 => self.obp1 = value,
@@ -457,3 +460,4 @@ mod oam_dma;
 mod registers;
 mod sprite;
 mod video_ram;
+mod vram_dma;

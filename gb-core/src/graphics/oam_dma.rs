@@ -1,5 +1,3 @@
-use super::Graphics;
-
 #[derive(Debug, Default, PartialEq, Eq)]
 enum Status {
     #[default]
@@ -10,12 +8,20 @@ enum Status {
 
 #[derive(Default)]
 pub struct OamDma {
-    pub dma: u8,
+    dma: u8,
     offset: u8,
     status: Status,
 }
 
 impl OamDma {
+    pub fn read(&self) -> u8 {
+        self.dma
+    }
+
+    pub fn write(&mut self, value: u8) {
+        self.start(value);
+    }
+
     pub fn start(&mut self, value: u8) {
         self.dma = value;
         self.offset = 0x00;
@@ -59,16 +65,6 @@ impl OamDma {
                 Some((source, destination))
             }
         }
-    }
-}
-
-impl Graphics {
-    pub fn read_dma(&self) -> u8 {
-        self.oam_dma.dma
-    }
-
-    pub fn write_dma(&mut self, value: u8) {
-        self.oam_dma.start(value);
     }
 }
 

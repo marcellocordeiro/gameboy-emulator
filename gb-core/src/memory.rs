@@ -7,7 +7,9 @@ use crate::{
     timer::Timer,
 };
 
-use self::{bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, work_ram::WorkRam};
+use self::{
+    bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, speed::Speed, work_ram::WorkRam,
+};
 
 #[derive(Default)]
 pub struct Memory {
@@ -24,6 +26,8 @@ pub struct Memory {
     pub serial: Serial,
     pub timer: Timer,
 
+    pub speed: Speed,
+
     pub interrupts: Interrupts,
 }
 
@@ -34,13 +38,12 @@ impl Memory {
         if cfg!(feature = "cgb") && cartridge.in_cgb_mode() {
             if cartridge.info.cgb_flag == CgbFlag::CgbOnly {
                 todo!("CGB mode not yet implemented.");
-            }
 
-            self.wram.set_cgb_mode(false);
-            self.graphics.set_cgb_mode(false);
-            // TODO: enable this after implementing full CGB support.
-            // self.wram.set_cgb_mode(true);
-            // self.graphics.set_cgb_mode(true);
+                // TODO: enable this after implementing full CGB support.
+                // self.wram.set_cgb_mode(true);
+                // self.graphics.set_cgb_mode(true);
+                // self.speed.set_cgb_mode(true);
+            }
         }
 
         self.cartridge = Some(cartridge);
@@ -56,6 +59,10 @@ impl Memory {
     }
 
     pub fn tick(&mut self) {
+        if self.speed.in_double_speed() {
+            panic!("CGB double speed not yet supported.");
+        }
+
         if let Some((source, destination)) = self.graphics.oam_dma.advance() {
             let value = self.read(source);
             self.graphics.oam.write(destination, value);
@@ -130,12 +137,12 @@ impl Memory {
             0xFF16..=0xFF3F => self.audio.read(address),
             0xFF40..=0xFF4B => self.graphics.read(address),
 
-            0xFF4D => 0xFF, // TODO: (CGB) KEY1: Prepare speed switch.
+            0xFF4D => self.speed.read(), // (CGB) KEY1: Prepare speed switch.
             0xFF4F => self.graphics.vram.read_vbk(), // (CGB) VRAM bank selection.
 
             0xFF50 => self.bootrom.read_status(),
 
-            0xFF51..=0xFF55 => 0xFF, // TODO: (CGB) VRAM DMA.
+            0xFF51..=0xFF55 => self.graphics.vram_dma.read(address), // (CGB) VRAM DMA.
             0xFF68..=0xFF69 => 0xFF, // TODO: (CGB) BG / OBJ Palettes.
 
             0xFF70 => self.wram.read_svbk(), // (CGB) WRAM bank selection.
@@ -197,12 +204,13 @@ impl Memory {
             0xFF16..=0xFF3F => self.audio.write(address, value),
             0xFF40..=0xFF4B => self.graphics.write(address, value),
 
-            0xFF4D => (), // TODO: (CGB) KEY1: Prepare speed switch.
+            0xFF4D => self.speed.write(value), // (CGB) KEY1: Prepare speed switch.
             0xFF4F => self.graphics.vram.write_vbk(value), // (CGB) VRAM bank selection.
 
             0xFF50 => self.bootrom.write_status(value),
 
-            0xFF51..=0xFF55 => (), // TODO: (CGB) VRAM DMA.
+            0xFF51..=0xFF55 => self.graphics.vram_dma.write(address, value), // (CGB) VRAM DMA.
+
             0xFF68..=0xFF69 => (), // TODO: (CGB) BG / OBJ Palettes.
 
             0xFF70 => self.wram.write_svbk(value), // (CGB) WRAM bank selection.
@@ -233,4 +241,5 @@ impl Memory {
 mod bootrom;
 mod high_ram;
 mod interrupts;
+mod speed;
 mod work_ram;
