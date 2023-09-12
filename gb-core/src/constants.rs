@@ -8,7 +8,12 @@ pub const SCREEN_HEIGHT: usize = 144;
 pub type Framebuffer = [u8; SCREEN_WIDTH * SCREEN_HEIGHT];
 pub type Frame = [u8; SCREEN_WIDTH * SCREEN_HEIGHT * std::mem::size_of::<u32>()];
 
+#[cfg(not(feature = "cgb"))]
 pub const TILE_DATA_FRAME_WIDTH: usize = 128;
+
+#[cfg(feature = "cgb")]
+pub const TILE_DATA_FRAME_WIDTH: usize = 128 * 2;
+
 pub const TILE_DATA_FRAME_HEIGHT: usize = 192;
 pub const TILES_PER_LINE: usize = 16;
 pub type TileDataFrame =

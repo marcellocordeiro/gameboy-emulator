@@ -1,6 +1,6 @@
 use self::{
     error::Error as CartridgeError,
-    info::{CartridgeType, CgbFlag, Info},
+    info::{CartridgeType, Info},
     mbc::{Mbc, Mbc1, Mbc2, Mbc3, Mbc30, Mbc5, MbcInterface, NoMbc},
 };
 
@@ -19,10 +19,6 @@ impl Cartridge {
         let mbc = Self::get_mbc(rom, &info)?;
 
         Ok(Self { info, mbc })
-    }
-
-    pub fn in_cgb_mode(&self) -> bool {
-        self.info.cgb_flag != CgbFlag::DmgMode
     }
 
     pub fn read_rom(&self, address: u16) -> u8 {

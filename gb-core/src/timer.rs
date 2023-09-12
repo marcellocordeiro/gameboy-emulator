@@ -57,7 +57,7 @@ impl Timer {
             0xFF06 => self.read_tma(),
             0xFF07 => self.read_tac(),
 
-            _ => unreachable!("[timer.rs] Invalid read: {:#06x}", address),
+            _ => unreachable!("[timer.rs] Invalid read: {address:#06x}"),
         }
     }
 
@@ -68,10 +68,7 @@ impl Timer {
             0xFF06 => self.write_tma(value),
             0xFF07 => self.write_tac(value),
 
-            _ => unreachable!(
-                "[timer.rs] Invalid write: ({:#06x}) = {:#04x}",
-                address, value
-            ),
+            _ => unreachable!("[timer.rs] Invalid write: ({address:#06x}) = {value:#04x}",),
         }
     }
 

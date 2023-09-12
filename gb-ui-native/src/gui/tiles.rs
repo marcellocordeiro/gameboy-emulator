@@ -11,8 +11,8 @@ use gb_core::{
 pub struct Tiles {
     opened: bool,
 
-    pixels_bank0: TileDataFrame,
-    texture_bank0: egui::TextureHandle,
+    pixels_bank: TileDataFrame,
+    texture_bank: egui::TextureHandle,
 }
 
 impl Tiles {
@@ -23,21 +23,21 @@ impl Tiles {
     const FILTER: egui::TextureOptions = egui::TextureOptions::NEAREST;
 
     pub fn new(egui_ctx: &Context) -> Self {
-        let pixels_bank0 = [0; TILE_DATA_FRAME_WIDTH * TILE_DATA_FRAME_HEIGHT * 4];
+        let pixels_bank = [0; TILE_DATA_FRAME_WIDTH * TILE_DATA_FRAME_HEIGHT * 4];
 
-        let texture_bank0 = {
+        let texture_bank = {
             let image = ColorImage::from_rgba_unmultiplied(
                 [TILE_DATA_FRAME_WIDTH, TILE_DATA_FRAME_HEIGHT],
-                &pixels_bank0,
+                &pixels_bank,
             );
 
-            egui_ctx.load_texture("tiles_bank0", image, Self::FILTER)
+            egui_ctx.load_texture("tiles", image, Self::FILTER)
         };
 
         Self {
             opened: false,
-            pixels_bank0,
-            texture_bank0,
+            pixels_bank,
+            texture_bank,
         }
     }
 
@@ -68,7 +68,7 @@ impl Tiles {
                 let screen_width = screen_size.x;
                 let screen_height = screen_size.y;
 
-                let texture_size = self.texture_bank0.size_vec2();
+                let texture_size = self.texture_bank.size_vec2();
                 let texture_width = texture_size.x;
                 let texture_height = texture_size.y;
 
@@ -86,7 +86,7 @@ impl Tiles {
                 };
 
                 ui.centered_and_justified(|ui| {
-                    ui.image(&self.texture_bank0, size);
+                    ui.image(&self.texture_bank, size);
                 });
             });
     }
@@ -97,12 +97,21 @@ impl Tiles {
             .memory
             .graphics
             .vram
-            .draw_tile_data0_into_frame(&mut self.pixels_bank0);
+            .draw_tile_data_0_into_frame(&mut self.pixels_bank);
+
+        #[cfg(feature = "cgb")]
+        gb_ctx
+            .cpu
+            .memory
+            .graphics
+            .vram
+            .draw_tile_data_1_into_frame(&mut self.pixels_bank);
 
         let image = ColorImage::from_rgba_unmultiplied(
             [TILE_DATA_FRAME_WIDTH, TILE_DATA_FRAME_HEIGHT],
-            &self.pixels_bank0,
+            &self.pixels_bank,
         );
-        self.texture_bank0.set(image, Self::FILTER);
+
+        self.texture_bank.set(image, Self::FILTER);
     }
 }

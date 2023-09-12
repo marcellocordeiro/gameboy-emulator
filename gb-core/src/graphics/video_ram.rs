@@ -1,3 +1,5 @@
+use std::ops::RangeInclusive;
+
 use crate::constants::{TileDataFrame, PALETTE, TILES_PER_LINE, TILE_DATA_FRAME_WIDTH};
 
 use super::{lcd_status::StatusMode, Graphics};
@@ -36,23 +38,23 @@ impl VideoRam {
         self.cgb_mode = value;
     }
 
-    pub fn draw_tile_data0_into_frame(&self, frame: &mut TileDataFrame) {
-        const TILE_DATA_START: usize = 0;
-        const TILE_DATA_END: usize = 0x97FF - 0x8000;
+    pub fn draw_tile_data_0_into_frame(&self, frame: &mut TileDataFrame) {
+        const TILE_DATA_0_START: usize = 0;
+        const TILE_DATA_0_END: usize = 0x97FF - 0x8000;
 
-        let tile_data = &self.data[TILE_DATA_START..=TILE_DATA_END];
+        let range = TILE_DATA_0_START..=TILE_DATA_0_END;
 
-        Self::draw_tile_data_into_frame(tile_data, frame);
+        self.draw_tile_data_range_into_frame(range, frame, 0);
     }
 
     #[cfg(feature = "cgb")]
-    pub fn draw_tile_data1_into_frame(&self, frame: &mut TileDataFrame) {
-        const TILE_DATA_START: usize = 0 + VRAM_BANK_SIZE;
-        const TILE_DATA_END: usize = (0x97FF - 0x8000) + VRAM_BANK_SIZE;
+    pub fn draw_tile_data_1_into_frame(&self, frame: &mut TileDataFrame) {
+        const TILE_DATA_1_START: usize = 0 + VRAM_BANK_SIZE;
+        const TILE_DATA_1_END: usize = (0x97FF - 0x8000) + VRAM_BANK_SIZE;
 
-        let tile_data = &self.data[TILE_DATA_START..=TILE_DATA_END];
+        let range = TILE_DATA_1_START..=TILE_DATA_1_END;
 
-        Self::draw_tile_data_into_frame(tile_data, frame);
+        self.draw_tile_data_range_into_frame(range, frame, TILE_DATA_FRAME_WIDTH / 2);
     }
 
     pub fn read(&self, address: u16) -> u8 {
@@ -81,10 +83,15 @@ impl VideoRam {
         VRAM_BANK_SIZE * (self.vbk as usize)
     }
 
-    fn draw_tile_data_into_frame(tile_data: &[u8], frame: &mut TileDataFrame) {
+    fn draw_tile_data_range_into_frame(
+        &self,
+        range: RangeInclusive<usize>,
+        frame: &mut TileDataFrame,
+        frame_column_offset: usize,
+    ) {
         const TILE_SIZE: usize = 16;
 
-        let tile_data_chunks = tile_data.chunks_exact(TILE_SIZE);
+        let tile_data_chunks = self.data[range].chunks_exact(TILE_SIZE);
 
         for (tile_index, tile) in tile_data_chunks.into_iter().enumerate() {
             let tile_base_x = (tile_index % TILES_PER_LINE) * 8;
@@ -108,7 +115,8 @@ impl VideoRam {
 
                     let mapped_x = tile_base_x + bit;
                     let mapped_y = tile_base_y + byte_line;
-                    let mapped_address = (mapped_y * TILE_DATA_FRAME_WIDTH) + mapped_x;
+                    let mapped_address =
+                        (mapped_y * TILE_DATA_FRAME_WIDTH) + mapped_x + frame_column_offset;
 
                     frame[mapped_address * 4] = PALETTE[pixel as usize];
                     frame[(mapped_address * 4) + 1] = PALETTE[pixel as usize];

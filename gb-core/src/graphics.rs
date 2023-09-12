@@ -108,7 +108,7 @@ impl Graphics {
             0xFF4B => self.wx,
 
             _ => {
-                unreachable!("[video.rs] Read out of bounds: {:#06x}", address);
+                unreachable!("[video.rs] Read out of bounds: {address:#06x}");
             }
         }
     }
@@ -129,10 +129,7 @@ impl Graphics {
             0xFF4B => self.wx = value,
 
             _ => {
-                unreachable!(
-                    "[video.rs] Write out of bounds: ({:#06x}) = {:#04x}",
-                    address, value
-                );
+                unreachable!("[video.rs] Write out of bounds: ({address:#06x}) = {value:#04x}");
             }
         }
     }

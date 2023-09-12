@@ -14,12 +14,12 @@ impl VramDma {
             0xFF53 => 0xFF,
 
             // HDMA4 (destination low)
-            0xFF43 => 0xFF,
+            0xFF54 => 0xFF,
 
             // HDMA5 (length/mode/start)
-            0xFF44 => 0xFF,
+            0xFF55 => 0xFF,
 
-            _ => unreachable!("[vram_dma.rs] Read out of bounds: {:#06x}", address),
+            _ => unreachable!("[vram_dma.rs] Read out of bounds: {address:#06x}"),
         }
     }
 
@@ -35,15 +35,12 @@ impl VramDma {
             0xFF53 => (),
 
             // HDMA4 (destination low)
-            0xFF43 => (),
+            0xFF54 => (),
 
             // HDMA5 (length/mode/start)
-            0xFF44 => (),
+            0xFF55 => (),
 
-            _ => unreachable!(
-                "[vram_dma.rs] Write out of bounds: ({:#06x}) = {:#04x}",
-                address, value
-            ),
+            _ => unreachable!("[vram_dma.rs] Write out of bounds: ({address:#06x}) = {value:#04x}"),
         }
     }
 }

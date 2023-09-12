@@ -52,7 +52,7 @@ impl WorkRam {
             0xE000..=0xEFFF => self.data[address as usize - 0xE000],
             0xF000..=0xFDFF => self.data[address as usize - 0xE000 + self.bank_offset()], // Bank selection in CGB mode only.
 
-            _ => unreachable!("[work_ram.rs] Read out of bounds: {:#06x}", address),
+            _ => unreachable!("[work_ram.rs] Read out of bounds: {address:#06x}"),
         }
     }
 
@@ -65,10 +65,7 @@ impl WorkRam {
             0xE000..=0xEFFF => self.data[address as usize - 0xE000] = value,
             0xF000..=0xFDFF => self.data[address as usize - 0xE000 + self.bank_offset()] = value, // Bank selection in CGB mode only.
 
-            _ => unreachable!(
-                "[work_ram.rs] Write out of bounds: ({:#06x}) = {:#04x}",
-                address, value
-            ),
+            _ => unreachable!("[work_ram.rs] Write out of bounds: ({address:#06x}) = {value:#04x}"),
         }
     }
 

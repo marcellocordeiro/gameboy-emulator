@@ -1,3 +1,5 @@
+use log::info;
+
 use crate::{
     audio::Audio,
     cartridge::{error::Error as CartridgeError, info::CgbFlag, Cartridge},
@@ -35,20 +37,23 @@ impl Memory {
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         let cartridge = Cartridge::new(rom)?;
 
-        if cfg!(feature = "cgb") && cartridge.in_cgb_mode() {
-            if cartridge.info.cgb_flag == CgbFlag::CgbOnly {
-                todo!("CGB mode not yet implemented.");
-
-                // TODO: enable this after implementing full CGB support.
-                // self.wram.set_cgb_mode(true);
-                // self.graphics.set_cgb_mode(true);
-                // self.speed.set_cgb_mode(true);
-            }
+        if cfg!(feature = "cgb")
+            && (cfg!(feature = "bootrom") || cartridge.info.cgb_flag == CgbFlag::CgbOnly)
+        {
+            self.set_cgb_mode(true);
         }
 
         self.cartridge = Some(cartridge);
 
         Ok(())
+    }
+
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        info!("{} CGB mode.", if value { "Enabling" } else { "Disabling" });
+
+        self.wram.set_cgb_mode(value);
+        self.graphics.set_cgb_mode(value);
+        self.speed.set_cgb_mode(value);
     }
 
     pub fn skip_bootrom(&mut self) {
@@ -137,7 +142,8 @@ impl Memory {
             0xFF16..=0xFF3F => self.audio.read(address),
             0xFF40..=0xFF4B => self.graphics.read(address),
 
-            0xFF4D => self.speed.read(), // (CGB) KEY1: Prepare speed switch.
+            0xFF4C => 0xFF,                          // (CGB) KEY0: CGB mode.
+            0xFF4D => self.speed.read(),             // (CGB) KEY1: Prepare speed switch.
             0xFF4F => self.graphics.vram.read_vbk(), // (CGB) VRAM bank selection.
 
             0xFF50 => self.bootrom.read_status(),
@@ -160,7 +166,6 @@ impl Memory {
             0xFF0D => 0xFF,          // Unused.
             0xFF0E => 0xFF,          // Unused.
             0xFF15 => 0xFF,          // Unused.
-            0xFF4C => 0xFF,          // Unused.
             0xFF4E => 0xFF,          // Unused.
             0xFF56 => 0xFF,          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => 0xFF, // Unused.
@@ -204,6 +209,7 @@ impl Memory {
             0xFF16..=0xFF3F => self.audio.write(address, value),
             0xFF40..=0xFF4B => self.graphics.write(address, value),
 
+            0xFF4C => self.set_cgb_mode(CgbFlag::from(value) == CgbFlag::CgbOnly), // (CGB) KEY0: CGB mode.
             0xFF4D => self.speed.write(value), // (CGB) KEY1: Prepare speed switch.
             0xFF4F => self.graphics.vram.write_vbk(value), // (CGB) VRAM bank selection.
 
@@ -228,7 +234,6 @@ impl Memory {
             0xFF0D => (),          // Unused.
             0xFF0E => (),          // Unused.
             0xFF15 => (),          // Unused.
-            0xFF4C => (),          // Unused.
             0xFF4E => (),          // Unused.
             0xFF56 => (),          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => (), // Unused.

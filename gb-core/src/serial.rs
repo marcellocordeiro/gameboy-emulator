@@ -30,10 +30,7 @@ impl Serial {
                 }
             }
 
-            _ => unreachable!(
-                "[serial.rs] Invalid write: ({:#06x}) = {:#04x}",
-                address, value
-            ),
+            _ => unreachable!("[serial.rs] Invalid write: ({address:#06x}) = {value:#04x}",),
         }
     }
 }
