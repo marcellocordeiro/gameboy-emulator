@@ -20,6 +20,12 @@ impl From<u8> for CgbFlag {
     }
 }
 
+impl CgbFlag {
+    pub fn has_cgb_support(&self) -> bool {
+        *self != CgbFlag::DmgMode
+    }
+}
+
 impl std::fmt::Display for CgbFlag {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use CgbFlag::*;

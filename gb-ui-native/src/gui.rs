@@ -3,12 +3,14 @@ use egui::{menu, Context, TopBottomPanel};
 use gb_core::GameBoy;
 
 use self::{
-    control::Control, file_loader::FileLoader, screen_area::ScreenArea, state::State, tiles::Tiles,
+    control::Control, file_loader::FileLoader, palettes::Palettes, screen_area::ScreenArea,
+    state::State, tiles::Tiles,
 };
 
 pub struct Gui {
     pub control: Control,
     pub file_loader: FileLoader,
+    pub palettes: Palettes,
     pub state: State,
     pub tiles: Tiles,
     pub screen_area: ScreenArea,
@@ -19,6 +21,7 @@ impl Gui {
         Self {
             control: Control::default(),
             file_loader: FileLoader,
+            palettes: Palettes::default(),
             state: State::default(),
             tiles: Tiles::new(egui_ctx),
             screen_area: ScreenArea::new(egui_ctx),
@@ -45,12 +48,14 @@ impl Gui {
                 self.control.draw_widget_toggle_button(ui);
                 self.state.draw_widget_toggle_button(ui);
                 self.tiles.draw_widget_toggle_button(ui);
+                self.palettes.draw_widget_toggle_button(ui);
             });
         });
 
         self.control.draw(egui_ctx, gb_ctx);
         self.state.draw(egui_ctx, gb_ctx);
         self.tiles.draw(egui_ctx, gb_ctx);
+        self.palettes.draw(egui_ctx, gb_ctx);
     }
 
     fn render_screen_area(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
@@ -60,6 +65,7 @@ impl Gui {
 
 mod control;
 mod file_loader;
+mod palettes;
 mod screen_area;
 mod state;
 mod tiles;

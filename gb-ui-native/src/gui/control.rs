@@ -33,6 +33,10 @@ impl Control {
     }
 
     pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
+        if !self.opened {
+            return;
+        }
+
         Window::new("Control")
             .open(&mut self.opened)
             .show(egui_ctx, |ui| {

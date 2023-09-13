@@ -10,7 +10,8 @@ use crate::{
 };
 
 use self::{
-    bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, speed::Speed, work_ram::WorkRam,
+    bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, speed_switch::SpeedSwitch,
+    work_ram::WorkRam,
 };
 
 #[derive(Default)]
@@ -28,7 +29,7 @@ pub struct Memory {
     pub serial: Serial,
     pub timer: Timer,
 
-    pub speed: Speed,
+    pub speed_switch: SpeedSwitch,
 
     pub interrupts: Interrupts,
 }
@@ -38,7 +39,7 @@ impl Memory {
         let cartridge = Cartridge::new(rom)?;
 
         if cfg!(feature = "cgb")
-            && (cfg!(feature = "bootrom") || cartridge.info.cgb_flag == CgbFlag::CgbOnly)
+            && (cfg!(feature = "bootrom") || cartridge.info.cgb_flag.has_cgb_support())
         {
             self.set_cgb_mode(true);
         }
@@ -53,7 +54,7 @@ impl Memory {
 
         self.wram.set_cgb_mode(value);
         self.graphics.set_cgb_mode(value);
-        self.speed.set_cgb_mode(value);
+        self.speed_switch.set_cgb_mode(value);
     }
 
     pub fn skip_bootrom(&mut self) {
@@ -64,7 +65,7 @@ impl Memory {
     }
 
     pub fn tick(&mut self) {
-        if self.speed.in_double_speed() {
+        if self.speed_switch.in_double_speed() {
             panic!("CGB double speed not yet supported.");
         }
 
@@ -143,13 +144,13 @@ impl Memory {
             0xFF40..=0xFF4B => self.graphics.read(address),
 
             0xFF4C => 0xFF,                          // (CGB) KEY0: CGB mode.
-            0xFF4D => self.speed.read(),             // (CGB) KEY1: Prepare speed switch.
+            0xFF4D => self.speed_switch.read(),      // (CGB) KEY1: Prepare speed switch.
             0xFF4F => self.graphics.vram.read_vbk(), // (CGB) VRAM bank selection.
 
             0xFF50 => self.bootrom.read_status(),
 
             0xFF51..=0xFF55 => self.graphics.vram_dma.read(address), // (CGB) VRAM DMA.
-            0xFF68..=0xFF69 => 0xFF, // TODO: (CGB) BG / OBJ Palettes.
+            0xFF68..=0xFF6B => self.graphics.read(address),          // (CGB) BG / OBJ Palettes.
 
             0xFF70 => self.wram.read_svbk(), // (CGB) WRAM bank selection.
 
@@ -169,7 +170,7 @@ impl Memory {
             0xFF4E => 0xFF,          // Unused.
             0xFF56 => 0xFF,          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => 0xFF, // Unused.
-            0xFF6A..=0xFF6F => 0xFF, // Unused.
+            0xFF6C..=0xFF6F => 0xFF, // Unused.
             0xFF71..=0xFF7F => 0xFF, // Unused.
         }
     }
@@ -209,15 +210,14 @@ impl Memory {
             0xFF16..=0xFF3F => self.audio.write(address, value),
             0xFF40..=0xFF4B => self.graphics.write(address, value),
 
-            0xFF4C => self.set_cgb_mode(CgbFlag::from(value) == CgbFlag::CgbOnly), // (CGB) KEY0: CGB mode.
-            0xFF4D => self.speed.write(value), // (CGB) KEY1: Prepare speed switch.
+            0xFF4C => self.set_cgb_mode(CgbFlag::from(value).has_cgb_support()), // (CGB) KEY0: CGB mode.
+            0xFF4D => self.speed_switch.write(value), // (CGB) KEY1: Prepare speed switch.
             0xFF4F => self.graphics.vram.write_vbk(value), // (CGB) VRAM bank selection.
 
             0xFF50 => self.bootrom.write_status(value),
 
             0xFF51..=0xFF55 => self.graphics.vram_dma.write(address, value), // (CGB) VRAM DMA.
-
-            0xFF68..=0xFF69 => (), // TODO: (CGB) BG / OBJ Palettes.
+            0xFF68..=0xFF6B => self.graphics.write(address, value), // (CGB) BG / OBJ Palettes.
 
             0xFF70 => self.wram.write_svbk(value), // (CGB) WRAM bank selection.
 
@@ -237,7 +237,7 @@ impl Memory {
             0xFF4E => (),          // Unused.
             0xFF56 => (),          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => (), // Unused.
-            0xFF6A..=0xFF6F => (), // Unused.
+            0xFF6C..=0xFF6F => (), // Unused.
             0xFF71..=0xFF7F => (), // Unused.
         }
     }
@@ -246,5 +246,5 @@ impl Memory {
 mod bootrom;
 mod high_ram;
 mod interrupts;
-mod speed;
+mod speed_switch;
 mod work_ram;

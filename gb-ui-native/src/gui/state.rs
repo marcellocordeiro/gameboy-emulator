@@ -19,6 +19,10 @@ impl State {
     }
 
     pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
+        if !self.opened {
+            return;
+        }
+
         Window::new("State")
             .open(&mut self.opened)
             .show(egui_ctx, |ui| {

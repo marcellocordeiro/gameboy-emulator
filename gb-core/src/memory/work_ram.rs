@@ -39,7 +39,6 @@ impl WorkRam {
     // 0xE000 ~ 0xFDFF: ECHO RAM (prohibited area, but mirrors 0xC000 ~ 0xDDFF).
 
     pub fn set_cgb_mode(&mut self, value: bool) {
-        self.svbk = 0;
         self.cgb_mode = value;
     }
 
@@ -70,17 +69,19 @@ impl WorkRam {
     }
 
     pub fn read_svbk(&self) -> u8 {
-        if cfg!(feature = "cgb") && self.cgb_mode {
-            0b1111_1000 | self.svbk
-        } else {
-            0xFF
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return 0xFF;
         }
+
+        0b1111_1000 | self.svbk
     }
 
     pub fn write_svbk(&mut self, value: u8) {
-        if cfg!(feature = "cgb") && self.cgb_mode {
-            self.svbk = value & 0b111;
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return;
         }
+
+        self.svbk = value & 0b111;
     }
 
     fn bank_offset(&self) -> usize {

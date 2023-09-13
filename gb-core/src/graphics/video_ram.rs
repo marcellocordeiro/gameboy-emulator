@@ -34,7 +34,6 @@ impl VideoRam {
     // 0x8000 ~ 0x9FFF
 
     pub fn set_cgb_mode(&mut self, value: bool) {
-        self.vbk = 0;
         self.cgb_mode = value;
     }
 
@@ -66,17 +65,19 @@ impl VideoRam {
     }
 
     pub fn read_vbk(&self) -> u8 {
-        if cfg!(feature = "cgb") && self.cgb_mode {
-            0b1111_1110 | self.vbk
-        } else {
-            0xFF
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return 0xFF;
         }
+
+        0b1111_1110 | self.vbk
     }
 
     pub fn write_vbk(&mut self, value: u8) {
-        if cfg!(feature = "cgb") && self.cgb_mode {
-            self.vbk = value & 0b1;
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return;
         }
+
+        self.vbk = value & 0b1;
     }
 
     fn bank_offset(&self) -> usize {

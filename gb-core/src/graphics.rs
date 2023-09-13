@@ -25,6 +25,12 @@ pub struct Graphics {
     wx: u8,
     window_internal_counter: u8,
 
+    bcps: u8,                 // (CGB) Background color palette specification
+    bg_palette_ram: [u8; 64], // (CGB) Accessed through background color palette data (BCPD)
+
+    ocps: u8,                  // (CGB) Object color palette specification
+    obj_palette_ram: [u8; 64], // (CGB) Accessed through object color palette data (OCPD)
+
     pub stat_irq: bool,
     pub vblank_irq: bool,
 
@@ -38,6 +44,8 @@ pub struct Graphics {
     cycles: u32,
 
     framebuffer: Framebuffer,
+
+    cgb_mode: bool,
 }
 
 impl Default for Graphics {
@@ -56,6 +64,12 @@ impl Default for Graphics {
             wx: 0,
             window_internal_counter: 0,
 
+            bcps: 0,
+            bg_palette_ram: [0; 64],
+
+            ocps: 0,
+            obj_palette_ram: [0; 64],
+
             stat_irq: false,
             vblank_irq: false,
 
@@ -69,12 +83,15 @@ impl Default for Graphics {
             cycles: 0,
 
             framebuffer: [0; SCREEN_WIDTH * SCREEN_HEIGHT],
+
+            cgb_mode: false,
         }
     }
 }
 
 impl Graphics {
     pub fn set_cgb_mode(&mut self, value: bool) {
+        self.cgb_mode = value;
         self.vram.set_cgb_mode(value);
     }
 
@@ -107,6 +124,11 @@ impl Graphics {
             0xFF4A => self.wy,
             0xFF4B => self.wx,
 
+            0xFF68 => self.read_bcps(),
+            0xFF69 => self.read_bcpd(),
+            0xFF6A => self.read_ocps(),
+            0xFF6B => self.read_ocpd(),
+
             _ => {
                 unreachable!("[video.rs] Read out of bounds: {address:#06x}");
             }
@@ -128,9 +150,110 @@ impl Graphics {
             0xFF4A => self.wy = value,
             0xFF4B => self.wx = value,
 
+            0xFF68 => self.write_bcps(value),
+            0xFF69 => self.write_bcpd(value),
+            0xFF6A => self.write_ocps(value),
+            0xFF6B => self.write_ocpd(value),
+
             _ => {
                 unreachable!("[video.rs] Write out of bounds: ({address:#06x}) = {value:#04x}");
             }
+        }
+    }
+
+    fn read_bcps(&self) -> u8 {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return 0xFF;
+        }
+
+        0b0100_0000 | self.bcps
+    }
+
+    fn write_bcps(&mut self, value: u8) {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return;
+        }
+
+        self.bcps = value & 0b1011_1111;
+    }
+
+    fn read_bcpd(&self) -> u8 {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return 0xFF;
+        }
+
+        if self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing {
+            return 0xFF;
+        }
+
+        let address = self.bcps & 0b0011_1111;
+
+        self.bg_palette_ram[address as usize]
+    }
+
+    fn write_bcpd(&mut self, value: u8) {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return;
+        }
+
+        let increment_address = self.bcps & 0b1000_0000 != 0;
+        let address = self.bcps & 0b0011_1111;
+
+        if !(self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing) {
+            self.bg_palette_ram[address as usize] = value;
+        }
+
+        if increment_address {
+            self.bcps &= 0b1000_0000;
+            self.bcps |= (address + 1) & 0b0011_1111;
+        }
+    }
+
+    fn read_ocps(&self) -> u8 {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return 0xFF;
+        }
+
+        0b0100_0000 | self.ocps
+    }
+
+    fn write_ocps(&mut self, value: u8) {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return;
+        }
+
+        self.ocps = value & 0b1011_1111;
+    }
+
+    fn read_ocpd(&self) -> u8 {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return 0xFF;
+        }
+
+        if self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing {
+            return 0xFF;
+        }
+
+        let address = self.ocps & 0b0011_1111;
+
+        self.obj_palette_ram[address as usize]
+    }
+
+    fn write_ocpd(&mut self, value: u8) {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return;
+        }
+
+        let increment_address = self.ocps & 0b1000_0000 != 0;
+        let address = self.ocps & 0b0011_1111;
+
+        if !(self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing) {
+            self.obj_palette_ram[address as usize] = value;
+        }
+
+        if increment_address {
+            self.ocps &= 0b1000_0000;
+            self.ocps |= (address + 1) & 0b0011_1111;
         }
     }
 
@@ -450,6 +573,7 @@ fn apply_palette(palette: u8, color_id: u8) -> u8 {
     }
 }
 
+mod debug_getters;
 mod lcd_control;
 mod lcd_status;
 mod oam;

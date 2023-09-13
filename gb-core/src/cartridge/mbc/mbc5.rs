@@ -78,6 +78,8 @@ impl MbcInterface for Mbc5 {
 
             0x4000..=0x5FFF => self.ram_bank = value & 0b1111,
 
+            0x6000..=0x7FFF => (),
+
             _ => unreachable!(
                 "[mbc5.rs] Invalid write: ({:#06x}) = {:#04x}",
                 address, value

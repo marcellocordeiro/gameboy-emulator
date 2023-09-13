@@ -14,7 +14,7 @@ impl Cpu {
 
         // TODO?
 
-        self.memory.speed.process_speed_switch();
+        self.memory.speed_switch.process_speed_switch();
     }
 
     pub(super) fn opcode_0x76(&mut self) {
