@@ -1,23 +1,15 @@
 use bitflags::bitflags;
 
 bitflags! {
-    #[derive(Default, Clone, Copy)]
+    #[derive(Default, Clone, Copy, PartialEq, Eq)]
     pub struct InterruptBits: u8 {
-        const JOYPAD   = 1 << 4;
-        const SERIAL   = 1 << 3;
-        const TIMER    = 1 << 2;
+        const VBLANK = 1 << 0;
         const LCD_STAT = 1 << 1;
-        const VBLANK   = 1 << 0;
+        const TIMER = 1 << 2;
+        const SERIAL = 1 << 3;
+        const JOYPAD = 1 << 4;
     }
 }
-
-const INTERRUPT_PRIORITY: [InterruptBits; 5] = [
-    InterruptBits::VBLANK,
-    InterruptBits::LCD_STAT,
-    InterruptBits::TIMER,
-    InterruptBits::SERIAL,
-    InterruptBits::JOYPAD,
-];
 
 #[derive(Default)]
 pub struct Interrupts {
@@ -30,28 +22,35 @@ impl Interrupts {
         self.flags = InterruptBits::from_bits_truncate(0xE1);
     }
 
-    pub fn get_queued_irq(&self) -> Option<(InterruptBits, usize)> {
-        if self.enable.is_empty() || self.flags.is_empty() {
+    pub fn get_queued_irq(&self) -> Option<InterruptBits> {
+        let intersection = self.enable & self.flags;
+
+        if intersection.is_empty() {
             return None;
         }
 
-        let intersection = self.enable & self.flags;
+        let bits = intersection.bits();
+        let result = ((bits as i8) & -(bits as i8)) as u8;
 
-        for (index, interrupt) in INTERRUPT_PRIORITY.iter().enumerate() {
-            if intersection.contains(*interrupt) {
-                return Some((*interrupt, index));
-            }
-        }
+        let interrupt = InterruptBits::from_bits_truncate(result);
 
-        None
+        Some(interrupt)
     }
 
     pub fn take_queued_irq(&mut self) -> Option<u16> {
-        let (interrupt, index) = self.get_queued_irq()?;
+        let interrupt = self.get_queued_irq()?;
 
         self.flags.remove(interrupt);
 
-        let address = (0x40 + 0x08 * index) as u16;
+        let address = match interrupt {
+            InterruptBits::VBLANK => 0x0040,
+            InterruptBits::LCD_STAT => 0x0048,
+            InterruptBits::TIMER => 0x0050,
+            InterruptBits::SERIAL => 0x0058,
+            InterruptBits::JOYPAD => 0x0060,
+
+            _ => 0x0000,
+        };
 
         Some(address)
     }
