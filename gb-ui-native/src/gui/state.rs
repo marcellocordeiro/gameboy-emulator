@@ -1,5 +1,5 @@
 use eframe::egui;
-use egui::{Context, FontId, RichText, Window};
+use egui::{Context, FontId, RichText, Ui, Window};
 use gb_core::GameBoy;
 
 #[derive(Debug, Default)]
@@ -12,7 +12,7 @@ impl State {
         self.opened = !self.opened;
     }
 
-    pub fn draw_widget_toggle_button(&mut self, ui: &mut egui::Ui) {
+    pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
         if ui.button("Toggle state").clicked() {
             self.toggle();
         }

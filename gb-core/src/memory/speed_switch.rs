@@ -50,6 +50,8 @@ mod tests {
         let mut speed_switch = SpeedSwitch::default();
 
         if cfg!(feature = "cgb") {
+            speed_switch.set_cgb_mode(true);
+
             assert_eq!(speed_switch.read(), 0b0111_1110);
 
             speed_switch.write(0xFF);

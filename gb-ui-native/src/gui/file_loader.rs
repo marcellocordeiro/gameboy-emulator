@@ -1,11 +1,12 @@
 use eframe::egui;
+use egui::Ui;
 use gb_core::GameBoy;
 
 #[derive(Debug)]
 pub struct FileLoader;
 
 impl FileLoader {
-    pub fn draw_button(&mut self, ui: &mut egui::Ui, gb_ctx: &mut GameBoy) {
+    pub fn draw_button(&mut self, ui: &mut Ui, gb_ctx: &mut GameBoy) {
         if ui.button("Load...").clicked() {
             let builder = rfd::FileDialog::new().add_filter("", &["gb", "gbc"]);
 

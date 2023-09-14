@@ -1,6 +1,7 @@
-use crate::constants::{Frame, Framebuffer, PALETTE, SCREEN_HEIGHT, SCREEN_WIDTH};
+use crate::constants::{Frame, Framebuffer, SCREEN_HEIGHT, SCREEN_WIDTH};
 
 use self::{
+    color::Color,
     lcd_control::LcdControl,
     lcd_status::{LcdStatus, StatusMode},
     oam::Oam,
@@ -82,7 +83,7 @@ impl Default for Graphics {
             mode: StatusMode::OamScan,
             cycles: 0,
 
-            framebuffer: [0; SCREEN_WIDTH * SCREEN_HEIGHT],
+            framebuffer: [Color::default(); SCREEN_WIDTH * SCREEN_HEIGHT],
 
             cgb_mode: false,
         }
@@ -102,10 +103,10 @@ impl Graphics {
 
     pub fn draw_into_frame(&self, frame: &mut Frame) {
         for (i, pixel) in self.framebuffer.iter().enumerate() {
-            frame[i * 4] = PALETTE[*pixel as usize];
-            frame[(i * 4) + 1] = PALETTE[*pixel as usize];
-            frame[(i * 4) + 2] = PALETTE[*pixel as usize];
-            frame[(i * 4) + 3] = 0xFF;
+            frame[i * 4] = pixel.red;
+            frame[(i * 4) + 1] = pixel.green;
+            frame[(i * 4) + 2] = pixel.blue;
+            frame[(i * 4) + 3] = pixel.alpha;
         }
     }
 
@@ -431,7 +432,7 @@ impl Graphics {
                 };
 
                 bg_priority[i as usize] = color_id != 0;
-                line_pixels[i as usize] = apply_palette(self.bgp, color_id);
+                line_pixels[i as usize] = Color::from_dmg_color_id_with_palette(color_id, self.bgp);
             }
         }
 
@@ -492,7 +493,7 @@ impl Graphics {
                 };
 
                 bg_priority[i as usize] = color_id != 0;
-                line_pixels[i as usize] = apply_palette(self.bgp, color_id);
+                line_pixels[i as usize] = Color::from_dmg_color_id_with_palette(color_id, self.bgp);
             }
         }
 
@@ -552,7 +553,8 @@ impl Graphics {
 
                     if mapped_x < SCREEN_WIDTH && color_id != 0 {
                         if !sprite.flags.contains(SpriteFlags::PRIORITY) || !bg_priority[mapped_x] {
-                            line_pixels[mapped_x] = apply_palette(palette, color_id);
+                            line_pixels[mapped_x] =
+                                Color::from_dmg_color_id_with_palette(color_id, palette);
                         }
                     }
                 }
@@ -561,18 +563,7 @@ impl Graphics {
     }
 }
 
-#[allow(clippy::identity_op)]
-fn apply_palette(palette: u8, color_id: u8) -> u8 {
-    match color_id & 0b11 {
-        0 => (palette >> 0) & 0b11,
-        1 => (palette >> 2) & 0b11,
-        2 => (palette >> 4) & 0b11,
-        3 => (palette >> 6) & 0b11,
-
-        _ => unreachable!(),
-    }
-}
-
+pub mod color;
 mod debug_getters;
 mod lcd_control;
 mod lcd_status;

@@ -9,28 +9,19 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(cc: &eframe::CreationContext, rom_path: Option<&String>) -> Self {
-        let mut gb = GameBoy::new();
-
-        if let Some(path) = rom_path {
-            let rom = std::fs::read(path).unwrap();
-            gb.load_cartridge(rom).unwrap();
-        }
-
-        cc.egui_ctx.set_pixels_per_point(1.0);
-
+    pub fn new(cc: &eframe::CreationContext, gb: GameBoy) -> Self {
         Self {
             gb,
             gui: Gui::new(&cc.egui_ctx),
         }
     }
 
-    fn handle_input(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        ctx.input(|i| {
+    fn handle_input(&mut self, eframe_frame: &mut eframe::Frame, egui_ctx: &egui::Context) {
+        egui_ctx.input(|i| {
             use egui::Key;
 
             if i.key_pressed(Key::Escape) {
-                frame.close();
+                eframe_frame.close();
             }
 
             for button in Button::to_array() {
@@ -47,16 +38,16 @@ impl App {
 }
 
 impl eframe::App for App {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        ctx.set_pixels_per_point(1.0);
+    fn update(&mut self, egui_ctx: &egui::Context, eframe_frame: &mut eframe::Frame) {
+        egui_ctx.set_pixels_per_point(1.0);
 
         if !self.gui.control.manual_control && self.gb.cpu.memory.cartridge.is_some() {
             self.gb.run_frame();
-            ctx.request_repaint();
+            egui_ctx.request_repaint();
         }
 
-        self.handle_input(ctx, frame);
+        self.handle_input(eframe_frame, egui_ctx);
 
-        self.gui.render(frame, ctx, &mut self.gb);
+        self.gui.render(eframe_frame, egui_ctx, &mut self.gb);
     }
 }

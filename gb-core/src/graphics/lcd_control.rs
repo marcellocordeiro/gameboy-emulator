@@ -1,6 +1,6 @@
 use bitflags::bitflags;
 
-use super::{lcd_status::StatusMode, Graphics};
+use super::{color::Color, lcd_status::StatusMode, Graphics};
 
 bitflags!(
     /// FF40 — LCDC: LCD control
@@ -111,7 +111,7 @@ impl Graphics {
             self.mode = StatusMode::OamScan;
             self.cycles = 0;
             self.ly = 0;
-            self.framebuffer.fill(0);
+            self.framebuffer.fill(Color::default());
         }
 
         self.lcdc = new_lcdc;

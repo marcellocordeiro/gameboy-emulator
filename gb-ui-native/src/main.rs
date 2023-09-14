@@ -17,6 +17,10 @@
 )]
 
 use app::App;
+use gb_core::{
+    constants::{SCREEN_HEIGHT, SCREEN_WIDTH},
+    GameBoy,
+};
 
 fn main() -> Result<(), eframe::Error> {
     env_logger::init();
@@ -25,12 +29,18 @@ fn main() -> Result<(), eframe::Error> {
         .arg(clap::Arg::new("rom"))
         .get_matches();
 
-    let rom_path = matches.get_one::<String>("rom").cloned();
+    let rom_path = matches.get_one::<String>("rom");
 
-    let initial_window_size = eframe::egui::vec2(
-        gb_core::constants::SCREEN_WIDTH as f32 * 5.0,
-        gb_core::constants::SCREEN_HEIGHT as f32 * 5.0,
-    );
+    let mut gb = GameBoy::new();
+
+    // Maybe let the UI handle the errors?
+    if let Some(path) = rom_path {
+        let rom = std::fs::read(path).unwrap();
+        gb.load_cartridge(rom).unwrap();
+    }
+
+    let initial_window_size =
+        eframe::egui::vec2(SCREEN_WIDTH as f32 * 5.0, SCREEN_HEIGHT as f32 * 5.0);
 
     let native_options = eframe::NativeOptions {
         initial_window_size: Some(initial_window_size),
@@ -40,7 +50,7 @@ fn main() -> Result<(), eframe::Error> {
     eframe::run_native(
         "gameboy-emulator",
         native_options,
-        Box::new(move |cc| Box::new(App::new(cc, rom_path.as_ref()))),
+        Box::new(move |cc| Box::new(App::new(cc, gb))),
     )
 }
 

@@ -1,5 +1,5 @@
 use eframe::egui;
-use egui::{Button, Context, Window};
+use egui::{Button, Context, Ui, Window};
 use gb_core::GameBoy;
 
 #[derive(Debug, Default)]
@@ -14,7 +14,7 @@ impl Control {
         self.opened = !self.opened;
     }
 
-    pub fn draw_manual_control_button(&mut self, ui: &mut egui::Ui) {
+    pub fn draw_manual_control_button(&mut self, ui: &mut Ui) {
         let text = if self.manual_control {
             "Manual"
         } else {
@@ -26,7 +26,7 @@ impl Control {
         }
     }
 
-    pub fn draw_widget_toggle_button(&mut self, ui: &mut egui::Ui) {
+    pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
         if ui.button("Toggle control").clicked() {
             self.toggle();
         }

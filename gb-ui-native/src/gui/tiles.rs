@@ -1,10 +1,12 @@
 use eframe::egui;
 use egui::{
-    epaint::{ColorImage, Vec2},
-    Context, Window,
+    epaint::{ColorImage, TextureHandle, Vec2},
+    Context, TextureOptions, Ui, Window,
 };
 use gb_core::{
-    constants::{TileDataFrame, TILE_DATA_FRAME_HEIGHT, TILE_DATA_FRAME_WIDTH},
+    constants::{
+        TileDataFrame, TILE_DATA_FRAME_HEIGHT, TILE_DATA_FRAME_SIZE, TILE_DATA_FRAME_WIDTH,
+    },
     GameBoy,
 };
 
@@ -12,7 +14,7 @@ pub struct Tiles {
     opened: bool,
 
     pixels_bank: TileDataFrame,
-    texture_bank: egui::TextureHandle,
+    texture_bank: TextureHandle,
 }
 
 impl Tiles {
@@ -20,10 +22,10 @@ impl Tiles {
         x: TILE_DATA_FRAME_WIDTH as f32 * 2.0,
         y: TILE_DATA_FRAME_HEIGHT as f32 * 2.05, // TODO: don't rely on this.
     };
-    const FILTER: egui::TextureOptions = egui::TextureOptions::NEAREST;
+    const FILTER: TextureOptions = TextureOptions::NEAREST;
 
     pub fn new(egui_ctx: &Context) -> Self {
-        let pixels_bank = [0; TILE_DATA_FRAME_WIDTH * TILE_DATA_FRAME_HEIGHT * 4];
+        let pixels_bank = [0; TILE_DATA_FRAME_SIZE];
 
         let texture_bank = {
             let image = ColorImage::from_rgba_unmultiplied(
@@ -45,7 +47,7 @@ impl Tiles {
         self.opened = !self.opened;
     }
 
-    pub fn draw_widget_toggle_button(&mut self, ui: &mut egui::Ui) {
+    pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
         if ui.button("Toggle tiles").clicked() {
             self.toggle();
         }

@@ -1,6 +1,8 @@
-use eframe::{egui, epaint::Color32};
-use egui::{Context, Window};
-use gb_core::GameBoy;
+use eframe::egui;
+use egui::{epaint::Color32, Context, Ui, Window};
+use gb_core::{graphics::color::Color, GameBoy};
+
+use super::components::color_rect::color_rect;
 
 #[derive(Debug, Default)]
 pub struct Palettes {
@@ -12,7 +14,7 @@ impl Palettes {
         self.opened = !self.opened;
     }
 
-    pub fn draw_widget_toggle_button(&mut self, ui: &mut egui::Ui) {
+    pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
         if ui.button("Toggle palettes").clicked() {
             self.toggle();
         }
@@ -33,31 +35,23 @@ impl Palettes {
                     ui.vertical(|ui| {
                         for palette in bg_palettes.chunks_exact(8) {
                             ui.horizontal(|ui| {
-                                for color in palette.chunks(2) {
+                                for color_bytes in palette.chunks(2) {
                                     let rgb555 = {
-                                        let lo = color[0] as u16;
-                                        let hi = color[1] as u16;
+                                        let lo = color_bytes[0] as u16;
+                                        let hi = color_bytes[1] as u16;
 
                                         (hi << 8) | lo
                                     };
 
-                                    let red = rgb555 & 0b1_1111;
-                                    let green = (rgb555 >> 5) & 0b1_1111;
-                                    let blue = (rgb555 >> 10) & 0b1_1111;
+                                    let raw_pixel = Color::from_rgb555_u16_raw(rgb555);
+                                    let pixel = Color::from_rgb555_u16_to_rgba8888(rgb555);
 
-                                    let mut adjusted_red = red * 26 + green *  4 + blue *  2;
-                                    let mut adjusted_green = green * 24 + blue *  8;
-                                    let mut adjusted_blue = red *  6 + green *  4 + blue * 22;
+                                    let rgb = Color32::from_rgb(pixel.red, pixel.green, pixel.blue);
+                                    let tooltip = format!(
+                                        "RGB555: {rgb555:#06x}\n\nR: {:#04x}\nG: {:#04x}\nB: {:#04x}", raw_pixel.red, raw_pixel.green, raw_pixel.blue
+                                    );
 
-                                    adjusted_red >>= 2;
-                                    adjusted_green >>= 2;
-                                    adjusted_blue >>= 2;
-
-                                    let mut rgba = Color32::from_rgb(adjusted_red as u8, adjusted_green as u8, adjusted_blue as u8);
-
-                                    ui.color_edit_button_srgba(&mut rgba).on_hover_text(format!(
-                                        "RGB555: {rgb555:#06x}\n\nR: {red:#04x}\nG: {green:#04x}\nB: {blue:#04x}"
-                                    ));
+                                    color_rect(ui, rgb).on_hover_text(tooltip);
                                 }
                             });
                         }
@@ -68,31 +62,23 @@ impl Palettes {
                     ui.vertical(|ui| {
                         for palette in obj_palettes.chunks_exact(8) {
                             ui.horizontal(|ui| {
-                                for color in palette.chunks(2) {
+                                for color_bytes in palette.chunks(2) {
                                     let rgb555 = {
-                                        let lo = color[0] as u16;
-                                        let hi = color[1] as u16;
+                                        let lo = color_bytes[0] as u16;
+                                        let hi = color_bytes[1] as u16;
 
                                         (hi << 8) | lo
                                     };
 
-                                    let red = rgb555 & 0b1_1111;
-                                    let green = (rgb555 >> 5) & 0b1_1111;
-                                    let blue = (rgb555 >> 10) & 0b1_1111;
+                                    let raw_pixel = Color::from_rgb555_u16_raw(rgb555);
+                                    let pixel = Color::from_rgb555_u16_to_rgba8888(rgb555);
 
-                                    let mut adjusted_red = red * 26 + green *  4 + blue *  2;
-                                    let mut adjusted_green = green * 24 + blue *  8;
-                                    let mut adjusted_blue = red *  6 + green *  4 + blue * 22;
+                                    let rgb = Color32::from_rgb(pixel.red, pixel.green, pixel.blue);
+                                    let tooltip = format!(
+                                        "RGB555: {rgb555:#06x}\n\nR: {:#04x}\nG: {:#04x}\nB: {:#04x}", raw_pixel.red, raw_pixel.green, raw_pixel.blue
+                                    );
 
-                                    adjusted_red >>= 2;
-                                    adjusted_green >>= 2;
-                                    adjusted_blue >>= 2;
-
-                                    let mut rgba = Color32::from_rgb(adjusted_red as u8, adjusted_green as u8, adjusted_blue as u8);
-
-                                    ui.color_edit_button_srgba(&mut rgba).on_hover_text(format!(
-                                        "RGB555: {rgb555:#06x}\n\nR: {red:#04x}\nG: {green:#04x}\nB: {blue:#04x}"
-                                    ));
+                                    color_rect(ui, rgb).on_hover_text(tooltip);
                                 }
                             });
                         }

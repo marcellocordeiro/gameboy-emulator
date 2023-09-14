@@ -1,9 +1,8 @@
 use eframe::egui;
+use egui::Key;
 use gb_core::constants::Button;
 
-pub fn map_button(button: Button) -> egui::Key {
-    use egui::Key;
-
+pub fn map_button(button: Button) -> Key {
     match button {
         Button::A => Key::A,
         Button::B => Key::S,

@@ -28,19 +28,29 @@ impl Gui {
         }
     }
 
-    pub fn render(&mut self, frame: &mut eframe::Frame, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
-        self.render_ui(frame, egui_ctx, gb_ctx);
+    pub fn render(
+        &mut self,
+        eframe_frame: &mut eframe::Frame,
+        egui_ctx: &Context,
+        gb_ctx: &mut GameBoy,
+    ) {
+        self.render_ui(eframe_frame, egui_ctx, gb_ctx);
         self.render_screen_area(egui_ctx, gb_ctx);
     }
 
-    fn render_ui(&mut self, frame: &mut eframe::Frame, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
+    fn render_ui(
+        &mut self,
+        eframe_frame: &mut eframe::Frame,
+        egui_ctx: &Context,
+        gb_ctx: &mut GameBoy,
+    ) {
         TopBottomPanel::top("top_panel").show(egui_ctx, |ui| {
             menu::bar(ui, |ui| {
                 ui.menu_button("File", |ui| {
                     self.file_loader.draw_button(ui, gb_ctx);
 
                     if ui.button("Quit").clicked() {
-                        frame.close();
+                        eframe_frame.close();
                     }
                 });
 
@@ -63,6 +73,7 @@ impl Gui {
     }
 }
 
+mod components;
 mod control;
 mod file_loader;
 mod palettes;
