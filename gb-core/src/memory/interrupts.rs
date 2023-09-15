@@ -1,7 +1,7 @@
 use bitflags::bitflags;
 
 bitflags! {
-    #[derive(Default, Clone, Copy, PartialEq, Eq)]
+    #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
     pub struct InterruptBits: u8 {
         const VBLANK = 1 << 0;
         const LCD_STAT = 1 << 1;
@@ -22,19 +22,10 @@ impl Interrupts {
         self.flags = InterruptBits::from_bits_truncate(0xE1);
     }
 
-    pub fn get_queued_irq(&self) -> Option<InterruptBits> {
+    pub fn has_queued_irq(&self) -> bool {
         let intersection = self.enable & self.flags;
 
-        if intersection.is_empty() {
-            return None;
-        }
-
-        let bits = intersection.bits();
-        let result = ((bits as i8) & -(bits as i8)) as u8;
-
-        let interrupt = InterruptBits::from_bits_truncate(result);
-
-        Some(interrupt)
+        !intersection.is_empty()
     }
 
     pub fn take_queued_irq(&mut self) -> Option<u16> {
@@ -53,6 +44,21 @@ impl Interrupts {
         };
 
         Some(address)
+    }
+
+    fn get_queued_irq(&self) -> Option<InterruptBits> {
+        let intersection = self.enable & self.flags;
+
+        if intersection.is_empty() {
+            return None;
+        }
+
+        let bits = intersection.bits();
+        let result = ((bits as i8) & -(bits as i8)) as u8;
+
+        let interrupt = InterruptBits::from_bits_truncate(result);
+
+        Some(interrupt)
     }
 
     pub fn read_flags(&self) -> u8 {
@@ -90,5 +96,50 @@ impl Interrupts {
 
     pub fn request_joypad(&mut self) {
         self.flags.insert(InterruptBits::JOYPAD);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_queued_irq() {
+        let mut interrupts = Interrupts::default();
+
+        interrupts.request_lcd_stat();
+        interrupts.request_serial();
+
+        interrupts.write_enable(0b0_1010);
+
+        assert_eq!(interrupts.read_enable(), 0b0_1010);
+        assert_eq!(interrupts.read_flags(), 0b1110_0000 | 0b0_1010);
+
+        // Test LCD_STAT
+        assert!(interrupts.has_queued_irq());
+        assert_eq!(interrupts.get_queued_irq(), Some(InterruptBits::LCD_STAT));
+
+        let queued_irq = interrupts.take_queued_irq().unwrap();
+
+        assert_eq!(queued_irq, 0x0048);
+
+        assert_eq!(interrupts.read_enable(), 0b0_1010);
+        assert_eq!(interrupts.read_flags(), 0b1110_0000 | 0b0_1000);
+
+        // Test serial
+        assert!(interrupts.has_queued_irq());
+        assert_eq!(interrupts.get_queued_irq(), Some(InterruptBits::SERIAL));
+
+        let queued_irq = interrupts.take_queued_irq().unwrap();
+
+        assert_eq!(queued_irq, 0x0058);
+
+        assert_eq!(interrupts.read_enable(), 0b0_1010);
+        assert_eq!(interrupts.read_flags(), 0b1110_0000 | 0b0_0000);
+
+        // Test none
+        assert!(!interrupts.has_queued_irq());
+        assert_eq!(interrupts.get_queued_irq(), None);
+        assert_eq!(interrupts.take_queued_irq(), None);
     }
 }

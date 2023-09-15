@@ -43,7 +43,7 @@ impl Cpu {
         if self.halt {
             self.tick();
 
-            if self.memory.interrupts.get_queued_irq().is_none() {
+            if !self.memory.interrupts.has_queued_irq() {
                 return;
             }
 

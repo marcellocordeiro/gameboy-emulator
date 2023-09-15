@@ -20,7 +20,7 @@ impl Cpu {
     pub(super) fn opcode_0x76(&mut self) {
         // HALT
 
-        if self.registers.ime.get_status() && self.memory.interrupts.get_queued_irq().is_some() {
+        if self.registers.ime.get_status() && self.memory.interrupts.has_queued_irq() {
             // TODO: implement halt bug
         }
 
