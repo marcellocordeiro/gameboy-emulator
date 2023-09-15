@@ -91,6 +91,8 @@ impl LcdControl {
     /// LCDC.0
     ///
     /// BG and Window enable/priority
+    ///
+    /// Different meanings for DMG and CGB.
     pub fn get_bg_enable(self) -> bool {
         self.contains(Self::BG_ENABLE)
     }

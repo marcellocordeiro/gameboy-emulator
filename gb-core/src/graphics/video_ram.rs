@@ -63,6 +63,16 @@ impl VideoRam {
         self.data[address as usize - 0x8000 + self.bank_offset()]
     }
 
+    #[cfg(feature = "cgb")]
+    pub fn read_bank_0(&self, address: u16) -> u8 {
+        self.data[address as usize - 0x8000]
+    }
+
+    #[cfg(feature = "cgb")]
+    pub fn read_bank_1(&self, address: u16) -> u8 {
+        self.data[address as usize - 0x8000 + VRAM_BANK_SIZE]
+    }
+
     pub fn write(&mut self, address: u16, value: u8) {
         self.data[address as usize - 0x8000 + self.bank_offset()] = value;
     }
@@ -84,6 +94,10 @@ impl VideoRam {
     }
 
     fn bank_offset(&self) -> usize {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return 0;
+        }
+
         VRAM_BANK_SIZE * (self.vbk as usize)
     }
 
