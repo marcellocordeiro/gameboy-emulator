@@ -83,7 +83,7 @@ impl Default for Graphics {
             mode: StatusMode::OamScan,
             cycles: 0,
 
-            framebuffer: [Color::default(); SCREEN_WIDTH * SCREEN_HEIGHT],
+            framebuffer: [Color::white(); SCREEN_WIDTH * SCREEN_HEIGHT],
 
             cgb_mode: false,
         }

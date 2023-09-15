@@ -18,6 +18,10 @@ impl Color {
         }
     }
 
+    pub fn white() -> Self {
+        Self::new(0xFF, 0xFF, 0xFF, 0xFF)
+    }
+
     pub fn from_dmg_color_id(color_id: u8) -> Self {
         let color = Self::DMG_PALETTE[(color_id & 0b11) as usize];
 
