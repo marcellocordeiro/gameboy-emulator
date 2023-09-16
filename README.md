@@ -2,7 +2,7 @@
 
 Experimental Game Boy emulator written in Rust.
 
-***Disclaimer***: this emulator is an experimental and educational project. The development and use of emulators is legal, as long as no copyrighted content is illegally obtained. This means you are responsible for dumping your own bootroms and games. Please note that there are free open-source and homebrew content available.
+**_Disclaimer_**: this emulator is an experimental and educational project. The development and use of emulators is legal, as long as no copyrighted content is illegally obtained. This means you are responsible for dumping your own bootroms and games. Please note that there are free open-source and homebrew content available.
 
 ## Features
 
@@ -24,7 +24,7 @@ Experimental Game Boy emulator written in Rust.
 - [x] Automated ROM tests
   - [ ] blargg
   - [x] mooneye-test-suite (failing tests are commented out)
-  - [ ] dmg-acid2
+  - [x] dmg-acid2 (DMG only)
 
 ## Screenshots
 
@@ -32,16 +32,16 @@ boop
 
 ## Repository structure
 
-* **[`.`](/)**: Package/configuration files for all modules.
-* **[`external`](external/)**: External dependencies.
-* **[`gb-core`](gb-core/)**: Main core written in Rust.
-* **[`gb-core-c`](gb-core-c/)**: `gb-core` shims for use in other languages (interoperability). Contains a C/C++ header file with the function declarations.
-* **[`gb-core-wasm`](gb-core-wasm/)**: `gb-core` wrapper targeting WASM.
-* **[`gb-opcode-info`](gb-opcode-info/)**: Contains opcode info for use in other modules.
-* **[`gb-ui-browser`](gb-ui-browser/)**: Browser app written in TypeScript using Vite and React.
-* **[`gb-ui-native`](gb-ui-native/)**: Native app written in Rust.
-* **[`gb-ui-sdl2-c`](gb-ui-sdl2-c/)**: Native app written in C using `gb-core-c` and SDL2.
-* **[`gb-ui-sdl2-swift`](gb-ui-sdl2-swift/)**: Native app written in Swift using `gb-core-c` and SDL2. Likely unsupported on Windows and Linux.
+- **[`.`](/)**: Package/configuration files for all modules.
+- **[`external`](external/)**: External dependencies.
+- **[`gb-core`](gb-core/)**: Main core written in Rust.
+- **[`gb-core-c`](gb-core-c/)**: `gb-core` shims for use in other languages (interoperability). Contains a C/C++ header file with the function declarations.
+- **[`gb-core-wasm`](gb-core-wasm/)**: `gb-core` wrapper targeting WASM.
+- **[`gb-opcode-info`](gb-opcode-info/)**: Contains opcode info for use in other modules.
+- **[`gb-ui-browser`](gb-ui-browser/)**: Browser app written in TypeScript using Vite and React.
+- **[`gb-ui-native`](gb-ui-native/)**: Native app written in Rust.
+- **[`gb-ui-sdl2-c`](gb-ui-sdl2-c/)**: Native app written in C using `gb-core-c` and SDL2.
+- **[`gb-ui-sdl2-swift`](gb-ui-sdl2-swift/)**: Native app written in Swift using `gb-core-c` and SDL2. Likely unsupported on Windows and Linux.
 
 ## Setup
 
