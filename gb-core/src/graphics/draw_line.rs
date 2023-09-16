@@ -2,8 +2,8 @@ use crate::{constants::SCREEN_WIDTH, utils::color::Color};
 
 use super::Graphics;
 
-#[cfg(not(feature = "cgb"))]
 impl Graphics {
+    #[cfg(not(feature = "cgb"))]
     #[allow(clippy::too_many_lines)]
     pub fn draw_line(&mut self) {
         let line_start = SCREEN_WIDTH * (self.ly as usize);
