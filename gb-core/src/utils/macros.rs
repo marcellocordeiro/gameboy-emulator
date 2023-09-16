@@ -41,5 +41,5 @@ macro_rules! pure_read_write_methods_u8 {
 }
 
 pub(crate) use pure_read_method_u8;
-pub(crate) use pure_write_method_u8;
 pub(crate) use pure_read_write_methods_u8;
+pub(crate) use pure_write_method_u8;

@@ -1,10 +1,6 @@
 use arrayvec::ArrayVec;
 
-use super::{
-    lcd_status::StatusMode,
-    sprite::{SpriteFlags, SpriteObject},
-    Graphics,
-};
+use super::{lcd_status::StatusMode, sprite::SpriteObject, Graphics};
 
 const OAM_SIZE: usize = 0xA0;
 
@@ -42,15 +38,10 @@ impl Oam {
             let y = chunk[0].wrapping_sub(16);
             let x = chunk[1].wrapping_sub(8);
             let tile_index = chunk[2];
-            let flags = SpriteFlags::from_bits_truncate(chunk[3]);
+            let flags = chunk[3];
 
             if ly.wrapping_sub(y) < obj_height {
-                let element = SpriteObject {
-                    y,
-                    x,
-                    tile_index,
-                    flags,
-                };
+                let element = SpriteObject::from_bytes(y, x, tile_index, flags);
 
                 self.sprite_buffer.push(element);
             }

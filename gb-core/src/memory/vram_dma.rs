@@ -14,6 +14,12 @@ pub struct VramDma {
     /// `0bXXX3_3333_4444_XXXX`
     pub destination: u16,
 
+    pub hdma1: u8,
+    pub hdma2: u8,
+    pub hdma3: u8,
+    pub hdma4: u8,
+    pub hdma5: u8,
+
     pub mode: DmaMode,
 }
 
@@ -44,46 +50,45 @@ impl VramDma {
     }
 
     pub fn write_hdma1(&mut self, value: u8) {
+        self.hdma1 = value;
         self.source = ((value as u16) << 8) | (self.source & 0x00FF);
+
+        self.validate_writes();
     }
 
     pub fn write_hdma2(&mut self, value: u8) {
         const WRITABLE_MASK: u8 = 0b1111_0000;
+        self.hdma2 = value & WRITABLE_MASK;
         self.source = (self.source & 0xFF00) | ((value & WRITABLE_MASK) as u16);
+
+        self.validate_writes();
     }
 
     pub fn write_hdma3(&mut self, value: u8) {
         const WRITABLE_MASK: u8 = 0b0001_1111;
+        self.hdma3 = value & WRITABLE_MASK;
         self.destination = (((value & WRITABLE_MASK) as u16) << 8) | (self.destination & 0x00FF);
+
+        self.validate_writes();
     }
 
     pub fn write_hdma4(&mut self, value: u8) {
         const WRITABLE_MASK: u8 = 0b1111_0000;
+        self.hdma4 = value & WRITABLE_MASK;
         self.destination = (self.destination & 0xFF00) | ((value & WRITABLE_MASK) as u16);
+
+        self.validate_writes();
     }
 
     pub fn write_hdma5(&mut self, value: u8) {
         ()
     }
 
-    /*pub fn write(&mut self, address: u16, value: u8) {
-        match address {
-            // HDMA1 (source high)
-            0xFF51 => (),
-
-            // HDMA2 (source low)
-            0xFF52 => (),
-
-            // HDMA3 (destination high)
-            0xFF53 => (),
-
-            // HDMA4 (destination low)
-            0xFF54 => (),
-
-            // HDMA5 (length/mode/start)
-            0xFF55 => (),
-
-            _ => unreachable!("[vram_dma.rs] Write out of bounds: ({address:#06x}) = {value:#04x}"),
-        }
-    }*/
+    fn validate_writes(&self) {
+        assert_eq!(((self.hdma1 as u16) << 8) | self.hdma2 as u16, self.source);
+        assert_eq!(
+            ((self.hdma3 as u16) << 8) | self.hdma4 as u16,
+            self.destination
+        );
+    }
 }
