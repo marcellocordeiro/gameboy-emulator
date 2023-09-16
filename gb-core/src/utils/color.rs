@@ -18,6 +18,10 @@ impl Color {
         }
     }
 
+    pub fn to_rgb555(&self) -> u16 {
+        ((self.red as u16) << 10) | ((self.green as u16) << 5) | (self.blue as u16)
+    }
+
     pub fn white() -> Self {
         Self::new(0xFF, 0xFF, 0xFF, 0xFF)
     }

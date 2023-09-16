@@ -2,7 +2,7 @@ use std::ops::RangeInclusive;
 
 use crate::{
     constants::{TileDataFrame, TILES_PER_LINE, TILE_DATA_FRAME_WIDTH},
-    graphics::color::Color,
+    utils::color::Color,
 };
 
 use super::{lcd_status::StatusMode, Graphics};

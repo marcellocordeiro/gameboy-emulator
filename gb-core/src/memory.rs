@@ -10,8 +10,8 @@ use crate::{
 };
 
 use self::{
-    bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, speed_switch::SpeedSwitch,
-    work_ram::WorkRam,
+    bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, oam_dma::OamDma,
+    speed_switch::SpeedSwitch, vram_dma::VramDma, work_ram::WorkRam,
 };
 
 #[derive(Default)]
@@ -32,6 +32,9 @@ pub struct Memory {
     pub speed_switch: SpeedSwitch,
 
     pub interrupts: Interrupts,
+
+    pub oam_dma: OamDma,
+    pub vram_dma: VramDma,
 }
 
 impl Memory {
@@ -69,7 +72,7 @@ impl Memory {
             panic!("CGB double speed not yet supported.");
         }
 
-        if let Some((source, destination)) = self.graphics.oam_dma.advance() {
+        if let Some((source, destination)) = self.oam_dma.advance() {
             let value = self.read(source);
             self.graphics.oam.write(destination, value);
         }
@@ -141,7 +144,19 @@ impl Memory {
 
             0xFF10..=0xFF14 => self.audio.read(address),
             0xFF16..=0xFF3F => self.audio.read(address),
-            0xFF40..=0xFF4B => self.graphics.read(address),
+
+            0xFF40 => self.graphics.read_lcdc(),
+            0xFF41 => self.graphics.read_stat(),
+            0xFF42 => self.graphics.read_scy(),
+            0xFF43 => self.graphics.read_scx(),
+            0xFF44 => self.graphics.read_ly(),
+            0xFF45 => self.graphics.read_lyc(),
+            0xFF46 => self.oam_dma.read(),
+            0xFF47 => self.graphics.read_bgp(),
+            0xFF48 => self.graphics.read_obp0(),
+            0xFF49 => self.graphics.read_obp1(),
+            0xFF4A => self.graphics.read_wy(),
+            0xFF4B => self.graphics.read_wx(),
 
             0xFF4C => 0xFF,                          // (CGB) KEY0: CGB mode.
             0xFF4D => self.speed_switch.read(),      // (CGB) KEY1: Prepare speed switch.
@@ -149,8 +164,18 @@ impl Memory {
 
             0xFF50 => self.bootrom.read_status(),
 
-            0xFF51..=0xFF55 => self.graphics.vram_dma.read(address), // (CGB) VRAM DMA.
-            0xFF68..=0xFF6B => self.graphics.read(address),          // (CGB) BG / OBJ Palettes.
+            // (CGB) VRAM DMA.
+            0xFF51 => self.vram_dma.read_hdma1(),
+            0xFF52 => self.vram_dma.read_hdma2(),
+            0xFF53 => self.vram_dma.read_hdma3(),
+            0xFF54 => self.vram_dma.read_hdma4(),
+            0xFF55 => self.vram_dma.read_hdma5(),
+
+            // (CGB) BG / OBJ Palettes.
+            0xFF68 => self.graphics.read_bcps(),
+            0xFF69 => self.graphics.read_bcpd(),
+            0xFF6A => self.graphics.read_ocps(),
+            0xFF6B => self.graphics.read_ocpd(),
 
             0xFF70 => self.wram.read_svbk(), // (CGB) WRAM bank selection.
 
@@ -208,16 +233,39 @@ impl Memory {
 
             0xFF10..=0xFF14 => self.audio.write(address, value),
             0xFF16..=0xFF3F => self.audio.write(address, value),
-            0xFF40..=0xFF4B => self.graphics.write(address, value),
+
+            0xFF40 => self.graphics.write_lcdc(value),
+            0xFF41 => self.graphics.write_stat(value),
+            0xFF42 => self.graphics.write_scy(value),
+            0xFF43 => self.graphics.write_scx(value),
+            0xFF44 => println!("[video.rs] LY is read-only."),
+            0xFF45 => self.graphics.write_lyc(value),
+            0xFF46 => self.oam_dma.write(value),
+            0xFF47 => self.graphics.write_bgp(value),
+            0xFF48 => self.graphics.write_obp0(value),
+            0xFF49 => self.graphics.write_obp1(value),
+            0xFF4A => self.graphics.write_wy(value),
+            0xFF4B => self.graphics.write_wx(value),
 
             0xFF4C => self.set_cgb_mode(CgbFlag::from(value).has_cgb_support()), // (CGB) KEY0: CGB mode.
             0xFF4D => self.speed_switch.write(value), // (CGB) KEY1: Prepare speed switch.
+
             0xFF4F => self.graphics.vram.write_vbk(value), // (CGB) VRAM bank selection.
 
             0xFF50 => self.bootrom.write_status(value),
 
-            0xFF51..=0xFF55 => self.graphics.vram_dma.write(address, value), // (CGB) VRAM DMA.
-            0xFF68..=0xFF6B => self.graphics.write(address, value), // (CGB) BG / OBJ Palettes.
+            // (CGB) VRAM DMA.
+            0xFF51 => self.vram_dma.write_hdma1(value),
+            0xFF52 => self.vram_dma.write_hdma2(value),
+            0xFF53 => self.vram_dma.write_hdma3(value),
+            0xFF54 => self.vram_dma.write_hdma4(value),
+            0xFF55 => self.vram_dma.write_hdma5(value),
+
+            // (CGB) BG / OBJ Palettes.
+            0xFF68 => self.graphics.write_bcps(value),
+            0xFF69 => self.graphics.write_bcpd(value),
+            0xFF6A => self.graphics.write_ocps(value),
+            0xFF6B => self.graphics.write_ocpd(value),
 
             0xFF70 => self.wram.write_svbk(value), // (CGB) WRAM bank selection.
 
@@ -246,5 +294,7 @@ impl Memory {
 mod bootrom;
 mod high_ram;
 mod interrupts;
+mod oam_dma;
 mod speed_switch;
+mod vram_dma;
 mod work_ram;

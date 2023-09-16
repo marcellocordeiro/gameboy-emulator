@@ -1,6 +1,8 @@
 use bitflags::bitflags;
 
-use super::{color::Color, lcd_status::StatusMode, Graphics};
+use crate::utils::color::Color;
+
+use super::{lcd_status::StatusMode, Graphics};
 
 bitflags!(
     /// FF40 — LCDC: LCD control

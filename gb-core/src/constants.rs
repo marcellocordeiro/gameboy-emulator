@@ -1,4 +1,4 @@
-use crate::graphics::color::Color;
+use crate::utils::color::Color;
 
 pub const ONE_KIB: usize = 0x400;
 
