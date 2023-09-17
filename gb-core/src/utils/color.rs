@@ -72,7 +72,7 @@ impl Color {
     }
 
     #[allow(clippy::identity_op)]
-    fn apply_dmg_palette(color_id: u8, palette: u8) -> u8 {
+    pub fn apply_dmg_palette(color_id: u8, palette: u8) -> u8 {
         match color_id & 0b11 {
             0 => (palette >> 0) & 0b11,
             1 => (palette >> 2) & 0b11,

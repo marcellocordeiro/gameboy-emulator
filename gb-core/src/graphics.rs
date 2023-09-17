@@ -112,7 +112,8 @@ impl Graphics {
     }
 
     pub fn read_bcps(&self) -> u8 {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        // TODO: lock after bootrom is finished?
+        if !cfg!(feature = "cgb") {
             return 0xFF;
         }
 
@@ -120,7 +121,8 @@ impl Graphics {
     }
 
     pub fn write_bcps(&mut self, value: u8) {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        // TODO: lock after bootrom is finished?
+        if !cfg!(feature = "cgb") {
             return;
         }
 
@@ -128,7 +130,8 @@ impl Graphics {
     }
 
     pub fn read_bcpd(&self) -> u8 {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        // TODO: lock after bootrom is finished?
+        if !cfg!(feature = "cgb") {
             return 0xFF;
         }
 
@@ -142,7 +145,9 @@ impl Graphics {
     }
 
     pub fn write_bcpd(&mut self, value: u8) {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        // TODO: lock after bootrom is finished?
+
+        if !cfg!(feature = "cgb") {
             return;
         }
 
@@ -160,7 +165,8 @@ impl Graphics {
     }
 
     pub fn read_ocps(&self) -> u8 {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        // TODO: lock after bootrom is finished?
+        if !cfg!(feature = "cgb") {
             return 0xFF;
         }
 
@@ -168,7 +174,8 @@ impl Graphics {
     }
 
     pub fn write_ocps(&mut self, value: u8) {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        // TODO: lock after bootrom is finished?
+        if !cfg!(feature = "cgb") {
             return;
         }
 
@@ -176,7 +183,8 @@ impl Graphics {
     }
 
     pub fn read_ocpd(&self) -> u8 {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        // TODO: lock after bootrom is finished?
+        if !cfg!(feature = "cgb") {
             return 0xFF;
         }
 
@@ -190,7 +198,8 @@ impl Graphics {
     }
 
     pub fn write_ocpd(&mut self, value: u8) {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        // TODO: lock after bootrom is finished?
+        if !cfg!(feature = "cgb") {
             return;
         }
 
@@ -208,6 +217,7 @@ impl Graphics {
     }
 
     pub fn read_opri(&self) -> u8 {
+        // TODO: lock after bootrom is finished?
         if !(cfg!(feature = "cgb") && self.cgb_mode) {
             return 0xFF;
         }
@@ -216,7 +226,8 @@ impl Graphics {
     }
 
     pub fn write_opri(&mut self, value: u8) {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        // TODO: lock after bootrom is finished?
+        if !cfg!(feature = "cgb") {
             return;
         }
 
@@ -354,6 +365,7 @@ impl Graphics {
 }
 
 mod debug_getters;
+mod draw_line_cgb;
 mod draw_line_dmg;
 mod lcd_control;
 mod lcd_status;
