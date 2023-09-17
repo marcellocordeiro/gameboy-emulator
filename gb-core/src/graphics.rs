@@ -354,7 +354,7 @@ impl Graphics {
 }
 
 mod debug_getters;
-mod draw_line;
+mod draw_line_dmg;
 mod lcd_control;
 mod lcd_status;
 mod oam;
