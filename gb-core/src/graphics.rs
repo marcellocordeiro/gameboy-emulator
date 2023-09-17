@@ -208,10 +208,18 @@ impl Graphics {
     }
 
     pub fn read_opri(&self) -> u8 {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return 0xFF;
+        }
+
         self.opri as u8
     }
 
     pub fn write_opri(&mut self, value: u8) {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return;
+        }
+
         self.opri = (value & 0b1) != 0;
     }
 
