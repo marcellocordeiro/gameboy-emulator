@@ -51,7 +51,7 @@ impl VideoRam {
 
     #[cfg(feature = "cgb")]
     pub fn draw_tile_data_1_into_frame(&self, frame: &mut TileDataFrame) {
-        const TILE_DATA_1_START: usize = 0 + VRAM_BANK_SIZE;
+        const TILE_DATA_1_START: usize = VRAM_BANK_SIZE;
         const TILE_DATA_1_END: usize = (0x97FF - 0x8000) + VRAM_BANK_SIZE;
 
         let range = TILE_DATA_1_START..=TILE_DATA_1_END;
@@ -78,7 +78,7 @@ impl VideoRam {
     }
 
     pub fn read_vbk(&self) -> u8 {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        if !cfg!(feature = "cgb") {
             return 0xFF;
         }
 

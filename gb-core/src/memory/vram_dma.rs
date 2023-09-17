@@ -80,9 +80,7 @@ impl VramDma {
         self.validate_writes();
     }
 
-    pub fn write_hdma5(&mut self, value: u8) {
-        ()
-    }
+    pub fn write_hdma5(&mut self, value: u8) {}
 
     fn validate_writes(&self) {
         assert_eq!(((self.hdma1 as u16) << 8) | self.hdma2 as u16, self.source);

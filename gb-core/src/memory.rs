@@ -11,7 +11,8 @@ use crate::{
 
 use self::{
     bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, oam_dma::OamDma,
-    speed_switch::SpeedSwitch, vram_dma::VramDma, work_ram::WorkRam,
+    speed_switch::SpeedSwitch, undocumented_registers::UndocumentedRegisters, vram_dma::VramDma,
+    work_ram::WorkRam,
 };
 
 #[derive(Default)]
@@ -33,6 +34,8 @@ pub struct Memory {
 
     pub interrupts: Interrupts,
 
+    pub undocumented_registers: UndocumentedRegisters,
+
     pub oam_dma: OamDma,
     pub vram_dma: VramDma,
 }
@@ -47,6 +50,7 @@ impl Memory {
         self.serial = Serial::default();
         self.timer = Timer::default();
         self.speed_switch = SpeedSwitch::default();
+        self.undocumented_registers = UndocumentedRegisters::default();
         self.oam_dma = OamDma::default();
         self.vram_dma = VramDma::default();
 
@@ -81,6 +85,7 @@ impl Memory {
         self.wram.set_cgb_mode(value);
         self.graphics.set_cgb_mode(value);
         self.speed_switch.set_cgb_mode(value);
+        self.undocumented_registers.set_cgb_mode(value);
     }
 
     pub fn skip_bootrom(&mut self) {
@@ -208,6 +213,13 @@ impl Memory {
 
             0xFFFF => self.interrupts.read_enable(),
 
+            0xFF72 => self.undocumented_registers.read_0xff72(),
+            0xFF73 => self.undocumented_registers.read_0xff73(),
+            0xFF74 => self.undocumented_registers.read_0xff74(),
+            0xFF75 => self.undocumented_registers.read_0xff75(),
+
+            0xFF76..=0xFF77 => self.audio.read(address),
+
             0xFF03 => 0xFF,          // Unused.
             0xFF08 => 0xFF,          // Unused.
             0xFF09 => 0xFF,          // Unused.
@@ -221,7 +233,8 @@ impl Memory {
             0xFF56 => 0xFF,          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => 0xFF, // Unused.
             0xFF6D..=0xFF6F => 0xFF, // Unused.
-            0xFF71..=0xFF7F => 0xFF, // Unused.
+            0xFF71..=0xFF71 => 0xFF, // Unused.
+            0xFF78..=0xFF7F => 0xFF, // Unused.
         }
     }
 
@@ -300,6 +313,13 @@ impl Memory {
 
             0xFFFF => self.interrupts.write_enable(value),
 
+            0xFF72 => self.undocumented_registers.write_0xff72(value),
+            0xFF73 => self.undocumented_registers.write_0xff73(value),
+            0xFF74 => self.undocumented_registers.write_0xff74(value),
+            0xFF75 => self.undocumented_registers.write_0xff75(value),
+
+            0xFF76..=0xFF77 => self.audio.write(address, value),
+
             0xFF03 => (),          // Unused.
             0xFF08 => (),          // Unused.
             0xFF09 => (),          // Unused.
@@ -313,7 +333,8 @@ impl Memory {
             0xFF56 => (),          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => (), // Unused.
             0xFF6D..=0xFF6F => (), // Unused.
-            0xFF71..=0xFF7F => (), // Unused.
+            0xFF71..=0xFF71 => (), // Unused.
+            0xFF78..=0xFF7F => (), // Unused.
         }
     }
 }
@@ -323,5 +344,6 @@ mod high_ram;
 mod interrupts;
 mod oam_dma;
 mod speed_switch;
+mod undocumented_registers;
 mod vram_dma;
 mod work_ram;

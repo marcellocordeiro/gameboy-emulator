@@ -9,6 +9,10 @@ impl Audio {
     // 0xFF10..=0xFF26 => 0, // TODO: Sound.
     // 0xFF30..=0xFF3F => 0, // TODO: Wave pattern.
 
+    // Undocumented
+    // 0xFF76
+    // 0xFF77
+
     pub fn read(&self, address: u16) -> u8 {
         match address {
             // TODO: stubs for the DMG.
@@ -28,6 +32,22 @@ impl Audio {
             0xFF24 => 0x77,
             0xFF25 => 0xF3,
             0xFF26 => 0xF1,
+
+            0xFF76 => {
+                if !cfg!(feature = "cgb") {
+                    return 0xFF;
+                }
+
+                0x00
+            }
+
+            0xFF77 => {
+                if !cfg!(feature = "cgb") {
+                    return 0xFF;
+                }
+
+                0x00
+            }
 
             _ => 0xFF,
         }

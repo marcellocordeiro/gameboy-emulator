@@ -67,7 +67,7 @@ impl Bootrom {
 #[cfg(not(feature = "bootrom"))]
 #[derive(Debug, Default)]
 /// Bootrom stubs
-pub struct Bootrom;
+pub struct Bootrom {}
 
 #[cfg(not(feature = "bootrom"))]
 impl Bootrom {

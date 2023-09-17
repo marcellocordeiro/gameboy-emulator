@@ -6,6 +6,7 @@
 - Study Rust's macros to improve the code.
 - Study Rust's explicit lifetime to avoid nesting the components.
 - Improve the FFI code.
+- Lock access to some registers after the bootrom is finished (CGB).
 
 ## Profiling
 
