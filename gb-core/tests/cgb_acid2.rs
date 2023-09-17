@@ -1,3 +1,5 @@
+#![cfg(all(feature = "cgb", feature = "bootrom"))]
+
 use std::time::{Duration, Instant};
 
 use gb_core::{
