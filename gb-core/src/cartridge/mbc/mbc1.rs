@@ -61,6 +61,14 @@ impl Mbc1 {
 }
 
 impl MbcInterface for Mbc1 {
+    fn reset(&mut self) {
+        self.ram.fill(0);
+        self.ram_enable = false;
+        self.bank_lo = 0x01;
+        self.bank_hi = 0x00;
+        self.mode = false;
+    }
+
     fn read_rom(&self, address: u16) -> u8 {
         let mask = self.rom.len() - 1;
 

@@ -42,7 +42,11 @@ impl GameBoy {
     }
 
     pub fn reset(&mut self) {
-        *self = Self::new();
+        self.cpu.reset();
+
+        if !cfg!(feature = "bootrom") {
+            self.cpu.skip_bootrom();
+        }
     }
 
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {

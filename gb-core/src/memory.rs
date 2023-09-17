@@ -38,6 +38,29 @@ pub struct Memory {
 }
 
 impl Memory {
+    pub fn reset(&mut self) {
+        self.bootrom = Bootrom::default();
+        self.wram = WorkRam::default();
+        self.hram = HighRam::default();
+        self.graphics = Graphics::default();
+        self.audio = Audio::default();
+        self.serial = Serial::default();
+        self.timer = Timer::default();
+        self.speed_switch = SpeedSwitch::default();
+        self.oam_dma = OamDma::default();
+        self.vram_dma = VramDma::default();
+
+        if let Some(cartridge) = self.cartridge.as_mut() {
+            cartridge.reset();
+
+            if cfg!(feature = "cgb")
+                && (cfg!(feature = "bootrom") || cartridge.info.cgb_flag.has_cgb_support())
+            {
+                self.set_cgb_mode(true);
+            }
+        };
+    }
+
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         let cartridge = Cartridge::new(rom)?;
 

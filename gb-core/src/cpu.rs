@@ -13,6 +13,13 @@ pub struct Cpu {
 }
 
 impl Cpu {
+    pub fn reset(&mut self) {
+        self.registers = Registers::default();
+        self.memory.reset();
+        self.halt = false;
+        self.cycles = 0;
+    }
+
     pub fn skip_bootrom(&mut self) {
         self.registers.program_counter = 0x0100;
         self.registers.stack_pointer = 0xFFFE;

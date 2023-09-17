@@ -21,6 +21,10 @@ impl Cartridge {
         Ok(Self { info, mbc })
     }
 
+    pub fn reset(&mut self) {
+        self.mbc.reset();
+    }
+
     pub fn read_rom(&self, address: u16) -> u8 {
         self.mbc.read_rom(address)
     }

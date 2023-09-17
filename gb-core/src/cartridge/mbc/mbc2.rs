@@ -29,6 +29,12 @@ impl Mbc2 {
 }
 
 impl MbcInterface for Mbc2 {
+    fn reset(&mut self) {
+        self.ram.fill(0);
+        self.ram_enable = false;
+        self.rom_bank = 0x01;
+    }
+
     fn read_rom(&self, address: u16) -> u8 {
         if address < 0x4000 {
             return self.rom[address as usize];

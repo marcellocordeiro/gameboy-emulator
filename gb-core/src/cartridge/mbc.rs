@@ -4,6 +4,8 @@ pub use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc30::Mbc30, mbc5::Mbc5, no_
 
 #[enum_dispatch]
 pub(super) trait MbcInterface {
+    fn reset(&mut self);
+
     fn read_rom(&self, address: u16) -> u8;
     fn read_ram(&self, address: u16) -> u8;
 

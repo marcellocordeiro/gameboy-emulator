@@ -24,6 +24,10 @@ impl NoMbc {
 }
 
 impl MbcInterface for NoMbc {
+    fn reset(&mut self) {
+        self.ram.fill(0);
+    }
+
     fn read_rom(&self, address: u16) -> u8 {
         self.rom[address as usize]
     }
