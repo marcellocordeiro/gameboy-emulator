@@ -9,7 +9,7 @@ pub struct Color {
 impl Color {
     pub const DMG_PALETTE: [u8; 4] = [0xFF, 0xAA, 0x55, 0x00];
 
-    pub fn new(red: u8, blue: u8, green: u8, alpha: u8) -> Self {
+    pub fn new(red: u8, green: u8, blue: u8, alpha: u8) -> Self {
         Self {
             red,
             green,
@@ -33,7 +33,7 @@ impl Color {
         let green = color;
         let blue = color;
 
-        Self::new(red, blue, green, 0xFF)
+        Self::new(red, green, blue, 0xFF)
     }
 
     pub fn from_dmg_color_id_with_palette(color_id: u8, dmg_palette: u8) -> Self {
@@ -47,7 +47,7 @@ impl Color {
         let green = (value >> 5) & 0b1_1111;
         let blue = (value >> 10) & 0b1_1111;
 
-        Self::new(red as u8, blue as u8, green as u8, 0xFF)
+        Self::new(red as u8, green as u8, blue as u8, 0xFF)
     }
 
     pub fn from_rgb555_u16_to_rgba8888(value: u16) -> Self {
