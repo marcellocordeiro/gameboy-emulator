@@ -16,3 +16,6 @@ bitflags = "2.4.0"
 enum_dispatch = "0.3.12"
 log = "0.4.20"
 paste = "1.0.14"
+
+[dev-dependencies]
+image = { version = "0.24.7", default-features = false, features = ["png"] }

@@ -1119,6 +1119,7 @@ dependencies = [
  "arrayvec",
  "bitflags 2.4.0",
  "enum_dispatch",
+ "image",
  "log",
  "paste",
 ]

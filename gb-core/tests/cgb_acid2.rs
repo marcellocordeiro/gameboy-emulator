@@ -46,21 +46,13 @@ fn run(name: &str, rom: Vec<u8>) {
     }
 }
 
-#[cfg(not(feature = "cgb"))]
-#[test]
-fn test_dmg_acid2_dmg() {
-    let rom = include_bytes!("../../external/gameboy-test-roms/dmg-acid2.gb");
-
-    run("dmg-acid2_dmg", rom.to_vec());
-}
-
 #[cfg(all(feature = "cgb", feature = "bootrom"))]
 #[test]
 #[ignore = "need to implement proper CGB support first (preferably without relying on the bootrom"]
-fn test_dmg_acid2_cgb() {
-    let rom = include_bytes!("../../external/gameboy-test-roms/dmg-acid2.gb");
+fn test_cgb_acid2() {
+    let rom = include_bytes!("../../external/gameboy-test-roms/cgb-acid2.gbc");
 
-    run("dmg-acid2_cgb", rom.to_vec());
+    run("cgb-acid2", rom.to_vec());
 }
 
 fn dump_image(path: String, bytes: &[u8]) {
