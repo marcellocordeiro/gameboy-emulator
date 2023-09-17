@@ -49,6 +49,10 @@ impl Gui {
                 ui.menu_button("File", |ui| {
                     self.file_loader.draw_button(ui, gb_ctx);
 
+                    if ui.button("Reset").clicked() {
+                        gb_ctx.reset();
+                    }
+
                     if ui.button("Quit").clicked() {
                         eframe_frame.close();
                     }
