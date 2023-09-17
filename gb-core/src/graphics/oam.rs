@@ -31,7 +31,30 @@ impl Oam {
         self.data[address as usize - 0xFE00] = value;
     }
 
-    pub fn get_sprites_in_line(&mut self, ly: u8, obj_height: u8) -> &[SpriteObject] {
+    /// Returns the sprite buffer sorted by the X coordinate.
+    ///
+    /// This is the default behaviour in the DMG.
+    pub fn get_sprites_in_line_by_coordinate(&mut self, ly: u8, obj_height: u8) -> &[SpriteObject] {
+        self.update_sprite_buffer(ly, obj_height);
+
+        // Increasing priority by the x coordinate.
+        self.sprite_buffer.sort_by(|a, b| a.x.cmp(&b.x));
+
+        &self.sprite_buffer
+    }
+
+    /// Returns the sprite buffer sorted by the OAM order.
+    ///
+    /// This is the default behaviour in the CGB, but the bootrom can change this
+    /// by modifying the OPRI (0xFF6C) register.
+    #[cfg(feature = "cgb")]
+    pub fn get_sprites_in_line_by_oam(&mut self, ly: u8, obj_height: u8) -> &[SpriteObject] {
+        self.update_sprite_buffer(ly, obj_height);
+
+        &self.sprite_buffer
+    }
+
+    fn update_sprite_buffer(&mut self, ly: u8, obj_height: u8) {
         self.sprite_buffer.clear();
 
         for chunk in self.data.chunks_exact(4) {
@@ -50,11 +73,6 @@ impl Oam {
                 break;
             }
         }
-
-        // Increasing priority.
-        self.sprite_buffer.sort_by(|a, b| a.x.cmp(&b.x));
-
-        &self.sprite_buffer
     }
 }
 

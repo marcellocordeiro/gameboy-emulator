@@ -200,6 +200,8 @@ impl Memory {
             0xFF6A => self.graphics.read_ocps(),
             0xFF6B => self.graphics.read_ocpd(),
 
+            0xFF6C => self.graphics.read_opri(),
+
             0xFF70 => self.wram.read_svbk(), // (CGB) WRAM bank selection.
 
             0xFF80..=0xFFFE => self.hram.read(address),
@@ -218,7 +220,7 @@ impl Memory {
             0xFF4E => 0xFF,          // Unused.
             0xFF56 => 0xFF,          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => 0xFF, // Unused.
-            0xFF6C..=0xFF6F => 0xFF, // Unused.
+            0xFF6D..=0xFF6F => 0xFF, // Unused.
             0xFF71..=0xFF7F => 0xFF, // Unused.
         }
     }
@@ -290,6 +292,8 @@ impl Memory {
             0xFF6A => self.graphics.write_ocps(value),
             0xFF6B => self.graphics.write_ocpd(value),
 
+            0xFF6C => self.graphics.write_opri(value),
+
             0xFF70 => self.wram.write_svbk(value), // (CGB) WRAM bank selection.
 
             0xFF80..=0xFFFE => self.hram.write(address, value),
@@ -308,7 +312,7 @@ impl Memory {
             0xFF4E => (),          // Unused.
             0xFF56 => (),          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => (), // Unused.
-            0xFF6C..=0xFF6F => (), // Unused.
+            0xFF6D..=0xFF6F => (), // Unused.
             0xFF71..=0xFF7F => (), // Unused.
         }
     }

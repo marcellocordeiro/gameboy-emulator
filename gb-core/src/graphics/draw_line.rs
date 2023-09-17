@@ -146,7 +146,9 @@ impl Graphics {
 
         if self.lcdc.get_obj_enable() {
             let obj_height = if self.lcdc.get_obj_size() { 16 } else { 8 };
-            let sprite_buffer = self.oam.get_sprites_in_line(self.ly, obj_height);
+            let sprite_buffer = self
+                .oam
+                .get_sprites_in_line_by_coordinate(self.ly, obj_height);
 
             // Since `sprite_buffer`'s priority is increasing, we need to reverse the iterator.
             for sprite in sprite_buffer.iter().rev() {
@@ -356,7 +358,12 @@ impl Graphics {
 
         if self.lcdc.get_obj_enable() {
             let obj_height = if self.lcdc.get_obj_size() { 16 } else { 8 };
-            let sprite_buffer = self.oam.get_sprites_in_line(self.ly, obj_height);
+            let sprite_buffer = if self.opri {
+                self.oam
+                    .get_sprites_in_line_by_coordinate(self.ly, obj_height)
+            } else {
+                self.oam.get_sprites_in_line_by_oam(self.ly, obj_height)
+            };
 
             // Since `sprite_buffer`'s priority is increasing, we need to reverse the iterator.
             for sprite in sprite_buffer.iter().rev() {

@@ -31,6 +31,8 @@ pub struct Graphics {
     ocps: u8,                  // (CGB) Object color palette specification
     obj_palette_ram: [u8; 64], // (CGB) Accessed through object color palette data (OCPD)
 
+    opri: bool, // (CGB) Object priority mode
+
     pub stat_irq: bool,
     pub vblank_irq: bool,
 
@@ -66,6 +68,8 @@ impl Default for Graphics {
 
             ocps: 0,
             obj_palette_ram: [0; 64],
+
+            opri: false,
 
             stat_irq: false,
             vblank_irq: false,
@@ -201,6 +205,14 @@ impl Graphics {
             self.ocps &= 0b1000_0000;
             self.ocps |= (address + 1) & 0b0011_1111;
         }
+    }
+
+    pub fn read_opri(&self) -> u8 {
+        self.opri as u8
+    }
+
+    pub fn write_opri(&mut self, value: u8) {
+        self.opri = (value & 0b1) != 0;
     }
 
     pure_read_write_methods_u8! {
