@@ -56,7 +56,7 @@ fn test_dmg_acid2_dmg() {
 
 #[cfg(all(feature = "cgb", feature = "bootrom"))]
 #[test]
-#[ignore = "need to implement proper CGB support first (preferably without relying on the bootrom"]
+#[ignore = "need to implement proper CGB support first (preferably without relying on the bootrom)"]
 fn test_dmg_acid2_cgb() {
     let rom = include_bytes!("../../external/gameboy-test-roms/dmg-acid2.gb");
 
