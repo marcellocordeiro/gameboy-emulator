@@ -33,8 +33,7 @@ fn run(name: &str, rom: Vec<u8>) {
 
     gb.draw(&mut frame);
 
-    let expected_image_result = image::open(format!("./tests/expected/{name}.png"));
-    let expected_image = match expected_image_result {
+    let expected_image = match image::open(format!("./tests/expected/{name}.png")) {
         Ok(image) => image,
         Err(err) => {
             dump_image(format!("./tests/actual/{name}.png"), frame.as_slice());

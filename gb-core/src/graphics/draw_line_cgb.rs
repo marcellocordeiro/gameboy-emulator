@@ -127,16 +127,7 @@ impl Graphics {
             };
 
             if self.cgb_mode {
-                let palette_address = palette_number * 8;
-                let color_index = color_id * 2;
-                let base_address = (palette_address + color_index) as usize;
-
-                let raw_color = {
-                    let lo = self.bg_palette_ram[base_address] as u16;
-                    let hi = self.bg_palette_ram[base_address + 1] as u16;
-
-                    (hi << 8) | lo
-                };
+                let raw_color = self.bg_cram.get_color_rgb555(palette_number, color_id);
 
                 bg_priority[i as usize] = color_id != 0;
 
@@ -144,15 +135,8 @@ impl Graphics {
                 let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
                 self.framebuffer[framebuffer_address] = framebuffer_pixel;
             } else {
-                let color_index = Color::apply_dmg_palette(color_id, self.bgp) * 2;
-                let base_address = color_index as usize;
-
-                let raw_color = {
-                    let lo = self.bg_palette_ram[base_address] as u16;
-                    let hi = self.bg_palette_ram[base_address + 1] as u16;
-
-                    (hi << 8) | lo
-                };
+                let color_index = Color::apply_dmg_palette(color_id, self.bgp);
+                let raw_color = self.bg_cram.get_color_rgb555(0, color_index);
 
                 bg_priority[i as usize] = color_id != 0;
 
@@ -245,16 +229,9 @@ impl Graphics {
                         continue;
                     }
 
-                    let palette_address = sprite.flags.palette_number * 8;
-                    let color_index = color_id * 2;
-                    let base_address = (palette_address + color_index) as usize;
-
-                    let raw_color = {
-                        let lo = self.obj_palette_ram[base_address] as u16;
-                        let hi = self.obj_palette_ram[base_address + 1] as u16;
-
-                        (hi << 8) | lo
-                    };
+                    let raw_color = self
+                        .obj_cram
+                        .get_color_rgb555(sprite.flags.palette_number, color_id);
 
                     let framebuffer_address = line_offset + mapped_x;
                     let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
@@ -265,15 +242,8 @@ impl Graphics {
                         continue;
                     }
 
-                    let color_index = Color::apply_dmg_palette(color_id, selected_palette) * 2;
-                    let base_address = color_index as usize;
-
-                    let raw_color = {
-                        let lo = self.obj_palette_ram[base_address] as u16;
-                        let hi = self.obj_palette_ram[base_address + 1] as u16;
-
-                        (hi << 8) | lo
-                    };
+                    let color_index = Color::apply_dmg_palette(color_id, selected_palette);
+                    let raw_color = self.obj_cram.get_color_rgb555(0, color_index);
 
                     let framebuffer_address = line_offset + mapped_x;
                     let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);

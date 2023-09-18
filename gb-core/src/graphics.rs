@@ -4,6 +4,7 @@ use crate::{
 };
 
 use self::{
+    color_ram::ColorRam,
     lcd_control::LcdControl,
     lcd_status::{LcdStatus, StatusMode},
     oam::Oam,
@@ -25,11 +26,11 @@ pub struct Graphics {
     wx: u8,
     window_internal_counter: u8,
 
-    bcps: u8,                 // (CGB) Background color palette specification
-    bg_palette_ram: [u8; 64], // (CGB) Accessed through background color palette data (BCPD)
+    bcps: u8,          // (CGB) Background color palette specification
+    bg_cram: ColorRam, // (CGB) Accessed through background color palette data (BCPD)
 
-    ocps: u8,                  // (CGB) Object color palette specification
-    obj_palette_ram: [u8; 64], // (CGB) Accessed through object color palette data (OCPD)
+    ocps: u8,           // (CGB) Object color palette specification
+    obj_cram: ColorRam, // (CGB) Accessed through object color palette data (OCPD)
 
     opri: bool, // (CGB) Object priority mode
 
@@ -64,10 +65,10 @@ impl Default for Graphics {
             window_internal_counter: 0,
 
             bcps: 0,
-            bg_palette_ram: [0; 64],
+            bg_cram: ColorRam::default(),
 
             ocps: 0,
-            obj_palette_ram: [0; 64],
+            obj_cram: ColorRam::default(),
 
             opri: false,
 
@@ -141,7 +142,7 @@ impl Graphics {
 
         let address = self.bcps & 0b0011_1111;
 
-        self.bg_palette_ram[address as usize]
+        self.bg_cram.read(address)
     }
 
     pub fn write_bcpd(&mut self, value: u8) {
@@ -155,7 +156,7 @@ impl Graphics {
         let address = self.bcps & 0b0011_1111;
 
         if !(self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing) {
-            self.bg_palette_ram[address as usize] = value;
+            self.bg_cram.write(address, value);
         }
 
         if increment_address {
@@ -194,7 +195,7 @@ impl Graphics {
 
         let address = self.ocps & 0b0011_1111;
 
-        self.obj_palette_ram[address as usize]
+        self.obj_cram.read(address)
     }
 
     pub fn write_ocpd(&mut self, value: u8) {
@@ -207,7 +208,7 @@ impl Graphics {
         let address = self.ocps & 0b0011_1111;
 
         if !(self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing) {
-            self.obj_palette_ram[address as usize] = value;
+            self.obj_cram.write(address, value);
         }
 
         if increment_address {
@@ -364,6 +365,7 @@ impl Graphics {
     }
 }
 
+mod color_ram;
 mod debug_getters;
 mod draw_line_cgb;
 mod draw_line_dmg;

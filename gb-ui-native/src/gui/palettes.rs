@@ -25,30 +25,25 @@ impl Palettes {
             return;
         }
 
-        let bg_palettes = gb_ctx.cpu.memory.graphics.get_bg_palette_ram();
-        let obj_palettes = gb_ctx.cpu.memory.graphics.get_obj_palette_ram();
+        let bg_palettes = gb_ctx.cpu.memory.graphics.get_bg_cram();
+        let obj_palettes = gb_ctx.cpu.memory.graphics.get_obj_cram();
 
         Window::new("Palettes")
             .open(&mut self.opened)
             .show(egui_ctx, |ui| {
                 ui.horizontal(|ui| {
                     ui.vertical(|ui| {
-                        for palette in bg_palettes.chunks_exact(8) {
+                        for palette_number in 0..8 {
                             ui.horizontal(|ui| {
-                                for color_bytes in palette.chunks(2) {
-                                    let rgb555 = {
-                                        let lo = color_bytes[0] as u16;
-                                        let hi = color_bytes[1] as u16;
+                                for color_id in 0..4 {
+                                    let raw_color = bg_palettes.get_color_rgb555(palette_number, color_id);
 
-                                        (hi << 8) | lo
-                                    };
-
-                                    let raw_pixel = Color::from_rgb555_u16_raw(rgb555);
-                                    let pixel = Color::from_rgb555_u16_to_rgba8888(rgb555);
+                                    let raw_pixel = Color::from_rgb555_u16_raw(raw_color);
+                                    let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
 
                                     let rgb = Color32::from_rgb(pixel.red, pixel.green, pixel.blue);
                                     let tooltip = format!(
-                                        "RGB555: {rgb555:#06x}\n\nR: {:#04x}\nG: {:#04x}\nB: {:#04x}", raw_pixel.red, raw_pixel.green, raw_pixel.blue
+                                        "RGB555: {raw_color:#06x}\n\nR: {:#04x}\nG: {:#04x}\nB: {:#04x}", raw_pixel.red, raw_pixel.green, raw_pixel.blue
                                     );
 
                                     color_rect(ui, rgb).on_hover_text(tooltip);
@@ -60,22 +55,17 @@ impl Palettes {
                     ui.separator();
 
                     ui.vertical(|ui| {
-                        for palette in obj_palettes.chunks_exact(8) {
+                        for palette_number in 0..8 {
                             ui.horizontal(|ui| {
-                                for color_bytes in palette.chunks(2) {
-                                    let rgb555 = {
-                                        let lo = color_bytes[0] as u16;
-                                        let hi = color_bytes[1] as u16;
+                                for color_id in 0..4 {
+                                    let raw_color = obj_palettes.get_color_rgb555(palette_number, color_id);
 
-                                        (hi << 8) | lo
-                                    };
-
-                                    let raw_pixel = Color::from_rgb555_u16_raw(rgb555);
-                                    let pixel = Color::from_rgb555_u16_to_rgba8888(rgb555);
+                                    let raw_pixel = Color::from_rgb555_u16_raw(raw_color);
+                                    let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
 
                                     let rgb = Color32::from_rgb(pixel.red, pixel.green, pixel.blue);
                                     let tooltip = format!(
-                                        "RGB555: {rgb555:#06x}\n\nR: {:#04x}\nG: {:#04x}\nB: {:#04x}", raw_pixel.red, raw_pixel.green, raw_pixel.blue
+                                        "RGB555: {raw_color:#06x}\n\nR: {:#04x}\nG: {:#04x}\nB: {:#04x}", raw_pixel.red, raw_pixel.green, raw_pixel.blue
                                     );
 
                                     color_rect(ui, rgb).on_hover_text(tooltip);

@@ -39,8 +39,6 @@ impl App {
 
 impl eframe::App for App {
     fn update(&mut self, egui_ctx: &egui::Context, eframe_frame: &mut eframe::Frame) {
-        egui_ctx.set_pixels_per_point(1.0);
-
         if !self.gui.control.manual_control && self.gb.cpu.memory.cartridge.is_some() {
             self.gb.run_frame();
             egui_ctx.request_repaint();

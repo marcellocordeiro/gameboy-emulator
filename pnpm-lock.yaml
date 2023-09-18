@@ -65,8 +65,8 @@ devDependencies:
     specifier: ^7.33.2
     version: 7.33.2(eslint@8.49.0)
   eslint-plugin-react-hooks:
-    specifier: 5.0.0-canary-fdc8c81e0-20230707
-    version: 5.0.0-canary-fdc8c81e0-20230707(eslint@8.49.0)
+    specifier: 5.0.0-canary-2807d781a-20230918
+    version: 5.0.0-canary-2807d781a-20230918(eslint@8.49.0)
   eslint-plugin-react-refresh:
     specifier: ^0.4.3
     version: 0.4.3(eslint@8.49.0)
@@ -879,7 +879,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.21.10
-      caniuse-lite: 1.0.30001534
+      caniuse-lite: 1.0.30001535
       fraction.js: 4.3.6
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -931,7 +931,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001534
+      caniuse-lite: 1.0.30001535
       electron-to-chromium: 1.4.523
       node-releases: 2.0.13
       update-browserslist-db: 1.0.11(browserslist@4.21.10)
@@ -954,8 +954,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /caniuse-lite@1.0.30001534:
-    resolution: {integrity: sha512-vlPVrhsCS7XaSh2VvWluIQEzVhefrUQcEsQWSS5A5V+dM07uv1qHeQzAOTGIMy9i3e9bH15+muvI/UHojVgS/Q==}
+  /caniuse-lite@1.0.30001535:
+    resolution: {integrity: sha512-48jLyUkiWFfhm/afF7cQPqPjaUmSraEhK4j+FCTJpgnGGEZHqyLe3hmWH7lIooZdSzXL0ReMvHz0vKDoTBsrwg==}
     dev: true
 
   /chalk@4.1.2:
@@ -1390,8 +1390,8 @@ packages:
       semver: 6.3.1
     dev: true
 
-  /eslint-plugin-react-hooks@5.0.0-canary-fdc8c81e0-20230707(eslint@8.49.0):
-    resolution: {integrity: sha512-EmAIET13NKkYSiySl6euIP/x61PVVfHreEjLcfY33LoASbHEiv0BHGcWDmjRDr8LrjlCQdgURJL1y+oqSKiIxg==}
+  /eslint-plugin-react-hooks@5.0.0-canary-2807d781a-20230918(eslint@8.49.0):
+    resolution: {integrity: sha512-mnzRq5GK8klJmnfBQ8dsIkusd1QMFif5LYcax2wiWlfI1PVgJpqhG9hZSujC57LSL62/Tj+8kH+YskVkBOmfUA==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
