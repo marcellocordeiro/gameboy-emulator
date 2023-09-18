@@ -1,4 +1,3 @@
-use eframe::egui;
 use egui::{menu, Context, TopBottomPanel};
 use gb_core::GameBoy;
 

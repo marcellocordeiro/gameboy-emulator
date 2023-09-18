@@ -1,4 +1,3 @@
-use eframe::egui;
 use egui::Ui;
 use gb_core::GameBoy;
 

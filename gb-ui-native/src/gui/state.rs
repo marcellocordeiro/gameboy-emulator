@@ -1,4 +1,3 @@
-use eframe::egui;
 use egui::{Context, FontId, RichText, Ui, Window};
 use gb_core::GameBoy;
 

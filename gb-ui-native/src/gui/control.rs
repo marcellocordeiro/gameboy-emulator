@@ -1,4 +1,3 @@
-use eframe::egui;
 use egui::{Button, Context, Ui, Window};
 use gb_core::GameBoy;
 

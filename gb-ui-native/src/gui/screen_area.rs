@@ -1,4 +1,3 @@
-use eframe::egui;
 use egui::{
     epaint::{ColorImage, TextureHandle, Vec2},
     CentralPanel, Context, TextureOptions,
@@ -32,28 +31,28 @@ impl ScreenArea {
         self.update_texture(gb_ctx);
 
         CentralPanel::default().show(egui_ctx, |ui| {
-            let screen_size = ui.available_size();
-            let screen_width = screen_size.x;
-            let screen_height = screen_size.y;
-
-            let texture_size = self.texture.size_vec2();
-            let texture_width = texture_size.x;
-            let texture_height = texture_size.y;
-
-            let width_ratio = (screen_width / texture_width).max(1.0);
-            let height_ratio = (screen_height / texture_height).max(1.0);
-
-            let scale = width_ratio.clamp(1.0, height_ratio).floor();
-
-            let scaled_width = texture_width * scale;
-            let scaled_height = texture_height * scale;
-
-            let size = Vec2 {
-                x: scaled_width,
-                y: scaled_height,
-            };
-
             ui.centered_and_justified(|ui| {
+                let screen_size = ui.available_size();
+                let screen_width = screen_size.x;
+                let screen_height = screen_size.y;
+
+                let texture_size = self.texture.size_vec2();
+                let texture_width = texture_size.x;
+                let texture_height = texture_size.y;
+
+                let width_ratio = (screen_width / texture_width).max(1.0);
+                let height_ratio = (screen_height / texture_height).max(1.0);
+
+                let scale = width_ratio.clamp(1.0, height_ratio).floor();
+
+                let scaled_width = texture_width * scale;
+                let scaled_height = texture_height * scale;
+
+                let size = Vec2 {
+                    x: scaled_width,
+                    y: scaled_height,
+                };
+
                 ui.image(&self.texture, size);
             });
         });

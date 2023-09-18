@@ -1,4 +1,3 @@
-use eframe::egui;
 use egui::{epaint::Color32, Response, Sense, Ui};
 
 pub fn color_rect(ui: &mut Ui, color: Color32) -> Response {

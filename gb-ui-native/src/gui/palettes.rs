@@ -1,4 +1,3 @@
-use eframe::egui;
 use egui::{epaint::Color32, Context, Ui, Window};
 use gb_core::{utils::color::Color, GameBoy};
 

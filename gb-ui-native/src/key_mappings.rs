@@ -1,4 +1,3 @@
-use eframe::egui;
 use egui::Key;
 use gb_core::constants::Button;
 

@@ -1,4 +1,3 @@
-use eframe::egui;
 use gb_core::{constants::Button, GameBoy};
 
 use crate::{gui::Gui, key_mappings};
