@@ -43,7 +43,7 @@ macro_rules! testcases {
     ) => {
         #[test]
         fn $name() {
-            let rom = include_bytes!(concat!("../../external/gameboy-test-roms/", "mooneye-test-suite/", $path, ".gb"));
+            let rom = include_bytes!(concat!("../../../external/gameboy-test-roms/", "mooneye-test-suite/", $path, ".gb"));
 
             run(rom);
         }
