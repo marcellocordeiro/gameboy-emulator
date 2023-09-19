@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm build:wasm && vite",
-    "build:wasm": "wasm-pack build ./gb-core-wasm --target web",
-    "build": "pnpm build:wasm && tsc && vite build --emptyOutDir",
-    "lint": "eslint ./gb-ui-browser/src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "format": "prettier -w ./gb-ui-browser/src",
+    "build:wasm": "wasm-pack build ../gb-core-wasm --target web",
+    "build": "pnpm build:wasm && tsc && vite build",
+    "lint": "eslint ./src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier -w ./src",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -20,10 +20,10 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.6",
-    "@types/react": "^18.2.21",
+    "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.7",
-    "@typescript-eslint/eslint-plugin": "^6.7.0",
-    "@typescript-eslint/parser": "^6.7.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "autoprefixer": "^10.4.15",
     "eslint": "^8.49.0",
@@ -36,7 +36,7 @@
     "eslint-plugin-react-hooks": "5.0.0-canary-2807d781a-20230918",
     "eslint-plugin-react-refresh": "^0.4.3",
     "eslint-plugin-tailwindcss": "^3.13.0",
-    "postcss": "^8.4.29",
+    "postcss": "^8.4.30",
     "prettier": "^3.0.3",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.2.2",

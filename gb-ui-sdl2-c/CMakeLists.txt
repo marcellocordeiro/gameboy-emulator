@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.27)
+
 project(gb-ui-sdl2-c)
 
 add_executable(gb-ui-sdl2-c

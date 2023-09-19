@@ -1,8 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 const tailwindConfig = {
   content: [
-    "./gb-ui-browser/index.html",
-    "./gb-ui-browser/src/**/*.{js,ts,jsx,tsx}",
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     container: {
