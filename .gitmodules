@@ -1,3 +1,3 @@
 [submodule "external/gameboy-test-roms"]
 	path = external/gameboy-test-roms
-	url = git@github.com:marcellocordeiro/gameboy-test-roms.git
+	url = https://github.com/marcellocordeiro/gameboy-test-roms.git

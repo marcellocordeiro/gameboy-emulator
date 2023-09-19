@@ -30,6 +30,11 @@ pub extern "C" fn gameboy_new() -> *mut GameBoy {
 }
 
 #[no_mangle]
+pub unsafe extern "C" fn gameboy_destroy(gb_ptr: *mut GameBoy) {
+    drop(Box::from_raw(gb_ptr));
+}
+
+#[no_mangle]
 pub unsafe extern "C" fn gameboy_reset(gb_ptr: *mut GameBoy) {
     let gb = unsafe { &mut *gb_ptr };
 

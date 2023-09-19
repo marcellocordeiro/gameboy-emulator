@@ -280,11 +280,11 @@ impl Graphics {
 
                 if self.ly == 144 {
                     self.switch_mode(StatusMode::Vblank);
-                    self.cycles = 0;
                 } else {
                     self.switch_mode(StatusMode::OamScan);
-                    self.cycles = 0;
                 }
+
+                self.cycles = 0;
 
                 self.check_irq();
             }

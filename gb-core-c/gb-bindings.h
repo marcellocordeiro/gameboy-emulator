@@ -18,6 +18,7 @@ extern "C" {
     struct GameBoy;
 
     struct GameBoy* gameboy_new();
+    void gameboy_destroy(struct GameBoy* gb);
     void gameboy_reset(struct GameBoy* gb);
     void gameboy_load_cartridge(struct GameBoy* gb, const uint8_t* rom, size_t rom_size);
     void gameboy_run_frame(struct GameBoy* gb);

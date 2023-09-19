@@ -21,8 +21,8 @@ impl Graphics {
 
         for i in 0..(SCREEN_WIDTH as u8) {
             let (x, y, tile_map_base_address) = if should_render_win && i >= window_x {
-                let x = i - window_x;
-                let y = self.window_internal_counter;
+                let x = (i - window_x) as u16;
+                let y = self.window_internal_counter as u16;
 
                 let tile_map_base_address = if self.lcdc.get_win_map() {
                     0x9C00
@@ -32,8 +32,8 @@ impl Graphics {
 
                 (x, y, tile_map_base_address)
             } else if should_render_bg {
-                let x = self.scx.wrapping_add(i);
-                let y = self.scy.wrapping_add(self.ly);
+                let x = self.scx.wrapping_add(i) as u16;
+                let y = self.scy.wrapping_add(self.ly) as u16;
 
                 let tile_map_base_address = if self.lcdc.get_bg_map() {
                     0x9C00
@@ -52,8 +52,8 @@ impl Graphics {
             };
 
             let tile_map_address = {
-                let tile_row = (y / 8) as u16;
-                let tile_col = (x / 8) as u16;
+                let tile_row = y / 8;
+                let tile_col = x / 8;
 
                 tile_map_base_address + ((tile_row * 32) + tile_col)
             };

@@ -27,6 +27,8 @@ int main(int argc, char* argv[]) {
   struct GameBoy* gb = gameboy_new();
   gameboy_load_cartridge(gb, rom, rom_size);
 
+  free(rom);
+
   uint8_t framebuffer[FRAMEBUFFER_SIZE];
 
   for (size_t i = 0; i < FRAMEBUFFER_SIZE; ++i) {
@@ -79,7 +81,7 @@ int main(int argc, char* argv[]) {
   SDL_DestroyTexture(texture);
   SDL_DestroyWindow(window);
 
-  free(rom);
+  gameboy_destroy(gb);
 
   return 0;
 }
