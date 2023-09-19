@@ -6,12 +6,12 @@ add_executable(gb-ui-sdl2-c
   "src/main.c"
 )
 
-target_include_directories(gb-ui-sdl2-c PRIVATE "../gb-core-c")
+target_include_directories(gb-ui-sdl2-c PRIVATE "../../platform/gb-core-c")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(CARGO_BUILD_FOLDER "../target/debug")
+  set(CARGO_BUILD_FOLDER "../../target/debug")
 else()
-  set(CARGO_BUILD_FOLDER "../target/release")
+  set(CARGO_BUILD_FOLDER "../../target/release")
 endif()
 
 target_link_directories(gb-ui-sdl2-c PRIVATE ${CARGO_BUILD_FOLDER})

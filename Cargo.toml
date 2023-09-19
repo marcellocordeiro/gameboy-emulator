@@ -1,11 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
-  "gb-core",
-  "gb-core-c",
-  "gb-core-wasm",
-  "gb-opcode-info",
-  "gb-ui-native",
+  "core/gb-core",
+  "core/gb-core-c",
+  "core/gb-core-wasm",
+  "core/gb-opcode-info",
+  "platform/gb-ui-native",
 ]
 
 # Reminder to use `cargo clippy`.

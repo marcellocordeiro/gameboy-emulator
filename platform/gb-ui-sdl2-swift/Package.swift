@@ -4,14 +4,14 @@
 import PackageDescription
 
 let packageDirectory = Context.packageDirectory
-let rootDirectory = "\(packageDirectory)/.."
+let rootDirectory = "\(packageDirectory)/../.."
 
-let gbHeaderPath = "\(rootDirectory)/gb-core-c/gb-bindings.h"
+let gbHeaderPath = "\(rootDirectory)/core/gb-core-c/gb-bindings.h"
 
 #if DEBUG
-let libDirectory = "\(packageDirectory)/../target/debug"
+let libDirectory = "\(rootDirectory)/target/debug"
 #else
-let libDirectory = "\(packageDirectory)/../target/release"
+let libDirectory = "\(rootDirectory)/target/release"
 #endif
 
 let staticLibPath = "\(libDirectory)/libgb_core_c.a"
