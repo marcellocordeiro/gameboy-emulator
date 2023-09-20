@@ -30,10 +30,10 @@ jobs:
         run: npm install -g vercel@latest
 
       - name: Pull Vercel Environment Information
-        run: vercel pull --cwd ./platform/gb-ui-browser --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --cwd ./platform/browser --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
-        run: vercel build --cwd ./platform/gb-ui-browser --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --cwd ./platform/browser --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --cwd ./platform/gb-ui-browser --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --cwd ./platform/browser --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
