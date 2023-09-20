@@ -1113,11 +1113,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "gameboy-emulator"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "eframe",
+ "egui",
+ "env_logger",
+ "gb-core",
+ "log",
+ "rfd",
+]
+
+[[package]]
 name = "gb-core"
 version = "0.1.0"
 dependencies = [
  "arrayvec",
  "bitflags 2.4.0",
+ "cfg-if",
  "enum_dispatch",
  "image",
  "log",
@@ -1149,19 +1163,6 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
-]
-
-[[package]]
-name = "gb-ui-native"
-version = "0.1.0"
-dependencies = [
- "clap",
- "eframe",
- "egui",
- "env_logger",
- "gb-core",
- "log",
- "rfd",
 ]
 
 [[package]]

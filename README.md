@@ -34,14 +34,16 @@ boop
 
 - **[`.`](/)**: Package/configuration files for all modules.
 - **[`external`](external/)**: External dependencies.
-- **[`gb-core`](gb-core/)**: Main core written in Rust.
-- **[`gb-core-c`](gb-core-c/)**: `gb-core` shims for use in other languages (interoperability). Contains a C/C++ header file with the function declarations.
-- **[`gb-core-wasm`](gb-core-wasm/)**: `gb-core` wrapper targeting WASM.
-- **[`gb-opcode-info`](gb-opcode-info/)**: Contains opcode info for use in other modules.
-- **[`gb-ui-browser`](gb-ui-browser/)**: Browser app written in TypeScript using Vite and React.
-- **[`gb-ui-native`](gb-ui-native/)**: Native app written in Rust.
-- **[`gb-ui-sdl2-c`](gb-ui-sdl2-c/)**: Native app written in C using `gb-core-c` and SDL2.
-- **[`gb-ui-sdl2-swift`](gb-ui-sdl2-swift/)**: Native app written in Swift using `gb-core-c` and SDL2. Likely unsupported on Windows and Linux.
+- **[`core`](core/)**: Core modules.
+  - **[`gb-core`](core/gb-core/)**: Main core written in Rust.
+  - **[`gb-core-c`](core/gb-core-c/)**: `gb-core` shims for use in other languages (interoperability). Contains a C/C++ header file with the function declarations.
+  - **[`gb-core-wasm`](core/gb-core-wasm/)**: `gb-core` wrapper targeting WASM.
+  - **[`gb-opcode-info`](core/gb-opcode-info/)**: Contains opcode info for use in other modules.
+- **[`platform`](platform/)**: Language/framework specific frontends.
+  - **[`browser`](platform/browser/)**: Browser app written in TypeScript using Vite and React.
+  - **[`eframe-rust`](platform/eframe-rust/)**: Native app written in Rust.
+  - **[`sdl2-c`](platform/sdl2-c/)**: Native app written in C using `gb-core-c` and SDL2.
+  - **[`sdl2-swift`](platform/sdl2-swift/)**: Native app written in Swift using `gb-core-c` and SDL2. Likely unsupported on Windows and Linux, but was briefly tested on the latter.
 
 ## Setup
 

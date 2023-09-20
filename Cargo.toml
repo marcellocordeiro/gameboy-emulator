@@ -5,7 +5,7 @@ members = [
   "core/gb-core-c",
   "core/gb-core-wasm",
   "core/gb-opcode-info",
-  "platform/gb-ui-native",
+  "platform/eframe-rust",
 ]
 
 # Reminder to use `cargo clippy`.

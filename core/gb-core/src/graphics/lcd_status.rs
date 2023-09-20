@@ -71,10 +71,10 @@ impl LcdStatus {
 impl Graphics {
     pub fn read_stat(&self) -> u8 {
         if !self.lcdc.get_lcd_enable() {
-            return 1 << 7;
+            return 0b1000_0000;
         }
 
-        (1 << 7) | self.stat.bits() | self.mode as u8
+        0b1000_0000 | self.stat.bits() | self.mode as u8
     }
 
     pub fn write_stat(&mut self, value: u8) {

@@ -79,13 +79,8 @@ testcases! {
 // CGB only tests.
 #[cfg(feature = "cgb")]
 testcases! {
-    boot_regs_cgb("misc/boot_regs-cgb");
-}
-
-// CGB only tests (bootrom is unsupported).
-#[cfg(all(feature = "cgb", not(feature = "bootrom")))]
-testcases! {
     boot_hwio_c("misc/boot_hwio-C");
+    boot_regs_cgb("misc/boot_regs-cgb");
 }
 
 testcases! {

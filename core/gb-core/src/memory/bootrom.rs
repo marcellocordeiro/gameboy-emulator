@@ -22,10 +22,10 @@ pub struct Bootrom {
 impl Default for Bootrom {
     fn default() -> Self {
         #[cfg(not(feature = "cgb"))]
-        let data = include_bytes!("../../../roms/dmg_boot.bin");
+        let data = include_bytes!("../../../../roms/dmg_boot.bin");
 
         #[cfg(feature = "cgb")]
-        let data = include_bytes!("../../../roms/cgb_boot.bin");
+        let data = include_bytes!("../../../../roms/cgb_boot.bin");
 
         Self {
             data: *data,
@@ -49,7 +49,7 @@ impl Bootrom {
     }
 
     pub fn read_status(&self) -> u8 {
-        (!self.is_active as u8) | 0xFE
+        0b1111_1110 | (!self.is_active as u8)
     }
 
     pub fn write_status(&mut self, value: u8) {

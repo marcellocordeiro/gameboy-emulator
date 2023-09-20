@@ -1,5 +1,5 @@
 {
-  "name": "gb-ui-browser",
+  "name": "gameboy-emulator",
   "private": true,
   "version": "0.0.0",
   "type": "module",
