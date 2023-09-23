@@ -10,3 +10,6 @@ members = [
 ]
 
 # Reminder to use `cargo clippy`.
+
+[workspace.dependencies]
+gb-core = { path = "./core/gb-core" }

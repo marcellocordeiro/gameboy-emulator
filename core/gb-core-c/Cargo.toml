@@ -6,10 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-bootrom = []
+# default = ["bootrom", "cgb"]
+bootrom = ["gb-core/bootrom"]
+cgb = ["gb-core/cgb"]
 
 [lib]
 crate-type = ["staticlib", "dylib"]
 
 [dependencies]
-gb-core = { path = "../gb-core" }
+gb-core = { workspace = true }
