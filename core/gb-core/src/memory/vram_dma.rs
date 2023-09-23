@@ -1,9 +1,12 @@
-#[derive(Debug, Default)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub enum DmaMode {
     #[default]
     Idle,
     General,
-    Hblank,
+    Hblank {
+        active: bool,
+        remaining_steps: u8,
+    },
 }
 
 #[derive(Debug, Default)]
@@ -13,6 +16,8 @@ pub struct VramDma {
 
     /// `0bXXX3_3333_4444_XXXX`
     pub destination: u16,
+
+    pub steps: u8,
 
     pub hdma1: u8,
     pub hdma2: u8,
@@ -46,47 +51,123 @@ impl VramDma {
 
     /// HDMA5 (length/mode/start)
     pub fn read_hdma5(&self) -> u8 {
-        0xFF
+        match self.mode {
+            DmaMode::Idle => 0xFF,
+            DmaMode::General => 0xFF,
+
+            DmaMode::Hblank {
+                remaining_steps, ..
+            } => remaining_steps,
+        }
     }
 
     pub fn write_hdma1(&mut self, value: u8) {
         self.hdma1 = value;
-        self.source = ((value as u16) << 8) | (self.source & 0x00FF);
-
-        self.validate_writes();
     }
 
     pub fn write_hdma2(&mut self, value: u8) {
         const WRITABLE_MASK: u8 = 0b1111_0000;
         self.hdma2 = value & WRITABLE_MASK;
-        self.source = (self.source & 0xFF00) | ((value & WRITABLE_MASK) as u16);
-
-        self.validate_writes();
     }
 
     pub fn write_hdma3(&mut self, value: u8) {
         const WRITABLE_MASK: u8 = 0b0001_1111;
         self.hdma3 = value & WRITABLE_MASK;
-        self.destination = (((value & WRITABLE_MASK) as u16) << 8) | (self.destination & 0x00FF);
-
-        self.validate_writes();
     }
 
     pub fn write_hdma4(&mut self, value: u8) {
         const WRITABLE_MASK: u8 = 0b1111_0000;
         self.hdma4 = value & WRITABLE_MASK;
-        self.destination = (self.destination & 0xFF00) | ((value & WRITABLE_MASK) as u16);
-
-        self.validate_writes();
     }
 
-    pub fn write_hdma5(&mut self, value: u8) {}
+    pub fn write_hdma5(&mut self, value: u8) {
+        self.hdma5 = value;
 
-    fn validate_writes(&self) {
-        assert_eq!(((self.hdma1 as u16) << 8) | self.hdma2 as u16, self.source);
-        assert_eq!(
-            ((self.hdma3 as u16) << 8) | self.hdma4 as u16,
-            self.destination
-        );
+        let source = ((self.hdma1 as u16) << 8) | (self.hdma2 as u16);
+        let destination = 0x8000 | ((self.hdma3 as u16) << 8) | (self.hdma4 as u16);
+        let steps = (self.hdma5 & 0b0111_1111) + 1;
+
+        self.source = source;
+        self.destination = destination;
+        self.steps = steps;
+
+        if value & 0b1000_0000 == 0 {
+            self.mode = DmaMode::General;
+        } else {
+            self.mode = DmaMode::Hblank {
+                active: true,
+                remaining_steps: steps,
+            };
+        }
+    }
+
+    /*
+    pub fn perform_gdma(&mut self) -> Option<impl Iterator<Item = u16>> {
+        if self.mode == DmaMode::General {
+            let len = ((self.hdma5 & 0b0111_1111) as u16 + 1) * 0x10;
+            let iter = 0..len;
+
+            self.mode = DmaMode::Idle;
+
+            return Some(iter);
+        }
+
+        None
+    }
+    */
+
+    pub fn perform_gdma(&mut self) -> Option<u16> {
+        if self.mode != DmaMode::General {
+            return None;
+        }
+
+        self.mode = DmaMode::Idle;
+
+        Some((self.steps as u16) * 0x10)
+    }
+
+    pub fn perform_hdma(&mut self) -> Option<u16> {
+        let step = match self.mode {
+            DmaMode::Hblank { active: false, .. } => {
+                return None;
+            }
+
+            DmaMode::Hblank {
+                remaining_steps: 1, ..
+            } => {
+                self.mode = DmaMode::Idle;
+
+                return None;
+            }
+
+            DmaMode::Hblank {
+                ref mut remaining_steps,
+                ref mut active,
+            } => {
+                let current = *remaining_steps;
+
+                *active = false;
+                *remaining_steps -= 1;
+
+                self.steps - current
+            }
+
+            _ => return None,
+        };
+
+        Some((step as u16) * 0x10)
+    }
+
+    pub fn resume_hdma(&mut self) {
+        if let DmaMode::Hblank {
+            active: false,
+            remaining_steps,
+        } = self.mode
+        {
+            self.mode = DmaMode::Hblank {
+                active: true,
+                remaining_steps,
+            };
+        }
     }
 }

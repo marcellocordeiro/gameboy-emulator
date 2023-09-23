@@ -38,6 +38,8 @@ pub struct Memory {
 
     pub oam_dma: OamDma,
     pub vram_dma: VramDma,
+
+    pub cgb_mode: bool,
 }
 
 impl Memory {
@@ -53,6 +55,8 @@ impl Memory {
         self.undocumented_registers = UndocumentedRegisters::default();
         self.oam_dma = OamDma::default();
         self.vram_dma = VramDma::default();
+
+        self.cgb_mode = false;
 
         if let Some(cartridge) = self.cartridge.as_mut() {
             cartridge.reset();
@@ -82,6 +86,8 @@ impl Memory {
     pub fn set_cgb_mode(&mut self, value: bool) {
         info!("{} CGB mode.", if value { "Enabling" } else { "Disabling" });
 
+        self.cgb_mode = value;
+
         self.wram.set_cgb_mode(value);
         self.graphics.set_cgb_mode(value);
         self.speed_switch.set_cgb_mode(value);
@@ -100,10 +106,8 @@ impl Memory {
             panic!("CGB double speed not yet supported.");
         }
 
-        if let Some((source, destination)) = self.oam_dma.advance() {
-            let value = self.read(source);
-            self.graphics.oam.write(destination, value);
-        }
+        self.perform_oam_dma();
+        self.perform_vram_dma();
 
         for _ in 0..4 {
             self.timer.tick();
@@ -335,6 +339,43 @@ impl Memory {
             0xFF6D..=0xFF6F => (), // Unused.
             0xFF71..=0xFF71 => (), // Unused.
             0xFF78..=0xFF7F => (), // Unused.
+        }
+    }
+
+    fn perform_oam_dma(&mut self) {
+        if let Some((source, destination)) = self.oam_dma.advance() {
+            let value = self.read(source);
+            self.graphics.oam.write(destination, value);
+        }
+    }
+
+    fn perform_vram_dma(&mut self) {
+        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+            return;
+        }
+
+        if let Some(length) = self.vram_dma.perform_gdma() {
+            let source = self.vram_dma.source;
+            let destination = self.vram_dma.destination;
+
+            for offset in 0..length {
+                let value = self.read(source + offset);
+                self.write(destination + offset, value);
+            }
+        }
+
+        if self.graphics.in_hblank() {
+            if let Some(base_offset) = self.vram_dma.perform_hdma() {
+                let source = self.vram_dma.source;
+                let destination = self.vram_dma.destination;
+
+                for offset in base_offset..(base_offset + 0x10) {
+                    let value = self.read(source + offset);
+                    self.write(destination + offset, value);
+                }
+            }
+        } else {
+            self.vram_dma.resume_hdma();
         }
     }
 }
