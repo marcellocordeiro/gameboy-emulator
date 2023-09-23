@@ -1,0 +1,1 @@
+pub const OLD_LICENSEE_CODE_ADDRESS: usize = 0x014B;

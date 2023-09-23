@@ -1,6 +1,15 @@
 use log::info;
 
-use crate::{cartridge::error::Error as CartridgeError, constants::ONE_KIB};
+use crate::{
+    cartridge::{
+        error::Error as CartridgeError,
+        info::{
+            new_licensee_code::{NEW_LICENSEE_CODE_ADDRESS_BEGIN, NEW_LICENSEE_CODE_ADDRESS_END},
+            old_licensee_code::OLD_LICENSEE_CODE_ADDRESS,
+        },
+    },
+    constants::ONE_KIB,
+};
 
 use self::{
     cartridge_type::CARTRIDGE_TYPE_ADDRESS,
@@ -58,6 +67,14 @@ impl TryFrom<&Vec<u8>> for Info {
             .get(SGB_FLAG_ADDRESS)
             .ok_or(CartridgeError::InvalidRom)?;
 
+        let old_licensee_code = *rom
+            .get(OLD_LICENSEE_CODE_ADDRESS)
+            .ok_or(CartridgeError::InvalidRom)?;
+
+        let new_licensee_code_bytes = rom
+            .get(NEW_LICENSEE_CODE_ADDRESS_BEGIN..=NEW_LICENSEE_CODE_ADDRESS_END)
+            .ok_or(CartridgeError::InvalidRom)?;
+
         let title = get_title(title_bytes);
         let rom_banks = get_rom_banks(rom_size_code)?;
         let ram_banks = get_ram_banks(ram_size_code)?;
@@ -65,6 +82,7 @@ impl TryFrom<&Vec<u8>> for Info {
         let extra_features = ExtraFeature::get_features(cartridge_type_code);
         let cgb_flag = CgbFlag::from(cgb_flag_code);
         let sgb_flag = sgb_flag::from(sgb_flag_code);
+        let new_licensee_code = new_licensee_code::get_new_licensee_code(new_licensee_code_bytes);
 
         let file_size = rom.len();
 
@@ -84,6 +102,8 @@ impl TryFrom<&Vec<u8>> for Info {
         info!("RAM banks: {ram_banks}");
         info!("CGB flag: {cgb_flag}");
         info!("SGB flag: {sgb_flag:?}");
+        info!("Old licensee code: {old_licensee_code:#04X}");
+        info!("New licensee code: {new_licensee_code}");
 
         Ok(Self {
             title,
@@ -123,6 +143,8 @@ impl Info {
 mod cartridge_type;
 mod cgb_flag;
 mod extra_features;
+mod new_licensee_code;
+mod old_licensee_code;
 mod ram_size;
 mod rom_size;
 mod sgb_flag;
