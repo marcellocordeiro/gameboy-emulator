@@ -17,10 +17,6 @@ impl Graphics {
         let should_render_win = self.lcdc.get_win_enable() && self.wy <= self.ly;
         let should_render_bg = self.lcdc.get_bg_enable();
 
-        if !should_render_win && !should_render_bg {
-            return;
-        }
-
         let window_x = self.wx.saturating_sub(7);
 
         for i in 0..(SCREEN_WIDTH as u8) {
@@ -47,6 +43,11 @@ impl Graphics {
 
                 (x, y, tile_map_base_address)
             } else {
+                let address = line_offset + (i as usize);
+                let pixel = Color::SYSTEM_DEFAULT;
+
+                self.framebuffer[address] = pixel;
+
                 continue;
             };
 
@@ -164,15 +165,19 @@ impl Graphics {
 
                 let mapped_x = sprite.x.wrapping_add(7 - x) as usize;
 
-                if mapped_x < SCREEN_WIDTH && color_id != 0 {
-                    if !sprite.flags.priority || !bg_priority[mapped_x] {
-                        let framebuffer_address = line_offset + mapped_x;
-                        let framebuffer_pixel =
-                            Color::from_dmg_color_id_with_palette(color_id, selected_palette);
-
-                        self.framebuffer[framebuffer_address] = framebuffer_pixel;
-                    }
+                if mapped_x >= SCREEN_WIDTH || color_id == 0 {
+                    continue;
                 }
+
+                if bg_priority[mapped_x] && sprite.flags.bg_priority {
+                    continue;
+                }
+
+                let framebuffer_address = line_offset + mapped_x;
+                let framebuffer_pixel =
+                    Color::from_dmg_color_id_with_palette(color_id, selected_palette);
+
+                self.framebuffer[framebuffer_address] = framebuffer_pixel;
             }
         }
     }

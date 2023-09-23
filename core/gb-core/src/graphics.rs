@@ -43,7 +43,7 @@ pub struct Graphics {
     mode: StatusMode,
     cycles: u32,
 
-    framebuffer: Framebuffer,
+    framebuffer: Box<Framebuffer>,
 
     cgb_mode: bool,
 }
@@ -81,7 +81,10 @@ impl Default for Graphics {
             mode: StatusMode::OamScan,
             cycles: 0,
 
-            framebuffer: [Color::white(); SCREEN_WIDTH * SCREEN_HEIGHT],
+            framebuffer: vec![Color::SYSTEM_DEFAULT; SCREEN_WIDTH * SCREEN_HEIGHT]
+                .into_boxed_slice()
+                .try_into()
+                .unwrap(),
 
             cgb_mode: false,
         }

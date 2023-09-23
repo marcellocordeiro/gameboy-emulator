@@ -4,16 +4,23 @@ use crate::{constants::SCREEN_WIDTH, utils::color::Color};
 
 use super::Graphics;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Priority {
+    Object,
+    OamAttribute,
+    Background,
+}
+
 impl Graphics {
     pub fn draw_line(&mut self) {
         let line_offset = SCREEN_WIDTH * (self.ly as usize);
-        let mut bg_priority = [false; SCREEN_WIDTH];
+        let mut priority = [Priority::Object; SCREEN_WIDTH];
 
-        self.draw_tiles(line_offset, &mut bg_priority);
-        self.draw_sprites(line_offset, &bg_priority);
+        self.draw_tiles(line_offset, &mut priority);
+        self.draw_sprites(line_offset, &priority);
     }
 
-    fn draw_tiles(&mut self, line_offset: usize, bg_priority: &mut [bool; SCREEN_WIDTH]) {
+    fn draw_tiles(&mut self, line_offset: usize, priority: &mut [Priority; SCREEN_WIDTH]) {
         let should_render_win = self.lcdc.get_win_enable() && self.wy <= self.ly;
         let should_render_bg = self.cgb_mode || self.lcdc.get_bg_enable();
 
@@ -44,7 +51,7 @@ impl Graphics {
                 (x, y, tile_map_base_address)
             } else {
                 let address = line_offset + (i as usize);
-                let pixel = Color::white();
+                let pixel = Color::SYSTEM_DEFAULT;
 
                 self.framebuffer[address] = pixel;
 
@@ -96,9 +103,9 @@ impl Graphics {
             let (tile_data_lo, tile_data_hi) = {
                 let line = {
                     if y_flip {
-                        14 - ((y % 8) * 2) as u16
+                        14 - ((y % 8) * 2)
                     } else {
-                        ((y % 8) * 2) as u16
+                        (y % 8) * 2
                     }
                 };
                 let base_address = tile_address + line;
@@ -129,7 +136,13 @@ impl Graphics {
             if self.cgb_mode {
                 let raw_color = self.bg_cram.get_color_rgb555(palette_number, color_id);
 
-                bg_priority[i as usize] = color_id != 0;
+                if color_id == 0 || !self.lcdc.get_bg_enable() {
+                    priority[i as usize] = Priority::Object;
+                } else if !bg_oam_priority {
+                    priority[i as usize] = Priority::OamAttribute;
+                } else {
+                    priority[i as usize] = Priority::Background;
+                }
 
                 let framebuffer_address = line_offset + (i as usize);
                 let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
@@ -138,7 +151,11 @@ impl Graphics {
                 let color_index = Color::apply_dmg_palette(color_id, self.bgp);
                 let raw_color = self.bg_cram.get_color_rgb555(0, color_index);
 
-                bg_priority[i as usize] = color_id != 0;
+                priority[i as usize] = if color_id == 0 {
+                    Priority::Object
+                } else {
+                    Priority::Background
+                };
 
                 let framebuffer_address = line_offset + (i as usize);
                 let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
@@ -147,7 +164,7 @@ impl Graphics {
         }
     }
 
-    fn draw_sprites(&mut self, line_offset: usize, bg_priority: &[bool; SCREEN_WIDTH]) {
+    fn draw_sprites(&mut self, line_offset: usize, priority: &[Priority; SCREEN_WIDTH]) {
         if !self.lcdc.get_obj_enable() {
             return;
         }
@@ -225,7 +242,10 @@ impl Graphics {
                 }
 
                 if self.cgb_mode {
-                    if sprite.flags.priority && bg_priority[mapped_x] {
+                    if !(priority[mapped_x] == Priority::Object
+                        || (priority[mapped_x] == Priority::OamAttribute
+                            && !sprite.flags.bg_priority))
+                    {
                         continue;
                     }
 
@@ -238,7 +258,7 @@ impl Graphics {
 
                     self.framebuffer[framebuffer_address] = framebuffer_pixel;
                 } else {
-                    if sprite.flags.priority && bg_priority[mapped_x] {
+                    if priority[mapped_x] == Priority::Background && sprite.flags.bg_priority {
                         continue;
                     }
 
