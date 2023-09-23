@@ -41,8 +41,9 @@ boop
   - **[`gb-opcode-info`](core/gb-opcode-info/)**: Contains opcode info for use in other modules.
 - **[`platform`](platform/)**: Language/framework specific frontends.
   - **[`browser`](platform/browser/)**: Browser app written in TypeScript using Vite and React.
-  - **[`eframe-rust`](platform/eframe-rust/)**: Native app written in Rust.
+  - **[`eframe-rust`](platform/eframe-rust/)**: Native app written in Rust using eframe.
   - **[`sdl2-c`](platform/sdl2-c/)**: Native app written in C using `gb-core-c` and SDL2.
+  - **[`sdl2-rust`](platform/sdl2-rust/)**: Native app written in Rust using SDL2.
   - **[`sdl2-swift`](platform/sdl2-swift/)**: Native app written in Swift using `gb-core-c` and SDL2. Likely unsupported on Windows and Linux, but was briefly tested on the latter.
 
 ## Setup
