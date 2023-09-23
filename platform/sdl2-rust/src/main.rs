@@ -35,12 +35,11 @@ fn main() {
         let rom = std::fs::read(path).unwrap();
         gb.load_cartridge(rom).unwrap();
     } else {
-        let builder = rfd::FileDialog::new().add_filter("", &["gb", "gbc"]);
+        let builder = rfd::FileDialog::new().add_filter("GB/GBC ROM", &["gb", "gbc"]);
+        let path = builder.pick_file().unwrap();
 
-        if let Some(path) = builder.pick_file() {
-            let rom = std::fs::read(path).unwrap();
-            gb.load_cartridge(rom).unwrap();
-        }
+        let rom = std::fs::read(path).unwrap();
+        gb.load_cartridge(rom).unwrap();
     }
 
     App::new(gb).run();
