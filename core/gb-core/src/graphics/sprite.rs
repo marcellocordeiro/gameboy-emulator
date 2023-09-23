@@ -1,6 +1,6 @@
 #[derive(Debug, Default)]
 pub struct SpriteObjectFlags {
-    pub priority: bool,
+    pub bg_priority: bool,
     pub y_flip: bool,
     pub x_flip: bool,
     pub obp1_selected: bool, // DMG and DMG compat only.
@@ -10,7 +10,7 @@ pub struct SpriteObjectFlags {
 
 impl SpriteObjectFlags {
     pub fn from_byte(flags: u8) -> Self {
-        let priority = (flags & 0b1000_0000) != 0;
+        let bg_priority = (flags & 0b1000_0000) != 0;
         let y_flip = (flags & 0b0100_0000) != 0;
         let x_flip = (flags & 0b0010_0000) != 0;
         let obp1_selected = (flags & 0b0001_0000) != 0;
@@ -18,7 +18,7 @@ impl SpriteObjectFlags {
         let palette_number = flags & 0b0000_0111;
 
         Self {
-            priority,
+            bg_priority,
             y_flip,
             x_flip,
             obp1_selected,

@@ -1,6 +1,6 @@
 use egui::{
     epaint::{ColorImage, TextureHandle, Vec2},
-    CentralPanel, Context, TextureOptions,
+    CentralPanel, Color32, Context, TextureOptions,
 };
 use gb_core::{
     constants::{Frame, FRAME_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH},
@@ -8,7 +8,7 @@ use gb_core::{
 };
 
 pub struct ScreenArea {
-    pixels: Frame,
+    pixels: Box<Frame>,
     texture: TextureHandle,
 }
 
@@ -16,15 +16,16 @@ impl ScreenArea {
     const FILTER: TextureOptions = TextureOptions::NEAREST;
 
     pub fn new(egui_ctx: &Context) -> Self {
-        let pixels = [0; FRAME_SIZE];
-
         let texture = {
-            let image = ColorImage::from_rgba_unmultiplied([SCREEN_WIDTH, SCREEN_HEIGHT], &pixels);
+            let image = ColorImage::new([SCREEN_WIDTH, SCREEN_HEIGHT], Color32::WHITE);
 
             egui_ctx.load_texture("main", image, Self::FILTER)
         };
 
-        Self { pixels, texture }
+        Self {
+            pixels: vec![0; FRAME_SIZE].into_boxed_slice().try_into().unwrap(),
+            texture,
+        }
     }
 
     pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
@@ -48,10 +49,7 @@ impl ScreenArea {
                 let scaled_width = texture_width * scale;
                 let scaled_height = texture_height * scale;
 
-                let size = Vec2 {
-                    x: scaled_width,
-                    y: scaled_height,
-                };
+                let size = Vec2::new(scaled_width, scaled_height);
 
                 ui.image(&self.texture, size);
             });
@@ -61,7 +59,8 @@ impl ScreenArea {
     fn update_texture(&mut self, gb_ctx: &GameBoy) {
         gb_ctx.draw(&mut self.pixels);
 
-        let image = ColorImage::from_rgba_unmultiplied([SCREEN_WIDTH, SCREEN_HEIGHT], &self.pixels);
+        let image =
+            ColorImage::from_rgba_unmultiplied([SCREEN_WIDTH, SCREEN_HEIGHT], self.pixels.as_ref());
         self.texture.set(image, Self::FILTER);
     }
 }

@@ -4,7 +4,7 @@ use super::MbcInterface;
 
 pub struct Mbc2 {
     rom: Vec<u8>,
-    ram: [u8; 512],
+    ram: Box<[u8; 512]>,
 
     ram_enable: bool,
 
@@ -17,7 +17,7 @@ impl Mbc2 {
 
         Self {
             rom,
-            ram: [0; 512],
+            ram: Box::new([0; 512]),
             ram_enable: false,
             rom_bank: 0x01,
         }

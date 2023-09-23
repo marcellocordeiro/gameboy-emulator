@@ -115,7 +115,8 @@ impl Graphics {
             self.mode = StatusMode::OamScan;
             self.cycles = 0;
             self.ly = 0;
-            self.framebuffer.fill(Color::white());
+
+            self.framebuffer.fill(Color::SYSTEM_DEFAULT);
         }
 
         self.lcdc = new_lcdc;

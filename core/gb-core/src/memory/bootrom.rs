@@ -14,7 +14,7 @@ const BOOTROM_SIZE: usize = 0x100 + 0x100 + 0x700;
 
 #[cfg(feature = "bootrom")]
 pub struct Bootrom {
-    data: [u8; BOOTROM_SIZE],
+    data: &'static [u8; BOOTROM_SIZE],
     is_active: bool,
 }
 
@@ -28,7 +28,7 @@ impl Default for Bootrom {
         let data = include_bytes!("../../../../roms/cgb_boot.bin");
 
         Self {
-            data: *data,
+            data,
             is_active: true,
         }
     }

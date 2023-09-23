@@ -1,6 +1,6 @@
 use egui::{
     epaint::{ColorImage, TextureHandle, Vec2},
-    Context, TextureOptions, Ui, Window,
+    Color32, Context, TextureOptions, Ui, Window,
 };
 use gb_core::{
     constants::{
@@ -12,8 +12,8 @@ use gb_core::{
 pub struct Tiles {
     opened: bool,
 
-    pixels_bank: TileDataFrame,
-    texture_bank: TextureHandle,
+    pixels: Box<TileDataFrame>,
+    texture: TextureHandle,
 }
 
 impl Tiles {
@@ -24,12 +24,10 @@ impl Tiles {
     const FILTER: TextureOptions = TextureOptions::NEAREST;
 
     pub fn new(egui_ctx: &Context) -> Self {
-        let pixels_bank = [0; TILE_DATA_FRAME_SIZE];
-
-        let texture_bank = {
-            let image = ColorImage::from_rgba_unmultiplied(
+        let texture = {
+            let image = ColorImage::new(
                 [TILE_DATA_FRAME_WIDTH, TILE_DATA_FRAME_HEIGHT],
-                &pixels_bank,
+                Color32::WHITE,
             );
 
             egui_ctx.load_texture("tiles", image, Self::FILTER)
@@ -37,8 +35,11 @@ impl Tiles {
 
         Self {
             opened: false,
-            pixels_bank,
-            texture_bank,
+            pixels: vec![0; TILE_DATA_FRAME_SIZE]
+                .into_boxed_slice()
+                .try_into()
+                .unwrap(),
+            texture,
         }
     }
 
@@ -69,7 +70,7 @@ impl Tiles {
                 let screen_width = screen_size.x;
                 let screen_height = screen_size.y;
 
-                let texture_size = self.texture_bank.size_vec2();
+                let texture_size = self.texture.size_vec2();
                 let texture_width = texture_size.x;
                 let texture_height = texture_size.y;
 
@@ -81,13 +82,10 @@ impl Tiles {
                 let scaled_width = texture_width * scale;
                 let scaled_height = texture_height * scale;
 
-                let size = Vec2 {
-                    x: scaled_width,
-                    y: scaled_height,
-                };
+                let size = Vec2::new(scaled_width, scaled_height);
 
                 ui.centered_and_justified(|ui| {
-                    ui.image(&self.texture_bank, size);
+                    ui.image(&self.texture, size);
                 });
             });
     }
@@ -98,7 +96,7 @@ impl Tiles {
             .memory
             .graphics
             .vram
-            .draw_tile_data_0_into_frame(&mut self.pixels_bank);
+            .draw_tile_data_0_into_frame(&mut self.pixels);
 
         #[cfg(feature = "cgb")]
         gb_ctx
@@ -106,13 +104,13 @@ impl Tiles {
             .memory
             .graphics
             .vram
-            .draw_tile_data_1_into_frame(&mut self.pixels_bank);
+            .draw_tile_data_1_into_frame(&mut self.pixels);
 
         let image = ColorImage::from_rgba_unmultiplied(
             [TILE_DATA_FRAME_WIDTH, TILE_DATA_FRAME_HEIGHT],
-            &self.pixels_bank,
+            self.pixels.as_ref(),
         );
 
-        self.texture_bank.set(image, Self::FILTER);
+        self.texture.set(image, Self::FILTER);
     }
 }
