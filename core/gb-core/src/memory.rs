@@ -10,9 +10,8 @@ use crate::{
 };
 
 use self::{
-    bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, oam_dma::OamDma,
-    speed_switch::SpeedSwitch, undocumented_registers::UndocumentedRegisters, vram_dma::VramDma,
-    work_ram::WorkRam,
+    bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, speed_switch::SpeedSwitch,
+    undocumented_registers::UndocumentedRegisters, work_ram::WorkRam,
 };
 
 #[derive(Default)]
@@ -36,9 +35,6 @@ pub struct Memory {
 
     pub undocumented_registers: UndocumentedRegisters,
 
-    pub oam_dma: OamDma,
-    pub vram_dma: VramDma,
-
     pub cgb_mode: bool,
 }
 
@@ -53,8 +49,6 @@ impl Memory {
         self.timer = Timer::default();
         self.speed_switch = SpeedSwitch::default();
         self.undocumented_registers = UndocumentedRegisters::default();
-        self.oam_dma = OamDma::default();
-        self.vram_dma = VramDma::default();
 
         self.cgb_mode = false;
 
@@ -183,7 +177,7 @@ impl Memory {
             0xFF43 => self.graphics.read_scx(),
             0xFF44 => self.graphics.read_ly(),
             0xFF45 => self.graphics.read_lyc(),
-            0xFF46 => self.oam_dma.read(),
+            0xFF46 => self.graphics.oam_dma.read(),
             0xFF47 => self.graphics.read_bgp(),
             0xFF48 => self.graphics.read_obp0(),
             0xFF49 => self.graphics.read_obp1(),
@@ -197,11 +191,11 @@ impl Memory {
             0xFF50 => self.bootrom.read_status(),
 
             // (CGB) VRAM DMA.
-            0xFF51 => self.vram_dma.read_hdma1(),
-            0xFF52 => self.vram_dma.read_hdma2(),
-            0xFF53 => self.vram_dma.read_hdma3(),
-            0xFF54 => self.vram_dma.read_hdma4(),
-            0xFF55 => self.vram_dma.read_hdma5(),
+            0xFF51 => self.graphics.vram_dma.read_hdma1(),
+            0xFF52 => self.graphics.vram_dma.read_hdma2(),
+            0xFF53 => self.graphics.vram_dma.read_hdma3(),
+            0xFF54 => self.graphics.vram_dma.read_hdma4(),
+            0xFF55 => self.graphics.vram_dma.read_hdma5(),
 
             // (CGB) BG / OBJ Palettes.
             0xFF68 => self.graphics.read_bcps(),
@@ -282,7 +276,7 @@ impl Memory {
             0xFF43 => self.graphics.write_scx(value),
             0xFF44 => println!("[video.rs] LY is read-only."),
             0xFF45 => self.graphics.write_lyc(value),
-            0xFF46 => self.oam_dma.write(value),
+            0xFF46 => self.graphics.oam_dma.write(value),
             0xFF47 => self.graphics.write_bgp(value),
             0xFF48 => self.graphics.write_obp0(value),
             0xFF49 => self.graphics.write_obp1(value),
@@ -297,11 +291,11 @@ impl Memory {
             0xFF50 => self.bootrom.write_status(value),
 
             // (CGB) VRAM DMA.
-            0xFF51 => self.vram_dma.write_hdma1(value),
-            0xFF52 => self.vram_dma.write_hdma2(value),
-            0xFF53 => self.vram_dma.write_hdma3(value),
-            0xFF54 => self.vram_dma.write_hdma4(value),
-            0xFF55 => self.vram_dma.write_hdma5(value),
+            0xFF51 => self.graphics.vram_dma.write_hdma1(value),
+            0xFF52 => self.graphics.vram_dma.write_hdma2(value),
+            0xFF53 => self.graphics.vram_dma.write_hdma3(value),
+            0xFF54 => self.graphics.vram_dma.write_hdma4(value),
+            0xFF55 => self.graphics.vram_dma.write_hdma5(value),
 
             // (CGB) BG / OBJ Palettes.
             0xFF68 => self.graphics.write_bcps(value),
@@ -343,7 +337,7 @@ impl Memory {
     }
 
     fn perform_oam_dma(&mut self) {
-        if let Some((source, destination)) = self.oam_dma.advance() {
+        if let Some((source, destination)) = self.graphics.oam_dma.advance() {
             let value = self.read(source);
             self.graphics.oam.write(destination, value);
         }
@@ -354,9 +348,9 @@ impl Memory {
             return;
         }
 
-        if let Some(length) = self.vram_dma.perform_gdma() {
-            let source = self.vram_dma.source;
-            let destination = self.vram_dma.destination;
+        if let Some(length) = self.graphics.vram_dma.perform_gdma() {
+            let source = self.graphics.vram_dma.source;
+            let destination = self.graphics.vram_dma.destination;
 
             for offset in 0..length {
                 let value = self.read(source + offset);
@@ -365,17 +359,15 @@ impl Memory {
         }
 
         if self.graphics.in_hblank() {
-            if let Some(base_offset) = self.vram_dma.perform_hdma() {
-                let source = self.vram_dma.source;
-                let destination = self.vram_dma.destination;
+            if let Some(base_offset) = self.graphics.vram_dma.perform_hdma() {
+                let source = self.graphics.vram_dma.source;
+                let destination = self.graphics.vram_dma.destination;
 
                 for offset in base_offset..(base_offset + 0x10) {
                     let value = self.read(source + offset);
                     self.write(destination + offset, value);
                 }
             }
-        } else {
-            self.vram_dma.resume_hdma();
         }
     }
 }
@@ -383,8 +375,6 @@ impl Memory {
 mod bootrom;
 mod high_ram;
 mod interrupts;
-mod oam_dma;
 mod speed_switch;
 mod undocumented_registers;
-mod vram_dma;
 mod work_ram;

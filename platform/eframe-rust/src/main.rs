@@ -37,6 +37,12 @@ fn main() -> Result<(), eframe::Error> {
     if let Some(path) = rom_path {
         let rom = std::fs::read(path).unwrap();
         gb.load_cartridge(rom).unwrap();
+    } else {
+        let builder = rfd::FileDialog::new().add_filter("GB/GBC ROM", &["gb", "gbc"]);
+        let path = builder.pick_file().unwrap();
+
+        let rom = std::fs::read(path).unwrap();
+        gb.load_cartridge(rom).unwrap();
     }
 
     let initial_window_size =

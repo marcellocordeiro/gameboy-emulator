@@ -8,7 +8,9 @@ use self::{
     lcd_control::LcdControl,
     lcd_status::{LcdStatus, StatusMode},
     oam::Oam,
+    oam_dma::OamDma,
     video_ram::VideoRam,
+    vram_dma::VramDma,
 };
 
 pub struct Graphics {
@@ -39,6 +41,9 @@ pub struct Graphics {
 
     pub vram: VideoRam,
     pub oam: Oam,
+
+    pub oam_dma: OamDma,
+    pub vram_dma: VramDma,
 
     mode: StatusMode,
     cycles: u32,
@@ -77,6 +82,9 @@ impl Default for Graphics {
 
             vram: VideoRam::default(),
             oam: Oam::default(),
+
+            oam_dma: OamDma::default(),
+            vram_dma: VramDma::default(),
 
             mode: StatusMode::OamScan,
             cycles: 0,
@@ -325,6 +333,10 @@ impl Graphics {
 
                 self.draw_line();
                 self.switch_mode(StatusMode::Hblank);
+
+                if cfg!(feature = "cgb") && self.cgb_mode {
+                    self.vram_dma.resume_hdma();
+                }
             }
         };
     }
@@ -375,5 +387,7 @@ mod draw_line_dmg;
 mod lcd_control;
 mod lcd_status;
 mod oam;
+mod oam_dma;
 mod sprite;
 mod video_ram;
+mod vram_dma;

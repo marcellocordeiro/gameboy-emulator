@@ -26,13 +26,11 @@ impl ColorRam {
         let color_index = color_id * 2;
         let base_address = palette_address + color_index;
 
-        let raw_color = {
+        {
             let lo = self.read(base_address) as u16;
             let hi = self.read(base_address + 1) as u16;
 
             (hi << 8) | lo
-        };
-
-        raw_color
+        }
     }
 }

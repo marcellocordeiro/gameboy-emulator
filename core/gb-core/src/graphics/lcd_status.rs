@@ -55,14 +55,14 @@ impl LcdStatus {
 
     /// STAT.4
     ///
-    /// Mode 1 VBlank STAT Interrupt source
+    /// Mode 1 V-Blank STAT Interrupt source
     pub fn get_vblank_irq(self) -> bool {
         self.contains(Self::VBLANK_IRQ)
     }
 
     /// STAT.3
     ///
-    /// Mode 0 HBlank STAT Interrupt source
+    /// Mode 0 H-Blank STAT Interrupt source
     pub fn get_hblank_irq(self) -> bool {
         self.contains(Self::HBLANK_IRQ)
     }

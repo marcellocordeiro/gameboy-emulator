@@ -49,6 +49,17 @@ impl Control {
                     gb_ctx.cpu.step();
                     egui_ctx.request_repaint();
                 }
+
+                if ui
+                    .add_enabled(
+                        self.manual_control && gb_ctx.cpu.memory.cartridge.is_some(),
+                        Button::new("Run frame"),
+                    )
+                    .clicked()
+                {
+                    gb_ctx.run_frame();
+                    egui_ctx.request_repaint();
+                }
             });
     }
 }
