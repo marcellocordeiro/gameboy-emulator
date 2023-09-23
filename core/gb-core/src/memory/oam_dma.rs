@@ -9,6 +9,7 @@ enum Status {
 #[derive(Default)]
 pub struct OamDma {
     dma: u8,
+
     offset: u8,
     status: Status,
 }
@@ -19,17 +20,8 @@ impl OamDma {
     }
 
     pub fn write(&mut self, value: u8) {
-        self.start(value);
-    }
-
-    pub fn start(&mut self, value: u8) {
         self.dma = value;
-        self.offset = 0x00;
-        self.status = Status::Requested;
-    }
-
-    fn stop(&mut self) {
-        self.status = Status::Idle;
+        self.start();
     }
 
     pub fn advance(&mut self) -> Option<(u16, u16)> {
@@ -66,6 +58,15 @@ impl OamDma {
             }
         }
     }
+
+    fn start(&mut self) {
+        self.offset = 0x00;
+        self.status = Status::Requested;
+    }
+
+    fn stop(&mut self) {
+        self.status = Status::Idle;
+    }
 }
 
 #[cfg(test)]
@@ -81,7 +82,7 @@ mod tests {
         assert_eq!(oam_dma.status, Status::Idle);
 
         // Request
-        oam_dma.start(0x00);
+        oam_dma.write(0x00);
         assert_eq!(oam_dma.dma, 0);
         assert_eq!(oam_dma.offset, 0);
         assert_eq!(oam_dma.status, Status::Requested);
