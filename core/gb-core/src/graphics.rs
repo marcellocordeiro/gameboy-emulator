@@ -110,12 +110,23 @@ impl Graphics {
         self.bgp = 0xFC;
     }
 
+    #[cfg(feature = "libretro")]
+    pub fn draw_into_frame(&self, frame: &mut Frame) {
+        for (i, pixel) in self.framebuffer.iter().enumerate() {
+            frame[i * 4] = pixel.blue;
+            frame[(i * 4) + 1] = pixel.green;
+            frame[(i * 4) + 2] = pixel.red;
+            frame[(i * 4) + 3] = 0xFF;
+        }
+    }
+
+    #[cfg(not(feature = "libretro"))]
     pub fn draw_into_frame(&self, frame: &mut Frame) {
         for (i, pixel) in self.framebuffer.iter().enumerate() {
             frame[i * 4] = pixel.red;
             frame[(i * 4) + 1] = pixel.green;
             frame[(i * 4) + 2] = pixel.blue;
-            frame[(i * 4) + 3] = pixel.alpha;
+            frame[(i * 4) + 3] = 0xFF;
         }
     }
 

@@ -9,11 +9,11 @@ edition = "2021"
 # default = ["bootrom", "cgb"]
 bootrom = []
 cgb = []
+libretro = []
 
 [dependencies]
 arrayvec = "0.7.4"
 bitflags = "2.4.0"
-cfg-if = "1.0.0"
 enum_dispatch = "0.3.12"
 log = "0.4.20"
 paste = "1.0.14"
