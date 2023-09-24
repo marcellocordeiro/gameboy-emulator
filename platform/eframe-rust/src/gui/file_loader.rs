@@ -7,7 +7,8 @@ pub struct FileLoader;
 impl FileLoader {
     pub fn draw_button(&mut self, ui: &mut Ui, gb_ctx: &mut GameBoy) {
         if ui.button("Load...").clicked() {
-            let builder = rfd::FileDialog::new().add_filter("GB/GBC ROM", &["gb", "gbc"]);
+            let builder =
+                rfd::FileDialog::new().add_filter("Game Boy/Game Boy Color ROM", &["gb", "gbc"]);
 
             if let Some(path) = builder.pick_file() {
                 let rom = std::fs::read(path).unwrap();

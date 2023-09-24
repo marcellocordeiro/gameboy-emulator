@@ -18,8 +18,8 @@ pub struct Tiles {
 
 impl Tiles {
     const DEFAULT_SIZE: Vec2 = Vec2 {
-        x: TILE_DATA_FRAME_WIDTH as f32 * 2.0,
-        y: TILE_DATA_FRAME_HEIGHT as f32 * 2.05, // TODO: don't rely on this.
+        x: (TILE_DATA_FRAME_WIDTH * 2) as f32,
+        y: (TILE_DATA_FRAME_HEIGHT * 2 + 6) as f32, // TODO: don't rely on this.
     };
     const FILTER: TextureOptions = TextureOptions::NEAREST;
 

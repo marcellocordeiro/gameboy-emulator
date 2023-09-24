@@ -3,7 +3,6 @@ pub struct Color {
     pub red: u8,
     pub green: u8,
     pub blue: u8,
-    pub alpha: u8,
 }
 
 impl Color {
@@ -15,17 +14,12 @@ impl Color {
     #[cfg(feature = "cgb")]
     pub const SYSTEM_DEFAULT: Self = Self::WHITE_RGB555;
 
-    pub const WHITE: Self = Self::new(0xFF, 0xFF, 0xFF, 0xFF);
+    pub const WHITE: Self = Self::new(0xFF, 0xFF, 0xFF);
     pub const WHITE_RGB555: Self =
         Self::from_rgb555_u16_to_rgba8888((0x7F << 10) | (0x7F << 5) | 0x7F);
 
-    pub const fn new(red: u8, green: u8, blue: u8, alpha: u8) -> Self {
-        Self {
-            red,
-            green,
-            blue,
-            alpha,
-        }
+    pub const fn new(red: u8, green: u8, blue: u8) -> Self {
+        Self { red, green, blue }
     }
 
     pub const fn to_rgb555(&self) -> u16 {
@@ -39,7 +33,7 @@ impl Color {
         let green = color;
         let blue = color;
 
-        Self::new(red, green, blue, 0xFF)
+        Self::new(red, green, blue)
     }
 
     pub const fn from_dmg_color_id_with_palette(color_id: u8, dmg_palette: u8) -> Self {
@@ -53,7 +47,7 @@ impl Color {
         let green = (value >> 5) & 0b1_1111;
         let blue = (value >> 10) & 0b1_1111;
 
-        Self::new(red as u8, green as u8, blue as u8, 0xFF)
+        Self::new(red as u8, green as u8, blue as u8)
     }
 
     pub const fn from_rgb555_u16_to_rgba8888(value: u16) -> Self {
@@ -73,7 +67,6 @@ impl Color {
             adjusted_red as u8,
             adjusted_green as u8,
             adjusted_blue as u8,
-            0xFF,
         )
     }
 

@@ -22,10 +22,10 @@ pub struct Bootrom {
 impl Default for Bootrom {
     fn default() -> Self {
         #[cfg(not(feature = "cgb"))]
-        let data = include_bytes!("../../../../roms/dmg_boot.bin");
+        let data = include_bytes!("../../../../roms/bootrom/dmg_boot.bin");
 
         #[cfg(feature = "cgb")]
-        let data = include_bytes!("../../../../roms/cgb_boot.bin");
+        let data = include_bytes!("../../../../roms/bootrom/cgb_boot.bin");
 
         Self {
             data,

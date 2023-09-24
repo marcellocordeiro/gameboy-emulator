@@ -27,8 +27,8 @@ impl App {
         let window = video_subsystem
             .window(
                 "gameboy-emulator",
-                (SCREEN_WIDTH as u32) * 5,
-                (SCREEN_HEIGHT as u32) * 5,
+                (SCREEN_WIDTH * 5) as u32,
+                (SCREEN_HEIGHT * 5) as u32,
             )
             .position_centered()
             .build()

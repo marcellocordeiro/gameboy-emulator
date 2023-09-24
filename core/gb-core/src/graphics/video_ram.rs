@@ -129,17 +129,19 @@ impl VideoRam {
                         (hi << 1) | lo
                     };
 
-                    let mapped_x = tile_base_x + bit;
-                    let mapped_y = tile_base_y + byte_line;
-                    let mapped_address =
-                        (mapped_y * TILE_DATA_FRAME_WIDTH) + mapped_x + frame_column_offset;
-
                     let pixel = Color::from_dmg_color_id(color_id);
+
+                    let mapped_address = {
+                        let mapped_x = tile_base_x + bit;
+                        let mapped_y = tile_base_y + byte_line;
+
+                        (mapped_y * TILE_DATA_FRAME_WIDTH) + mapped_x + frame_column_offset
+                    };
 
                     frame[mapped_address * 4] = pixel.red;
                     frame[(mapped_address * 4) + 1] = pixel.green;
                     frame[(mapped_address * 4) + 2] = pixel.blue;
-                    frame[(mapped_address * 4) + 3] = pixel.alpha;
+                    frame[(mapped_address * 4) + 3] = 0xFF;
                 }
             }
         }
