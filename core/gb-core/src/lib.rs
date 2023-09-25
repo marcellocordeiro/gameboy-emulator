@@ -86,8 +86,12 @@ impl GameBoy {
         self.cpu.memory.joypad.key_up(key);
     }
 
-    pub fn draw(&self, frame: &mut Frame) {
-        self.cpu.memory.graphics.draw_into_frame(frame);
+    pub fn draw_into_frame_rgba8888(&self, frame: &mut Frame) {
+        self.cpu.memory.graphics.draw_into_frame_rgba8888(frame);
+    }
+
+    pub fn draw_into_frame_bgra8888(&self, frame: &mut Frame) {
+        self.cpu.memory.graphics.draw_into_frame_bgra8888(frame);
     }
 }
 

@@ -9,9 +9,8 @@ edition = "2021"
 crate-type = ["staticlib", "dylib"]
 
 [features]
-# default = ["bootrom", "cgb"]
 bootrom = ["gb-core/bootrom"]
 cgb = ["gb-core/cgb"]
 
-[dependencies]
-gb-core = { path = "../gb-core" }
+[dependencies.gb-core]
+path = "../gb-core"

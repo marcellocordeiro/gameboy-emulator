@@ -58,7 +58,7 @@ while !quit {
     }
 
     gameboy_run_frame(gb)
-    gameboy_draw(gb, &framebuffer)
+    gameboy_draw_into_frame_rgba8888(gb, &framebuffer)
 
     SDL_UpdateTexture(texture, nil, framebuffer, SCREEN_WIDTH * 4)
     SDL_RenderCopy(renderer, texture, nil, nil)

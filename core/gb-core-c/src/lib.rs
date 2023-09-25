@@ -86,7 +86,10 @@ pub unsafe extern "C" fn gameboy_run_frame(gb_ptr: *mut GameBoy) {
 /// 2. The frame array pointer **cannot** be null.
 /// 3. The allocated size for the frame **has** to be **equal** to `SCREEN_WIDTH * SCREEN_HEIGHT * 4`.
 #[no_mangle]
-pub unsafe extern "C" fn gameboy_draw(gb_ptr: *mut GameBoy, frame: *mut c_uchar) {
+pub unsafe extern "C" fn gameboy_draw_into_frame_rgba8888(
+    gb_ptr: *mut GameBoy,
+    frame: *mut c_uchar,
+) {
     let gb = unsafe { &mut *gb_ptr };
 
     let slice: &mut Frame = unsafe {
@@ -95,5 +98,5 @@ pub unsafe extern "C" fn gameboy_draw(gb_ptr: *mut GameBoy, frame: *mut c_uchar)
             .unwrap_unchecked()
     };
 
-    gb.draw(slice);
+    gb.draw_into_frame_rgba8888(slice);
 }

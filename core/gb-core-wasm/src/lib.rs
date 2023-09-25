@@ -69,7 +69,7 @@ impl GameBoy {
     pub fn draw(&self, ctx: &CanvasRenderingContext2d) {
         let frame = &mut [0u8; SCREEN_WIDTH * SCREEN_HEIGHT * 4];
 
-        self.cpu.memory.graphics.draw_into_frame(frame);
+        self.cpu.memory.graphics.draw_into_frame_rgba8888(frame);
 
         let img_data =
             ImageData::new_with_u8_clamped_array(Clamped(frame), SCREEN_WIDTH as u32).unwrap();

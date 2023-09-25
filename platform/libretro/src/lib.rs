@@ -65,7 +65,7 @@ impl RetroCore for Emulator {
         }
 
         self.gb.run_frame();
-        self.gb.draw(&mut self.pixels);
+        self.gb.draw_into_frame_bgra8888(&mut self.pixels);
 
         runtime.upload_video_frame(
             self.pixels.as_ref(),

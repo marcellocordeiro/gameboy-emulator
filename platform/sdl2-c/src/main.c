@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
     }
 
     gameboy_run_frame(gb);
-    gameboy_draw(gb, framebuffer);
+    gameboy_draw_into_frame_rgba8888(gb, framebuffer);
 
     SDL_UpdateTexture(texture, NULL, framebuffer, SCREEN_WIDTH * sizeof(uint32_t));
     SDL_RenderCopy(renderer, texture, NULL, NULL);

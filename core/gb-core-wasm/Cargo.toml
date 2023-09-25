@@ -9,14 +9,15 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [features]
-# default = ["bootrom", "cgb"]
 bootrom = ["gb-core/bootrom"]
 cgb = ["gb-core/cgb"]
+
+[dependencies.gb-core]
+path = "../gb-core"
 
 [dependencies]
 console_error_panic_hook = "0.1.7"
 console_log = "1.0.0"
-gb-core = { path = "../gb-core" }
 log = "0.4.20"
 wasm-bindgen = "0.2.87"
 

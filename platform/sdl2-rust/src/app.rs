@@ -91,7 +91,7 @@ impl App {
     }
 
     fn update_tex(&mut self, texture: &mut Texture) {
-        self.gb.draw(&mut self.pixels);
+        self.gb.draw_into_frame_rgba8888(&mut self.pixels);
 
         texture.update(None, self.pixels.as_mut(), 160 * 4).unwrap();
     }

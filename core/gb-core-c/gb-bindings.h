@@ -22,7 +22,7 @@ extern "C" {
     void gameboy_reset(struct GameBoy* gb);
     void gameboy_load_cartridge(struct GameBoy* gb, const uint8_t* rom, size_t rom_size);
     void gameboy_run_frame(struct GameBoy* gb);
-    void gameboy_draw(struct GameBoy* gb, const uint8_t* frame);
+    void gameboy_draw_into_frame_rgba8888(struct GameBoy* gb, const uint8_t* frame);
 #ifdef __cplusplus
 }
 #endif

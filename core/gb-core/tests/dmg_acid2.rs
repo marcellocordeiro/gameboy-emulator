@@ -29,7 +29,7 @@ fn run(name: &str, rom: Vec<u8>) {
 
     let mut frame = [0; FRAME_SIZE];
 
-    gb.draw(&mut frame);
+    gb.draw_into_frame_rgba8888(&mut frame);
 
     let expected_image = match image::open(format!("./tests/expected/{name}.png")) {
         Ok(image) => image,

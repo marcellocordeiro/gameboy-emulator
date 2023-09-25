@@ -57,7 +57,7 @@ impl ScreenArea {
     }
 
     fn update_texture(&mut self, gb_ctx: &GameBoy) {
-        gb_ctx.draw(&mut self.pixels);
+        gb_ctx.draw_into_frame_rgba8888(&mut self.pixels);
 
         let image =
             ColorImage::from_rgba_unmultiplied([SCREEN_WIDTH, SCREEN_HEIGHT], self.pixels.as_ref());
