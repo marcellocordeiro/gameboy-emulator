@@ -1,4 +1,4 @@
-use gb_core::constants::Button;
+use gb_core::utils::button::Button;
 use sdl2::keyboard::Keycode;
 
 #[allow(dead_code)]

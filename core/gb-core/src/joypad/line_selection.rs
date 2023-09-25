@@ -10,13 +10,11 @@ pub(super) enum LineSelection {
 
 impl LineSelection {
     pub fn from_joyp_bits(value: u8) -> Self {
-        use LineSelection::*;
-
         match (value & JOYP_SELECTION_MASK) >> 4 {
-            0b00 => Both,
-            0b01 => Action,
-            0b10 => Direction,
-            0b11 => None,
+            0b00 => Self::Both,
+            0b01 => Self::Action,
+            0b10 => Self::Direction,
+            0b11 => Self::None,
 
             _ => unreachable!(),
         }

@@ -9,68 +9,64 @@ pub enum ExtraFeature {
 
 impl ExtraFeature {
     pub fn get_features(code: u8) -> Vec<Self> {
-        use ExtraFeature::*;
-
         match code {
             // $08 ROM+RAM
             // $09 ROM+RAM+BATTERY
-            0x08 => [Ram].to_vec(),
-            0x09 => [Ram, Battery].to_vec(),
+            0x08 => vec![Self::Ram],
+            0x09 => vec![Self::Ram, Self::Battery],
 
             // $02 MBC1+RAM
             // $03 MBC1+RAM+BATTERY
-            0x02 => [Ram].to_vec(),
-            0x03 => [Ram, Battery].to_vec(),
+            0x02 => vec![Self::Ram],
+            0x03 => vec![Self::Ram, Self::Battery],
 
             // $06 MBC2+BATTERY (RAM is implied)
-            0x06 => [Battery].to_vec(),
+            0x06 => vec![Self::Battery],
 
             // $0C MMM01+RAM
             // $0D MMM01+RAM+BATTERY
-            0x0C => [Ram].to_vec(),
-            0x0D => [Ram, Battery].to_vec(),
+            0x0C => vec![Self::Ram],
+            0x0D => vec![Self::Ram, Self::Battery],
 
             // $0F MBC3+TIMER+BATTERY
             // $10 MBC3+TIMER+RAM+BATTERY
             // $12 MBC3+RAM
             // $13 MBC3+RAM+BATTERY
-            0x0F => [Timer, Battery].to_vec(),
-            0x10 => [Timer, Ram, Battery].to_vec(),
-            0x12 => [Ram].to_vec(),
-            0x13 => [Ram, Battery].to_vec(),
+            0x0F => vec![Self::Timer, Self::Battery],
+            0x10 => vec![Self::Timer, Self::Ram, Self::Battery],
+            0x12 => vec![Self::Ram],
+            0x13 => vec![Self::Ram, Self::Battery],
 
             // $1A MBC5+RAM
             // $1B MBC5+RAM+BATTERY
             // $1C MBC5+RUMBLE
             // $1D MBC5+RUMBLE+RAM
             // $1E MBC5+RUMBLE+RAM+BATTERY
-            0x1A => [Ram].to_vec(),
-            0x1B => [Ram, Battery].to_vec(),
-            0x1C => [Rumble].to_vec(),
-            0x1D => [Rumble, Ram].to_vec(),
-            0x1E => [Rumble, Ram, Battery].to_vec(),
+            0x1A => vec![Self::Ram],
+            0x1B => vec![Self::Ram, Self::Battery],
+            0x1C => vec![Self::Rumble],
+            0x1D => vec![Self::Rumble, Self::Ram],
+            0x1E => vec![Self::Rumble, Self::Ram, Self::Battery],
 
             // $22 MBC7+SENSOR+RUMBLE+RAM+BATTERY
-            0x22 => [Sensor, Rumble, Ram, Battery].to_vec(),
+            0x22 => vec![Self::Sensor, Self::Rumble, Self::Ram, Self::Battery],
 
             // $FF HuC1+RAM+BATTERY
-            0xFF => [Ram, Battery].to_vec(),
+            0xFF => vec![Self::Ram, Self::Battery],
 
-            _ => [].to_vec(),
+            _ => vec![],
         }
     }
 }
 
 impl std::fmt::Display for ExtraFeature {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        use ExtraFeature::*;
-
         let str = match self {
-            Ram => "RAM",
-            Battery => "BATTERY",
-            Timer => "TIMER",
-            Rumble => "RUMBLE",
-            Sensor => "SENSOR",
+            Self::Ram => "RAM",
+            Self::Battery => "BATTERY",
+            Self::Timer => "TIMER",
+            Self::Rumble => "RUMBLE",
+            Self::Sensor => "SENSOR",
         };
 
         write!(f, "{str}")

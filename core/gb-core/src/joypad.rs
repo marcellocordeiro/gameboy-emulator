@@ -1,4 +1,4 @@
-use crate::constants::Button;
+use crate::utils::button::Button;
 
 use self::line_selection::{LineSelection, JOYP_SELECTION_MASK};
 
@@ -39,13 +39,11 @@ impl Joypad {
     }
 
     fn update_joyp(&mut self) {
-        use LineSelection::*;
-
         let buttons_bits = match LineSelection::from_joyp_bits(self.joyp) {
-            Both => (self.buttons | (self.buttons >> 4)) & 0b1111,
-            Action => self.buttons & 0b1111,
-            Direction => self.buttons >> 4,
-            None => 0b0000,
+            LineSelection::Both => (self.buttons | (self.buttons >> 4)) & 0b1111,
+            LineSelection::Action => self.buttons & 0b1111,
+            LineSelection::Direction => self.buttons >> 4,
+            LineSelection::None => 0b0000,
         };
 
         self.joyp &= !JOYP_BUTTONS_MASK;
@@ -76,7 +74,6 @@ mod line_selection;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use Button::*;
 
     #[test]
     fn test_initial_read() {
@@ -105,7 +102,7 @@ mod tests {
         assert_eq!(joypad.read(), 0b1100_1111);
 
         joypad.write(0b0001_0000);
-        joypad.key_down(A);
+        joypad.key_down(Button::A);
 
         // Only A is down
         assert_eq!(joypad.read(), 0b1101_1110);

@@ -1,4 +1,4 @@
-#![warn(clippy::pedantic, clippy::perf, clippy::all, clippy::complexity)]
+#![warn(clippy::pedantic, clippy::nursery)]
 #![allow(
     clippy::match_same_arms,
     clippy::cast_lossless,
@@ -11,14 +11,16 @@
     clippy::collapsible_if,
     clippy::new_without_default,
     clippy::module_name_repetitions,
+    clippy::missing_const_for_fn,
     clippy::cast_possible_truncation, // Intentional, but may be possible to mitigate.
     clippy::verbose_bit_mask, // As per the docs, LLVM may not be able to generate better code.
     clippy::cast_possible_wrap,
 )]
 
 use cartridge::error::Error as CartridgeError;
-use constants::{Button, Frame};
+use constants::Frame;
 use cpu::Cpu;
+use utils::button::Button;
 
 pub struct GameBoy {
     pub cpu: Cpu,

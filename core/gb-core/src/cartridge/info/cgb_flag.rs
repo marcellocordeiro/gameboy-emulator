@@ -9,31 +9,27 @@ pub enum CgbFlag {
 
 impl From<u8> for CgbFlag {
     fn from(code: u8) -> Self {
-        use CgbFlag::*;
-
         match code {
-            0x80 => CgbEnhanced,
-            0xC0 => CgbOnly,
+            0x80 => Self::CgbEnhanced,
+            0xC0 => Self::CgbOnly,
 
-            _ => DmgMode,
+            _ => Self::DmgMode,
         }
     }
 }
 
 impl CgbFlag {
     pub fn has_cgb_support(&self) -> bool {
-        *self != CgbFlag::DmgMode
+        *self != Self::DmgMode
     }
 }
 
 impl std::fmt::Display for CgbFlag {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        use CgbFlag::*;
-
         let str = match self {
-            DmgMode => "DMG mode",
-            CgbEnhanced => "CGB enhanced",
-            CgbOnly => "CGB only",
+            Self::DmgMode => "DMG mode",
+            Self::CgbEnhanced => "CGB enhanced",
+            Self::CgbOnly => "CGB only",
         };
 
         write!(f, "{str}")

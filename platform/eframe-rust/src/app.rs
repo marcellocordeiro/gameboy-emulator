@@ -1,4 +1,4 @@
-use gb_core::{constants::Button, GameBoy};
+use gb_core::{utils::button::Button, GameBoy};
 
 use crate::{gui::Gui, key_mappings};
 
@@ -23,7 +23,7 @@ impl App {
                 eframe_frame.close();
             }
 
-            for button in Button::to_array() {
+            for button in Button::ALL_CASES {
                 let key = key_mappings::map_button(button);
 
                 if i.key_pressed(key) {

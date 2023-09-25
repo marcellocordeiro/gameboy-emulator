@@ -1,5 +1,7 @@
 use bitflags::bitflags;
 
+use crate::utils::bits;
+
 bitflags! {
     #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
     pub struct InterruptBits: u8 {
@@ -54,7 +56,7 @@ impl Interrupts {
         }
 
         let bits = intersection.bits();
-        let result = ((bits as i8) & -(bits as i8)) as u8;
+        let result = bits::isolate_rightmost_bit(bits);
 
         let interrupt = InterruptBits::from_bits_truncate(result);
 

@@ -1,4 +1,4 @@
-#![warn(clippy::pedantic, clippy::perf, clippy::all, clippy::complexity)]
+#![warn(clippy::pedantic, clippy::nursery)]
 #![allow(
     clippy::match_same_arms,
     clippy::cast_lossless,
@@ -11,6 +11,7 @@
     clippy::collapsible_if,
     clippy::new_without_default,
     clippy::module_name_repetitions,
+    clippy::missing_const_for_fn,
     clippy::cast_possible_truncation, // Intentional, but may be possible to mitigate.
     clippy::verbose_bit_mask, // As per the docs, LLVM may not be able to generate better code.
     clippy::cast_possible_wrap,
@@ -46,6 +47,7 @@ fn main() -> Result<(), eframe::Error> {
         gb.load_cartridge(rom).unwrap();
     }
 
+    #[allow(clippy::cast_precision_loss)]
     let initial_window_size =
         eframe::egui::vec2((SCREEN_WIDTH * 5) as f32, (SCREEN_HEIGHT * 5) as f32);
 

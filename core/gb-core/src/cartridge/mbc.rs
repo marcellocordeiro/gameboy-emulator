@@ -13,6 +13,7 @@ pub(super) trait MbcInterface {
     fn write_ram(&mut self, address: u16, value: u8);
 }
 
+#[allow(clippy::enum_variant_names)]
 #[enum_dispatch(MbcInterface)]
 pub enum Mbc {
     NoMbc,

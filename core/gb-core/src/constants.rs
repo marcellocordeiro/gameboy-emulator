@@ -23,22 +23,3 @@ pub const TILES_PER_LINE: usize = 16;
 pub type Framebuffer = [Color; SCREEN_WIDTH * SCREEN_HEIGHT];
 pub type Frame = [u8; FRAME_SIZE];
 pub type TileDataFrame = [u8; TILE_DATA_FRAME_SIZE];
-
-#[derive(Clone, Copy)]
-pub enum Button {
-    A = (1 << 0),
-    B = (1 << 1),
-    Select = (1 << 2),
-    Start = (1 << 3),
-    Right = (1 << 4),
-    Left = (1 << 5),
-    Up = (1 << 6),
-    Down = (1 << 7),
-}
-
-impl Button {
-    pub const fn to_array() -> [Self; 8] {
-        use Button::*;
-        [A, B, Select, Start, Right, Left, Up, Down]
-    }
-}

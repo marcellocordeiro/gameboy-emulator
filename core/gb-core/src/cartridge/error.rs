@@ -11,24 +11,22 @@ pub enum Error {
 
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        use Error::*;
-
         match *self {
-            InvalidRom => write!(f, "Invalid ROM"),
+            Self::InvalidRom => write!(f, "Invalid ROM"),
 
-            InvalidMbcCode { code } => {
+            Self::InvalidMbcCode { code } => {
                 write!(f, "Invalid and unsupported MBC (code = {code:#04X}).")
             }
 
-            UnsupportedMbc { cartridge_type } => {
+            Self::UnsupportedMbc { cartridge_type } => {
                 write!(f, "Unsupported MBC (type = {cartridge_type:?}).")
             }
 
-            UnsupportedRomSize { code } => {
+            Self::UnsupportedRomSize { code } => {
                 write!(f, "Unsupported number of ROM banks (code = {code:#04X}).")
             }
 
-            UnsupportedRamSize { code } => {
+            Self::UnsupportedRamSize { code } => {
                 write!(f, "Unsupported number of RAM banks (code = {code:#04X}).")
             }
         }

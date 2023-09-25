@@ -13,6 +13,7 @@ use self::{
     vram_dma::VramDma,
 };
 
+#[allow(clippy::struct_excessive_bools)]
 pub struct Graphics {
     // Registers
     lcdc: LcdControl,
