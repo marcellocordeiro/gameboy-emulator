@@ -7,6 +7,15 @@
 - Study Rust's explicit lifetime to avoid nesting the components.
 - Improve the FFI code.
 - Lock access to some registers after the bootrom is finished (CGB).
+- Add more linter rules
+
+## Linting
+
+TODO: Add more rules from both `clippy` and `rustc`.
+
+```sh
+cargo clippy
+```
 
 ## Profiling
 

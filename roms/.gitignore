@@ -1,2 +1,9 @@
+# ROMs
 *.gb
 *.gbc
+
+# Save files
+*.srm
+*.state*
+*.sav
+*.rtc

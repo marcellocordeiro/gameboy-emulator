@@ -35,6 +35,19 @@ impl MbcInterface for Mbc2 {
         self.rom_bank = 0x01;
     }
 
+    fn get_battery(&self) -> &[u8] {
+        self.ram.as_ref()
+    }
+
+    fn load_battery(&mut self, file: Vec<u8>) {
+        self.ram = if let Ok(file) = file.try_into() {
+            file
+        } else {
+            log::error!("Error loading the battery backed RAM.");
+            return;
+        }
+    }
+
     fn read_rom(&self, address: u16) -> u8 {
         if address < 0x4000 {
             return self.rom[address as usize];

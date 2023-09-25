@@ -20,6 +20,7 @@ impl Graphics {
         self.draw_sprites(line_offset, &priority);
     }
 
+    #[allow(clippy::too_many_lines)]
     fn draw_tiles(&mut self, line_offset: usize, priority: &mut [Priority; SCREEN_WIDTH]) {
         let should_render_win = self.lcdc.get_win_enable() && self.wy <= self.ly;
         let should_render_bg = self.cgb_mode || self.lcdc.get_bg_enable();

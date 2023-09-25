@@ -47,6 +47,20 @@ impl MbcInterface for Mbc3 {
         self.ram_rtc_sel = 0x00;
     }
 
+    fn get_battery(&self) -> &[u8] {
+        &self.ram
+    }
+
+    fn load_battery(&mut self, file: Vec<u8>) {
+        if self.ram.is_empty() {
+            log::error!("This cartridge does not have a battery backed RAM.");
+        } else if self.ram.len() != file.len() {
+            log::error!("Size mismatch.");
+        }
+
+        self.ram = file;
+    }
+
     fn read_rom(&self, address: u16) -> u8 {
         if address < 0x4000 {
             return self.rom[address as usize];

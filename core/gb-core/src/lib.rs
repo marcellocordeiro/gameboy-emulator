@@ -57,6 +57,20 @@ impl GameBoy {
         self.cpu.memory.load_cartridge(rom)
     }
 
+    pub fn get_battery(&self) -> Option<&[u8]> {
+        if let Some(cartridge) = self.cpu.memory.cartridge.as_ref() {
+            return Some(cartridge.get_battery());
+        }
+
+        None
+    }
+
+    pub fn load_battery(&mut self, file: Vec<u8>) {
+        if let Some(cartridge) = self.cpu.memory.cartridge.as_mut() {
+            cartridge.load_battery(file);
+        }
+    }
+
     pub fn run_frame(&mut self) {
         self.cpu.cycles = 0;
         while self.cpu.cycles < (70224 * 2) {

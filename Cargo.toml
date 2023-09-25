@@ -9,5 +9,3 @@ members = [
   "platform/libretro",
   "platform/sdl2-rust",
 ]
-
-# Reminder to use `cargo clippy`.

@@ -25,6 +25,14 @@ impl Cartridge {
         self.mbc.reset();
     }
 
+    pub fn get_battery(&self) -> &[u8] {
+        self.mbc.get_battery()
+    }
+
+    pub fn load_battery(&mut self, file: Vec<u8>) {
+        self.mbc.load_battery(file);
+    }
+
     pub fn read_rom(&self, address: u16) -> u8 {
         self.mbc.read_rom(address)
     }

@@ -69,6 +69,20 @@ impl MbcInterface for Mbc1 {
         self.mode = false;
     }
 
+    fn get_battery(&self) -> &[u8] {
+        &self.ram
+    }
+
+    fn load_battery(&mut self, file: Vec<u8>) {
+        if self.ram.is_empty() {
+            log::error!("This cartridge does not have a battery backed RAM.");
+        } else if self.ram.len() != file.len() {
+            log::error!("Size mismatch.");
+        }
+
+        self.ram = file;
+    }
+
     fn read_rom(&self, address: u16) -> u8 {
         let mask = self.rom.len() - 1;
 

@@ -19,11 +19,13 @@
 
 use gb_core::{
     constants::{Frame, FRAME_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH},
+    utils::button::Button,
     GameBoy,
 };
 use libretro_rs::{
-    libretro_core, RetroAudioInfo, RetroCore, RetroEnvironment, RetroGame, RetroLoadGameResult,
-    RetroPixelFormat, RetroRuntime, RetroSystemInfo, RetroVideoInfo,
+    libretro_core, sys::RETRO_MEMORY_SAVE_RAM, RetroAudioInfo, RetroCore, RetroEnvironment,
+    RetroGame, RetroLoadGameResult, RetroPixelFormat, RetroRuntime, RetroSystemInfo,
+    RetroVideoInfo,
 };
 
 struct Emulator {
@@ -52,6 +54,16 @@ impl RetroCore for Emulator {
     }
 
     fn run(&mut self, _env: &RetroEnvironment, runtime: &RetroRuntime) {
+        for button in Button::ALL_CASES {
+            let key = key_mappings::map_button(button);
+
+            if runtime.is_joypad_button_pressed(0, key) {
+                self.gb.key_down(button);
+            } else {
+                self.gb.key_up(button);
+            }
+        }
+
         self.gb.run_frame();
         self.gb.draw(&mut self.pixels);
 
@@ -92,6 +104,29 @@ impl RetroCore for Emulator {
             Err(_) => RetroLoadGameResult::Failure,
         }
     }
+
+    #[allow(clippy::as_ptr_cast_mut)]
+    fn get_memory_data(&mut self, _env: &RetroEnvironment, id: u32) -> *mut () {
+        match id {
+            // This is horrible. Maybe try to find a better way.
+            RETRO_MEMORY_SAVE_RAM => self
+                .gb
+                .get_battery()
+                .map_or(std::ptr::null_mut(), |ram| ram.as_ptr() as *mut ()),
+
+            _ => std::ptr::null_mut(),
+        }
+    }
+
+    fn get_memory_size(&self, _env: &RetroEnvironment, id: u32) -> usize {
+        match id {
+            RETRO_MEMORY_SAVE_RAM => self.gb.get_battery().map_or(0, <[u8]>::len),
+
+            _ => 0,
+        }
+    }
 }
 
 libretro_core!(Emulator);
+
+mod key_mappings;
