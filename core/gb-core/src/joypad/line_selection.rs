@@ -29,7 +29,7 @@ mod tests {
 
     #[test]
     fn test_both_selection_from_joyp() {
-        for joyp in 0..u8::MAX {
+        for joyp in 0..=u8::MAX {
             let mask = 0b0000_0000;
 
             assert_eq!(
@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn test_action_selection_from_joyp() {
-        for joyp in 0..u8::MAX {
+        for joyp in 0..=u8::MAX {
             let mask = 0b0001_0000;
 
             assert_eq!(
@@ -57,7 +57,7 @@ mod tests {
 
     #[test]
     fn test_direction_selection_from_joyp() {
-        for joyp in 0..u8::MAX {
+        for joyp in 0..=u8::MAX {
             let mask = 0b0010_0000;
 
             assert_eq!(
@@ -71,7 +71,7 @@ mod tests {
 
     #[test]
     fn test_none_selection_from_joyp() {
-        for joyp in 0..u8::MAX {
+        for joyp in 0..=u8::MAX {
             let mask = 0b0011_0000;
 
             assert_eq!(
