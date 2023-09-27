@@ -1,4 +1,4 @@
-use crate::constants::ONE_KIB;
+use crate::{constants::ONE_KIB, utils::macros::in_cgb_mode};
 
 #[cfg(not(feature = "cgb"))]
 /// DMG mode selected.
@@ -69,7 +69,7 @@ impl WorkRam {
     }
 
     pub fn read_svbk(&self) -> u8 {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        if !in_cgb_mode!(self) {
             return 0xFF;
         }
 
@@ -77,7 +77,7 @@ impl WorkRam {
     }
 
     pub fn write_svbk(&mut self, value: u8) {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        if !in_cgb_mode!(self) {
             return;
         }
 
@@ -94,11 +94,13 @@ impl WorkRam {
 mod tests {
     use super::*;
 
+    use crate::utils::macros::device_is_cgb;
+
     #[test]
     fn test_my_sanity() {
         let wram = WorkRam::default();
 
-        if cfg!(feature = "cgb") {
+        if device_is_cgb!() {
             assert_eq!(wram.data.len(), 0x8000);
         } else {
             assert_eq!(wram.data.len(), 0x2000);

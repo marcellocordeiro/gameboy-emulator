@@ -7,6 +7,7 @@ use crate::{
     joypad::Joypad,
     serial::Serial,
     timer::Timer,
+    utils::macros::in_cgb_mode,
 };
 
 use self::{
@@ -345,7 +346,7 @@ impl Memory {
     }
 
     fn perform_vram_dma(&mut self) {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        if !in_cgb_mode!(self) {
             return;
         }
 

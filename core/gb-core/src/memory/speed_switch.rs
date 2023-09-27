@@ -1,3 +1,5 @@
+use crate::utils::macros::in_cgb_mode;
+
 #[derive(Debug, Default)]
 pub struct SpeedSwitch {
     key0: u8,
@@ -15,7 +17,7 @@ impl SpeedSwitch {
     }
 
     pub fn process_speed_switch(&mut self) {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        if !in_cgb_mode!(self) {
             return;
         }
 
@@ -25,7 +27,7 @@ impl SpeedSwitch {
     }
 
     pub fn read(&self) -> u8 {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        if !in_cgb_mode!(self) {
             return 0xFF;
         }
 
@@ -33,7 +35,7 @@ impl SpeedSwitch {
     }
 
     pub fn write(&mut self, value: u8) {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        if !in_cgb_mode!(self) {
             return;
         }
 
@@ -43,13 +45,15 @@ impl SpeedSwitch {
 
 #[cfg(test)]
 mod tests {
+    use crate::utils::macros::device_is_cgb;
+
     use super::*;
 
     #[test]
     fn test_my_sanity() {
         let mut speed_switch = SpeedSwitch::default();
 
-        if cfg!(feature = "cgb") {
+        if device_is_cgb!() {
             speed_switch.set_cgb_mode(true);
 
             assert_eq!(speed_switch.read(), 0b0111_1110);

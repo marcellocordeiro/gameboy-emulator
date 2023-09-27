@@ -2,7 +2,10 @@ use std::ops::RangeInclusive;
 
 use crate::{
     constants::{TileDataFrame, TILES_PER_LINE, TILE_DATA_FRAME_WIDTH},
-    utils::color::Color,
+    utils::{
+        color::Color,
+        macros::{device_is_cgb, in_cgb_mode},
+    },
 };
 
 use super::{lcd_status::StatusMode, Graphics};
@@ -78,7 +81,7 @@ impl VideoRam {
     }
 
     pub fn read_vbk(&self) -> u8 {
-        if !cfg!(feature = "cgb") {
+        if !device_is_cgb!() {
             return 0xFF;
         }
 
@@ -86,7 +89,7 @@ impl VideoRam {
     }
 
     pub fn write_vbk(&mut self, value: u8) {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        if !in_cgb_mode!(self) {
             return;
         }
 
@@ -94,7 +97,7 @@ impl VideoRam {
     }
 
     fn bank_offset(&self) -> usize {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        if !in_cgb_mode!(self) {
             return 0;
         }
 
