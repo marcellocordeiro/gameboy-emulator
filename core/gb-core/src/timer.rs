@@ -204,7 +204,7 @@ mod tests {
         assert_eq!(timer.tma, 0x00);
         assert_eq!(timer.tac, 0x00);
         assert_eq!(timer.tima_state, TimaState::Running);
-        assert_eq!(timer.irq, false);
+        assert!(!timer.irq);
 
         assert_eq!(timer.read_div(), 0x00);
         assert_eq!(timer.read_tima(), 0x00);
@@ -222,7 +222,7 @@ mod tests {
         assert_eq!(timer.tma, 0x00);
         assert_eq!(timer.tac, 0x00);
         assert_eq!(timer.tima_state, TimaState::Running);
-        assert_eq!(timer.irq, false);
+        assert!(!timer.irq);
 
         assert_eq!(timer.read_div(), 0xAB);
         assert_eq!(timer.read_tima(), 0x00);
@@ -232,18 +232,19 @@ mod tests {
     // TODO: rewrite this.
     #[test]
     #[ignore]
+    #[allow(clippy::cognitive_complexity)]
     fn test_overflow() {
         let mut timer = Timer::default();
 
         assert_eq!(timer.tac, 0x00);
-        assert_eq!(timer.timer_enable(), false);
+        assert!(!timer.timer_enable());
 
         timer.write_tima(0xFF);
         timer.write_tac(0b100);
         timer.write_tma(0xB0);
 
         assert_eq!(timer.tac, 0b100);
-        assert_eq!(timer.timer_enable(), true);
+        assert!(timer.timer_enable());
         assert_eq!(timer.tima, 0xFF);
         assert_eq!(timer.tima_state, TimaState::Running);
 
@@ -254,14 +255,14 @@ mod tests {
         assert_eq!(timer.system_counter, 1023);
         assert_eq!(timer.read_div(), 0b0000_0011);
         assert_eq!(timer.tac, 0b100);
-        assert_eq!(timer.timer_enable(), true);
+        assert!(timer.timer_enable());
         assert_eq!(timer.tima, 0xFF);
         assert_eq!(timer.tima_state, TimaState::Running);
 
         timer.tick();
 
         assert_eq!(timer.tac, 0b100);
-        assert_eq!(timer.timer_enable(), true);
+        assert!(timer.timer_enable());
         assert_eq!(timer.tima, 0);
         assert_eq!(timer.tima_state, TimaState::Overflow(3));
 
@@ -271,12 +272,12 @@ mod tests {
 
         assert_eq!(timer.tima_state, TimaState::Overflow(0));
         assert_eq!(timer.tima, 0);
-        assert_eq!(timer.irq, false);
+        assert!(!timer.irq);
 
         timer.tick();
 
         assert_eq!(timer.tima_state, TimaState::Loading(3));
-        assert_eq!(timer.irq, true);
+        assert!(timer.irq);
 
         timer.tick();
         timer.tick();

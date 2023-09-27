@@ -48,17 +48,17 @@ mod tests {
         let mut ime_state = ImeState::default();
 
         assert_eq!(ime_state, ImeState::Disabled);
-        assert_eq!(ime_state.get_status(), false);
-        assert_eq!(ime_state.update_and_get_status(), false);
+        assert!(!ime_state.get_status());
+        assert!(!ime_state.update_and_get_status());
 
         ime_state = ImeState::Pending;
 
         assert_eq!(ime_state, ImeState::Pending);
-        assert_eq!(ime_state.get_status(), false);
-        assert_eq!(ime_state.update_and_get_status(), false); // Mutates the value.
+        assert!(!ime_state.get_status());
+        assert!(!ime_state.update_and_get_status()); // Mutates the value.
 
         assert_eq!(ime_state, ImeState::Enabled);
-        assert_eq!(ime_state.get_status(), true);
-        assert_eq!(ime_state.update_and_get_status(), true);
+        assert!(ime_state.get_status());
+        assert!(ime_state.update_and_get_status());
     }
 }

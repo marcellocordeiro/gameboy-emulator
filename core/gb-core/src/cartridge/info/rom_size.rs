@@ -51,13 +51,13 @@ mod tests {
         mapping.insert(0x02, 128);
         mapping.insert(0x03, 256);
         mapping.insert(0x04, 512);
-        mapping.insert(0x05, 1 * ONE_MIB_TO_KIB);
+        mapping.insert(0x05, ONE_MIB_TO_KIB);
         mapping.insert(0x06, 2 * ONE_MIB_TO_KIB);
         mapping.insert(0x07, 4 * ONE_MIB_TO_KIB);
         mapping.insert(0x08, 8 * ONE_MIB_TO_KIB);
 
-        for (code, size) in mapping.iter() {
-            let banks = get_rom_banks(*code).unwrap();
+        for (code, size) in mapping {
+            let banks = get_rom_banks(code).unwrap();
 
             assert_eq!(banks, size / 16);
         }

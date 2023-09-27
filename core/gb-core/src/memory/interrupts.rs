@@ -137,7 +137,7 @@ mod tests {
         assert_eq!(queued_irq, 0x0058);
 
         assert_eq!(interrupts.read_enable(), 0b0_1010);
-        assert_eq!(interrupts.read_flags(), 0b1110_0000 | 0b0_0000);
+        assert_eq!(interrupts.read_flags(), 0b1110_0000);
 
         // Test none
         assert!(!interrupts.has_queued_irq());
