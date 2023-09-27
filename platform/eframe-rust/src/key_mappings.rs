@@ -3,8 +3,8 @@ use gb_core::utils::button::Button;
 
 pub fn map_button(button: Button) -> Key {
     match button {
-        Button::A => Key::A,
-        Button::B => Key::S,
+        Button::A => Key::X,
+        Button::B => Key::Z,
         Button::Select => Key::Backspace,
         Button::Start => Key::Enter,
         Button::Right => Key::ArrowRight,

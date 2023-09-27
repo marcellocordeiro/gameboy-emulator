@@ -4,8 +4,8 @@ use sdl2::keyboard::Keycode;
 #[allow(dead_code)]
 pub fn map_button(button: Button) -> Keycode {
     match button {
-        Button::A => Keycode::A,
-        Button::B => Keycode::S,
+        Button::A => Keycode::X,
+        Button::B => Keycode::Z,
         Button::Select => Keycode::Backspace,
         Button::Start => Keycode::Return,
         Button::Right => Keycode::Right,
@@ -17,8 +17,8 @@ pub fn map_button(button: Button) -> Keycode {
 
 pub fn map_keycode(keycode: Keycode) -> Option<Button> {
     Some(match keycode {
-        Keycode::A => Button::A,
-        Keycode::S => Button::B,
+        Keycode::X => Button::A,
+        Keycode::Z => Button::B,
         Keycode::Backspace => Button::Select,
         Keycode::Return => Button::Start,
         Keycode::Right => Button::Right,
