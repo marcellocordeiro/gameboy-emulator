@@ -1,6 +1,9 @@
 use crate::{
     constants::{Frame, Framebuffer, SCREEN_HEIGHT, SCREEN_WIDTH},
-    utils::{color::Color, macros::pure_read_write_methods_u8},
+    utils::{
+        color::Color,
+        macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
+    },
 };
 
 use self::{
@@ -50,6 +53,7 @@ pub struct Graphics {
     cycles: u32,
 
     framebuffer: Box<Framebuffer>,
+    internal_framebuffer: Box<Framebuffer>,
 
     cgb_mode: bool,
 }
@@ -91,6 +95,11 @@ impl Default for Graphics {
             cycles: 0,
 
             framebuffer: vec![Color::SYSTEM_DEFAULT; SCREEN_WIDTH * SCREEN_HEIGHT]
+                .into_boxed_slice()
+                .try_into()
+                .unwrap(),
+
+            internal_framebuffer: vec![Color::SYSTEM_DEFAULT; SCREEN_WIDTH * SCREEN_HEIGHT]
                 .into_boxed_slice()
                 .try_into()
                 .unwrap(),
@@ -372,6 +381,7 @@ impl Graphics {
             }
 
             StatusMode::Vblank => {
+                std::mem::swap(&mut self.framebuffer, &mut self.internal_framebuffer);
                 self.vblank_irq = true;
 
                 if self.stat.get_vblank_irq() || self.stat.get_oam_irq() {

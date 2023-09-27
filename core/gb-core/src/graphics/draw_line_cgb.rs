@@ -54,7 +54,7 @@ impl Graphics {
                 let address = line_offset + (i as usize);
                 let pixel = Color::SYSTEM_DEFAULT;
 
-                self.framebuffer[address] = pixel;
+                self.internal_framebuffer[address] = pixel;
 
                 continue;
             };
@@ -147,7 +147,7 @@ impl Graphics {
 
                 let framebuffer_address = line_offset + (i as usize);
                 let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
-                self.framebuffer[framebuffer_address] = framebuffer_pixel;
+                self.internal_framebuffer[framebuffer_address] = framebuffer_pixel;
             } else {
                 let color_index = Color::apply_dmg_palette(color_id, self.bgp);
                 let raw_color = self.bg_cram.get_color_rgb555(0, color_index);
@@ -160,7 +160,7 @@ impl Graphics {
 
                 let framebuffer_address = line_offset + (i as usize);
                 let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
-                self.framebuffer[framebuffer_address] = framebuffer_pixel;
+                self.internal_framebuffer[framebuffer_address] = framebuffer_pixel;
             }
         }
     }
@@ -257,7 +257,7 @@ impl Graphics {
                     let framebuffer_address = line_offset + mapped_x;
                     let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
 
-                    self.framebuffer[framebuffer_address] = framebuffer_pixel;
+                    self.internal_framebuffer[framebuffer_address] = framebuffer_pixel;
                 } else {
                     if priority[mapped_x] == Priority::Background && sprite.flags.bg_priority {
                         continue;
@@ -269,7 +269,7 @@ impl Graphics {
                     let framebuffer_address = line_offset + mapped_x;
                     let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
 
-                    self.framebuffer[framebuffer_address] = framebuffer_pixel;
+                    self.internal_framebuffer[framebuffer_address] = framebuffer_pixel;
                 }
             }
         }

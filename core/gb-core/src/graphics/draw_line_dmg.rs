@@ -46,7 +46,7 @@ impl Graphics {
                 let address = line_offset + (i as usize);
                 let pixel = Color::SYSTEM_DEFAULT;
 
-                self.framebuffer[address] = pixel;
+                self.internal_framebuffer[address] = pixel;
 
                 continue;
             };
@@ -97,7 +97,7 @@ impl Graphics {
 
             let framebuffer_address = line_offset + (i as usize);
             let framebuffer_pixel = Color::from_dmg_color_id_with_palette(color_id, self.bgp);
-            self.framebuffer[framebuffer_address] = framebuffer_pixel;
+            self.internal_framebuffer[framebuffer_address] = framebuffer_pixel;
         }
     }
 
@@ -177,7 +177,7 @@ impl Graphics {
                 let framebuffer_pixel =
                     Color::from_dmg_color_id_with_palette(color_id, selected_palette);
 
-                self.framebuffer[framebuffer_address] = framebuffer_pixel;
+                self.internal_framebuffer[framebuffer_address] = framebuffer_pixel;
             }
         }
     }
