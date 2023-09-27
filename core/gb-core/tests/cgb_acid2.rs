@@ -1,4 +1,4 @@
-#![cfg(all(feature = "cgb", feature = "bootrom"))]
+#![cfg(feature = "cgb")]
 
 use std::time::{Duration, Instant};
 
@@ -47,9 +47,7 @@ fn run(name: &str, rom: Vec<u8>) {
     }
 }
 
-#[cfg(all(feature = "cgb", feature = "bootrom"))]
 #[test]
-#[ignore = "need to implement proper CGB support first (preferably without relying on the bootrom"]
 fn test_cgb_acid2() {
     let rom = include_bytes!("../../../external/gameboy-test-roms/cgb-acid2.gbc");
 
