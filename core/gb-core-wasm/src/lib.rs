@@ -28,7 +28,7 @@ use gb_core::{
 #[wasm_bindgen]
 pub fn init_logging() {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-    console_log::init_with_level(log::Level::Trace).unwrap();
+    console_log::init_with_level(log::Level::Info).unwrap();
 }
 
 #[wasm_bindgen]
@@ -42,8 +42,9 @@ impl GameBoy {
     pub fn new() -> Self {
         let mut cpu = Cpu::default();
 
-        #[cfg(not(feature = "bootrom"))]
-        cpu.skip_bootrom();
+        if !cfg!(feature = "bootrom") {
+            cpu.skip_bootrom();
+        }
 
         Self { cpu }
     }

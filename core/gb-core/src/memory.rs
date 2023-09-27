@@ -349,22 +349,22 @@ impl Memory {
             return;
         }
 
-        if let Some(length) = self.graphics.vram_dma.perform_gdma() {
-            let source = self.graphics.vram_dma.source;
-            let destination = self.graphics.vram_dma.destination;
+        if let Some(offsets) = self.graphics.vram_dma.perform_gdma() {
+            let source = self.graphics.vram_dma.source();
+            let destination = self.graphics.vram_dma.destination();
 
-            for offset in 0..length {
+            for offset in offsets {
                 let value = self.read(source + offset);
                 self.write(destination + offset, value);
             }
         }
 
         if self.graphics.in_hblank() {
-            if let Some(base_offset) = self.graphics.vram_dma.perform_hdma() {
-                let source = self.graphics.vram_dma.source;
-                let destination = self.graphics.vram_dma.destination;
+            if let Some(offsets) = self.graphics.vram_dma.perform_hdma() {
+                let source = self.graphics.vram_dma.source();
+                let destination = self.graphics.vram_dma.destination();
 
-                for offset in base_offset..(base_offset + 0x10) {
+                for offset in offsets {
                     let value = self.read(source + offset);
                     self.write(destination + offset, value);
                 }

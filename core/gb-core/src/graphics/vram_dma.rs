@@ -11,12 +11,7 @@ pub enum DmaMode {
 
 #[derive(Debug, Default)]
 pub struct VramDma {
-    /// `0b1111_1111_2222_XXXX`
-    pub source: u16,
-
-    /// `0bXXX3_3333_4444_XXXX`
-    pub destination: u16,
-
+    /// Number of steps of 0x10 bytes.
     pub steps: u8,
 
     pub hdma1: u8,
@@ -81,52 +76,61 @@ impl VramDma {
     }
 
     pub fn write_hdma5(&mut self, value: u8) {
+        if (value & 0b1000_0000) == 0 {
+            if let DmaMode::Hblank { .. } = self.mode {
+                // TODO: update HDMA5
+                self.mode = DmaMode::Idle;
+                return;
+            }
+        }
+
         self.hdma5 = value;
 
-        let source = ((self.hdma1 as u16) << 8) | (self.hdma2 as u16);
-        let destination = 0x8000 | ((self.hdma3 as u16) << 8) | (self.hdma4 as u16);
         let steps = (self.hdma5 & 0b0111_1111) + 1;
 
-        self.source = source;
-        self.destination = destination;
         self.steps = steps;
 
-        if value & 0b1000_0000 == 0 {
+        if (value & 0b1000_0000) == 0 {
             self.mode = DmaMode::General;
         } else {
             self.mode = DmaMode::Hblank {
-                active: true,
+                active: false,
                 remaining_steps: steps,
             };
         }
     }
 
-    /*
-    pub fn perform_gdma(&mut self) -> Option<impl Iterator<Item = u16>> {
-        if self.mode == DmaMode::General {
-            let len = ((self.hdma5 & 0b0111_1111) as u16 + 1) * 0x10;
-            let iter = 0..len;
+    #[allow(clippy::manual_range_contains)]
+    /// `0b1111_1111_2222_XXXX`
+    pub fn source(&self) -> u16 {
+        let source = ((self.hdma1 as u16) << 8) | (self.hdma2 as u16);
 
-            self.mode = DmaMode::Idle;
+        assert!(
+            (source <= 0x7FF0) || (0xA000 <= source && source <= 0xDFF0),
+            "with source = {source:#06X}"
+        );
 
-            return Some(iter);
-        }
-
-        None
+        source
     }
-    */
 
-    pub fn perform_gdma(&mut self) -> Option<u16> {
+    /// `0bXXX3_3333_4444_XXXX`
+    pub fn destination(&self) -> u16 {
+        0x8000 | ((self.hdma3 as u16) << 8) | (self.hdma4 as u16)
+    }
+
+    pub fn perform_gdma(&mut self) -> Option<impl Iterator<Item = u16> + Clone> {
         if self.mode != DmaMode::General {
             return None;
         }
 
         self.mode = DmaMode::Idle;
 
-        Some((self.steps as u16) * 0x10)
+        let length = (self.steps as u16) * 0x10;
+
+        Some(0..length)
     }
 
-    pub fn perform_hdma(&mut self) -> Option<u16> {
+    pub fn perform_hdma(&mut self) -> Option<impl Iterator<Item = u16> + Clone> {
         let step = match self.mode {
             DmaMode::Hblank { active: false, .. } => {
                 return None;
@@ -137,7 +141,7 @@ impl VramDma {
             } => {
                 self.mode = DmaMode::Idle;
 
-                return None;
+                self.steps - 1
             }
 
             DmaMode::Hblank {
@@ -155,7 +159,10 @@ impl VramDma {
             _ => return None,
         };
 
-        Some((step as u16) * 0x10)
+        let length = 0x10;
+        let base_offset = (step as u16) * 0x10;
+
+        Some(base_offset..(base_offset + length))
     }
 
     pub fn resume_hdma(&mut self) {
@@ -169,5 +176,121 @@ impl VramDma {
                 remaining_steps,
             };
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // TODO: test cancellation and HDMA5 reads.
+
+    #[test]
+    fn test_gdma() {
+        let mut vram_dma = VramDma::default();
+
+        vram_dma.write_hdma1(0xDF); // 0xFF is invalid, but probably allowed.
+        vram_dma.write_hdma2(0xFF);
+        vram_dma.write_hdma3(0xFF);
+        vram_dma.write_hdma4(0xFF);
+        vram_dma.write_hdma5(0b0111_1111);
+
+        let source = ((vram_dma.hdma1 as u16) << 8) | (vram_dma.hdma2 as u16);
+        assert_eq!(source, 0xDFFF & 0xFFF0);
+        assert_eq!(vram_dma.source(), source);
+
+        let destination = 0x8000 | ((vram_dma.hdma3 as u16) << 8) | (vram_dma.hdma4 as u16);
+        assert_eq!(destination, 0x8000 | 0x1FF0);
+        assert_eq!(vram_dma.destination(), destination);
+
+        let steps = (vram_dma.hdma5 & 0b0111_1111) + 1;
+        assert_eq!(vram_dma.steps, steps);
+        assert_eq!(vram_dma.mode, DmaMode::General);
+
+        let offsets = vram_dma.perform_gdma().unwrap();
+        assert_eq!(
+            offsets.clone().cmp(0x0000..((0x7F + 1) * 0x10)),
+            std::cmp::Ordering::Equal
+        );
+        assert_eq!(
+            offsets.cmp(0x0000..((vram_dma.steps as u16) * 0x10)),
+            std::cmp::Ordering::Equal
+        );
+
+        assert_eq!(vram_dma.mode, DmaMode::Idle);
+    }
+
+    #[test]
+    fn test_hdma_setup() {
+        let mut vram_dma = VramDma::default();
+
+        vram_dma.write_hdma1(0xDF); // 0xFF is invalid, but probably allowed.
+        vram_dma.write_hdma2(0xFF);
+        vram_dma.write_hdma3(0xFF);
+        vram_dma.write_hdma4(0xFF);
+        vram_dma.write_hdma5(0b1111_1111);
+
+        let source = ((vram_dma.hdma1 as u16) << 8) | (vram_dma.hdma2 as u16);
+        assert_eq!(source, 0xDFFF & 0xFFF0);
+        assert_eq!(vram_dma.source(), source);
+
+        let destination = 0x8000 | ((vram_dma.hdma3 as u16) << 8) | (vram_dma.hdma4 as u16);
+        assert_eq!(destination, 0x8000 | 0x1FF0);
+        assert_eq!(vram_dma.destination(), destination);
+
+        let steps = (vram_dma.hdma5 & 0b0111_1111) + 1;
+        assert_eq!(vram_dma.steps, steps);
+        assert_eq!(
+            vram_dma.mode,
+            DmaMode::Hblank {
+                active: false,
+                remaining_steps: steps
+            }
+        );
+
+        vram_dma.resume_hdma();
+
+        let offsets = vram_dma.perform_hdma().unwrap();
+        assert_eq!(offsets.cmp(0x0000..0x10), std::cmp::Ordering::Equal);
+    }
+
+    #[test]
+    fn test_hdma() {
+        let mut vram_dma = VramDma::default();
+
+        vram_dma.write_hdma1(0xDF); // 0xFF is invalid, but probably allowed.
+        vram_dma.write_hdma2(0xFF);
+        vram_dma.write_hdma3(0xFF);
+        vram_dma.write_hdma4(0xFF);
+        vram_dma.write_hdma5(0b1111_1111);
+
+        let steps = (vram_dma.hdma5 & 0b0111_1111) + 1;
+        assert_eq!(vram_dma.steps, steps);
+        assert_eq!(
+            vram_dma.mode,
+            DmaMode::Hblank {
+                active: false,
+                remaining_steps: steps
+            }
+        );
+
+        vram_dma.resume_hdma();
+
+        for step in 0..steps {
+            assert_eq!(
+                vram_dma.mode,
+                DmaMode::Hblank {
+                    active: true,
+                    remaining_steps: steps - step
+                }
+            );
+
+            let offsets = vram_dma.perform_hdma().unwrap();
+            assert_eq!(offsets.count(), 0x10);
+
+            vram_dma.resume_hdma();
+        }
+
+        assert_eq!(vram_dma.mode, DmaMode::Idle);
     }
 }
