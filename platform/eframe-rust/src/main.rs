@@ -24,7 +24,10 @@ use gb_core::{
 };
 
 fn main() -> Result<(), eframe::Error> {
-    env_logger::init();
+    env_logger::builder()
+        .filter_level(log::LevelFilter::Info)
+        .format_timestamp(None)
+        .init();
 
     let matches = clap::Command::new("gameboy-emulator")
         .arg(clap::Arg::new("rom"))
