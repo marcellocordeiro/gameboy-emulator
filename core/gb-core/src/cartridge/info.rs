@@ -1,12 +1,9 @@
 use log::info;
 
 use crate::{
-    cartridge::{
-        error::Error as CartridgeError,
-        info::{
-            new_licensee_code::{NEW_LICENSEE_CODE_ADDRESS_BEGIN, NEW_LICENSEE_CODE_ADDRESS_END},
-            old_licensee_code::OLD_LICENSEE_CODE_ADDRESS,
-        },
+    cartridge::info::{
+        new_licensee_code::{NEW_LICENSEE_CODE_ADDRESS_BEGIN, NEW_LICENSEE_CODE_ADDRESS_END},
+        old_licensee_code::OLD_LICENSEE_CODE_ADDRESS,
     },
     constants::ONE_KIB,
 };
@@ -40,40 +37,36 @@ pub struct Info {
 }
 
 impl TryFrom<&Vec<u8>> for Info {
-    type Error = CartridgeError;
+    type Error = super::error::Error;
 
     fn try_from(rom: &Vec<u8>) -> Result<Self, Self::Error> {
         let title_bytes = rom
             .get(TITLE_ADDRESS_BEGIN..=TITLE_ADDRESS_END)
-            .ok_or(CartridgeError::InvalidRom)?;
+            .ok_or(Self::Error::InvalidRom)?;
 
         let cartridge_type_code = *rom
             .get(CARTRIDGE_TYPE_ADDRESS)
-            .ok_or(CartridgeError::InvalidRom)?;
+            .ok_or(Self::Error::InvalidRom)?;
 
         let rom_size_code = *rom
             .get(ROM_BANKS_CODE_ADDRESS)
-            .ok_or(CartridgeError::InvalidRom)?;
+            .ok_or(Self::Error::InvalidRom)?;
 
         let ram_size_code = *rom
             .get(RAM_BANKS_CODE_ADDRESS)
-            .ok_or(CartridgeError::InvalidRom)?;
+            .ok_or(Self::Error::InvalidRom)?;
 
-        let cgb_flag_code = *rom
-            .get(CGB_FLAG_ADDRESS)
-            .ok_or(CartridgeError::InvalidRom)?;
+        let cgb_flag_code = *rom.get(CGB_FLAG_ADDRESS).ok_or(Self::Error::InvalidRom)?;
 
-        let sgb_flag_code = *rom
-            .get(SGB_FLAG_ADDRESS)
-            .ok_or(CartridgeError::InvalidRom)?;
+        let sgb_flag_code = *rom.get(SGB_FLAG_ADDRESS).ok_or(Self::Error::InvalidRom)?;
 
         let old_licensee_code = *rom
             .get(OLD_LICENSEE_CODE_ADDRESS)
-            .ok_or(CartridgeError::InvalidRom)?;
+            .ok_or(Self::Error::InvalidRom)?;
 
         let new_licensee_code_bytes = rom
             .get(NEW_LICENSEE_CODE_ADDRESS_BEGIN..=NEW_LICENSEE_CODE_ADDRESS_END)
-            .ok_or(CartridgeError::InvalidRom)?;
+            .ok_or(Self::Error::InvalidRom)?;
 
         let title = get_title(title_bytes);
         let rom_banks = get_rom_banks(rom_size_code)?;
