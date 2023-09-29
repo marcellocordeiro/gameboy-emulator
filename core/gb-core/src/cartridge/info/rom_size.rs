@@ -3,17 +3,17 @@ use crate::{cartridge::error::Error as CartridgeError, constants::ONE_KIB};
 pub const ROM_BANK_SIZE: usize = 16 * ONE_KIB; // 0x4000
 pub const ROM_BANKS_CODE_ADDRESS: usize = 0x0148;
 
-/// | Code | Size    | Number of banks |
-/// |------|--------:|----------------:|
-/// | $00  | 32 KiB  | 2 (no banking)  |
-/// | $01  | 64 KiB  | 4               |
-/// | $02  | 128 KiB | 8               |
-/// | $03  | 256 KiB | 16              |
-/// | $04  | 512 KiB | 32              |
-/// | $05  | 1 MiB   | 64              |
-/// | $06  | 2 MiB   | 128             |
-/// | $07  | 4 MiB   | 256             |
-/// | $08  | 8 MiB   | 512             |
+/// | Code |    Size | Number of banks |
+/// | ---- | ------: | --------------: |
+/// | $00  |  32 KiB |  2 (no banking) |
+/// | $01  |  64 KiB |               4 |
+/// | $02  | 128 KiB |               8 |
+/// | $03  | 256 KiB |              16 |
+/// | $04  | 512 KiB |              32 |
+/// | $05  |   1 MiB |              64 |
+/// | $06  |   2 MiB |             128 |
+/// | $07  |   4 MiB |             256 |
+/// | $08  |   8 MiB |             512 |
 ///
 /// Note: each bank is 16 KiB.
 pub fn get_rom_banks(code: u8) -> Result<usize, CartridgeError> {

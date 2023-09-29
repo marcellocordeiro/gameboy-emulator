@@ -13,18 +13,18 @@ pub enum StatusMode {
 bitflags!(
     /// FF41 — STAT: LCD status
     ///
-    /// | Bit | Name                                | Usage notes                               |            |
-    /// |-----|-------------------------------------|-------------------------------------------|------------|
-    /// | 6   | LYC=LY STAT Interrupt source        | 0=Off, 1=On                               | Read/Write |
-    /// | 5   | Mode 2 OAM STAT Interrupt source    | 0=Off, 1=On                               | Read/Write |
-    /// | 4   | Mode 1 VBlank STAT Interrupt source | 0=Off, 1=On                               | Read/Write |
-    /// | 3   | Mode 0 HBlank STAT Interrupt source | 0=Off, 1=On                               | Read/Write |
-    /// | 2   | LYC=LY Flag                         | 0=Different, 1=Equal                      | Read only  |
-    /// | 1-0 | Mode Flag                           | Mode 0-3, see below                       | Read only  |
-    /// |     |                                     |    0: HBlank                              |            |
-    /// |     |                                     |    1: VBlank                              |            |
-    /// |     |                                     |    2: Searching OAM                       |            |
-    /// |     |                                     |    3: Transferring Data to LCD Controller |            |
+    /// | Bit | Name                                | Usage notes                              |            |
+    /// | --- | ----------------------------------- | ---------------------------------------- | ---------- |
+    /// | 6   | LYC=LY STAT Interrupt source        | 0=Off, 1=On                              | Read/Write |
+    /// | 5   | Mode 2 OAM STAT Interrupt source    | 0=Off, 1=On                              | Read/Write |
+    /// | 4   | Mode 1 VBlank STAT Interrupt source | 0=Off, 1=On                              | Read/Write |
+    /// | 3   | Mode 0 HBlank STAT Interrupt source | 0=Off, 1=On                              | Read/Write |
+    /// | 2   | LYC=LY Flag                         | 0=Different, 1=Equal                     | Read only  |
+    /// | 1-0 | Mode Flag                           | Mode 0-3, see below                      | Read only  |
+    /// |     |                                     | - 0: HBlank                              |            |
+    /// |     |                                     | - 1: VBlank                              |            |
+    /// |     |                                     | - 2: Searching OAM                       |            |
+    /// |     |                                     | - 3: Transferring Data to LCD Controller |            |
     #[derive(Default, Clone, Copy)]
     pub struct LcdStatus: u8 {
         const COMPARE_IRQ = 1 << 6;

@@ -24,7 +24,7 @@ impl OamDma {
         self.start();
     }
 
-    pub fn advance(&mut self) -> Option<(u16, u16)> {
+    pub fn perform_dma(&mut self) -> Option<(u16, u16)> {
         match self.status {
             Status::Idle => None,
 
@@ -87,10 +87,10 @@ mod tests {
         assert_eq!(oam_dma.offset, 0);
         assert_eq!(oam_dma.status, Status::Requested);
 
-        assert_eq!(oam_dma.advance(), None);
+        assert_eq!(oam_dma.perform_dma(), None);
 
         // Next read is expected to return a (source, destination)
-        let (source, destination) = oam_dma.advance().expect("first read");
+        let (source, destination) = oam_dma.perform_dma().expect("first read");
         assert_eq!(source, 0);
         assert_eq!(destination, 0xFE00);
 

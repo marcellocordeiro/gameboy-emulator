@@ -1,6 +1,6 @@
 use egui::{
     epaint::{ColorImage, TextureHandle, Vec2},
-    CentralPanel, Color32, Context, TextureOptions,
+    CentralPanel, Color32, Context, Image, TextureOptions,
 };
 use gb_core::{
     constants::{Frame, FRAME_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH},
@@ -51,7 +51,7 @@ impl ScreenArea {
 
                 let size = Vec2::new(scaled_width, scaled_height);
 
-                ui.image(&self.texture, size);
+                ui.add(Image::from_texture(&self.texture).fit_to_exact_size(size));
             });
         });
     }

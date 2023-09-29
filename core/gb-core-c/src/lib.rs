@@ -39,7 +39,9 @@ pub unsafe extern "C" fn gameboy_destroy(gb_ptr: *mut GameBoy) {
         return;
     }
 
-    drop(Box::from_raw(gb_ptr));
+    unsafe {
+        drop(Box::from_raw(gb_ptr));
+    }
 }
 
 /// # Safety

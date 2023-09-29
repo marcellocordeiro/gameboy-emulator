@@ -1,6 +1,6 @@
 use egui::{
     epaint::{ColorImage, TextureHandle, Vec2},
-    Color32, Context, TextureOptions, Ui, Window,
+    Color32, Context, Image, TextureOptions, Ui, Window,
 };
 use gb_core::{
     constants::{
@@ -86,7 +86,7 @@ impl Tiles {
                 let size = Vec2::new(scaled_width, scaled_height);
 
                 ui.centered_and_justified(|ui| {
-                    ui.image(&self.texture, size);
+                    ui.add(Image::from_texture(&self.texture).fit_to_exact_size(size));
                 });
             });
     }
