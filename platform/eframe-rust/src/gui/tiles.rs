@@ -9,6 +9,8 @@ use gb_core::{
     GameBoy,
 };
 
+use crate::utils::scaling::integer_scaling_size;
+
 pub struct Tiles {
     opened: bool,
 
@@ -67,23 +69,7 @@ impl Tiles {
             .min_width(Self::DEFAULT_SIZE.x)
             .min_height(Self::DEFAULT_SIZE.y)
             .show(egui_ctx, |ui| {
-                let screen_size = ui.available_size();
-                let screen_width = screen_size.x;
-                let screen_height = screen_size.y;
-
-                let texture_size = self.texture.size_vec2();
-                let texture_width = texture_size.x;
-                let texture_height = texture_size.y;
-
-                let width_ratio = (screen_width / texture_width).max(1.0);
-                let height_ratio = (screen_height / texture_height).max(1.0);
-
-                let scale = width_ratio.clamp(1.0, height_ratio).floor();
-
-                let scaled_width = texture_width * scale;
-                let scaled_height = texture_height * scale;
-
-                let size = Vec2::new(scaled_width, scaled_height);
+                let size = integer_scaling_size(ui.available_size(), self.texture.size_vec2());
 
                 ui.centered_and_justified(|ui| {
                     ui.add(Image::from_texture(&self.texture).fit_to_exact_size(size));
@@ -97,7 +83,7 @@ impl Tiles {
             .memory
             .graphics
             .vram
-            .draw_tile_data_0_into_frame(&mut self.pixels);
+            .draw_tile_data_0_into_frame(self.pixels.as_mut());
 
         #[cfg(feature = "cgb")]
         gb_ctx
@@ -105,7 +91,7 @@ impl Tiles {
             .memory
             .graphics
             .vram
-            .draw_tile_data_1_into_frame(&mut self.pixels);
+            .draw_tile_data_1_into_frame(self.pixels.as_mut());
 
         let image = ColorImage::from_rgba_unmultiplied(
             [TILE_DATA_FRAME_WIDTH, TILE_DATA_FRAME_HEIGHT],

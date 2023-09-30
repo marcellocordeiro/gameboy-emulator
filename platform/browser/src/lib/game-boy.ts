@@ -1,9 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import init, { init_logging, GameBoy } from "gb-core-wasm";
+import init, { GameBoy } from "gb-core-wasm";
 
 await init();
-init_logging();
+
 const gameBoy = new GameBoy();
 
 export const SCREEN_WIDTH = 160;

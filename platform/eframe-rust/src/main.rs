@@ -69,3 +69,4 @@ fn main() -> Result<(), eframe::Error> {
 mod app;
 mod gui;
 mod key_mappings;
+mod utils;

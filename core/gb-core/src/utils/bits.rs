@@ -15,5 +15,6 @@ mod tests {
         assert_eq!(isolate_rightmost_bit(0), 0);
         assert_eq!(isolate_rightmost_bit(0b1000_0000), 0b1000_0000);
         assert_eq!(isolate_rightmost_bit(0b1100_0000), 0b0100_0000);
+        assert_eq!(isolate_rightmost_bit(0b1111_1111), 0b0000_0001);
     }
 }
