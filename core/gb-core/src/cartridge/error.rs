@@ -1,46 +1,31 @@
+use thiserror::Error;
+
 use super::info::CartridgeType;
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum Error {
+    #[error("Invalid ROM")]
     InvalidRom,
+
+    #[error("Invalid and unsupported MBC (code = {code:#04X}).")]
     InvalidMbcCode { code: u8 },
+
+    #[error("Unsupported MBC (type = {cartridge_type:?}).")]
     UnsupportedMbc { cartridge_type: CartridgeType },
+
+    #[error("Unsupported number of ROM banks (code = {code:#04X}).")]
     UnsupportedRomSize { code: u8 },
+
+    #[error("Unsupported number of RAM banks (code = {code:#04X}).")]
     UnsupportedRamSize { code: u8 },
 }
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match *self {
-            Self::InvalidRom => write!(f, "Invalid ROM"),
-
-            Self::InvalidMbcCode { code } => {
-                write!(f, "Invalid and unsupported MBC (code = {code:#04X}).")
-            }
-
-            Self::UnsupportedMbc { cartridge_type } => {
-                write!(f, "Unsupported MBC (type = {cartridge_type:?}).")
-            }
-
-            Self::UnsupportedRomSize { code } => {
-                write!(f, "Unsupported number of ROM banks (code = {code:#04X}).")
-            }
-
-            Self::UnsupportedRamSize { code } => {
-                write!(f, "Unsupported number of RAM banks (code = {code:#04X}).")
-            }
-        }
-    }
-}
-
-impl std::error::Error for Error {}
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    #[ignore]
+    #[ignore = "manual only"]
     fn test_format() {
         let err = Error::UnsupportedRamSize { code: 0xDB };
 

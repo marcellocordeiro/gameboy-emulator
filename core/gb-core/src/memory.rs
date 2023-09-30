@@ -341,7 +341,7 @@ impl Memory {
     fn perform_oam_dma(&mut self) {
         if let Some((source, destination)) = self.graphics.oam_dma.perform_dma() {
             let value = self.read(source);
-            self.graphics.write_oam(destination, value);
+            self.graphics.oam.write(destination, value);
         }
     }
 
@@ -356,7 +356,7 @@ impl Memory {
 
             for offset in offsets {
                 let value = self.read(source + offset);
-                self.graphics.write_vram(destination + offset, value);
+                self.graphics.vram.write(destination + offset, value);
             }
         }
 
@@ -367,7 +367,7 @@ impl Memory {
 
                 for offset in offsets {
                     let value = self.read(source + offset);
-                    self.graphics.write_vram(destination + offset, value);
+                    self.graphics.vram.write(destination + offset, value);
                 }
             }
         }

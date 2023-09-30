@@ -1,5 +1,7 @@
 // TODO: merge this with MBC3.
 
+use log::error;
+
 use crate::{
     cartridge::info::{CartridgeType, Info, RAM_BANK_SIZE, ROM_BANK_SIZE},
     constants::ONE_KIB,
@@ -26,7 +28,9 @@ impl Mbc30 {
         Self {
             rom,
             ram: vec![0; ram_banks * (8 * ONE_KIB)],
+
             ram_enable: false,
+
             rom_bank: 0x01,
             ram_rtc_sel: 0x00,
         }
@@ -55,9 +59,11 @@ impl MbcInterface for Mbc30 {
 
     fn load_battery(&mut self, file: Vec<u8>) {
         if self.ram.is_empty() {
-            log::error!("This cartridge does not have a battery backed RAM.");
+            error!("This cartridge does not have a battery backed RAM.");
+            return;
         } else if self.ram.len() != file.len() {
-            log::error!("Size mismatch.");
+            error!("Size mismatch.");
+            return;
         }
 
         self.ram = file;

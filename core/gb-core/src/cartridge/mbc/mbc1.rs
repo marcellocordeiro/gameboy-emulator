@@ -1,3 +1,5 @@
+use log::error;
+
 use crate::{
     cartridge::info::{CartridgeType, Info, RAM_BANK_SIZE, ROM_BANK_SIZE},
     constants::ONE_KIB,
@@ -9,12 +11,15 @@ pub struct Mbc1 {
     rom: Vec<u8>,
     ram: Vec<u8>,
 
+    rom_bank_mask: usize,
+    ram_bank_mask: usize,
+
     ram_enable: bool,
+
+    mode: bool,
 
     bank_lo: u8,
     bank_hi: u8,
-
-    mode: bool,
 }
 
 impl Mbc1 {
@@ -23,13 +28,21 @@ impl Mbc1 {
 
         let ram_banks = info.ram_banks;
 
+        let rom_bank_mask = info.rom_banks - 1;
+        let ram_bank_mask = if ram_banks == 0 { 0 } else { ram_banks - 1 };
+
         Self {
             rom,
             ram: vec![0; ram_banks * (8 * ONE_KIB)],
+
             ram_enable: false,
+            mode: false,
+
+            rom_bank_mask,
+            ram_bank_mask,
+
             bank_lo: 0x01,
             bank_hi: 0x00,
-            mode: false,
         }
     }
 
@@ -40,13 +53,13 @@ impl Mbc1 {
 
         let rom_bank = (self.bank_hi << 5) as usize;
 
-        ROM_BANK_SIZE * rom_bank
+        ROM_BANK_SIZE * (rom_bank & self.rom_bank_mask)
     }
 
     fn rom_0x4000_0x7fff_offset(&self) -> usize {
-        let rom_bank = ((self.bank_hi << 5) + self.bank_lo) as usize;
+        let rom_bank = ((self.bank_hi << 5) | self.bank_lo) as usize;
 
-        ROM_BANK_SIZE * rom_bank
+        ROM_BANK_SIZE * (rom_bank & self.rom_bank_mask)
     }
 
     fn ram_offset(&self) -> usize {
@@ -54,9 +67,9 @@ impl Mbc1 {
             return 0;
         }
 
-        let ram_bank = self.bank_hi;
+        let ram_bank = self.bank_hi as usize;
 
-        RAM_BANK_SIZE * (ram_bank as usize)
+        RAM_BANK_SIZE * (ram_bank & self.ram_bank_mask)
     }
 }
 
@@ -64,9 +77,9 @@ impl MbcInterface for Mbc1 {
     fn reset(&mut self) {
         self.ram.fill(0);
         self.ram_enable = false;
+        self.mode = false;
         self.bank_lo = 0x01;
         self.bank_hi = 0x00;
-        self.mode = false;
     }
 
     fn get_battery(&self) -> &[u8] {
@@ -75,28 +88,28 @@ impl MbcInterface for Mbc1 {
 
     fn load_battery(&mut self, file: Vec<u8>) {
         if self.ram.is_empty() {
-            log::error!("This cartridge does not have a battery backed RAM.");
+            error!("This cartridge does not have a battery backed RAM.");
+            return;
         } else if self.ram.len() != file.len() {
-            log::error!("Size mismatch.");
+            error!("Size mismatch.");
+            return;
         }
 
         self.ram = file;
     }
 
     fn read_rom(&self, address: u16) -> u8 {
-        let mask = self.rom.len() - 1;
-
         if address < 0x4000 {
             let offset = self.rom_0x0000_0x3fff_offset();
             let mapped_address = (address as usize) + offset;
 
-            return self.rom[mapped_address & mask];
+            return self.rom[mapped_address];
         }
 
         let offset = self.rom_0x4000_0x7fff_offset();
         let mapped_address = (address as usize - 0x4000) + offset;
 
-        self.rom[mapped_address & mask]
+        self.rom[mapped_address]
     }
 
     fn read_ram(&self, address: u16) -> u8 {
@@ -105,11 +118,9 @@ impl MbcInterface for Mbc1 {
         }
 
         let offset = self.ram_offset();
-        let mapped_address = ((address as usize) - 0xA000) + offset;
+        let mapped_address = (address as usize - 0xA000) + offset;
 
-        let mask = self.ram.len() - 1;
-
-        self.ram[mapped_address & mask]
+        self.ram[mapped_address]
     }
 
     fn write_rom(&mut self, address: u16, value: u8) {
@@ -124,7 +135,6 @@ impl MbcInterface for Mbc1 {
             }
 
             0x4000..=0x5FFF => self.bank_hi = value & 0b11,
-
             0x6000..=0x7FFF => self.mode = (value & 0b1) != 0,
 
             _ => unreachable!(
@@ -142,8 +152,6 @@ impl MbcInterface for Mbc1 {
         let offset = self.ram_offset();
         let mapped_address = ((address as usize) - 0xA000) + offset;
 
-        let mask = self.ram.len() - 1;
-
-        self.ram[mapped_address & mask] = value;
+        self.ram[mapped_address] = value;
     }
 }

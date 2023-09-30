@@ -81,7 +81,7 @@ impl TryFrom<(u8, usize)> for CartridgeType {
             // $FF HuC1+RAM+BATTERY
             0xFF => Self::Huc1,
 
-            code => return Err(CartridgeError::InvalidMbcCode { code }),
+            code => return Err(Self::Error::InvalidMbcCode { code }),
         })
     }
 }

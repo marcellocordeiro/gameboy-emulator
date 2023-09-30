@@ -1,3 +1,5 @@
+use log::error;
+
 use crate::cartridge::info::{CartridgeType, Info, ROM_BANK_SIZE};
 
 use super::MbcInterface;
@@ -5,6 +7,8 @@ use super::MbcInterface;
 pub struct Mbc2 {
     rom: Vec<u8>,
     ram: Box<[u8; 512]>,
+
+    rom_bank_mask: usize,
 
     ram_enable: bool,
 
@@ -15,16 +19,22 @@ impl Mbc2 {
     pub fn new(rom: Vec<u8>, info: &Info) -> Self {
         assert_eq!(info.cartridge_type, CartridgeType::Mbc2);
 
+        let rom_bank_mask = info.rom_banks - 1;
+
         Self {
             rom,
             ram: Box::new([0; 512]),
+
+            rom_bank_mask,
+
             ram_enable: false,
+
             rom_bank: 0x01,
         }
     }
 
     fn rom_0x4000_0x7fff_offset(&self) -> usize {
-        ROM_BANK_SIZE * (self.rom_bank as usize)
+        ROM_BANK_SIZE * ((self.rom_bank as usize) & self.rom_bank_mask)
     }
 }
 
@@ -43,7 +53,7 @@ impl MbcInterface for Mbc2 {
         self.ram = if let Ok(file) = file.try_into() {
             file
         } else {
-            log::error!("Error loading the battery backed RAM.");
+            error!("Error loading the battery backed RAM.");
             return;
         }
     }
@@ -55,9 +65,8 @@ impl MbcInterface for Mbc2 {
 
         let offset = self.rom_0x4000_0x7fff_offset();
         let mapped_address = (address as usize - 0x4000) + offset;
-        let mask = self.rom.len() - 1;
 
-        self.rom[mapped_address & mask]
+        self.rom[mapped_address]
     }
 
     fn read_ram(&self, address: u16) -> u8 {
@@ -67,7 +76,7 @@ impl MbcInterface for Mbc2 {
 
         let mapped_address = (address - 0xA000) & 0x01FF;
 
-        self.ram[mapped_address as usize] | 0xF0
+        0b1111_0000 | self.ram[mapped_address as usize]
     }
 
     fn write_rom(&mut self, address: u16, value: u8) {

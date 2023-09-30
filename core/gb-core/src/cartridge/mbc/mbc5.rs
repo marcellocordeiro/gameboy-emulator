@@ -1,3 +1,5 @@
+use log::error;
+
 use crate::{
     cartridge::info::{CartridgeType, Info, RAM_BANK_SIZE, ROM_BANK_SIZE},
     constants::ONE_KIB,
@@ -9,10 +11,11 @@ pub struct Mbc5 {
     rom: Vec<u8>,
     ram: Vec<u8>,
 
+    rom_bank_mask: usize,
+
     ram_enable: bool,
 
-    rom_bank_lo: u8,
-    rom_bank_hi: u8,
+    rom_bank: u16,
     ram_bank: u8,
 }
 
@@ -22,20 +25,23 @@ impl Mbc5 {
 
         let ram_banks = info.ram_banks;
 
+        let rom_bank_mask = info.rom_banks - 1;
+
         Self {
             rom,
             ram: vec![0; ram_banks * (8 * ONE_KIB)],
+
+            rom_bank_mask,
+
             ram_enable: false,
-            rom_bank_lo: 0x01,
-            rom_bank_hi: 0x00,
+
+            rom_bank: 0x0001,
             ram_bank: 0x00,
         }
     }
 
     fn rom_0x4000_0x7fff_offset(&self) -> usize {
-        let rom_bank = ((self.rom_bank_hi as usize) << 8) | (self.rom_bank_lo as usize);
-
-        ROM_BANK_SIZE * rom_bank
+        ROM_BANK_SIZE * ((self.rom_bank as usize) & self.rom_bank_mask)
     }
 
     fn ram_offset(&self) -> usize {
@@ -47,8 +53,7 @@ impl MbcInterface for Mbc5 {
     fn reset(&mut self) {
         self.ram.fill(0);
         self.ram_enable = false;
-        self.rom_bank_lo = 0x01;
-        self.rom_bank_hi = 0x00;
+        self.rom_bank = 0x0001;
         self.ram_bank = 0x00;
     }
 
@@ -58,17 +63,17 @@ impl MbcInterface for Mbc5 {
 
     fn load_battery(&mut self, file: Vec<u8>) {
         if self.ram.is_empty() {
-            log::error!("This cartridge does not have a battery backed RAM.");
+            error!("This cartridge does not have a battery backed RAM.");
+            return;
         } else if self.ram.len() != file.len() {
-            log::error!("Size mismatch.");
+            error!("Size mismatch.");
+            return;
         }
 
         self.ram = file;
     }
 
     fn read_rom(&self, address: u16) -> u8 {
-        let mask = self.rom.len() - 1;
-
         if address < 0x4000 {
             return self.rom[address as usize];
         }
@@ -76,7 +81,7 @@ impl MbcInterface for Mbc5 {
         let offset = self.rom_0x4000_0x7fff_offset();
         let mapped_address = (address as usize - 0x4000) + offset;
 
-        self.rom[mapped_address & mask]
+        self.rom[mapped_address]
     }
 
     fn read_ram(&self, address: u16) -> u8 {
@@ -85,7 +90,7 @@ impl MbcInterface for Mbc5 {
         }
 
         let offset = self.ram_offset();
-        let mapped_address = ((address as usize) - 0xA000) + offset;
+        let mapped_address = (address as usize - 0xA000) + offset;
 
         self.ram[mapped_address]
     }
@@ -94,12 +99,21 @@ impl MbcInterface for Mbc5 {
         match address {
             0x0000..=0x1FFF => self.ram_enable = (value & 0b1111) == 0x0A,
 
-            0x2000..=0x2FFF => self.rom_bank_lo = value,
+            0x2000..=0x2FFF => {
+                let lo = value as u16;
+                let hi = self.rom_bank & 0x0100;
 
-            0x3000..=0x3FFF => self.rom_bank_hi = value & 0b1,
+                self.rom_bank = hi | lo;
+            }
+
+            0x3000..=0x3FFF => {
+                let lo = self.rom_bank & 0x00FF;
+                let hi = (value & 0b1) as u16;
+
+                self.rom_bank = (hi << 8) | lo;
+            }
 
             0x4000..=0x5FFF => self.ram_bank = value & 0b1111,
-
             0x6000..=0x7FFF => (),
 
             _ => unreachable!(
@@ -115,7 +129,7 @@ impl MbcInterface for Mbc5 {
         }
 
         let offset = self.ram_offset();
-        let mapped_address = ((address as usize) - 0xA000) + offset;
+        let mapped_address = (address as usize - 0xA000) + offset;
 
         self.ram[mapped_address] = value;
     }
