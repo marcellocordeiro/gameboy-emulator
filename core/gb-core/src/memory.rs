@@ -97,10 +97,11 @@ impl Memory {
     }
 
     pub fn tick(&mut self) {
-        assert!(
+        // TODO: properly implement double speed.
+        /*assert!(
             !self.speed_switch.in_double_speed(),
             "CGB double speed not yet supported."
-        );
+        );*/
 
         self.perform_oam_dma();
         self.perform_vram_dma();

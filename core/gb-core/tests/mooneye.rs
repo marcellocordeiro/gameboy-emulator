@@ -1,71 +1,8 @@
-use std::time::{Duration, Instant};
-
-use gb_core::GameBoy;
-
-const TIMEOUT: Duration = Duration::from_secs(20);
-const BREAK_OPCODE: u8 = 0x40; // LD B,B
-
-fn run(rom: &[u8]) {
-    let mut gb = GameBoy::new();
-    gb.load_cartridge(rom.to_vec()).unwrap();
-
-    let start_time = Instant::now();
-
-    loop {
-        if Instant::now() - start_time > TIMEOUT {
-            panic!("Timeout");
-        }
-
-        gb.cpu.step();
-
-        if gb.cpu.memory.read(gb.cpu.registers.program_counter) == BREAK_OPCODE {
-            gb.cpu.step();
-            break;
-        }
-    }
-
-    let regs = &gb.cpu.registers;
-
-    let is_fibonacci = regs.accumulator == 0
-        && regs.b == 3
-        && regs.c == 5
-        && regs.d == 8
-        && regs.e == 13
-        && regs.h == 21
-        && regs.l == 34;
-
-    assert!(is_fibonacci, "Fail");
-}
-
-macro_rules! testcases {
-    (
-        $name:ident($path:expr);
-    ) => {
-        #[test]
-        fn $name() {
-            let rom = include_bytes!(concat!("../../../external/gameboy-test-roms/", "mooneye-test-suite/", $path));
-
-            run(rom);
-        }
-    };
-
-    (
-        $name:ident($path:expr);
-        $(
-            $names:ident($paths:expr);
-        )+
-    ) => {
-        testcases! { $name($path); }
-        testcases! {
-            $(
-                $names($paths);
-            )+
-        }
-    };
-}
+mod common;
+use common::{runners::run_until_break, validators::validate_fibonacci};
 
 // Acceptance
-testcases! {
+testcases_mooneye! {
     // add_sp_e_timing("acceptance/add_sp_e_timing.gb");
 
     // boot_div_s("acceptance/boot_div-S.gb"); // SGB is unsupported.
@@ -152,7 +89,7 @@ testcases! {
 }
 
 // MBC
-testcases! {
+testcases_mooneye! {
     // MBC1
     mbc1_bits_ramg("emulator-only/mbc1/bits_ramg.gb");
     mbc1_bits_bank1("emulator-only/mbc1/bits_bank1.gb");
@@ -191,40 +128,40 @@ testcases! {
 // Acceptance
 // DMG only tests.
 #[cfg(not(feature = "cgb"))]
-testcases! {
+testcases_mooneye! {
     boot_regs_dmg_abc("acceptance/boot_regs-dmgABC.gb");
 }
 
 // Acceptance
 // DMG only tests (bootrom is unsupported).
 #[cfg(not(any(feature = "cgb", feature = "bootrom")))]
-testcases! {
+testcases_mooneye! {
     boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb.gb");
 }
 
 // Misc
 // CGB only tests.
 #[cfg(feature = "cgb")]
-testcases! {
+testcases_mooneye! {
     boot_regs_cgb("misc/boot_regs-cgb.gb");
 }
 
 // Misc
 // CGB only tests (needs bootrom).
 #[cfg(all(feature = "cgb", feature = "bootrom"))]
-testcases! {
+testcases_mooneye! {
     boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb");
     boot_hwio_c("misc/boot_hwio-C.gb"); // Why is this failing without the bootrom?
 }
 
 // TODO: compare screenshots
 // manual-only
-// testcases! {
+// testcases_mooneye! {
 //     sprite_priority("manual-only/sprite_priority.gb");
 // }
 
 // misc
-// testcases! {
+// testcases_mooneye! {
 // boot_div_a("misc/boot_div-A.gb"); // AGS is unsupported.
 
 // boot_div_cgb0("misc/boot_div-cgb0.gb"); // CGB0 is unsupported.
