@@ -9,7 +9,9 @@ pub(super) trait MbcInterface {
     fn get_battery(&self) -> &[u8];
     fn load_battery(&mut self, file: Vec<u8>);
 
-    fn read_rom(&self, address: u16) -> u8;
+    fn read_rom_bank_0(&self, address: u16) -> u8;
+    fn read_rom_bank_x(&self, address: u16) -> u8;
+
     fn read_ram(&self, address: u16) -> u8;
 
     fn write_rom(&mut self, address: u16, value: u8);

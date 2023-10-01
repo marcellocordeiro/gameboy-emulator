@@ -33,8 +33,12 @@ impl Cartridge {
         self.mbc.load_battery(file);
     }
 
-    pub fn read_rom(&self, address: u16) -> u8 {
-        self.mbc.read_rom(address)
+    pub fn read_rom_bank_0(&self, address: u16) -> u8 {
+        self.mbc.read_rom_bank_0(address)
+    }
+
+    pub fn read_rom_bank_x(&self, address: u16) -> u8 {
+        self.mbc.read_rom_bank_x(address)
     }
 
     pub fn read_ram(&self, address: u16) -> u8 {

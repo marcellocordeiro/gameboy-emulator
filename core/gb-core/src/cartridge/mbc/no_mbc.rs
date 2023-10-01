@@ -46,29 +46,35 @@ impl MbcInterface for NoMbc {
         self.ram = file;
     }
 
-    fn read_rom(&self, address: u16) -> u8 {
-        self.rom[address as usize]
+    fn read_rom_bank_0(&self, address: u16) -> u8 {
+        let address = address as usize;
+        self.rom[address]
+    }
+
+    fn read_rom_bank_x(&self, address: u16) -> u8 {
+        let address = address as usize;
+        self.rom[address]
     }
 
     fn read_ram(&self, address: u16) -> u8 {
         if self.ram.is_empty() {
-            unreachable!("[no_mbc.rs] RAM is unsupported.");
+            return 0xFF;
         }
 
-        self.ram[(address as usize) - 0xA000]
+        let address = (address - 0xA000) as usize;
+
+        self.ram[address]
     }
 
-    fn write_rom(&mut self, _address: u16, _value: u8) {
-        // Tetris attempts to write here.
-        // We can't simply panic :(
-        // unreachable!("[no_mbc.rs] NoMBC's ROM is read-only.");
-    }
+    fn write_rom(&mut self, _address: u16, _value: u8) {}
 
     fn write_ram(&mut self, address: u16, value: u8) {
         if self.ram.is_empty() {
-            unreachable!("[no_mbc.rs] RAM is unsupported.");
+            return;
         }
 
-        self.ram[(address as usize) - 0xA000] = value;
+        let address = (address - 0xA000) as usize;
+
+        self.ram[address] = value;
     }
 }

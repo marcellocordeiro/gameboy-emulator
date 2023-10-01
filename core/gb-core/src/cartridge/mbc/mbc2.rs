@@ -58,15 +58,16 @@ impl MbcInterface for Mbc2 {
         }
     }
 
-    fn read_rom(&self, address: u16) -> u8 {
-        if address < 0x4000 {
-            return self.rom[address as usize];
-        }
+    fn read_rom_bank_0(&self, address: u16) -> u8 {
+        let address = address as usize;
+        self.rom[address]
+    }
 
+    fn read_rom_bank_x(&self, address: u16) -> u8 {
+        let address = (address - 0x4000) as usize;
         let offset = self.rom_0x4000_0x7fff_offset();
-        let mapped_address = (address as usize - 0x4000) + offset;
 
-        self.rom[mapped_address]
+        self.rom[address + offset]
     }
 
     fn read_ram(&self, address: u16) -> u8 {
@@ -74,9 +75,9 @@ impl MbcInterface for Mbc2 {
             return 0xFF;
         }
 
-        let mapped_address = (address - 0xA000) & 0x01FF;
+        let address = (address - 0xA000) as usize;
 
-        0b1111_0000 | self.ram[mapped_address as usize]
+        0b1111_0000 | self.ram[address & 0x01FF]
     }
 
     fn write_rom(&mut self, address: u16, value: u8) {
@@ -101,8 +102,8 @@ impl MbcInterface for Mbc2 {
             return;
         }
 
-        let mapped_address = (address - 0xA000) & 0x01FF;
+        let address = (address - 0xA000) as usize;
 
-        self.ram[mapped_address as usize] = value;
+        self.ram[address & 0x01FF] = value;
     }
 }

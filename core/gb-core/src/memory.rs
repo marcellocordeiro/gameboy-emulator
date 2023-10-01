@@ -144,11 +144,17 @@ impl Memory {
             #[cfg(feature = "cgb")]
             0x0200..=0x08FF if self.bootrom.is_active() => self.bootrom.read(address),
 
-            0x0000..=0x7FFF => self
+            0x0000..=0x3FFF => self
                 .cartridge
                 .as_ref()
                 .expect("Cartridge should be loaded")
-                .read_rom(address),
+                .read_rom_bank_0(address),
+
+            0x4000..=0x7FFF => self
+                .cartridge
+                .as_ref()
+                .expect("Cartridge should be loaded")
+                .read_rom_bank_x(address),
 
             0x8000..=0x9FFF => self.graphics.read_vram(address),
 
