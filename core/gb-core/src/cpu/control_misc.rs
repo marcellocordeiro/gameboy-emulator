@@ -1,4 +1,4 @@
-use super::{registers::ImeState, Cpu};
+use super::Cpu;
 
 impl Cpu {
     pub(super) fn opcode_unused(&self) {}
@@ -20,7 +20,7 @@ impl Cpu {
     pub(super) fn opcode_0x76(&mut self) {
         // HALT
 
-        if self.registers.ime.get_status() && self.memory.interrupts.has_queued_irq() {
+        if self.registers.ime.is_enabled() && self.memory.interrupts.has_queued_irq() {
             // TODO: implement halt bug
         }
 
@@ -36,13 +36,11 @@ impl Cpu {
 
     pub(super) fn opcode_0xf3(&mut self) {
         // DI
-        self.registers.ime = ImeState::Disabled;
+        self.registers.ime.disable();
     }
 
     pub(super) fn opcode_0xfb(&mut self) {
         // EI
-        if self.registers.ime == ImeState::Disabled {
-            self.registers.ime = ImeState::Pending;
-        }
+        self.registers.ime.request_enable();
     }
 }

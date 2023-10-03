@@ -7,14 +7,30 @@ pub enum ImeState {
 }
 
 impl ImeState {
-    pub fn get_status(self) -> bool {
+    pub fn is_enabled(self) -> bool {
         match self {
             Self::Disabled | Self::Pending => false,
             Self::Enabled => true,
         }
     }
 
-    pub fn update_and_get_status(&mut self) -> bool {
+    /// Delayed by one instruction.
+    pub fn request_enable(&mut self) {
+        if *self == Self::Disabled {
+            *self = Self::Pending;
+        }
+    }
+
+    pub fn force_enable(&mut self) {
+        *self = Self::Enabled;
+    }
+
+    pub fn disable(&mut self) {
+        *self = Self::Disabled;
+    }
+
+    /// Processes a pending request and returns the status.
+    pub fn is_enabled_mut(&mut self) -> bool {
         match self {
             Self::Disabled => false,
             Self::Enabled => true,
@@ -48,17 +64,22 @@ mod tests {
         let mut ime_state = ImeState::default();
 
         assert_eq!(ime_state, ImeState::Disabled);
-        assert!(!ime_state.get_status());
-        assert!(!ime_state.update_and_get_status());
+        assert!(!ime_state.is_enabled());
+        assert!(!ime_state.is_enabled_mut());
+        assert_eq!(ime_state, ImeState::Disabled);
 
-        ime_state = ImeState::Pending;
-
+        ime_state.request_enable();
         assert_eq!(ime_state, ImeState::Pending);
-        assert!(!ime_state.get_status());
-        assert!(!ime_state.update_and_get_status()); // Mutates the value.
 
+        assert!(!ime_state.is_enabled());
+        assert!(!ime_state.is_enabled_mut()); // Mutates the value.
         assert_eq!(ime_state, ImeState::Enabled);
-        assert!(ime_state.get_status());
-        assert!(ime_state.update_and_get_status());
+
+        ime_state.request_enable();
+        assert_eq!(ime_state, ImeState::Enabled);
+
+        assert!(ime_state.is_enabled());
+        assert!(ime_state.is_enabled_mut());
+        assert_eq!(ime_state, ImeState::Enabled);
     }
 }

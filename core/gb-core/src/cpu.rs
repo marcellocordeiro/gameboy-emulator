@@ -40,12 +40,7 @@ impl Cpu {
     }
 
     pub fn step(&mut self) {
-        if self.registers.ime.update_and_get_status() {
-            if let Some(address) = self.memory.interrupts.take_queued_irq() {
-                self.handle_interrupt(address);
-                self.halt = false;
-            }
-        }
+        self.handle_interrupts();
 
         if self.halt {
             self.tick();
@@ -68,10 +63,19 @@ impl Cpu {
         self.cycles += 4;
     }
 
-    fn handle_interrupt(&mut self, address: u16) {
+    fn handle_interrupts(&mut self) {
+        if !self.registers.ime.is_enabled_mut() {
+            return;
+        }
+
+        let Some(address) = self.memory.interrupts.take_queued_irq() else {
+            return;
+        };
+
         self.registers.ime = ImeState::Disabled;
 
         self.jump_to_isr(address);
+        self.halt = false;
     }
 
     fn push_byte_stack(&mut self, value: u8) {

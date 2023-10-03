@@ -33,8 +33,6 @@ impl Interrupts {
     pub fn take_queued_irq(&mut self) -> Option<u16> {
         let interrupt = self.get_queued_irq()?;
 
-        self.flags.remove(interrupt);
-
         let address = match interrupt {
             InterruptBits::VBLANK => 0x0040,
             InterruptBits::LCD_STAT => 0x0048,
@@ -42,8 +40,10 @@ impl Interrupts {
             InterruptBits::SERIAL => 0x0058,
             InterruptBits::JOYPAD => 0x0060,
 
-            _ => 0x0000,
+            _ => return None,
         };
+
+        self.flags.remove(interrupt);
 
         Some(address)
     }
@@ -64,7 +64,7 @@ impl Interrupts {
     }
 
     pub fn read_flags(&self) -> u8 {
-        0xE0 | self.flags.bits()
+        0b1110_0000 | self.flags.bits()
     }
 
     pub fn read_enable(&self) -> u8 {

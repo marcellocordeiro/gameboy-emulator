@@ -1,7 +1,4 @@
-use super::{
-    registers::{Flags, ImeState},
-    Cpu,
-};
+use super::{registers::Flags, Cpu};
 
 // Completed.
 
@@ -193,7 +190,7 @@ impl Cpu {
 
     pub(super) fn opcode_0xd9(&mut self) {
         // RETI
-        self.registers.ime = ImeState::Enabled;
+        self.registers.ime.force_enable();
         self.return_from_routine();
     }
 

@@ -9,7 +9,7 @@ pub struct UndocumentedRegisters {
 }
 
 impl UndocumentedRegisters {
-    const REG_0XFF75_MASK: u8 = 0b0111_0000;
+    const REG_FF75_MASK: u8 = 0b0111_0000;
 
     pub fn set_cgb_mode(&mut self, value: bool) {
         self.cgb_mode = value;
@@ -44,7 +44,7 @@ impl UndocumentedRegisters {
             return 0xFF;
         }
 
-        !Self::REG_0XFF75_MASK | self.reg_0xff75
+        !Self::REG_FF75_MASK | self.reg_0xff75
     }
 
     pub fn write_0xff72(&mut self, value: u8) {
@@ -76,6 +76,6 @@ impl UndocumentedRegisters {
             return;
         }
 
-        self.reg_0xff75 = value & Self::REG_0XFF75_MASK;
+        self.reg_0xff75 = value & Self::REG_FF75_MASK;
     }
 }
