@@ -7,7 +7,10 @@ macro_rules! testcases_mooneye {
         fn $name() {
             let rom = include_bytes!(concat!("../../../external/gameboy-test-roms/", "mooneye-test-suite/", $path));
 
-            let gb = run_until_break(rom);
+            let mut gb = GameBoy::new();
+            gb.load_cartridge(rom.to_vec()).unwrap();
+
+            run_until_break(&mut gb);
             validate_fibonacci(gb);
         }
     };
@@ -36,7 +39,10 @@ macro_rules! testcases_blargg_serial {
         fn $name() {
             let rom = include_bytes!(concat!("../../../external/gameboy-test-roms/", "blargg/", $path));
 
-            let _ = run_until_serial_passed(rom);
+            let mut gb = GameBoy::new();
+            gb.load_cartridge(rom.to_vec()).unwrap();
+
+            run_until_serial_passed(&mut gb);
         }
     };
 
@@ -64,7 +70,10 @@ macro_rules! testcases_blargg_memory {
         fn $name() {
             let rom = include_bytes!(concat!("../../../external/gameboy-test-roms/", "blargg/", $path));
 
-            let _ = run_until_memory_status(rom);
+            let mut gb = GameBoy::new();
+            gb.load_cartridge(rom.to_vec()).unwrap();
+
+            run_until_memory_status(&mut gb);
         }
     };
 

@@ -8,32 +8,19 @@ use gb_core::GameBoy;
 const TIMEOUT: Duration = Duration::from_secs(20);
 const BREAK_OPCODE: u8 = 0x40; // LD B,B
 
-pub fn run_until_break(rom: &[u8]) -> GameBoy {
-    let mut gb = GameBoy::new();
-    gb.load_cartridge(rom.to_vec()).unwrap();
-
+pub fn run_until_break(gb: &mut GameBoy) {
     let start_time = Instant::now();
 
-    loop {
+    while gb.cpu.memory.read(gb.cpu.registers.program_counter) != BREAK_OPCODE {
+        gb.cpu.step();
+
         if Instant::now() - start_time > TIMEOUT {
             panic!("Timed out");
         }
-
-        gb.cpu.step();
-
-        if gb.cpu.memory.read(gb.cpu.registers.program_counter) == BREAK_OPCODE {
-            gb.cpu.step();
-            break;
-        }
     }
-
-    gb
 }
 
-pub fn run_until_serial_passed(rom: &[u8]) -> GameBoy {
-    let mut gb = GameBoy::new();
-    gb.load_cartridge(rom.to_vec()).unwrap();
-
+pub fn run_until_serial_passed(gb: &mut GameBoy) {
     let (sender, receiver) = mpsc::channel::<u8>();
 
     let mut output = String::default();
@@ -62,14 +49,9 @@ pub fn run_until_serial_passed(rom: &[u8]) -> GameBoy {
             panic!("Timed out");
         }
     }
-
-    gb
 }
 
-pub fn run_until_memory_status(rom: &[u8]) -> GameBoy {
-    let mut gb = GameBoy::new();
-    gb.load_cartridge(rom.to_vec()).unwrap();
-
+pub fn run_until_memory_status(gb: &mut GameBoy) {
     let start_time = Instant::now();
 
     loop {
@@ -100,6 +82,4 @@ pub fn run_until_memory_status(rom: &[u8]) -> GameBoy {
             panic!("Timed out: {decoded}",);
         }
     }
-
-    gb
 }
