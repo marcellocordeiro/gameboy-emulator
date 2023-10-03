@@ -2,7 +2,11 @@ use log::info;
 
 use crate::{
     audio::Audio,
-    cartridge::{error::Error as CartridgeError, info::CgbFlag, Cartridge},
+    cartridge::{
+        error::Error as CartridgeError,
+        info::{CgbFlag, Info},
+        Cartridge,
+    },
     graphics::Graphics,
     joypad::Joypad,
     serial::Serial,
@@ -67,10 +71,12 @@ impl Memory {
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         let cartridge = Cartridge::new(rom)?;
 
-        if cfg!(feature = "cgb")
-            && (cfg!(feature = "bootrom") || cartridge.info.cgb_flag.has_cgb_support())
-        {
-            self.set_cgb_mode(true);
+        if cfg!(feature = "cgb") {
+            if cfg!(feature = "bootrom") {
+                self.set_cgb_mode(true);
+            } else {
+                self.handle_post_bootrom_setup(&cartridge.info);
+            }
         }
 
         self.cartridge = Some(cartridge);
@@ -94,6 +100,14 @@ impl Memory {
         self.graphics.skip_bootrom();
         self.timer.skip_bootrom();
         self.interrupts.skip_bootrom();
+    }
+
+    pub fn handle_post_bootrom_setup(&mut self, info: &Info) {
+        if info.cgb_flag.has_cgb_support() {
+            self.set_cgb_mode(true);
+        }
+
+        self.graphics.handle_post_bootrom_setup(info);
     }
 
     pub fn tick(&mut self) {

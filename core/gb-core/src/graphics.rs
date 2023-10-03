@@ -1,4 +1,5 @@
 use crate::{
+    cartridge::info::Info,
     constants::{Frame, Framebuffer, SCREEN_HEIGHT, SCREEN_WIDTH},
     utils::{
         color::Color,
@@ -118,6 +119,34 @@ impl Graphics {
     pub fn skip_bootrom(&mut self) {
         self.lcdc = LcdControl::from_bits_truncate(0x91);
         self.bgp = 0xFC;
+    }
+
+    pub fn handle_post_bootrom_setup(&mut self, info: &Info) {
+        if cfg!(feature = "cgb") {
+            if !info.cgb_flag.has_cgb_support() {
+                self.opri = true;
+
+                for palette_number in 0..8 {
+                    self.bg_cram
+                        .set_palette(palette_number, [0x7FFF, 0x7FFF, 0x7FFF, 0xFFFF]);
+                    self.obj_cram
+                        .set_palette(palette_number, [0x0000, 0x0000, 0x0000, 0x0000]);
+                }
+
+                // TODO: properly handle the palettes.
+                // This one was hand picked for dmg-acid2.
+                let initial_bg_cram = [0x7FFF, 0x1BEF, 0x6180, 0x0000];
+
+                let initial_obj_cram = [
+                    [0x7FFF, 0x421F, 0x1CF2, 0x0000],
+                    [0x7FFF, 0x421F, 0x1CF2, 0x0000],
+                ];
+
+                self.bg_cram.set_palette(0, initial_bg_cram);
+                self.obj_cram.set_palette(0, initial_obj_cram[0]);
+                self.obj_cram.set_palette(1, initial_obj_cram[1]);
+            }
+        }
     }
 
     pub fn draw_into_frame_rgba8888(&self, frame: &mut Frame) {
