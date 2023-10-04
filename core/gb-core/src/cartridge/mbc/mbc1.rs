@@ -1,5 +1,3 @@
-use log::error;
-
 use crate::{
     cartridge::info::{CartridgeType, Info, RAM_BANK_SIZE, ROM_BANK_SIZE},
     constants::ONE_KIB,
@@ -88,10 +86,10 @@ impl MbcInterface for Mbc1 {
 
     fn load_battery(&mut self, file: Vec<u8>) {
         if self.ram.is_empty() {
-            error!("This cartridge does not have a battery backed RAM.");
+            log::error!("This cartridge does not have a battery backed RAM.");
             return;
         } else if self.ram.len() != file.len() {
-            error!("Size mismatch.");
+            log::error!("Size mismatch.");
             return;
         }
 

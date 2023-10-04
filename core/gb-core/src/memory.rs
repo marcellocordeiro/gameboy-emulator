@@ -1,5 +1,3 @@
-use log::info;
-
 use crate::{
     audio::Audio,
     cartridge::{
@@ -85,7 +83,7 @@ impl Memory {
     }
 
     pub fn set_cgb_mode(&mut self, value: bool) {
-        info!("{} CGB mode.", if value { "Enabling" } else { "Disabling" });
+        log::info!("{} CGB mode.", if value { "Enabling" } else { "Disabling" });
 
         self.cgb_mode = value;
 

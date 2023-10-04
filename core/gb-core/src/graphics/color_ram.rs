@@ -1,5 +1,3 @@
-use log::error;
-
 const CRAM_SIZE: usize = 64;
 
 pub struct ColorRam {
@@ -41,7 +39,7 @@ impl ColorRam {
 
         for (color_index, color) in colors.into_iter().enumerate() {
             if color > 0x7FFF {
-                error!("Color value is higher than 0x7FFF: [{palette_number}][{color_index}] = {color:#06X}.");
+                log::error!("Color value is higher than 0x7FFF: [{palette_number}][{color_index}] = {color:#06X}.");
             }
 
             let lo = (color & 0xFF) as u8;

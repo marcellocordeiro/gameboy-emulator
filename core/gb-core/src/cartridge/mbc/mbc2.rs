@@ -1,5 +1,3 @@
-use log::error;
-
 use crate::cartridge::info::{CartridgeType, Info, ROM_BANK_SIZE};
 
 use super::MbcInterface;
@@ -53,7 +51,7 @@ impl MbcInterface for Mbc2 {
         self.ram = if let Ok(file) = file.try_into() {
             file
         } else {
-            error!("Error loading the battery backed RAM.");
+            log::error!("Error loading the battery backed RAM.");
             return;
         }
     }
