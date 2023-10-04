@@ -128,7 +128,7 @@ impl Graphics {
 
                 for palette_number in 0..8 {
                     self.bg_cram
-                        .set_palette(palette_number, [0x7FFF, 0x7FFF, 0x7FFF, 0xFFFF]);
+                        .set_palette(palette_number, [0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF]);
                     self.obj_cram
                         .set_palette(palette_number, [0x0000, 0x0000, 0x0000, 0x0000]);
                 }
