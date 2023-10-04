@@ -304,7 +304,7 @@ impl Memory {
             0xFF4A => self.graphics.write_wy(value),
             0xFF4B => self.graphics.write_wx(value),
 
-            0xFF4C => self.set_cgb_mode(CgbFlag::from(value).has_cgb_support()), // (CGB) KEY0: CGB mode.
+            0xFF4C => self.set_cgb_mode(CgbFlag::with_code(value).has_cgb_support()), // (CGB) KEY0: CGB mode.
             0xFF4D => self.speed_switch.write(value), // (CGB) KEY1: Prepare speed switch.
 
             0xFF4F => self.graphics.vram.write_vbk(value), // (CGB) VRAM bank selection.

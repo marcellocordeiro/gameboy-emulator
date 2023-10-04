@@ -1,5 +1,7 @@
 use crate::cartridge::error::Error as CartridgeError;
 
+use super::ram_size::{get_ram_banks, RAM_BANKS_CODE_ADDRESS};
+
 pub const CARTRIDGE_TYPE_ADDRESS: usize = 0x0147;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -19,10 +21,22 @@ pub enum CartridgeType {
     Huc1,
 }
 
-impl TryFrom<(u8, usize)> for CartridgeType {
-    type Error = CartridgeError;
+impl CartridgeType {
+    pub fn with_rom(rom: &[u8]) -> Result<Self, CartridgeError> {
+        let cartridge_type_code = *rom
+            .get(CARTRIDGE_TYPE_ADDRESS)
+            .ok_or(CartridgeError::InvalidRom)?;
 
-    fn try_from((code, ram_size): (u8, usize)) -> Result<Self, Self::Error> {
+        let ram_size_code = *rom
+            .get(RAM_BANKS_CODE_ADDRESS)
+            .ok_or(CartridgeError::InvalidRom)?;
+
+        let ram_banks = get_ram_banks(ram_size_code)?;
+
+        Self::with_code_and_ram_banks(cartridge_type_code, ram_banks)
+    }
+
+    pub fn with_code_and_ram_banks(code: u8, ram_banks: usize) -> Result<Self, CartridgeError> {
         Ok(match code {
             // $00 ROM ONLY
             // $08 ROM+RAM
@@ -52,7 +66,7 @@ impl TryFrom<(u8, usize)> for CartridgeType {
             // $11 MBC3
             // $12 MBC3+RAM
             // $13 MBC3+RAM+BATTERY
-            0x0F..=0x13 if ram_size == 8 => Self::Mbc30, // 8 banks (64 KiB)
+            0x0F..=0x13 if ram_banks == 8 => Self::Mbc30, // 8 banks (64 KiB)
             0x0F..=0x13 => Self::Mbc3,
 
             // $19 MBC5
@@ -81,7 +95,7 @@ impl TryFrom<(u8, usize)> for CartridgeType {
             // $FF HuC1+RAM+BATTERY
             0xFF => Self::Huc1,
 
-            code => return Err(Self::Error::InvalidMbcCode { code }),
+            code => return Err(CartridgeError::InvalidMbcCode { code }),
         })
     }
 }

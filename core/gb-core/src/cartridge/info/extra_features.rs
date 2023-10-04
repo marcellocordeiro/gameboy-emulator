@@ -1,3 +1,7 @@
+use crate::cartridge::error::Error as CartridgeError;
+
+use super::cartridge_type::CARTRIDGE_TYPE_ADDRESS;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExtraFeature {
     Ram,
@@ -8,7 +12,15 @@ pub enum ExtraFeature {
 }
 
 impl ExtraFeature {
-    pub fn get_features(code: u8) -> Vec<Self> {
+    pub fn features_with_rom(rom: &[u8]) -> Result<Box<[Self]>, CartridgeError> {
+        let cartridge_type_code = *rom
+            .get(CARTRIDGE_TYPE_ADDRESS)
+            .ok_or(CartridgeError::InvalidRom)?;
+
+        Ok(Self::features_from_code(cartridge_type_code))
+    }
+
+    pub fn features_from_code(code: u8) -> Box<[Self]> {
         match code {
             // $08 ROM+RAM
             // $09 ROM+RAM+BATTERY
@@ -56,6 +68,7 @@ impl ExtraFeature {
 
             _ => vec![],
         }
+        .into_boxed_slice()
     }
 }
 
