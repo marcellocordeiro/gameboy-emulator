@@ -114,7 +114,6 @@ impl Info {
 
 mod cartridge_type;
 mod cgb_flag;
-mod dmg_compatibility_palettes;
 mod extra_features;
 mod licensee_code;
 mod ram_size;
