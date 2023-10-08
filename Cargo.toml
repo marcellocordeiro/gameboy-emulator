@@ -9,3 +9,6 @@ members = [
   "platform/libretro",
   "platform/sdl2-rust",
 ]
+
+[workspace.dependencies.gb-core]
+path = "./core/gb-core"

@@ -13,7 +13,7 @@ bootrom = ["gb-core/bootrom"]
 cgb = ["gb-core/cgb"]
 
 [dependencies.gb-core]
-path = "../gb-core"
+workspace = true
 
 [dependencies]
 console_error_panic_hook = "0.1.7"

@@ -56,12 +56,12 @@ export function App() {
       <input
         type="file"
         accept=".gb"
-        onChange={(event) => {
+        onChange={async (event) => {
           const file = event.currentTarget.files?.[0];
 
           if (file != null) {
             setSelectedRom(file);
-            handleStart(file);
+            await handleStart(file);
           }
         }}
       />
@@ -71,9 +71,9 @@ export function App() {
           disabled={
             isRunning || (isLoaded && !isRunning) || selectedRom == null
           }
-          onClick={() => {
+          onClick={async () => {
             if (selectedRom != null) {
-              handleStart(selectedRom);
+              await handleStart(selectedRom);
             }
           }}
         >
