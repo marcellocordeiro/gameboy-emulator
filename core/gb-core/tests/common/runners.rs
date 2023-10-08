@@ -79,7 +79,7 @@ pub fn run_until_memory_status(gb: &mut GameBoy) {
         }
 
         if Instant::now() - start_time > TIMEOUT {
-            panic!("Timed out: {decoded}",);
+            panic!("Timed out: {decoded}");
         }
     }
 }

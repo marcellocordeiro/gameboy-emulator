@@ -68,7 +68,7 @@ impl Timer {
             0xFF06 => self.write_tma(value),
             0xFF07 => self.write_tac(value),
 
-            _ => unreachable!("[timer.rs] Invalid write: ({address:#06x}) = {value:#04x}",),
+            _ => unreachable!("[timer.rs] Invalid write: ({address:#06x}) = {value:#04x}"),
         }
     }
 
