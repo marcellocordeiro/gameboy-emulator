@@ -51,8 +51,7 @@ fn main() -> Result<(), eframe::Error> {
     }
 
     #[allow(clippy::cast_precision_loss)]
-    let initial_window_size =
-        eframe::egui::vec2((SCREEN_WIDTH * 5) as f32, (SCREEN_HEIGHT * 5) as f32);
+    let initial_window_size = egui::vec2((SCREEN_WIDTH * 5) as f32, (SCREEN_HEIGHT * 5) as f32);
 
     let native_options = eframe::NativeOptions {
         initial_window_size: Some(initial_window_size),

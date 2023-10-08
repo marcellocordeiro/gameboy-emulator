@@ -32,10 +32,8 @@ export function useRenderer({ isLoaded, ctx, runFrame, draw }: Props) {
     };
   }, [ctx, draw, isLoaded, runFrame, isRunning]);
 
-  const value = {
+  return {
     isRunning,
     setIsRunning,
   };
-
-  return value;
 }

@@ -149,6 +149,7 @@ cargo test
 - [Pan Docs](https://gbdev.io/pandocs/)
 - [Game Boy: Complete Technical Reference](https://github.com/Gekkio/gb-ctr)
 - [mooneye-gb](https://github.com/Gekkio/mooneye-gb)
+- [SameBoy](https://github.com/LIJI32/SameBoy)
 - [The Cycle-Accurate Game Boy Docs](https://github.com/geaz/emu-gameboy/blob/master/docs/The%20Cycle-Accurate%20Game%20Boy%20Docs.pdf)
 - [CPU opcode reference](https://rgbds.gbdev.io/docs/v0.5.2/gbz80.7)
 - [A journey into GameBoy emulation](https://robertovaccari.com/blog/2020_09_26_gameboy/)

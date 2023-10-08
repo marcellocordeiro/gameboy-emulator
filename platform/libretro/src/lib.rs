@@ -96,7 +96,7 @@ impl RetroCore for Emulator {
         let result = self.gb.load_cartridge(rom);
 
         match result {
-            Ok(_) => RetroLoadGameResult::Success {
+            Ok(()) => RetroLoadGameResult::Success {
                 audio: RetroAudioInfo::new(44100.0),
                 video: RetroVideoInfo::new(4_194_304.0 / 70224.0, 160, 144)
                     .with_pixel_format(RetroPixelFormat::XRGB8888),

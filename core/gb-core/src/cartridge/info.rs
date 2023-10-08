@@ -1,6 +1,7 @@
 use crate::constants::ONE_KIB;
 
 use self::{
+    dmg_compatibility_palettes::DmgCompatibilityPalettes,
     licensee_code::LicenseeCode,
     ram_size::{get_ram_banks, RAM_BANKS_CODE_ADDRESS},
     rom_size::{get_rom_banks, ROM_BANKS_CODE_ADDRESS},
@@ -110,10 +111,15 @@ impl Info {
             self.rom_banks * 16
         );
     }
+
+    pub fn dmg_compatibility_palettes(&self) -> DmgCompatibilityPalettes {
+        DmgCompatibilityPalettes::with_header_info(&self.licensee_code, &self.title)
+    }
 }
 
 mod cartridge_type;
 mod cgb_flag;
+mod dmg_compatibility_palettes;
 mod extra_features;
 mod licensee_code;
 mod ram_size;

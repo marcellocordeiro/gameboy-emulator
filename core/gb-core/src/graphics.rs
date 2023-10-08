@@ -133,18 +133,11 @@ impl Graphics {
                         .set_palette(palette_number, [0x0000, 0x0000, 0x0000, 0x0000]);
                 }
 
-                // TODO: properly handle the palettes.
-                // This one was hand picked for dmg-acid2.
-                let initial_bg_cram = [0x7FFF, 0x1BEF, 0x6180, 0x0000];
+                let palettes = info.dmg_compatibility_palettes();
 
-                let initial_obj_cram = [
-                    [0x7FFF, 0x421F, 0x1CF2, 0x0000],
-                    [0x7FFF, 0x421F, 0x1CF2, 0x0000],
-                ];
-
-                self.bg_cram.set_palette(0, initial_bg_cram);
-                self.obj_cram.set_palette(0, initial_obj_cram[0]);
-                self.obj_cram.set_palette(1, initial_obj_cram[1]);
+                self.bg_cram.set_palette(0, palettes.bg0);
+                self.obj_cram.set_palette(0, palettes.obj0);
+                self.obj_cram.set_palette(1, palettes.obj1);
             }
         }
     }
