@@ -3,23 +3,21 @@ use super::Cpu;
 impl Cpu {
     pub(super) fn opcode_unused(&self) {}
 
+    /// NOP
     pub(super) fn opcode_0x00(&self) {
-        // NOP
 
         // Do absolutely nothing.
     }
 
+    /// STOP
     pub(super) fn opcode_0x10(&mut self) {
-        // STOP
-
         // TODO?
 
         self.memory.speed_switch.process_speed_switch();
     }
 
+    /// HALT
     pub(super) fn opcode_0x76(&mut self) {
-        // HALT
-
         if self.registers.ime.is_enabled() && self.memory.interrupts.has_queued_irq() {
             // TODO: implement halt bug
         }
@@ -27,20 +25,20 @@ impl Cpu {
         self.halt = true;
     }
 
+    /// PREFIX CB
     pub(super) fn opcode_0xcb(&mut self) {
-        // PREFIX CB
         let operand = self.read_byte_operand();
 
         self.run_cb_instruction(operand);
     }
 
+    /// DI
     pub(super) fn opcode_0xf3(&mut self) {
-        // DI
         self.registers.ime.disable();
     }
 
+    /// EI
     pub(super) fn opcode_0xfb(&mut self) {
-        // EI
         self.registers.ime.request_enable();
     }
 }

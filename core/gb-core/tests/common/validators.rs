@@ -6,7 +6,7 @@ use gb_core::{
 pub fn validate_fibonacci(gb: GameBoy) {
     let regs = &gb.cpu.registers;
 
-    let is_fibonacci = regs.accumulator == 0
+    let is_fibonacci = regs.a == 0
         && regs.b == 3
         && regs.c == 5
         && regs.d == 8

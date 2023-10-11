@@ -3,8 +3,8 @@ pub use self::ime_state::ImeState;
 
 #[derive(Default)]
 pub struct Registers {
-    pub accumulator: u8,
-    pub flags: Flags,
+    pub a: u8,
+    pub f: Flags,
 
     pub b: u8,
     pub c: u8,
@@ -21,8 +21,8 @@ pub struct Registers {
 
 impl Registers {
     pub fn get_af(&self) -> u16 {
-        let high = self.accumulator as u16;
-        let low = self.flags.bits() as u16;
+        let high = self.a as u16;
+        let low = self.f.bits() as u16;
 
         (high << 8) | low
     }
@@ -52,8 +52,8 @@ impl Registers {
         let high = ((word & 0xFF00) >> 8) as u8;
         let low = (word & 0x00FF) as u8;
 
-        self.accumulator = high;
-        self.flags = Flags::from_bits_truncate(low); // Same as (low & 0xF0).
+        self.a = high;
+        self.f = Flags::from_bits_truncate(low); // Same as (low & 0xF0).
     }
 
     pub fn set_bc(&mut self, word: u16) {
@@ -86,8 +86,8 @@ impl std::fmt::Display for Registers {
         let af_line = format!(
             "AF: {:#06X}, A: {:#04X} | F: {:#04X}",
             self.get_af(),
-            self.accumulator,
-            self.flags.bits()
+            self.a,
+            self.f.bits()
         );
 
         let bc_line = format!(
@@ -116,22 +116,22 @@ impl std::fmt::Display for Registers {
 
         let flags_line = format!(
             "Flags: Z: {} | N: {} | H: {} | C: {}",
-            if self.flags.contains(Flags::ZERO) {
+            if self.f.contains(Flags::ZERO) {
                 "☑"
             } else {
                 "☐"
             },
-            if self.flags.contains(Flags::N_ADD_SUB) {
+            if self.f.contains(Flags::N_ADD_SUB) {
                 "☑"
             } else {
                 "☐"
             },
-            if self.flags.contains(Flags::HALF_CARRY) {
+            if self.f.contains(Flags::HALF_CARRY) {
                 "☑"
             } else {
                 "☐"
             },
-            if self.flags.contains(Flags::CARRY) {
+            if self.f.contains(Flags::CARRY) {
                 "☑"
             } else {
                 "☐"

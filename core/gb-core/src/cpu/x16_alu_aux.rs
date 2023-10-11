@@ -10,10 +10,10 @@ impl Cpu {
         let carry = (stack_pointer & 0x00FF).wrapping_add_signed(offset & 0x00FF) > 0x00FF;
 
         // Store results.
-        self.registers.flags.set(Flags::ZERO, false);
-        self.registers.flags.set(Flags::N_ADD_SUB, false);
-        self.registers.flags.set(Flags::HALF_CARRY, half_carry);
-        self.registers.flags.set(Flags::CARRY, carry);
+        self.registers.f.set(Flags::ZERO, false);
+        self.registers.f.set(Flags::N_ADD_SUB, false);
+        self.registers.f.set(Flags::HALF_CARRY, half_carry);
+        self.registers.f.set(Flags::CARRY, carry);
 
         self.registers.stack_pointer = result;
     }
@@ -27,9 +27,9 @@ impl Cpu {
         let carry = hl > (0xFFFF - value);
 
         // Store results.
-        self.registers.flags.set(Flags::N_ADD_SUB, false);
-        self.registers.flags.set(Flags::HALF_CARRY, half_carry);
-        self.registers.flags.set(Flags::CARRY, carry);
+        self.registers.f.set(Flags::N_ADD_SUB, false);
+        self.registers.f.set(Flags::HALF_CARRY, half_carry);
+        self.registers.f.set(Flags::CARRY, carry);
 
         self.registers.set_hl(result);
     }
