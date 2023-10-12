@@ -208,82 +208,82 @@ impl Cpu {
 
     /// SLA B
     pub(super) fn opcode_cb_0x20(&mut self) {
-        alu_op_r8!(self, bit_sla_arithmetic_shift_left, b);
+        alu_op_r8!(self, alu_shift_left_arithmetic, b);
     }
 
     /// SLA C
     pub(super) fn opcode_cb_0x21(&mut self) {
-        alu_op_r8!(self, bit_sla_arithmetic_shift_left, c);
+        alu_op_r8!(self, alu_shift_left_arithmetic, c);
     }
 
     /// SLA D
     pub(super) fn opcode_cb_0x22(&mut self) {
-        alu_op_r8!(self, bit_sla_arithmetic_shift_left, d);
+        alu_op_r8!(self, alu_shift_left_arithmetic, d);
     }
 
     /// SLA E
     pub(super) fn opcode_cb_0x23(&mut self) {
-        alu_op_r8!(self, bit_sla_arithmetic_shift_left, e);
+        alu_op_r8!(self, alu_shift_left_arithmetic, e);
     }
 
     /// SLA H
     pub(super) fn opcode_cb_0x24(&mut self) {
-        alu_op_r8!(self, bit_sla_arithmetic_shift_left, h);
+        alu_op_r8!(self, alu_shift_left_arithmetic, h);
     }
 
     /// SLA L
     pub(super) fn opcode_cb_0x25(&mut self) {
-        alu_op_r8!(self, bit_sla_arithmetic_shift_left, l);
+        alu_op_r8!(self, alu_shift_left_arithmetic, l);
     }
 
     /// SLA (HL)
     pub(super) fn opcode_cb_0x26(&mut self) {
-        alu_op_hl!(self, bit_sla_arithmetic_shift_left, (hl));
+        alu_op_hl!(self, alu_shift_left_arithmetic, (hl));
     }
 
     /// SLA A
     pub(super) fn opcode_cb_0x27(&mut self) {
-        alu_op_r8!(self, bit_sla_arithmetic_shift_left, a);
+        alu_op_r8!(self, alu_shift_left_arithmetic, a);
     }
 
     /// SRA B
     pub(super) fn opcode_cb_0x28(&mut self) {
-        alu_op_r8!(self, bit_sra_arithmetic_shift_right, b);
+        alu_op_r8!(self, alu_shift_right_arithmetic, b);
     }
 
     /// SRA C
     pub(super) fn opcode_cb_0x29(&mut self) {
-        alu_op_r8!(self, bit_sra_arithmetic_shift_right, c);
+        alu_op_r8!(self, alu_shift_right_arithmetic, c);
     }
 
     /// SRA D
     pub(super) fn opcode_cb_0x2a(&mut self) {
-        alu_op_r8!(self, bit_sra_arithmetic_shift_right, d);
+        alu_op_r8!(self, alu_shift_right_arithmetic, d);
     }
 
     /// SRA E
     pub(super) fn opcode_cb_0x2b(&mut self) {
-        alu_op_r8!(self, bit_sra_arithmetic_shift_right, e);
+        alu_op_r8!(self, alu_shift_right_arithmetic, e);
     }
 
     /// SRA H
     pub(super) fn opcode_cb_0x2c(&mut self) {
-        alu_op_r8!(self, bit_sra_arithmetic_shift_right, h);
+        alu_op_r8!(self, alu_shift_right_arithmetic, h);
     }
 
     /// SRA L
     pub(super) fn opcode_cb_0x2d(&mut self) {
-        alu_op_r8!(self, bit_sra_arithmetic_shift_right, l);
+        alu_op_r8!(self, alu_shift_right_arithmetic, l);
     }
 
     /// SRA (HL)
     pub(super) fn opcode_cb_0x2e(&mut self) {
-        alu_op_hl!(self, bit_sra_arithmetic_shift_right, (hl));
+        alu_op_hl!(self, alu_shift_right_arithmetic, (hl));
     }
 
     /// SRA A
     pub(super) fn opcode_cb_0x2f(&mut self) {
-        alu_op_r8!(self, bit_sra_arithmetic_shift_right, a);
+        alu_op_r8!(self, alu_shift_right_arithmetic, a);
     }
 
     /// SWAP B
@@ -328,42 +328,42 @@ impl Cpu {
 
     /// SRL B
     pub(super) fn opcode_cb_0x38(&mut self) {
-        alu_op_r8!(self, alu_logical_shift_right, b);
+        alu_op_r8!(self, alu_shift_right_logical, b);
     }
 
     /// SRL C
     pub(super) fn opcode_cb_0x39(&mut self) {
-        alu_op_r8!(self, alu_logical_shift_right, c);
+        alu_op_r8!(self, alu_shift_right_logical, c);
     }
 
     /// SRL D
     pub(super) fn opcode_cb_0x3a(&mut self) {
-        alu_op_r8!(self, alu_logical_shift_right, d);
+        alu_op_r8!(self, alu_shift_right_logical, d);
     }
 
     /// SRL E
     pub(super) fn opcode_cb_0x3b(&mut self) {
-        alu_op_r8!(self, alu_logical_shift_right, e);
+        alu_op_r8!(self, alu_shift_right_logical, e);
     }
 
     /// SRL H
     pub(super) fn opcode_cb_0x3c(&mut self) {
-        alu_op_r8!(self, alu_logical_shift_right, h);
+        alu_op_r8!(self, alu_shift_right_logical, h);
     }
 
     /// SRL L
     pub(super) fn opcode_cb_0x3d(&mut self) {
-        alu_op_r8!(self, alu_logical_shift_right, l);
+        alu_op_r8!(self, alu_shift_right_logical, l);
     }
 
     /// SRL (HL)
     pub(super) fn opcode_cb_0x3e(&mut self) {
-        alu_op_hl!(self, alu_logical_shift_right, (hl));
+        alu_op_hl!(self, alu_shift_right_logical, (hl));
     }
 
     /// SRL A
     pub(super) fn opcode_cb_0x3f(&mut self) {
-        alu_op_r8!(self, alu_logical_shift_right, a);
+        alu_op_r8!(self, alu_shift_right_logical, a);
     }
 
     /// BIT 0,B

@@ -1,8 +1,10 @@
 use super::{registers::Flags, Cpu};
 
 impl Cpu {
-    // ADD
-    pub(super) fn add_to_accumulator(&mut self, value: u8) {
+    /// ADD
+    ///
+    /// Add to accumulator
+    pub(super) fn alu_add(&mut self, value: u8) {
         let accumulator = self.registers.a;
 
         let result = accumulator.wrapping_add(value);
@@ -19,7 +21,10 @@ impl Cpu {
         self.registers.a = result;
     }
 
-    pub(super) fn add_to_accumulator_with_carry(&mut self, value: u8) {
+    /// ADC
+    ///
+    /// Add to accumulator with carry
+    pub(super) fn alu_adc(&mut self, value: u8) {
         let accumulator = self.registers.a;
         let carry = self.registers.f.contains(Flags::CARRY) as u8;
 
@@ -37,8 +42,10 @@ impl Cpu {
         self.registers.a = result;
     }
 
-    // SUB
-    pub(super) fn sub_from_accumulator(&mut self, value: u8) {
+    /// SUB
+    ///
+    /// Sub from accumulator
+    pub(super) fn alu_sub(&mut self, value: u8) {
         let accumulator = self.registers.a;
 
         let result = accumulator.wrapping_sub(value);
@@ -55,7 +62,10 @@ impl Cpu {
         self.registers.a = result;
     }
 
-    pub(super) fn sub_from_accumulator_with_carry(&mut self, value: u8) {
+    /// SBC
+    ///
+    /// Sub from accumulator with carry
+    pub(super) fn alu_sbc(&mut self, value: u8) {
         let accumulator = self.registers.a;
         let carry = self.registers.f.contains(Flags::CARRY) as u8;
 
@@ -73,7 +83,8 @@ impl Cpu {
         self.registers.a = result;
     }
 
-    pub(super) fn cp_compare_with_accumulator(&mut self, value: u8) {
+    /// CP
+    pub(super) fn alu_cp(&mut self, value: u8) {
         let accumulator = self.registers.a;
 
         let result = accumulator.wrapping_sub(value);
@@ -88,9 +99,9 @@ impl Cpu {
         self.registers.f.set(Flags::CARRY, carry);
     }
 
-    // INC/DEC
+    /// INC
     #[must_use]
-    pub(super) fn inc_increment(&mut self, value: u8) -> u8 {
+    pub(super) fn alu_inc(&mut self, value: u8) -> u8 {
         let result = value.wrapping_add(1);
 
         let half_carry = (value & 0x0F) + 1 > 0x0F;
@@ -103,8 +114,9 @@ impl Cpu {
         result
     }
 
+    /// DEC
     #[must_use]
-    pub(super) fn dec_decrement(&mut self, value: u8) -> u8 {
+    pub(super) fn alu_dec(&mut self, value: u8) -> u8 {
         let result = value.wrapping_sub(1);
 
         let half_carry = (value & 0x0F) == 0;
@@ -117,8 +129,8 @@ impl Cpu {
         result
     }
 
-    // Bitwise
-    pub(super) fn and_with_accumulator(&mut self, value: u8) {
+    /// AND
+    pub(super) fn alu_and(&mut self, value: u8) {
         let accumulator = self.registers.a;
 
         let result = accumulator & value;
@@ -132,7 +144,8 @@ impl Cpu {
         self.registers.a = result;
     }
 
-    pub(super) fn or_with_accumulator(&mut self, value: u8) {
+    /// OR
+    pub(super) fn alu_or(&mut self, value: u8) {
         let accumulator = self.registers.a;
 
         let result = accumulator | value;
@@ -146,7 +159,8 @@ impl Cpu {
         self.registers.a = result;
     }
 
-    pub(super) fn xor_with_accumulator(&mut self, value: u8) {
+    /// XOR
+    pub(super) fn alu_xor(&mut self, value: u8) {
         let accumulator = self.registers.a;
 
         let result = accumulator ^ value;
@@ -160,29 +174,38 @@ impl Cpu {
         self.registers.a = result;
     }
 
-    // Flags
-    pub(super) fn ccf_complement_carry_flag(&mut self) {
+    /// CCF
+    ///
+    /// Complement carry flag
+    pub(super) fn alu_ccf(&mut self) {
         self.registers.f.set(Flags::N_ADD_SUB, false);
         self.registers.f.set(Flags::HALF_CARRY, false);
         self.registers.f.toggle(Flags::CARRY);
     }
 
-    pub(super) fn scf_set_carry_flag(&mut self) {
+    /// SCF
+    ///
+    /// Set carry flag
+    pub(super) fn alu_scf(&mut self) {
         self.registers.f.set(Flags::N_ADD_SUB, false);
         self.registers.f.set(Flags::HALF_CARRY, false);
         self.registers.f.set(Flags::CARRY, true);
     }
 
-    pub(super) fn cpl_complement_accumulator(&mut self) {
+    /// CPL
+    ///
+    /// Complement accumulator
+    pub(super) fn alu_cpl(&mut self) {
         self.registers.f.set(Flags::N_ADD_SUB, true);
         self.registers.f.set(Flags::HALF_CARRY, true);
 
         self.registers.a = !self.registers.a;
     }
 
-    // DAA
-    // PAAIN.
-    pub(super) fn daa_decimal_adjust_accumulator(&mut self) {
+    /// DAA
+    ///
+    /// Decimal adjust accumulator
+    pub(super) fn alu_daa(&mut self) {
         let accumulator = self.registers.a;
 
         let n_add_sub = self.registers.f.contains(Flags::N_ADD_SUB);

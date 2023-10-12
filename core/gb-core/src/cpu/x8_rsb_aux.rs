@@ -65,7 +65,7 @@ impl Cpu {
 
     /// SRL
     #[must_use]
-    pub(super) fn alu_logical_shift_right(&mut self, value: u8) -> u8 {
+    pub(super) fn alu_shift_right_logical(&mut self, value: u8) -> u8 {
         let will_carry = (value & (1 << 0)) != 0;
 
         let result = value >> 1;
@@ -82,7 +82,7 @@ impl Cpu {
     ///
     /// Bit 7 is unchanged.
     #[must_use]
-    pub(super) fn bit_sra_arithmetic_shift_right(&mut self, value: u8) -> u8 {
+    pub(super) fn alu_shift_right_arithmetic(&mut self, value: u8) -> u8 {
         let original_msb = value & (1 << 7);
         let will_carry = (value & (1 << 0)) != 0;
 
@@ -98,7 +98,7 @@ impl Cpu {
 
     /// SLA
     #[must_use]
-    pub(super) fn bit_sla_arithmetic_shift_left(&mut self, value: u8) -> u8 {
+    pub(super) fn alu_shift_left_arithmetic(&mut self, value: u8) -> u8 {
         let will_carry = (value & (1 << 7)) != 0;
 
         let result = value << 1;
