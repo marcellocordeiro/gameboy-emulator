@@ -9,6 +9,7 @@ edition = "2021"
 # default = ["bootrom", "cgb"]
 bootrom = []
 cgb = []
+sm83-test-data = []
 
 [dependencies]
 arrayvec = "0.7.4"
@@ -20,3 +21,5 @@ thiserror = "1.0.49"
 
 [dev-dependencies]
 image = { version = "0.24.7", default-features = false, features = ["png"] }
+serde = { version = "1.0.188", features = ["derive"] }
+serde_json = "1.0.107"

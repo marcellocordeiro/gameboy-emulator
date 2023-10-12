@@ -182,6 +182,7 @@ impl std::fmt::Display for Cpu {
 mod opcode_map;
 mod registers;
 
+mod alu;
 mod control_br;
 mod control_br_aux;
 mod control_misc;
@@ -189,8 +190,6 @@ mod x16_alu;
 mod x16_alu_aux;
 mod x16_lsm;
 mod x8_alu;
-mod x8_alu_aux;
 mod x8_lsm;
 mod x8_rsb;
-mod x8_rsb_aux;
 mod x8_rsb_prefixed;
