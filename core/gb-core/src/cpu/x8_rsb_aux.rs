@@ -1,9 +1,9 @@
 use super::{registers::Flags, Cpu};
 
 impl Cpu {
-    // RL
+    /// RL
     #[must_use]
-    pub(super) fn bit_rotate_left(&mut self, value: u8) -> u8 {
+    pub(super) fn alu_rotate_left(&mut self, value: u8) -> u8 {
         let carry = self.registers.f.contains(Flags::CARRY) as u8;
         let will_carry = (value & (1 << 7)) != 0;
 
@@ -17,9 +17,9 @@ impl Cpu {
         result
     }
 
-    // RR
+    /// RR
     #[must_use]
-    pub(super) fn bit_rotate_right(&mut self, value: u8) -> u8 {
+    pub(super) fn alu_rotate_right(&mut self, value: u8) -> u8 {
         let carry = self.registers.f.contains(Flags::CARRY) as u8;
         let will_carry = (value & (1 << 0)) != 0;
 
@@ -33,12 +33,12 @@ impl Cpu {
         result
     }
 
-    // RLC
+    /// RLC
     #[must_use]
-    pub(super) fn bit_rotate_left_c(&mut self, value: u8) -> u8 {
+    pub(super) fn alu_rotate_left_through_carry(&mut self, value: u8) -> u8 {
         let will_carry = (value & (1 << 7)) != 0;
 
-        let result = (value << 1) | (will_carry as u8);
+        let result = value.rotate_left(1);
 
         self.registers.f.set(Flags::ZERO, result == 0);
         self.registers.f.set(Flags::N_ADD_SUB, false);
@@ -48,12 +48,12 @@ impl Cpu {
         result
     }
 
-    // RRC
+    /// RRC
     #[must_use]
-    pub(super) fn bit_rotate_right_c(&mut self, value: u8) -> u8 {
+    pub(super) fn alu_rotate_right_through_carry(&mut self, value: u8) -> u8 {
         let will_carry = (value & (1 << 0)) != 0;
 
-        let result = (value >> 1) | ((will_carry as u8) << 7);
+        let result = value.rotate_right(1);
 
         self.registers.f.set(Flags::ZERO, result == 0);
         self.registers.f.set(Flags::N_ADD_SUB, false);
@@ -63,9 +63,9 @@ impl Cpu {
         result
     }
 
-    // SRL
+    /// SRL
     #[must_use]
-    pub(super) fn bit_srl_logical_shift_right(&mut self, value: u8) -> u8 {
+    pub(super) fn alu_logical_shift_right(&mut self, value: u8) -> u8 {
         let will_carry = (value & (1 << 0)) != 0;
 
         let result = value >> 1;
@@ -78,7 +78,9 @@ impl Cpu {
         result
     }
 
-    // SRA
+    /// SRA
+    ///
+    /// Bit 7 is unchanged.
     #[must_use]
     pub(super) fn bit_sra_arithmetic_shift_right(&mut self, value: u8) -> u8 {
         let original_msb = value & (1 << 7);
@@ -94,7 +96,7 @@ impl Cpu {
         result
     }
 
-    // SLA
+    /// SLA
     #[must_use]
     pub(super) fn bit_sla_arithmetic_shift_left(&mut self, value: u8) -> u8 {
         let will_carry = (value & (1 << 7)) != 0;
@@ -110,7 +112,7 @@ impl Cpu {
     }
 
     // BIT
-    pub(super) fn bit_test_bit(&mut self, bit: usize, value: u8) {
+    pub(super) fn alu_test_bit(&mut self, bit: usize, value: u8) {
         let result = value & (1 << bit);
 
         self.registers.f.set(Flags::ZERO, result == 0);
@@ -120,19 +122,19 @@ impl Cpu {
 
     // RES
     #[must_use]
-    pub(super) fn bit_reset_bit(&self, bit: usize, value: u8) -> u8 {
+    pub(super) fn alu_reset_bit(&self, bit: usize, value: u8) -> u8 {
         value & !(1 << bit)
     }
 
     // SET
     #[must_use]
-    pub(super) fn bit_set_bit(&self, bit: usize, value: u8) -> u8 {
+    pub(super) fn alu_set_bit(&self, bit: usize, value: u8) -> u8 {
         value | (1 << bit)
     }
 
     // SWAP
     #[must_use]
-    pub(super) fn swap_nibbles(&mut self, value: u8) -> u8 {
+    pub(super) fn alu_swap_nibbles(&mut self, value: u8) -> u8 {
         let low = value & 0x0F;
         let high = (value & 0xF0) >> 4;
 

@@ -19,7 +19,7 @@ macro_rules! alu_op_hl {
 
         let result = $self.$F(value);
 
-        $self.write_byte(address, result);
+        $self.write_byte(address, result)
     };
 
     ($self:ident, $F:ident, $bit:literal, (hl)) => {
@@ -28,7 +28,7 @@ macro_rules! alu_op_hl {
 
         let result = $self.$F($bit, value);
 
-        $self.write_byte(address, result);
+        $self.write_byte(address, result)
     };
 }
 
@@ -37,7 +37,7 @@ macro_rules! alu_op_bit_test {
         let address = $self.registers.get_hl();
         let value = $self.read_byte(address);
 
-        $self.$F($bit, value);
+        $self.$F($bit, value)
     };
 
     ($self:ident, $F:ident, $bit:literal, $reg:ident) => {
@@ -48,162 +48,162 @@ macro_rules! alu_op_bit_test {
 impl Cpu {
     /// RLC B
     pub(super) fn opcode_cb_0x00(&mut self) {
-        alu_op_r8!(self, bit_rotate_left_c, b);
+        alu_op_r8!(self, alu_rotate_left_through_carry, b);
     }
 
     /// RLC C
     pub(super) fn opcode_cb_0x01(&mut self) {
-        alu_op_r8!(self, bit_rotate_left_c, c);
+        alu_op_r8!(self, alu_rotate_left_through_carry, c);
     }
 
     /// RLC D
     pub(super) fn opcode_cb_0x02(&mut self) {
-        alu_op_r8!(self, bit_rotate_left_c, d);
+        alu_op_r8!(self, alu_rotate_left_through_carry, d);
     }
 
     /// RLC E
     pub(super) fn opcode_cb_0x03(&mut self) {
-        alu_op_r8!(self, bit_rotate_left_c, e);
+        alu_op_r8!(self, alu_rotate_left_through_carry, e);
     }
 
     /// RLC H
     pub(super) fn opcode_cb_0x04(&mut self) {
-        alu_op_r8!(self, bit_rotate_left_c, h);
+        alu_op_r8!(self, alu_rotate_left_through_carry, h);
     }
 
     /// RLC L
     pub(super) fn opcode_cb_0x05(&mut self) {
-        alu_op_r8!(self, bit_rotate_left_c, l);
+        alu_op_r8!(self, alu_rotate_left_through_carry, l);
     }
 
     /// RLC (HL)
     pub(super) fn opcode_cb_0x06(&mut self) {
-        alu_op_hl!(self, bit_rotate_left_c, (hl));
+        alu_op_hl!(self, alu_rotate_left_through_carry, (hl));
     }
 
     /// RLC A
     pub(super) fn opcode_cb_0x07(&mut self) {
-        alu_op_r8!(self, bit_rotate_left_c, a);
+        alu_op_r8!(self, alu_rotate_left_through_carry, a);
     }
 
     /// RRC B
     pub(super) fn opcode_cb_0x08(&mut self) {
-        alu_op_r8!(self, bit_rotate_right_c, b);
+        alu_op_r8!(self, alu_rotate_right_through_carry, b);
     }
 
     /// RRC C
     pub(super) fn opcode_cb_0x09(&mut self) {
-        alu_op_r8!(self, bit_rotate_right_c, c);
+        alu_op_r8!(self, alu_rotate_right_through_carry, c);
     }
 
     /// RRC D
     pub(super) fn opcode_cb_0x0a(&mut self) {
-        alu_op_r8!(self, bit_rotate_right_c, d);
+        alu_op_r8!(self, alu_rotate_right_through_carry, d);
     }
 
     /// RRC E
     pub(super) fn opcode_cb_0x0b(&mut self) {
-        alu_op_r8!(self, bit_rotate_right_c, e);
+        alu_op_r8!(self, alu_rotate_right_through_carry, e);
     }
 
     /// RRC H
     pub(super) fn opcode_cb_0x0c(&mut self) {
-        alu_op_r8!(self, bit_rotate_right_c, h);
+        alu_op_r8!(self, alu_rotate_right_through_carry, h);
     }
 
     /// RRC L
     pub(super) fn opcode_cb_0x0d(&mut self) {
-        alu_op_r8!(self, bit_rotate_right_c, l);
+        alu_op_r8!(self, alu_rotate_right_through_carry, l);
     }
 
     /// RRC (HL)
     pub(super) fn opcode_cb_0x0e(&mut self) {
-        alu_op_hl!(self, bit_rotate_right_c, (hl));
+        alu_op_hl!(self, alu_rotate_right_through_carry, (hl));
     }
 
     /// RRC A
     pub(super) fn opcode_cb_0x0f(&mut self) {
-        alu_op_r8!(self, bit_rotate_right_c, a);
+        alu_op_r8!(self, alu_rotate_right_through_carry, a);
     }
 
     /// RL B
     pub(super) fn opcode_cb_0x10(&mut self) {
-        alu_op_r8!(self, bit_rotate_left, b);
+        alu_op_r8!(self, alu_rotate_left, b);
     }
 
     /// RL C
     pub(super) fn opcode_cb_0x11(&mut self) {
-        alu_op_r8!(self, bit_rotate_left, c);
+        alu_op_r8!(self, alu_rotate_left, c);
     }
 
     /// RL D
     pub(super) fn opcode_cb_0x12(&mut self) {
-        alu_op_r8!(self, bit_rotate_left, d);
+        alu_op_r8!(self, alu_rotate_left, d);
     }
 
     /// RL E
     pub(super) fn opcode_cb_0x13(&mut self) {
-        alu_op_r8!(self, bit_rotate_left, e);
+        alu_op_r8!(self, alu_rotate_left, e);
     }
 
     /// RL H
     pub(super) fn opcode_cb_0x14(&mut self) {
-        alu_op_r8!(self, bit_rotate_left, h);
+        alu_op_r8!(self, alu_rotate_left, h);
     }
 
     /// RL L
     pub(super) fn opcode_cb_0x15(&mut self) {
-        alu_op_r8!(self, bit_rotate_left, l);
+        alu_op_r8!(self, alu_rotate_left, l);
     }
 
     /// RL (HL)
     pub(super) fn opcode_cb_0x16(&mut self) {
-        alu_op_hl!(self, bit_rotate_left, (hl));
+        alu_op_hl!(self, alu_rotate_left, (hl));
     }
 
     /// RL A
     pub(super) fn opcode_cb_0x17(&mut self) {
-        alu_op_r8!(self, bit_rotate_left, a);
+        alu_op_r8!(self, alu_rotate_left, a);
     }
 
     /// RR B
     pub(super) fn opcode_cb_0x18(&mut self) {
-        alu_op_r8!(self, bit_rotate_right, b);
+        alu_op_r8!(self, alu_rotate_right, b);
     }
 
     /// RR C
     pub(super) fn opcode_cb_0x19(&mut self) {
-        alu_op_r8!(self, bit_rotate_right, c);
+        alu_op_r8!(self, alu_rotate_right, c);
     }
 
     /// RR D
     pub(super) fn opcode_cb_0x1a(&mut self) {
-        alu_op_r8!(self, bit_rotate_right, d);
+        alu_op_r8!(self, alu_rotate_right, d);
     }
 
     /// RR E
     pub(super) fn opcode_cb_0x1b(&mut self) {
-        alu_op_r8!(self, bit_rotate_right, e);
+        alu_op_r8!(self, alu_rotate_right, e);
     }
 
     /// RR H
     pub(super) fn opcode_cb_0x1c(&mut self) {
-        alu_op_r8!(self, bit_rotate_right, h);
+        alu_op_r8!(self, alu_rotate_right, h);
     }
 
     /// RR L
     pub(super) fn opcode_cb_0x1d(&mut self) {
-        alu_op_r8!(self, bit_rotate_right, l);
+        alu_op_r8!(self, alu_rotate_right, l);
     }
 
     /// RR (HL)
     pub(super) fn opcode_cb_0x1e(&mut self) {
-        alu_op_hl!(self, bit_rotate_right, (hl));
+        alu_op_hl!(self, alu_rotate_right, (hl));
     }
 
     /// RR A
     pub(super) fn opcode_cb_0x1f(&mut self) {
-        alu_op_r8!(self, bit_rotate_right, a);
+        alu_op_r8!(self, alu_rotate_right, a);
     }
 
     /// SLA B
@@ -288,1041 +288,1041 @@ impl Cpu {
 
     /// SWAP B
     pub(super) fn opcode_cb_0x30(&mut self) {
-        alu_op_r8!(self, swap_nibbles, b);
+        alu_op_r8!(self, alu_swap_nibbles, b);
     }
 
     /// SWAP C
     pub(super) fn opcode_cb_0x31(&mut self) {
-        alu_op_r8!(self, swap_nibbles, c);
+        alu_op_r8!(self, alu_swap_nibbles, c);
     }
 
     /// SWAP D
     pub(super) fn opcode_cb_0x32(&mut self) {
-        alu_op_r8!(self, swap_nibbles, d);
+        alu_op_r8!(self, alu_swap_nibbles, d);
     }
 
     /// SWAP E
     pub(super) fn opcode_cb_0x33(&mut self) {
-        alu_op_r8!(self, swap_nibbles, e);
+        alu_op_r8!(self, alu_swap_nibbles, e);
     }
 
     /// SWAP H
     pub(super) fn opcode_cb_0x34(&mut self) {
-        alu_op_r8!(self, swap_nibbles, h);
+        alu_op_r8!(self, alu_swap_nibbles, h);
     }
 
     /// SWAP L
     pub(super) fn opcode_cb_0x35(&mut self) {
-        alu_op_r8!(self, swap_nibbles, l);
+        alu_op_r8!(self, alu_swap_nibbles, l);
     }
 
     /// SWAP (HL)
     pub(super) fn opcode_cb_0x36(&mut self) {
-        alu_op_hl!(self, swap_nibbles, (hl));
+        alu_op_hl!(self, alu_swap_nibbles, (hl));
     }
 
     /// SWAP A
     pub(super) fn opcode_cb_0x37(&mut self) {
-        alu_op_r8!(self, swap_nibbles, a);
+        alu_op_r8!(self, alu_swap_nibbles, a);
     }
 
     /// SRL B
     pub(super) fn opcode_cb_0x38(&mut self) {
-        alu_op_r8!(self, bit_srl_logical_shift_right, b);
+        alu_op_r8!(self, alu_logical_shift_right, b);
     }
 
     /// SRL C
     pub(super) fn opcode_cb_0x39(&mut self) {
-        alu_op_r8!(self, bit_srl_logical_shift_right, c);
+        alu_op_r8!(self, alu_logical_shift_right, c);
     }
 
     /// SRL D
     pub(super) fn opcode_cb_0x3a(&mut self) {
-        alu_op_r8!(self, bit_srl_logical_shift_right, d);
+        alu_op_r8!(self, alu_logical_shift_right, d);
     }
 
     /// SRL E
     pub(super) fn opcode_cb_0x3b(&mut self) {
-        alu_op_r8!(self, bit_srl_logical_shift_right, e);
+        alu_op_r8!(self, alu_logical_shift_right, e);
     }
 
     /// SRL H
     pub(super) fn opcode_cb_0x3c(&mut self) {
-        alu_op_r8!(self, bit_srl_logical_shift_right, h);
+        alu_op_r8!(self, alu_logical_shift_right, h);
     }
 
     /// SRL L
     pub(super) fn opcode_cb_0x3d(&mut self) {
-        alu_op_r8!(self, bit_srl_logical_shift_right, l);
+        alu_op_r8!(self, alu_logical_shift_right, l);
     }
 
     /// SRL (HL)
     pub(super) fn opcode_cb_0x3e(&mut self) {
-        alu_op_hl!(self, bit_srl_logical_shift_right, (hl));
+        alu_op_hl!(self, alu_logical_shift_right, (hl));
     }
 
     /// SRL A
     pub(super) fn opcode_cb_0x3f(&mut self) {
-        alu_op_r8!(self, bit_srl_logical_shift_right, a);
+        alu_op_r8!(self, alu_logical_shift_right, a);
     }
 
     /// BIT 0,B
     pub(super) fn opcode_cb_0x40(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 0, b);
+        alu_op_bit_test!(self, alu_test_bit, 0, b);
     }
 
     /// BIT 0,C
     pub(super) fn opcode_cb_0x41(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 0, c);
+        alu_op_bit_test!(self, alu_test_bit, 0, c);
     }
 
     /// BIT 0,D
     pub(super) fn opcode_cb_0x42(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 0, d);
+        alu_op_bit_test!(self, alu_test_bit, 0, d);
     }
 
     /// BIT 0,E
     pub(super) fn opcode_cb_0x43(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 0, e);
+        alu_op_bit_test!(self, alu_test_bit, 0, e);
     }
 
     /// BIT 0,H
     pub(super) fn opcode_cb_0x44(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 0, h);
+        alu_op_bit_test!(self, alu_test_bit, 0, h);
     }
 
     /// BIT 0,L
     pub(super) fn opcode_cb_0x45(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 0, l);
+        alu_op_bit_test!(self, alu_test_bit, 0, l);
     }
 
     /// BIT 0,(HL)
     pub(super) fn opcode_cb_0x46(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 0, (hl));
+        alu_op_bit_test!(self, alu_test_bit, 0, (hl));
     }
 
     /// BIT 0,A
     pub(super) fn opcode_cb_0x47(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 0, a);
+        alu_op_bit_test!(self, alu_test_bit, 0, a);
     }
 
     /// BIT 1,B
     pub(super) fn opcode_cb_0x48(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 1, b);
+        alu_op_bit_test!(self, alu_test_bit, 1, b);
     }
 
     /// BIT 1,C
     pub(super) fn opcode_cb_0x49(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 1, c);
+        alu_op_bit_test!(self, alu_test_bit, 1, c);
     }
 
     /// BIT 1,D
     pub(super) fn opcode_cb_0x4a(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 1, d);
+        alu_op_bit_test!(self, alu_test_bit, 1, d);
     }
 
     /// BIT 1,E
     pub(super) fn opcode_cb_0x4b(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 1, e);
+        alu_op_bit_test!(self, alu_test_bit, 1, e);
     }
 
     /// BIT 1,H
     pub(super) fn opcode_cb_0x4c(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 1, h);
+        alu_op_bit_test!(self, alu_test_bit, 1, h);
     }
 
     /// BIT 1,L
     pub(super) fn opcode_cb_0x4d(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 1, l);
+        alu_op_bit_test!(self, alu_test_bit, 1, l);
     }
 
     /// BIT 1,(HL)
     pub(super) fn opcode_cb_0x4e(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 1, (hl));
+        alu_op_bit_test!(self, alu_test_bit, 1, (hl));
     }
 
     /// BIT 1,A
     pub(super) fn opcode_cb_0x4f(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 1, a);
+        alu_op_bit_test!(self, alu_test_bit, 1, a);
     }
 
     /// BIT 2,B
     pub(super) fn opcode_cb_0x50(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 2, b);
+        alu_op_bit_test!(self, alu_test_bit, 2, b);
     }
 
     /// BIT 2,C
     pub(super) fn opcode_cb_0x51(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 2, c);
+        alu_op_bit_test!(self, alu_test_bit, 2, c);
     }
 
     /// BIT 2,D
     pub(super) fn opcode_cb_0x52(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 2, d);
+        alu_op_bit_test!(self, alu_test_bit, 2, d);
     }
 
     /// BIT 2,E
     pub(super) fn opcode_cb_0x53(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 2, e);
+        alu_op_bit_test!(self, alu_test_bit, 2, e);
     }
 
     /// BIT 2,H
     pub(super) fn opcode_cb_0x54(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 2, h);
+        alu_op_bit_test!(self, alu_test_bit, 2, h);
     }
 
     /// BIT 2,L
     pub(super) fn opcode_cb_0x55(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 2, l);
+        alu_op_bit_test!(self, alu_test_bit, 2, l);
     }
 
     /// BIT 2,(HL)
     pub(super) fn opcode_cb_0x56(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 2, (hl));
+        alu_op_bit_test!(self, alu_test_bit, 2, (hl));
     }
 
     /// BIT 2,A
     pub(super) fn opcode_cb_0x57(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 2, a);
+        alu_op_bit_test!(self, alu_test_bit, 2, a);
     }
 
     /// BIT 3,B
     pub(super) fn opcode_cb_0x58(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 3, b);
+        alu_op_bit_test!(self, alu_test_bit, 3, b);
     }
 
     /// BIT 3,C
     pub(super) fn opcode_cb_0x59(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 3, c);
+        alu_op_bit_test!(self, alu_test_bit, 3, c);
     }
 
     /// BIT 3,D
     pub(super) fn opcode_cb_0x5a(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 3, d);
+        alu_op_bit_test!(self, alu_test_bit, 3, d);
     }
 
     /// BIT 3,E
     pub(super) fn opcode_cb_0x5b(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 3, e);
+        alu_op_bit_test!(self, alu_test_bit, 3, e);
     }
 
     /// BIT 3,H
     pub(super) fn opcode_cb_0x5c(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 3, h);
+        alu_op_bit_test!(self, alu_test_bit, 3, h);
     }
 
     /// BIT 3,L
     pub(super) fn opcode_cb_0x5d(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 3, l);
+        alu_op_bit_test!(self, alu_test_bit, 3, l);
     }
 
     /// BIT 3,(HL)
     pub(super) fn opcode_cb_0x5e(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 3, (hl));
+        alu_op_bit_test!(self, alu_test_bit, 3, (hl));
     }
 
     /// BIT 3,A
     pub(super) fn opcode_cb_0x5f(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 3, a);
+        alu_op_bit_test!(self, alu_test_bit, 3, a);
     }
 
     /// BIT 4,B
     pub(super) fn opcode_cb_0x60(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 4, b);
+        alu_op_bit_test!(self, alu_test_bit, 4, b);
     }
 
     /// BIT 4,C
     pub(super) fn opcode_cb_0x61(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 4, c);
+        alu_op_bit_test!(self, alu_test_bit, 4, c);
     }
 
     /// BIT 4,D
     pub(super) fn opcode_cb_0x62(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 4, d);
+        alu_op_bit_test!(self, alu_test_bit, 4, d);
     }
 
     /// BIT 4,E
     pub(super) fn opcode_cb_0x63(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 4, e);
+        alu_op_bit_test!(self, alu_test_bit, 4, e);
     }
 
     /// BIT 4,H
     pub(super) fn opcode_cb_0x64(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 4, h);
+        alu_op_bit_test!(self, alu_test_bit, 4, h);
     }
 
     /// BIT 4,L
     pub(super) fn opcode_cb_0x65(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 4, l);
+        alu_op_bit_test!(self, alu_test_bit, 4, l);
     }
 
     /// BIT 4,(HL)
     pub(super) fn opcode_cb_0x66(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 4, (hl));
+        alu_op_bit_test!(self, alu_test_bit, 4, (hl));
     }
 
     /// BIT 4,A
     pub(super) fn opcode_cb_0x67(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 4, a);
+        alu_op_bit_test!(self, alu_test_bit, 4, a);
     }
 
     /// BIT 5,B
     pub(super) fn opcode_cb_0x68(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 5, b);
+        alu_op_bit_test!(self, alu_test_bit, 5, b);
     }
 
     /// BIT 5,C
     pub(super) fn opcode_cb_0x69(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 5, c);
+        alu_op_bit_test!(self, alu_test_bit, 5, c);
     }
 
     /// BIT 5,D
     pub(super) fn opcode_cb_0x6a(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 5, d);
+        alu_op_bit_test!(self, alu_test_bit, 5, d);
     }
 
     /// BIT 5,E
     pub(super) fn opcode_cb_0x6b(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 5, e);
+        alu_op_bit_test!(self, alu_test_bit, 5, e);
     }
 
     /// BIT 5,H
     pub(super) fn opcode_cb_0x6c(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 5, h);
+        alu_op_bit_test!(self, alu_test_bit, 5, h);
     }
 
     /// BIT 5,L
     pub(super) fn opcode_cb_0x6d(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 5, l);
+        alu_op_bit_test!(self, alu_test_bit, 5, l);
     }
 
     /// BIT 5,(HL)
     pub(super) fn opcode_cb_0x6e(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 5, (hl));
+        alu_op_bit_test!(self, alu_test_bit, 5, (hl));
     }
 
     /// BIT 5,A
     pub(super) fn opcode_cb_0x6f(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 5, a);
+        alu_op_bit_test!(self, alu_test_bit, 5, a);
     }
 
     /// BIT 6,B
     pub(super) fn opcode_cb_0x70(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 6, b);
+        alu_op_bit_test!(self, alu_test_bit, 6, b);
     }
 
     /// BIT 6,C
     pub(super) fn opcode_cb_0x71(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 6, c);
+        alu_op_bit_test!(self, alu_test_bit, 6, c);
     }
 
     /// BIT 6,D
     pub(super) fn opcode_cb_0x72(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 6, d);
+        alu_op_bit_test!(self, alu_test_bit, 6, d);
     }
 
     /// BIT 6,E
     pub(super) fn opcode_cb_0x73(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 6, e);
+        alu_op_bit_test!(self, alu_test_bit, 6, e);
     }
 
     /// BIT 6,H
     pub(super) fn opcode_cb_0x74(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 6, h);
+        alu_op_bit_test!(self, alu_test_bit, 6, h);
     }
 
     /// BIT 6,L
     pub(super) fn opcode_cb_0x75(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 6, l);
+        alu_op_bit_test!(self, alu_test_bit, 6, l);
     }
 
     /// BIT 6,(HL)
     pub(super) fn opcode_cb_0x76(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 6, (hl));
+        alu_op_bit_test!(self, alu_test_bit, 6, (hl));
     }
 
     /// BIT 6,A
     pub(super) fn opcode_cb_0x77(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 6, a);
+        alu_op_bit_test!(self, alu_test_bit, 6, a);
     }
 
     /// BIT 7,B
     pub(super) fn opcode_cb_0x78(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 7, b);
+        alu_op_bit_test!(self, alu_test_bit, 7, b);
     }
 
     /// BIT 7,C
     pub(super) fn opcode_cb_0x79(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 7, c);
+        alu_op_bit_test!(self, alu_test_bit, 7, c);
     }
 
     /// BIT 7,D
     pub(super) fn opcode_cb_0x7a(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 7, d);
+        alu_op_bit_test!(self, alu_test_bit, 7, d);
     }
 
     /// BIT 7,E
     pub(super) fn opcode_cb_0x7b(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 7, e);
+        alu_op_bit_test!(self, alu_test_bit, 7, e);
     }
 
     /// BIT 7,H
     pub(super) fn opcode_cb_0x7c(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 7, h);
+        alu_op_bit_test!(self, alu_test_bit, 7, h);
     }
 
     /// BIT 7,L
     pub(super) fn opcode_cb_0x7d(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 7, l);
+        alu_op_bit_test!(self, alu_test_bit, 7, l);
     }
 
     /// BIT 7,(HL)
     pub(super) fn opcode_cb_0x7e(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 7, (hl));
+        alu_op_bit_test!(self, alu_test_bit, 7, (hl));
     }
 
     /// BIT 7,A
     pub(super) fn opcode_cb_0x7f(&mut self) {
-        alu_op_bit_test!(self, bit_test_bit, 7, a);
+        alu_op_bit_test!(self, alu_test_bit, 7, a);
     }
 
     /// RES 0,B
     pub(super) fn opcode_cb_0x80(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 0, b);
+        alu_op_r8!(self, alu_reset_bit, 0, b);
     }
 
     /// RES 0,C
     pub(super) fn opcode_cb_0x81(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 0, c);
+        alu_op_r8!(self, alu_reset_bit, 0, c);
     }
 
     /// RES 0,D
     pub(super) fn opcode_cb_0x82(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 0, d);
+        alu_op_r8!(self, alu_reset_bit, 0, d);
     }
 
     /// RES 0,E
     pub(super) fn opcode_cb_0x83(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 0, e);
+        alu_op_r8!(self, alu_reset_bit, 0, e);
     }
 
     /// RES 0,H
     pub(super) fn opcode_cb_0x84(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 0, h);
+        alu_op_r8!(self, alu_reset_bit, 0, h);
     }
 
     /// RES 0,L
     pub(super) fn opcode_cb_0x85(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 0, l);
+        alu_op_r8!(self, alu_reset_bit, 0, l);
     }
 
     /// RES 0,(HL)
     pub(super) fn opcode_cb_0x86(&mut self) {
-        alu_op_hl!(self, bit_reset_bit, 0, (hl));
+        alu_op_hl!(self, alu_reset_bit, 0, (hl));
     }
 
     /// RES 0,A
     pub(super) fn opcode_cb_0x87(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 0, a);
+        alu_op_r8!(self, alu_reset_bit, 0, a);
     }
 
     /// RES 1,B
     pub(super) fn opcode_cb_0x88(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 1, b);
+        alu_op_r8!(self, alu_reset_bit, 1, b);
     }
 
     /// RES 1,C
     pub(super) fn opcode_cb_0x89(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 1, c);
+        alu_op_r8!(self, alu_reset_bit, 1, c);
     }
 
     /// RES 1,D
     pub(super) fn opcode_cb_0x8a(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 1, d);
+        alu_op_r8!(self, alu_reset_bit, 1, d);
     }
 
     /// RES 1,E
     pub(super) fn opcode_cb_0x8b(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 1, e);
+        alu_op_r8!(self, alu_reset_bit, 1, e);
     }
 
     /// RES 1,H
     pub(super) fn opcode_cb_0x8c(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 1, h);
+        alu_op_r8!(self, alu_reset_bit, 1, h);
     }
 
     /// RES 1,L
     pub(super) fn opcode_cb_0x8d(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 1, l);
+        alu_op_r8!(self, alu_reset_bit, 1, l);
     }
 
     /// RES 1,(HL)
     pub(super) fn opcode_cb_0x8e(&mut self) {
-        alu_op_hl!(self, bit_reset_bit, 1, (hl));
+        alu_op_hl!(self, alu_reset_bit, 1, (hl));
     }
 
     /// RES 1,A
     pub(super) fn opcode_cb_0x8f(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 1, a);
+        alu_op_r8!(self, alu_reset_bit, 1, a);
     }
 
     /// RES 2,B
     pub(super) fn opcode_cb_0x90(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 2, b);
+        alu_op_r8!(self, alu_reset_bit, 2, b);
     }
 
     /// RES 2,C
     pub(super) fn opcode_cb_0x91(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 2, c);
+        alu_op_r8!(self, alu_reset_bit, 2, c);
     }
 
     /// RES 2,D
     pub(super) fn opcode_cb_0x92(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 2, d);
+        alu_op_r8!(self, alu_reset_bit, 2, d);
     }
 
     /// RES 2,E
     pub(super) fn opcode_cb_0x93(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 2, e);
+        alu_op_r8!(self, alu_reset_bit, 2, e);
     }
 
     /// RES 2,H
     pub(super) fn opcode_cb_0x94(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 2, h);
+        alu_op_r8!(self, alu_reset_bit, 2, h);
     }
 
     /// RES 2,L
     pub(super) fn opcode_cb_0x95(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 2, l);
+        alu_op_r8!(self, alu_reset_bit, 2, l);
     }
 
     /// RES 2,(HL)
     pub(super) fn opcode_cb_0x96(&mut self) {
-        alu_op_hl!(self, bit_reset_bit, 2, (hl));
+        alu_op_hl!(self, alu_reset_bit, 2, (hl));
     }
 
     /// RES 2,A
     pub(super) fn opcode_cb_0x97(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 2, a);
+        alu_op_r8!(self, alu_reset_bit, 2, a);
     }
 
     /// RES 3,B
     pub(super) fn opcode_cb_0x98(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 3, b);
+        alu_op_r8!(self, alu_reset_bit, 3, b);
     }
 
     /// RES 3,C
     pub(super) fn opcode_cb_0x99(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 3, c);
+        alu_op_r8!(self, alu_reset_bit, 3, c);
     }
 
     /// RES 3,D
     pub(super) fn opcode_cb_0x9a(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 3, d);
+        alu_op_r8!(self, alu_reset_bit, 3, d);
     }
 
     /// RES 3,E
     pub(super) fn opcode_cb_0x9b(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 3, e);
+        alu_op_r8!(self, alu_reset_bit, 3, e);
     }
 
     /// RES 3,H
     pub(super) fn opcode_cb_0x9c(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 3, h);
+        alu_op_r8!(self, alu_reset_bit, 3, h);
     }
 
     /// RES 3,L
     pub(super) fn opcode_cb_0x9d(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 3, l);
+        alu_op_r8!(self, alu_reset_bit, 3, l);
     }
 
     /// RES 3,(HL)
     pub(super) fn opcode_cb_0x9e(&mut self) {
-        alu_op_hl!(self, bit_reset_bit, 3, (hl));
+        alu_op_hl!(self, alu_reset_bit, 3, (hl));
     }
 
     /// RES 3,A
     pub(super) fn opcode_cb_0x9f(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 3, a);
+        alu_op_r8!(self, alu_reset_bit, 3, a);
     }
 
     /// RES 4,B
     pub(super) fn opcode_cb_0xa0(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 4, b);
+        alu_op_r8!(self, alu_reset_bit, 4, b);
     }
 
     /// RES 4,C
     pub(super) fn opcode_cb_0xa1(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 4, c);
+        alu_op_r8!(self, alu_reset_bit, 4, c);
     }
 
     /// RES 4,D
     pub(super) fn opcode_cb_0xa2(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 4, d);
+        alu_op_r8!(self, alu_reset_bit, 4, d);
     }
 
     /// RES 4,E
     pub(super) fn opcode_cb_0xa3(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 4, e);
+        alu_op_r8!(self, alu_reset_bit, 4, e);
     }
 
     /// RES 4,H
     pub(super) fn opcode_cb_0xa4(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 4, h);
+        alu_op_r8!(self, alu_reset_bit, 4, h);
     }
 
     /// RES 4,L
     pub(super) fn opcode_cb_0xa5(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 4, l);
+        alu_op_r8!(self, alu_reset_bit, 4, l);
     }
 
     /// RES 4,(HL)
     pub(super) fn opcode_cb_0xa6(&mut self) {
-        alu_op_hl!(self, bit_reset_bit, 4, (hl));
+        alu_op_hl!(self, alu_reset_bit, 4, (hl));
     }
 
     /// RES 4,A
     pub(super) fn opcode_cb_0xa7(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 4, a);
+        alu_op_r8!(self, alu_reset_bit, 4, a);
     }
 
     /// RES 5,B
     pub(super) fn opcode_cb_0xa8(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 5, b);
+        alu_op_r8!(self, alu_reset_bit, 5, b);
     }
 
     /// RES 5,C
     pub(super) fn opcode_cb_0xa9(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 5, c);
+        alu_op_r8!(self, alu_reset_bit, 5, c);
     }
 
     /// RES 5,D
     pub(super) fn opcode_cb_0xaa(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 5, d);
+        alu_op_r8!(self, alu_reset_bit, 5, d);
     }
 
     /// RES 5,E
     pub(super) fn opcode_cb_0xab(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 5, e);
+        alu_op_r8!(self, alu_reset_bit, 5, e);
     }
 
     /// RES 5,H
     pub(super) fn opcode_cb_0xac(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 5, h);
+        alu_op_r8!(self, alu_reset_bit, 5, h);
     }
 
     /// RES 5,L
     pub(super) fn opcode_cb_0xad(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 5, l);
+        alu_op_r8!(self, alu_reset_bit, 5, l);
     }
 
     /// RES 5,(HL)
     pub(super) fn opcode_cb_0xae(&mut self) {
-        alu_op_hl!(self, bit_reset_bit, 5, (hl));
+        alu_op_hl!(self, alu_reset_bit, 5, (hl));
     }
 
     /// RES 5,A
     pub(super) fn opcode_cb_0xaf(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 5, a);
+        alu_op_r8!(self, alu_reset_bit, 5, a);
     }
 
     /// RES 6,B
     pub(super) fn opcode_cb_0xb0(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 6, b);
+        alu_op_r8!(self, alu_reset_bit, 6, b);
     }
 
     /// RES 6,C
     pub(super) fn opcode_cb_0xb1(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 6, c);
+        alu_op_r8!(self, alu_reset_bit, 6, c);
     }
 
     /// RES 6,D
     pub(super) fn opcode_cb_0xb2(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 6, d);
+        alu_op_r8!(self, alu_reset_bit, 6, d);
     }
 
     /// RES 6,E
     pub(super) fn opcode_cb_0xb3(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 6, e);
+        alu_op_r8!(self, alu_reset_bit, 6, e);
     }
 
     /// RES 6,H
     pub(super) fn opcode_cb_0xb4(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 6, h);
+        alu_op_r8!(self, alu_reset_bit, 6, h);
     }
 
     /// RES 6,L
     pub(super) fn opcode_cb_0xb5(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 6, l);
+        alu_op_r8!(self, alu_reset_bit, 6, l);
     }
 
     /// RES 6,(HL)
     pub(super) fn opcode_cb_0xb6(&mut self) {
-        alu_op_hl!(self, bit_reset_bit, 6, (hl));
+        alu_op_hl!(self, alu_reset_bit, 6, (hl));
     }
 
     /// RES 6,A
     pub(super) fn opcode_cb_0xb7(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 6, a);
+        alu_op_r8!(self, alu_reset_bit, 6, a);
     }
 
     /// RES 7,B
     pub(super) fn opcode_cb_0xb8(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 7, b);
+        alu_op_r8!(self, alu_reset_bit, 7, b);
     }
 
     /// RES 7,C
     pub(super) fn opcode_cb_0xb9(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 7, c);
+        alu_op_r8!(self, alu_reset_bit, 7, c);
     }
 
     /// RES 7,D
     pub(super) fn opcode_cb_0xba(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 7, d);
+        alu_op_r8!(self, alu_reset_bit, 7, d);
     }
 
     /// RES 7,E
     pub(super) fn opcode_cb_0xbb(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 7, e);
+        alu_op_r8!(self, alu_reset_bit, 7, e);
     }
 
     /// RES 7,H
     pub(super) fn opcode_cb_0xbc(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 7, h);
+        alu_op_r8!(self, alu_reset_bit, 7, h);
     }
 
     /// RES 7,L
     pub(super) fn opcode_cb_0xbd(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 7, l);
+        alu_op_r8!(self, alu_reset_bit, 7, l);
     }
 
     /// RES 7,(HL)
     pub(super) fn opcode_cb_0xbe(&mut self) {
-        alu_op_hl!(self, bit_reset_bit, 7, (hl));
+        alu_op_hl!(self, alu_reset_bit, 7, (hl));
     }
 
     /// RES 7,A
     pub(super) fn opcode_cb_0xbf(&mut self) {
-        alu_op_r8!(self, bit_reset_bit, 7, a);
+        alu_op_r8!(self, alu_reset_bit, 7, a);
     }
 
     /// SET 0,B
     pub(super) fn opcode_cb_0xc0(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 0, b);
+        alu_op_r8!(self, alu_set_bit, 0, b);
     }
 
     /// SET 0,C
     pub(super) fn opcode_cb_0xc1(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 0, c);
+        alu_op_r8!(self, alu_set_bit, 0, c);
     }
 
     /// SET 0,D
     pub(super) fn opcode_cb_0xc2(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 0, d);
+        alu_op_r8!(self, alu_set_bit, 0, d);
     }
 
     /// SET 0,E
     pub(super) fn opcode_cb_0xc3(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 0, e);
+        alu_op_r8!(self, alu_set_bit, 0, e);
     }
 
     /// SET 0,H
     pub(super) fn opcode_cb_0xc4(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 0, h);
+        alu_op_r8!(self, alu_set_bit, 0, h);
     }
 
     /// SET 0,L
     pub(super) fn opcode_cb_0xc5(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 0, l);
+        alu_op_r8!(self, alu_set_bit, 0, l);
     }
 
     /// SET 0,(HL)
     pub(super) fn opcode_cb_0xc6(&mut self) {
-        alu_op_hl!(self, bit_set_bit, 0, (hl));
+        alu_op_hl!(self, alu_set_bit, 0, (hl));
     }
 
     /// SET 0,A
     pub(super) fn opcode_cb_0xc7(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 0, a);
+        alu_op_r8!(self, alu_set_bit, 0, a);
     }
 
     /// SET 1,B
     pub(super) fn opcode_cb_0xc8(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 1, b);
+        alu_op_r8!(self, alu_set_bit, 1, b);
     }
 
     /// SET 1,C
     pub(super) fn opcode_cb_0xc9(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 1, c);
+        alu_op_r8!(self, alu_set_bit, 1, c);
     }
 
     /// SET 1,D
     pub(super) fn opcode_cb_0xca(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 1, d);
+        alu_op_r8!(self, alu_set_bit, 1, d);
     }
 
     /// SET 1,E
     pub(super) fn opcode_cb_0xcb(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 1, e);
+        alu_op_r8!(self, alu_set_bit, 1, e);
     }
 
     /// SET 1,H
     pub(super) fn opcode_cb_0xcc(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 1, h);
+        alu_op_r8!(self, alu_set_bit, 1, h);
     }
 
     /// SET 1,L
     pub(super) fn opcode_cb_0xcd(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 1, l);
+        alu_op_r8!(self, alu_set_bit, 1, l);
     }
 
     /// SET 1,(HL)
     pub(super) fn opcode_cb_0xce(&mut self) {
-        alu_op_hl!(self, bit_set_bit, 1, (hl));
+        alu_op_hl!(self, alu_set_bit, 1, (hl));
     }
 
     /// SET 1,A
     pub(super) fn opcode_cb_0xcf(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 1, a);
+        alu_op_r8!(self, alu_set_bit, 1, a);
     }
 
     /// SET 2,B
     pub(super) fn opcode_cb_0xd0(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 2, b);
+        alu_op_r8!(self, alu_set_bit, 2, b);
     }
 
     /// SET 2,C
     pub(super) fn opcode_cb_0xd1(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 2, c);
+        alu_op_r8!(self, alu_set_bit, 2, c);
     }
 
     /// SET 2,D
     pub(super) fn opcode_cb_0xd2(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 2, d);
+        alu_op_r8!(self, alu_set_bit, 2, d);
     }
 
     /// SET 2,E
     pub(super) fn opcode_cb_0xd3(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 2, e);
+        alu_op_r8!(self, alu_set_bit, 2, e);
     }
 
     /// SET 2,H
     pub(super) fn opcode_cb_0xd4(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 2, h);
+        alu_op_r8!(self, alu_set_bit, 2, h);
     }
 
     /// SET 2,L
     pub(super) fn opcode_cb_0xd5(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 2, l);
+        alu_op_r8!(self, alu_set_bit, 2, l);
     }
 
     /// SET 2,(HL)
     pub(super) fn opcode_cb_0xd6(&mut self) {
-        alu_op_hl!(self, bit_set_bit, 2, (hl));
+        alu_op_hl!(self, alu_set_bit, 2, (hl));
     }
 
     /// SET 2,A
     pub(super) fn opcode_cb_0xd7(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 2, a);
+        alu_op_r8!(self, alu_set_bit, 2, a);
     }
 
     /// SET 3,B
     pub(super) fn opcode_cb_0xd8(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 3, b);
+        alu_op_r8!(self, alu_set_bit, 3, b);
     }
 
     /// SET 3,C
     pub(super) fn opcode_cb_0xd9(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 3, c);
+        alu_op_r8!(self, alu_set_bit, 3, c);
     }
 
     /// SET 3,D
     pub(super) fn opcode_cb_0xda(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 3, d);
+        alu_op_r8!(self, alu_set_bit, 3, d);
     }
 
     /// SET 3,E
     pub(super) fn opcode_cb_0xdb(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 3, e);
+        alu_op_r8!(self, alu_set_bit, 3, e);
     }
 
     /// SET 3,H
     pub(super) fn opcode_cb_0xdc(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 3, h);
+        alu_op_r8!(self, alu_set_bit, 3, h);
     }
 
     /// SET 3,L
     pub(super) fn opcode_cb_0xdd(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 3, l);
+        alu_op_r8!(self, alu_set_bit, 3, l);
     }
 
     /// SET 3,(HL)
     pub(super) fn opcode_cb_0xde(&mut self) {
-        alu_op_hl!(self, bit_set_bit, 3, (hl));
+        alu_op_hl!(self, alu_set_bit, 3, (hl));
     }
 
     /// SET 3,A
     pub(super) fn opcode_cb_0xdf(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 3, a);
+        alu_op_r8!(self, alu_set_bit, 3, a);
     }
 
     /// SET 4,B
     pub(super) fn opcode_cb_0xe0(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 4, b);
+        alu_op_r8!(self, alu_set_bit, 4, b);
     }
 
     /// SET 4,C
     pub(super) fn opcode_cb_0xe1(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 4, c);
+        alu_op_r8!(self, alu_set_bit, 4, c);
     }
 
     /// SET 4,D
     pub(super) fn opcode_cb_0xe2(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 4, d);
+        alu_op_r8!(self, alu_set_bit, 4, d);
     }
 
     /// SET 4,E
     pub(super) fn opcode_cb_0xe3(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 4, e);
+        alu_op_r8!(self, alu_set_bit, 4, e);
     }
 
     /// SET 4,H
     pub(super) fn opcode_cb_0xe4(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 4, h);
+        alu_op_r8!(self, alu_set_bit, 4, h);
     }
 
     /// SET 4,L
     pub(super) fn opcode_cb_0xe5(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 4, l);
+        alu_op_r8!(self, alu_set_bit, 4, l);
     }
 
     /// SET 4,(HL)
     pub(super) fn opcode_cb_0xe6(&mut self) {
-        alu_op_hl!(self, bit_set_bit, 4, (hl));
+        alu_op_hl!(self, alu_set_bit, 4, (hl));
     }
 
     /// SET 4,A
     pub(super) fn opcode_cb_0xe7(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 4, a);
+        alu_op_r8!(self, alu_set_bit, 4, a);
     }
 
     /// SET 5,B
     pub(super) fn opcode_cb_0xe8(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 5, b);
+        alu_op_r8!(self, alu_set_bit, 5, b);
     }
 
     /// SET 5,C
     pub(super) fn opcode_cb_0xe9(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 5, c);
+        alu_op_r8!(self, alu_set_bit, 5, c);
     }
 
     /// SET 5,D
     pub(super) fn opcode_cb_0xea(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 5, d);
+        alu_op_r8!(self, alu_set_bit, 5, d);
     }
 
     /// SET 5,E
     pub(super) fn opcode_cb_0xeb(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 5, e);
+        alu_op_r8!(self, alu_set_bit, 5, e);
     }
 
     /// SET 5,H
     pub(super) fn opcode_cb_0xec(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 5, h);
+        alu_op_r8!(self, alu_set_bit, 5, h);
     }
 
     /// SET 5,L
     pub(super) fn opcode_cb_0xed(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 5, l);
+        alu_op_r8!(self, alu_set_bit, 5, l);
     }
 
     /// SET 5,(HL)
     pub(super) fn opcode_cb_0xee(&mut self) {
-        alu_op_hl!(self, bit_set_bit, 5, (hl));
+        alu_op_hl!(self, alu_set_bit, 5, (hl));
     }
 
     /// SET 5,A
     pub(super) fn opcode_cb_0xef(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 5, a);
+        alu_op_r8!(self, alu_set_bit, 5, a);
     }
 
     /// SET 6,B
     pub(super) fn opcode_cb_0xf0(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 6, b);
+        alu_op_r8!(self, alu_set_bit, 6, b);
     }
 
     /// SET 6,C
     pub(super) fn opcode_cb_0xf1(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 6, c);
+        alu_op_r8!(self, alu_set_bit, 6, c);
     }
 
     /// SET 6,D
     pub(super) fn opcode_cb_0xf2(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 6, d);
+        alu_op_r8!(self, alu_set_bit, 6, d);
     }
 
     /// SET 6,E
     pub(super) fn opcode_cb_0xf3(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 6, e);
+        alu_op_r8!(self, alu_set_bit, 6, e);
     }
 
     /// SET 6,H
     pub(super) fn opcode_cb_0xf4(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 6, h);
+        alu_op_r8!(self, alu_set_bit, 6, h);
     }
 
     /// SET 6,L
     pub(super) fn opcode_cb_0xf5(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 6, l);
+        alu_op_r8!(self, alu_set_bit, 6, l);
     }
 
     /// SET 6,(HL)
     pub(super) fn opcode_cb_0xf6(&mut self) {
-        alu_op_hl!(self, bit_set_bit, 6, (hl));
+        alu_op_hl!(self, alu_set_bit, 6, (hl));
     }
 
     /// SET 6,A
     pub(super) fn opcode_cb_0xf7(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 6, a);
+        alu_op_r8!(self, alu_set_bit, 6, a);
     }
 
     /// SET 7,B
     pub(super) fn opcode_cb_0xf8(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 7, b);
+        alu_op_r8!(self, alu_set_bit, 7, b);
     }
 
     /// SET 7,C
     pub(super) fn opcode_cb_0xf9(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 7, c);
+        alu_op_r8!(self, alu_set_bit, 7, c);
     }
 
     /// SET 7,D
     pub(super) fn opcode_cb_0xfa(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 7, d);
+        alu_op_r8!(self, alu_set_bit, 7, d);
     }
 
     /// SET 7,E
     pub(super) fn opcode_cb_0xfb(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 7, e);
+        alu_op_r8!(self, alu_set_bit, 7, e);
     }
 
     /// SET 7,H
     pub(super) fn opcode_cb_0xfc(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 7, h);
+        alu_op_r8!(self, alu_set_bit, 7, h);
     }
 
     /// SET 7,L
     pub(super) fn opcode_cb_0xfd(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 7, l);
+        alu_op_r8!(self, alu_set_bit, 7, l);
     }
 
     /// SET 7,(HL)
     pub(super) fn opcode_cb_0xfe(&mut self) {
-        alu_op_hl!(self, bit_set_bit, 7, (hl));
+        alu_op_hl!(self, alu_set_bit, 7, (hl));
     }
 
     /// SET 7,A
     pub(super) fn opcode_cb_0xff(&mut self) {
-        alu_op_r8!(self, bit_set_bit, 7, a);
+        alu_op_r8!(self, alu_set_bit, 7, a);
     }
 }

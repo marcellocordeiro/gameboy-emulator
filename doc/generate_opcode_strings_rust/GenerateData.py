@@ -6,15 +6,16 @@ groups = [
     "x8/alu",
     "x16/lsm",
     "control/misc",
-    "unused",
     "x16/alu",
     "x8/lsm",
 ]
 
-functionBodies = {}
+unprefixedFunctionBodies = {}
+prefixedFunctionBodies = {}
 
 for group in groups:
-    functionBodies[group] = []
+    unprefixedFunctionBodies[group] = []
+    prefixedFunctionBodies[group] = []
 
 unprefixed = ""
 unprefixedInstructionCycles = []
@@ -26,6 +27,42 @@ prefixedInstructionCycles = []
 prefixedFunctionDecl = []
 prefixedFunctionPtrs = []
 
+mapping = {
+    "BIT": {"func_name": "bit_test_bit", "macro": "alu_flags_op"},
+    "RES": {"func_name": "bit_reset_bit", "macro": "alu_u8_reg"},
+    "SET": {"func_name": "bit_set_bit", "macro": "alu_u8_reg"},
+}
+
+
+def getFunctionBody(val):
+    split = val["Name"].split(" ")
+
+    if len(split) != 2:
+        return ""
+
+    operands = split[1].split(",")
+
+    if len(operands) == 0:
+        return ""
+
+    arguments = (
+        f"{operands[0].lower()}"
+        if len(operands) == 1
+        else f"{operands[0].lower()}, {operands[1].lower()}"
+    )
+    return f"{mapping[split[0]]}!(self, {mapping[split[0]]}, {arguments})"
+
+    """match split[0]:
+        case "BIT":
+            return f"alu_flags_op!(self, bit_test_bit, {operands[0]}, {operands[1].lower()});"
+        
+        case "RES" or "SET":
+            
+        
+        case [op]:
+            pass
+            #print("one")"""
+
 
 # https://izik1.github.io/gbops/index.html
 with open("dmgops.json", "r") as f:
@@ -35,24 +72,23 @@ for i, val in enumerate(data["Unprefixed"]):
     name = val["Name"]
     group = val["Group"]
     length = str((int(val["Length"]) - 1))
-    opcode = "0x{0:0{1}X}".format(i, 2)
+    opcode = "0x{0:0{1}x}".format(i, 2)
     cycles = str(val["TCyclesNoBranch"])
 
     unprefixed += '{{ "{0}", {1} }}, // {2}\n'.format(name, length, opcode)
 
     if name == "UNUSED":
-        unprefixedFunctionPtrs.append("{0} => self.opcode_unused(),".format(opcode))
+        unprefixedFunctionPtrs.append(f"{opcode} => self.opcode_unused(),")
         unprefixedInstructionCycles.append("-1")
     else:
-        unprefixedFunctionPtrs.append("{0} => self.opcode_{0}(),".format(opcode))
-        unprefixedFunctionDecl.append(
-            "auto opcode_{0}() -> void; // {1}".format(opcode, name)
-        )
+        unprefixedFunctionPtrs.append(f"{opcode} => self.opcode_{opcode}(),")
+        unprefixedFunctionDecl.append(f"auto opcode_{opcode}() -> void; // {name}")
 
-        functionBodies[group].append(
-            "auto CPU::opcode_{0}() -> void {{\n  // {1}\n  // {2}\n}}\n".format(
-                opcode, name, length
-            )
+        unprefixedFunctionBodies[group].append(
+            f"/// {name}\n"
+            f"pub(super) opcode_{opcode}(&mut self) {{\n"
+            f"    \n"
+            f"}}\n"
         )
         unprefixedInstructionCycles.append(cycles)
 
@@ -60,23 +96,24 @@ for i, val in enumerate(data["CBPrefixed"]):
     name = val["Name"]
     group = val["Group"]
     length = str((int(val["Length"]) - 1))
-    opcode = "0x{0:0{1}X}".format(i, 2)
+    opcode = "0x{0:0{1}x}".format(i, 2)
     cycles = str(val["TCyclesNoBranch"])
 
-    prefixed += '{{ "{0}", {1} }}, // {2}\n'.format(name, length, opcode)
+    prefixed += f'{{ "{name}", {length} }}, // {opcode}\n'
 
     if name == "UNUSED":
-        prefixedFunctionPtrs.append("{0} => self.opcode_cb_unused(),".format(opcode))
+        prefixedFunctionPtrs.append(f"{opcode} => self.opcode_cb_unused(),")
         prefixedInstructionCycles.append("-1")
     else:
-        prefixedFunctionPtrs.append("{0} => self.opcode_cb_{0}(),".format(opcode))
-        prefixedFunctionDecl.append(
-            "auto opcode_CB_{0}() -> void; // {1}".format(opcode, name)
-        )
-        functionBodies[group].append(
-            "auto CPU::opcode_CB_{0}() -> void {{\n  // {1}\n  // {2}\n\n}}\n".format(
-                opcode, name, length
-            )
+        prefixedFunctionPtrs.append(f"{opcode} => self.opcode_cb_{opcode}(),")
+        prefixedFunctionDecl.append(f"auto opcode_cb_{opcode}() -> void; // {name}")
+
+        getFunctionBody(val)
+        prefixedFunctionBodies[group].append(
+            f"/// {name}\n"
+            f"pub(super) opcode_cb_{opcode}(&mut self) {{\n"
+            f"    {getFunctionBody(val)}\n"
+            f"}}\n"
         )
         prefixedInstructionCycles.append(cycles)
 
@@ -98,13 +135,13 @@ formatStructure(unprefixedInstructionCycles)
 formatStructure(prefixedInstructionCycles)
 
 # Finally write them to their respective files.
-with open("Unprefixed.txt", "w") as f:
+with open("out/Unprefixed.txt", "w") as f:
     f.write(unprefixed)
 
-with open("CBPrefixed.txt", "w") as f:
+with open("out/CBPrefixed.txt", "w") as f:
     f.write(prefixed)
 
-with open("gen_CPU.h", "w") as f:
+with open("out/gen_CPU.h", "w") as f:
     f.write("#include <array>\n\n")
     f.write("class CPU {\n")
 
@@ -141,8 +178,17 @@ with open("gen_CPU.h", "w") as f:
 
     f.write("\n};\n")
 
-for group in functionBodies:
-    fileName = "gen_CPU_" + group.replace("/", "_") + ".cpp"
-    with open(fileName, "w") as f:
-        f.write('#include "gen_CPU.h"\n\n')
-        f.write("\n".join(functionBodies[group]))
+for group in groups:
+    fileName = "out/gen_cpu_" + group.replace("/", "_") + ".rs"
+
+    if len(unprefixedFunctionBodies[group]) > 0:
+        fileName = "out/gen_cpu_" + group.replace("/", "_") + ".rs"
+
+        with open(fileName, "w") as f:
+            f.write("\n".join(unprefixedFunctionBodies[group]))
+
+    if len(prefixedFunctionBodies[group]) > 0:
+        fileName = "out/gen_cpu_" + group.replace("/", "_") + "_prefixed.rs"
+
+        with open(fileName, "w") as f:
+            f.write("\n".join(prefixedFunctionBodies[group]))
