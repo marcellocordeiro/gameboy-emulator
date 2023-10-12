@@ -1,4 +1,5 @@
-#![cfg_attr(feature = "sm83-test-data", cfg(test))]
+#![cfg(feature = "sm83-test-data")]
+#![cfg(test)]
 
 use serde::{Deserialize, Deserializer};
 

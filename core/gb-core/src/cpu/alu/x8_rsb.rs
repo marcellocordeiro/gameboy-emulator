@@ -147,7 +147,8 @@ pub fn swap(f: &mut Flags, value: u8) -> u8 {
     result
 }
 
-#[cfg_attr(feature = "sm83-test-data", cfg(test))]
+#[cfg(feature = "sm83-test-data")]
+#[cfg(test)]
 mod tests {
     use super::*;
 
