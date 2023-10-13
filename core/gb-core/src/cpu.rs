@@ -179,8 +179,8 @@ impl std::fmt::Display for Cpu {
     }
 }
 
-pub mod registers;
 pub mod alu;
+pub mod registers;
 
 mod opcode_map;
 

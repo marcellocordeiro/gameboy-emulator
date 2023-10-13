@@ -9,7 +9,7 @@ macro_rules! ld_r8_r8 {
 }
 
 macro_rules! ld_r8_hl {
-    ($self:ident, $reg:ident, (hl)) => {
+    ($self:ident, $reg:ident, [hl]) => {
         let address = $self.registers.get_hl();
         let value = $self.read_byte(address);
 
@@ -175,7 +175,7 @@ impl Cpu {
 
     /// LD B,(HL)
     pub(super) fn opcode_0x46(&mut self) {
-        ld_r8_hl!(self, b, (hl));
+        ld_r8_hl!(self, b, [hl]);
     }
 
     /// LD B,A
@@ -215,7 +215,7 @@ impl Cpu {
 
     /// LD C,(HL)
     pub(super) fn opcode_0x4e(&mut self) {
-        ld_r8_hl!(self, c, (hl));
+        ld_r8_hl!(self, c, [hl]);
     }
 
     /// LD C,A
@@ -255,7 +255,7 @@ impl Cpu {
 
     /// LD D,(HL)
     pub(super) fn opcode_0x56(&mut self) {
-        ld_r8_hl!(self, d, (hl));
+        ld_r8_hl!(self, d, [hl]);
     }
 
     /// LD D,A
@@ -295,7 +295,7 @@ impl Cpu {
 
     /// LD E,(HL)
     pub(super) fn opcode_0x5e(&mut self) {
-        ld_r8_hl!(self, e, (hl));
+        ld_r8_hl!(self, e, [hl]);
     }
 
     /// LD E,A
@@ -335,7 +335,7 @@ impl Cpu {
 
     /// LD H,(HL)
     pub(super) fn opcode_0x66(&mut self) {
-        ld_r8_hl!(self, h, (hl));
+        ld_r8_hl!(self, h, [hl]);
     }
 
     /// LD H,A
@@ -375,7 +375,7 @@ impl Cpu {
 
     /// LD L,(HL)
     pub(super) fn opcode_0x6e(&mut self) {
-        ld_r8_hl!(self, l, (hl));
+        ld_r8_hl!(self, l, [hl]);
     }
 
     /// LD L,A
@@ -471,7 +471,7 @@ impl Cpu {
 
     /// LD A,(HL)
     pub(super) fn opcode_0x7e(&mut self) {
-        ld_r8_hl!(self, a, (hl));
+        ld_r8_hl!(self, a, [hl]);
     }
 
     /// LD A,A
