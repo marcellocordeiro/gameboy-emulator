@@ -179,10 +179,11 @@ impl std::fmt::Display for Cpu {
     }
 }
 
-mod opcode_map;
-mod registers;
+pub mod registers;
+pub mod alu;
 
-mod alu;
+mod opcode_map;
+
 mod control_br;
 mod control_br_aux;
 mod control_misc;
