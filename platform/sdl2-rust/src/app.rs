@@ -1,5 +1,5 @@
 use gb_core::{
-    constants::{Frame, FRAME_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH},
+    constants::{ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
     GameBoy,
 };
 use sdl2::{event::Event, keyboard::Keycode, pixels::PixelFormatEnum, render::Texture};
@@ -9,14 +9,17 @@ use crate::key_mappings;
 pub struct App {
     gb: GameBoy,
 
-    pixels: Box<Frame>,
+    pixels: Box<ScreenPixels>,
 }
 
 impl App {
     pub fn new(gb: GameBoy) -> Self {
         Self {
             gb,
-            pixels: vec![0; FRAME_SIZE].into_boxed_slice().try_into().unwrap(),
+            pixels: vec![0; SCREEN_PIXELS_SIZE]
+                .into_boxed_slice()
+                .try_into()
+                .unwrap(),
         }
     }
 

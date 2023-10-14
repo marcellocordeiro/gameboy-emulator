@@ -3,14 +3,14 @@ use egui::{
     CentralPanel, Color32, Context, Image, TextureOptions,
 };
 use gb_core::{
-    constants::{Frame, FRAME_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH},
+    constants::{ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
     GameBoy,
 };
 
 use crate::utils::scaling::integer_scaling_size;
 
 pub struct ScreenArea {
-    pixels: Box<Frame>,
+    pixels: Box<ScreenPixels>,
     texture: TextureHandle,
 }
 
@@ -25,7 +25,10 @@ impl ScreenArea {
         };
 
         Self {
-            pixels: vec![0; FRAME_SIZE].into_boxed_slice().try_into().unwrap(),
+            pixels: vec![0; SCREEN_PIXELS_SIZE]
+                .into_boxed_slice()
+                .try_into()
+                .unwrap(),
             texture,
         }
     }

@@ -9,7 +9,7 @@ use crate::{
     joypad::Joypad,
     serial::Serial,
     timer::Timer,
-    utils::macros::in_cgb_mode,
+    utils::{macros::in_cgb_mode, screen::Screen},
 };
 
 use self::{
@@ -64,6 +64,10 @@ impl Memory {
                 self.set_cgb_mode(true);
             }
         };
+    }
+
+    pub fn screen(&self) -> &Screen {
+        &self.graphics.screen()
     }
 
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {

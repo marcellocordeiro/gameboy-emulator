@@ -20,7 +20,7 @@
 use std::ffi::{c_uchar, c_ulonglong};
 
 use gb_core::{
-    constants::{Frame, SCREEN_HEIGHT, SCREEN_WIDTH},
+    constants::{ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH},
     GameBoy,
 };
 
@@ -94,7 +94,7 @@ pub unsafe extern "C" fn gameboy_draw_into_frame_rgba8888(
 ) {
     let gb = unsafe { &mut *gb_ptr };
 
-    let slice: &mut Frame = unsafe {
+    let slice: &mut ScreenPixels = unsafe {
         std::slice::from_raw_parts_mut(frame, SCREEN_WIDTH * SCREEN_HEIGHT * 4)
             .try_into()
             .unwrap_unchecked()

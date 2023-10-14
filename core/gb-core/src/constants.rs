@@ -1,5 +1,3 @@
-use crate::utils::color::Color;
-
 pub const ONE_KIB: usize = 0x400;
 
 pub const ONE_MIB_TO_KIB: usize = 1024;
@@ -7,7 +5,7 @@ pub const ONE_MIB_TO_KIB: usize = 1024;
 pub const SCREEN_WIDTH: usize = 160;
 pub const SCREEN_HEIGHT: usize = 144;
 
-pub const FRAME_SIZE: usize = SCREEN_WIDTH * SCREEN_HEIGHT * core::mem::size_of::<u32>();
+pub const SCREEN_PIXELS_SIZE: usize = SCREEN_WIDTH * SCREEN_HEIGHT * core::mem::size_of::<u32>();
 
 #[cfg(not(feature = "cgb"))]
 pub const TILE_DATA_FRAME_WIDTH: usize = 128;
@@ -20,6 +18,5 @@ pub const TILE_DATA_FRAME_SIZE: usize =
     TILE_DATA_FRAME_WIDTH * TILE_DATA_FRAME_HEIGHT * core::mem::size_of::<u32>();
 pub const TILES_PER_LINE: usize = 16;
 
-pub type Framebuffer = [Color; SCREEN_WIDTH * SCREEN_HEIGHT];
-pub type Frame = [u8; FRAME_SIZE];
+pub type ScreenPixels = [u8; SCREEN_PIXELS_SIZE];
 pub type TileDataFrame = [u8; TILE_DATA_FRAME_SIZE];

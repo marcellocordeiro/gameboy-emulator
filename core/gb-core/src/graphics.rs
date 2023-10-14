@@ -1,9 +1,8 @@
 use crate::{
     cartridge::info::Info,
-    constants::{Frame, Framebuffer, SCREEN_HEIGHT, SCREEN_WIDTH},
     utils::{
-        color::Color,
         macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
+        screen::Screen,
     },
 };
 
@@ -18,6 +17,7 @@ use self::{
 };
 
 #[allow(clippy::struct_excessive_bools)]
+#[derive(Default)]
 pub struct Graphics {
     // Registers
     lcdc: LcdControl,
@@ -53,61 +53,10 @@ pub struct Graphics {
     mode: StatusMode,
     cycles: u32,
 
-    framebuffer: Box<Framebuffer>,
-    internal_framebuffer: Box<Framebuffer>,
+    screen: Screen,
+    internal_screen: Screen,
 
     cgb_mode: bool,
-}
-
-impl Default for Graphics {
-    fn default() -> Self {
-        Self {
-            lcdc: LcdControl::default(),
-            stat: LcdStatus::default(),
-            scy: 0,
-            scx: 0,
-            ly: 0,
-            lyc: 0,
-            bgp: 0,
-            obp0: 0xFF,
-            obp1: 0xFF,
-            wy: 0,
-            wx: 0,
-            window_internal_counter: 0,
-
-            bcps: 0,
-            bg_cram: ColorRam::default(),
-
-            ocps: 0,
-            obj_cram: ColorRam::default(),
-
-            opri: false,
-
-            stat_irq: false,
-            vblank_irq: false,
-
-            vram: VideoRam::default(),
-            oam: Oam::default(),
-
-            oam_dma: OamDma::default(),
-            vram_dma: VramDma::default(),
-
-            mode: StatusMode::OamScan,
-            cycles: 0,
-
-            framebuffer: vec![Color::SYSTEM_DEFAULT; SCREEN_WIDTH * SCREEN_HEIGHT]
-                .into_boxed_slice()
-                .try_into()
-                .unwrap(),
-
-            internal_framebuffer: vec![Color::SYSTEM_DEFAULT; SCREEN_WIDTH * SCREEN_HEIGHT]
-                .into_boxed_slice()
-                .try_into()
-                .unwrap(),
-
-            cgb_mode: false,
-        }
-    }
 }
 
 impl Graphics {
@@ -142,22 +91,8 @@ impl Graphics {
         }
     }
 
-    pub fn draw_into_frame_rgba8888(&self, frame: &mut Frame) {
-        for (i, pixel) in self.framebuffer.iter().enumerate() {
-            frame[i * 4] = pixel.red;
-            frame[(i * 4) + 1] = pixel.green;
-            frame[(i * 4) + 2] = pixel.blue;
-            frame[(i * 4) + 3] = 0xFF;
-        }
-    }
-
-    pub fn draw_into_frame_bgra8888(&self, frame: &mut Frame) {
-        for (i, pixel) in self.framebuffer.iter().enumerate() {
-            frame[i * 4] = pixel.blue;
-            frame[(i * 4) + 1] = pixel.green;
-            frame[(i * 4) + 2] = pixel.red;
-            frame[(i * 4) + 3] = 0xFF;
-        }
+    pub fn screen(&self) -> &Screen {
+        &self.screen
     }
 
     pub fn in_hblank(&self) -> bool {
@@ -403,7 +338,7 @@ impl Graphics {
             }
 
             StatusMode::Vblank => {
-                std::mem::swap(&mut self.framebuffer, &mut self.internal_framebuffer);
+                std::mem::swap(&mut self.screen, &mut self.internal_screen);
                 self.vblank_irq = true;
 
                 if self.stat.get_vblank_irq() || self.stat.get_oam_irq() {

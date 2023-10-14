@@ -2,10 +2,11 @@ use bitflags::bitflags;
 
 use super::Graphics;
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Default, Clone, Copy, PartialEq, Eq)]
 pub enum StatusMode {
     Hblank = 0b00,
     Vblank = 0b01,
+    #[default] // why
     OamScan = 0b10,
     Drawing = 0b11,
 }

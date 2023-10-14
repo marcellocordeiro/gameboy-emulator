@@ -21,14 +21,14 @@ use wasm_bindgen::{prelude::wasm_bindgen, Clamped};
 use web_sys::{CanvasRenderingContext2d, ImageData};
 
 use gb_core::{
-    constants::{Frame, FRAME_SIZE, SCREEN_WIDTH},
+    constants::{ScreenPixels, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
     GameBoy as GameBoyInternal,
 };
 
 #[wasm_bindgen]
 pub struct GameBoy {
     gb: GameBoyInternal,
-    frame: Box<Frame>,
+    frame: Box<ScreenPixels>,
 }
 
 #[wasm_bindgen]
@@ -44,7 +44,10 @@ impl GameBoy {
 
         Self {
             gb: GameBoyInternal::new(),
-            frame: vec![0; FRAME_SIZE].into_boxed_slice().try_into().unwrap(),
+            frame: vec![0; SCREEN_PIXELS_SIZE]
+                .into_boxed_slice()
+                .try_into()
+                .unwrap(),
         }
     }
 

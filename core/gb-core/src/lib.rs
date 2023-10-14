@@ -18,7 +18,7 @@
 )]
 
 use cartridge::error::Error as CartridgeError;
-use constants::Frame;
+use constants::ScreenPixels;
 use cpu::Cpu;
 use utils::button::Button;
 
@@ -86,12 +86,12 @@ impl GameBoy {
         self.cpu.memory.joypad.key_up(key);
     }
 
-    pub fn draw_into_frame_rgba8888(&self, frame: &mut Frame) {
-        self.cpu.memory.graphics.draw_into_frame_rgba8888(frame);
+    pub fn draw_into_frame_rgba8888(&self, frame: &mut ScreenPixels) {
+        self.cpu.memory.screen().draw_into_frame_rgba8888(frame);
     }
 
-    pub fn draw_into_frame_bgra8888(&self, frame: &mut Frame) {
-        self.cpu.memory.graphics.draw_into_frame_bgra8888(frame);
+    pub fn draw_into_frame_bgra8888(&self, frame: &mut ScreenPixels) {
+        self.cpu.memory.screen().draw_into_frame_bgra8888(frame);
     }
 }
 

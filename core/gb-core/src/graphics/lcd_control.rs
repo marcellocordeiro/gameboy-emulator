@@ -116,7 +116,7 @@ impl Graphics {
             self.cycles = 0;
             self.ly = 0;
 
-            self.internal_framebuffer.fill(Color::SYSTEM_DEFAULT);
+            self.internal_screen.screen.fill(Color::SYSTEM_DEFAULT);
         }
 
         self.lcdc = new_lcdc;

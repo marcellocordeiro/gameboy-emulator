@@ -1,5 +1,5 @@
 use gb_core::{
-    constants::{FRAME_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH},
+    constants::{SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
     GameBoy,
 };
 
@@ -18,7 +18,7 @@ pub fn validate_fibonacci(gb: GameBoy) {
 }
 
 pub fn validate_screenshot(gb: GameBoy, name: &'static str) {
-    let mut frame = [0; FRAME_SIZE];
+    let mut frame = [0; SCREEN_PIXELS_SIZE];
 
     gb.draw_into_frame_rgba8888(&mut frame);
 

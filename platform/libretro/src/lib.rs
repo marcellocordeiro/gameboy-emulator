@@ -18,7 +18,7 @@
 )]
 
 use gb_core::{
-    constants::{Frame, FRAME_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH},
+    constants::{ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
     utils::button::Button,
     GameBoy,
 };
@@ -31,7 +31,7 @@ use libretro_rs::{
 struct Emulator {
     gb: GameBoy,
 
-    pixels: Box<Frame>,
+    pixels: Box<ScreenPixels>,
 }
 
 impl RetroCore for Emulator {
@@ -40,7 +40,10 @@ impl RetroCore for Emulator {
 
         Self {
             gb: GameBoy::default(),
-            pixels: vec![0; FRAME_SIZE].into_boxed_slice().try_into().unwrap(),
+            pixels: vec![0; SCREEN_PIXELS_SIZE]
+                .into_boxed_slice()
+                .try_into()
+                .unwrap(),
         }
     }
 
