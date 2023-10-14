@@ -205,8 +205,10 @@ impl Memory {
             0xFF4A => self.graphics.read_wy(),
             0xFF4B => self.graphics.read_wx(),
 
-            0xFF4C => 0xFF,                          // (CGB) KEY0: CGB mode.
-            0xFF4D => self.speed_switch.read(),      // (CGB) KEY1: Prepare speed switch.
+            0xFF4C => 0xFF, // (CGB) KEY0: CGB mode.
+
+            0xFF4D => self.speed_switch.read(), // (CGB) KEY1: Prepare speed switch.
+
             0xFF4F => self.graphics.vram.read_vbk(), // (CGB) VRAM bank selection.
 
             0xFF50 => self.bootrom.read_status(),
@@ -228,16 +230,16 @@ impl Memory {
 
             0xFF70 => self.wram.read_svbk(), // (CGB) WRAM bank selection.
 
-            0xFF80..=0xFFFE => self.hram.read(address),
-
-            0xFFFF => self.interrupts.read_enable(),
-
             0xFF72 => self.undocumented_registers.read_0xff72(),
             0xFF73 => self.undocumented_registers.read_0xff73(),
             0xFF74 => self.undocumented_registers.read_0xff74(),
             0xFF75 => self.undocumented_registers.read_0xff75(),
 
-            0xFF76..=0xFF77 => self.audio.read(address),
+            0xFF76 | 0xFF77 => self.audio.read(address),
+
+            0xFF80..=0xFFFE => self.hram.read(address),
+
+            0xFFFF => self.interrupts.read_enable(),
 
             0xFF03 => 0xFF,          // Unused.
             0xFF08 => 0xFF,          // Unused.
@@ -283,7 +285,7 @@ impl Memory {
             // I/O registers.
             0xFF00 => self.joypad.write(value),
 
-            0xFF01..=0xFF02 => self.serial.write(address, value),
+            0xFF01 | 0xFF02 => self.serial.write(address, value),
             0xFF04..=0xFF07 => self.timer.write(address, value),
 
             0xFF0F => self.interrupts.write_flags(value),
@@ -295,7 +297,7 @@ impl Memory {
             0xFF41 => self.graphics.write_stat(value),
             0xFF42 => self.graphics.write_scy(value),
             0xFF43 => self.graphics.write_scx(value),
-            0xFF44 => println!("[video.rs] LY is read-only."),
+            0xFF44 => (),
             0xFF45 => self.graphics.write_lyc(value),
             0xFF46 => self.graphics.oam_dma.write(value),
             0xFF47 => self.graphics.write_bgp(value),
@@ -305,6 +307,7 @@ impl Memory {
             0xFF4B => self.graphics.write_wx(value),
 
             0xFF4C => self.set_cgb_mode(CgbFlag::with_code(value).has_cgb_support()), // (CGB) KEY0: CGB mode.
+
             0xFF4D => self.speed_switch.write(value), // (CGB) KEY1: Prepare speed switch.
 
             0xFF4F => self.graphics.vram.write_vbk(value), // (CGB) VRAM bank selection.
@@ -328,16 +331,16 @@ impl Memory {
 
             0xFF70 => self.wram.write_svbk(value), // (CGB) WRAM bank selection.
 
-            0xFF80..=0xFFFE => self.hram.write(address, value),
-
-            0xFFFF => self.interrupts.write_enable(value),
-
             0xFF72 => self.undocumented_registers.write_0xff72(value),
             0xFF73 => self.undocumented_registers.write_0xff73(value),
             0xFF74 => self.undocumented_registers.write_0xff74(value),
             0xFF75 => self.undocumented_registers.write_0xff75(value),
 
-            0xFF76..=0xFF77 => self.audio.write(address, value),
+            0xFF76 | 0xFF77 => self.audio.write(address, value),
+
+            0xFF80..=0xFFFE => self.hram.write(address, value),
+
+            0xFFFF => self.interrupts.write_enable(value),
 
             0xFF03 => (),          // Unused.
             0xFF08 => (),          // Unused.

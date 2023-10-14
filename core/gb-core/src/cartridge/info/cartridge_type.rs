@@ -41,11 +41,7 @@ impl CartridgeType {
             // $00 ROM ONLY
             // $08 ROM+RAM
             // $09 ROM+RAM+BATTERY
-            0x00 => Self::NoMbc,
-            0x08..=0x09 => {
-                // NoMbc,
-                todo!("NoMBC RAM/RAM+BATTERY");
-            }
+            0x00 | 0x08 | 0x09 => Self::NoMbc,
 
             // $01 MBC1
             // $02 MBC1+RAM
@@ -54,7 +50,7 @@ impl CartridgeType {
 
             // $05 MBC2
             // $06 MBC2+BATTERY
-            0x05..=0x06 => Self::Mbc2,
+            0x05 | 0x06 => Self::Mbc2,
 
             // $0B MMM01
             // $0C MMM01+RAM

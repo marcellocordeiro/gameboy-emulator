@@ -1,5 +1,3 @@
-#![cfg(feature = "sm83-test-data")]
-
 use serde::{Deserialize, Deserializer};
 
 use gb_core::cpu::{alu::*, registers::Flags};

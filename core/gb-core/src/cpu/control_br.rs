@@ -229,7 +229,7 @@ impl Cpu {
         let address = self.registers.get_hl();
 
         // Can't use `jump_absolute` because this isn't supposed to tick.
-        self.registers.program_counter = address;
+        self.registers.pc = address;
     }
 
     /// RST 28h

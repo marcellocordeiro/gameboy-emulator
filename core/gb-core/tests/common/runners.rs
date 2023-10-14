@@ -11,7 +11,7 @@ const BREAK_OPCODE: u8 = 0x40; // LD B,B
 pub fn run_until_break(gb: &mut GameBoy) {
     let start_time = Instant::now();
 
-    while gb.cpu.memory.read(gb.cpu.registers.program_counter) != BREAK_OPCODE {
+    while gb.cpu.memory.read(gb.cpu.registers.pc) != BREAK_OPCODE {
         gb.cpu.step();
 
         if Instant::now() - start_time > TIMEOUT {

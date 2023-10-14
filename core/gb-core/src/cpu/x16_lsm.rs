@@ -13,7 +13,7 @@ impl Cpu {
     /// LD (u16),SP
     pub(super) fn opcode_0x08(&mut self) {
         let address = self.read_word_operand();
-        let value = self.registers.stack_pointer;
+        let value = self.registers.sp;
 
         self.write_word(address, value);
     }
@@ -36,7 +36,7 @@ impl Cpu {
     pub(super) fn opcode_0x31(&mut self) {
         let value = self.read_word_operand();
 
-        self.registers.stack_pointer = value;
+        self.registers.sp = value;
     }
 
     /// POP BC
@@ -107,6 +107,6 @@ impl Cpu {
     pub(super) fn opcode_0xf9(&mut self) {
         self.tick();
 
-        self.registers.stack_pointer = self.registers.get_hl();
+        self.registers.sp = self.registers.get_hl();
     }
 }

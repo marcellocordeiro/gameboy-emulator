@@ -1,4 +1,4 @@
-use super::{registers::Flags, Cpu};
+use super::{alu, Cpu};
 
 // Completed, may need some refactoring.
 
@@ -15,7 +15,12 @@ impl Cpu {
     pub(super) fn opcode_0x09(&mut self) {
         self.tick();
 
-        self.add_to_hl(self.registers.get_bc());
+        let hl = self.registers.get_hl();
+        let value = self.registers.get_bc();
+
+        let result = alu::add_to_hl(&mut self.registers.f, hl, value);
+
+        self.registers.set_hl(result);
     }
 
     /// DEC BC
@@ -38,7 +43,12 @@ impl Cpu {
     pub(super) fn opcode_0x19(&mut self) {
         self.tick();
 
-        self.add_to_hl(self.registers.get_de());
+        let hl = self.registers.get_hl();
+        let value = self.registers.get_de();
+
+        let result = alu::add_to_hl(&mut self.registers.f, hl, value);
+
+        self.registers.set_hl(result);
     }
 
     /// DEC DE
@@ -61,7 +71,12 @@ impl Cpu {
     pub(super) fn opcode_0x29(&mut self) {
         self.tick();
 
-        self.add_to_hl(self.registers.get_hl());
+        let hl = self.registers.get_hl();
+        let value = hl;
+
+        let result = alu::add_to_hl(&mut self.registers.f, hl, value);
+
+        self.registers.set_hl(result);
     }
 
     /// DEC HL
@@ -76,21 +91,26 @@ impl Cpu {
     pub(super) fn opcode_0x33(&mut self) {
         self.tick();
 
-        self.registers.stack_pointer = self.registers.stack_pointer.wrapping_add(1);
+        self.registers.sp = self.registers.sp.wrapping_add(1);
     }
 
     /// ADD HL,SP
     pub(super) fn opcode_0x39(&mut self) {
         self.tick();
 
-        self.add_to_hl(self.registers.stack_pointer);
+        let hl = self.registers.get_hl();
+        let value = self.registers.sp;
+
+        let result = alu::add_to_hl(&mut self.registers.f, hl, value);
+
+        self.registers.set_hl(result);
     }
 
     /// DEC SP
     pub(super) fn opcode_0x3b(&mut self) {
         self.tick();
 
-        self.registers.stack_pointer = self.registers.stack_pointer.wrapping_sub(1);
+        self.registers.sp = self.registers.sp.wrapping_sub(1);
     }
 
     /// ADD SP,i8
@@ -100,24 +120,14 @@ impl Cpu {
         self.tick();
         self.tick();
 
-        self.add_to_stack_pointer(value.into());
+        self.registers.sp = alu::add_to_sp(&mut self.registers.f, self.registers.sp, value.into());
     }
 
     /// LD HL,SP+i8
     pub(super) fn opcode_0xf8(&mut self) {
-        let stack_pointer = self.registers.stack_pointer;
-        let offset = self.read_byte_operand() as i8 as i16;
+        let value = self.read_byte_operand() as i8;
 
-        let result = stack_pointer.wrapping_add_signed(offset);
-
-        let half_carry = (stack_pointer & 0x000F).wrapping_add_signed(offset & 0x000F) > 0x000F;
-        let carry = (stack_pointer & 0x00FF).wrapping_add_signed(offset & 0x00FF) > 0x00FF;
-
-        // Store results.
-        self.registers.f.set(Flags::ZERO, false);
-        self.registers.f.set(Flags::N_ADD_SUB, false);
-        self.registers.f.set(Flags::HALF_CARRY, half_carry);
-        self.registers.f.set(Flags::CARRY, carry);
+        let result = alu::add_to_sp(&mut self.registers.f, self.registers.sp, value.into());
 
         self.tick();
 

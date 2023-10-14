@@ -13,8 +13,8 @@ pub struct Registers {
     pub h: u8,
     pub l: u8,
 
-    pub program_counter: u16,
-    pub stack_pointer: u16,
+    pub pc: u16,
+    pub sp: u16,
 
     pub ime: ImeState, // Interrupt Master Enable (Write only).
 }
@@ -111,8 +111,8 @@ impl std::fmt::Display for Registers {
             self.l
         );
 
-        let pc_line = format!("PC: {:#06X}", self.program_counter);
-        let sp_line = format!("SP: {:#06X}", self.stack_pointer);
+        let pc_line = format!("PC: {:#06X}", self.pc);
+        let sp_line = format!("SP: {:#06X}", self.sp);
 
         let flags_line = format!(
             "Flags: Z: {} | N: {} | H: {} | C: {}",

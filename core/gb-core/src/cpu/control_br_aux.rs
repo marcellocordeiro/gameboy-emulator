@@ -13,21 +13,21 @@ impl Cpu {
     pub(super) fn jump_absolute(&mut self, address: u16) {
         self.tick();
 
-        self.registers.program_counter = address;
+        self.registers.pc = address;
     }
 
     // CALL
     pub(super) fn call_routine(&mut self, routine_address: u16) {
         self.tick();
 
-        self.push_word_stack(self.registers.program_counter);
-        self.registers.program_counter = routine_address;
+        self.push_word_stack(self.registers.pc);
+        self.registers.pc = routine_address;
     }
 
     // RET
     pub(super) fn return_from_routine(&mut self) {
         self.tick();
 
-        self.registers.program_counter = self.pop_word_stack();
+        self.registers.pc = self.pop_word_stack();
     }
 }
