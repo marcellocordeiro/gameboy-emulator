@@ -66,7 +66,6 @@ impl VideoRam {
         self.data[address as usize - 0x8000 + self.bank_offset()]
     }
 
-    #[cfg(feature = "cgb")]
     pub fn read_bank_0(&self, address: u16) -> u8 {
         self.data[address as usize - 0x8000]
     }

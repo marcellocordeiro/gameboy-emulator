@@ -4,9 +4,9 @@ use super::Graphics;
 
 #[derive(Default, Clone, Copy, PartialEq, Eq)]
 pub enum StatusMode {
+    #[default]
     Hblank = 0b00,
     Vblank = 0b01,
-    #[default] // why
     OamScan = 0b10,
     Drawing = 0b11,
 }

@@ -67,7 +67,7 @@ impl Memory {
     }
 
     pub fn screen(&self) -> &Screen {
-        &self.graphics.screen()
+        self.graphics.screen()
     }
 
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {

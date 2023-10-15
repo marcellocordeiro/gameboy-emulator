@@ -6,14 +6,19 @@ use super::Graphics;
 
 impl Graphics {
     pub fn draw_line(&mut self) {
-        let line_offset = SCREEN_WIDTH * (self.ly as usize);
         let mut bg_priority = [false; SCREEN_WIDTH];
 
-        self.draw_tiles(line_offset, &mut bg_priority);
-        self.draw_sprites(line_offset, &bg_priority);
+        self.draw_tiles(&mut bg_priority);
+        self.draw_sprites(&bg_priority);
     }
 
-    fn draw_tiles(&mut self, line_offset: usize, bg_priority: &mut [bool; SCREEN_WIDTH]) {
+    fn draw_tiles(&mut self, bg_priority: &mut [bool; SCREEN_WIDTH]) {
+        let screen_line = {
+            let line_offset = SCREEN_WIDTH * (self.ly as usize);
+
+            &mut self.internal_screen.screen[line_offset..(line_offset + SCREEN_WIDTH)]
+        };
+
         let should_render_win = self.lcdc.get_win_enable() && self.wy <= self.ly;
         let should_render_bg = self.lcdc.get_bg_enable();
 
@@ -43,10 +48,9 @@ impl Graphics {
 
                 (x, y, tile_map_base_address)
             } else {
-                let address = line_offset + (i as usize);
                 let pixel = Color::SYSTEM_DEFAULT;
 
-                self.internal_screen.screen[address] = pixel;
+                screen_line[i as usize] = pixel;
 
                 continue;
             };
@@ -59,7 +63,7 @@ impl Graphics {
             };
 
             let tile_address = {
-                let tile_index = self.vram.read(tile_map_address) as u16;
+                let tile_index = self.vram.read_bank_0(tile_map_address) as u16;
 
                 if self.lcdc.get_bg_win_addr() {
                     // Unsigned mapping.
@@ -79,8 +83,8 @@ impl Graphics {
                 let base_address = tile_address + line;
 
                 (
-                    self.vram.read(base_address),
-                    self.vram.read(base_address + 1),
+                    self.vram.read_bank_0(base_address),
+                    self.vram.read_bank_0(base_address + 1),
                 )
             };
 
@@ -95,23 +99,28 @@ impl Graphics {
 
             bg_priority[i as usize] = color_id != 0;
 
-            let framebuffer_address = line_offset + (i as usize);
-            let framebuffer_pixel = Color::from_dmg_color_id_with_palette(color_id, self.bgp);
-            self.internal_screen.screen[framebuffer_address] = framebuffer_pixel;
+            let pixel = Color::from_dmg_color_id_with_palette(color_id, self.bgp);
+            screen_line[i as usize] = pixel;
         }
     }
 
-    fn draw_sprites(&mut self, line_offset: usize, bg_priority: &[bool; SCREEN_WIDTH]) {
+    fn draw_sprites(&mut self, bg_priority: &[bool; SCREEN_WIDTH]) {
         if !self.lcdc.get_obj_enable() {
             return;
         }
+
+        let screen_line = {
+            let line_offset = SCREEN_WIDTH * (self.ly as usize);
+
+            &mut self.internal_screen.screen[line_offset..(line_offset + SCREEN_WIDTH)]
+        };
 
         let obj_height = if self.lcdc.get_obj_size() { 16 } else { 8 };
         let sprite_buffer = self
             .oam
             .get_sprites_in_line_by_coordinate(self.ly, obj_height);
 
-        // Since `sprite_buffer`'s priority is increasing, we need to reverse the iterator.
+        // From lowest to highest priority.
         for sprite in sprite_buffer.iter().rev() {
             let selected_palette = if sprite.flags.obp1_selected {
                 self.obp1
@@ -148,8 +157,8 @@ impl Graphics {
 
             let (tile_data_lo, tile_data_hi) = {
                 (
-                    self.vram.read(tile_address),
-                    self.vram.read(tile_address + 1),
+                    self.vram.read_bank_0(tile_address),
+                    self.vram.read_bank_0(tile_address + 1),
                 )
             };
 
@@ -173,11 +182,9 @@ impl Graphics {
                     continue;
                 }
 
-                let framebuffer_address = line_offset + mapped_x;
-                let framebuffer_pixel =
-                    Color::from_dmg_color_id_with_palette(color_id, selected_palette);
+                let pixel = Color::from_dmg_color_id_with_palette(color_id, selected_palette);
 
-                self.internal_screen.screen[framebuffer_address] = framebuffer_pixel;
+                screen_line[mapped_x] = pixel;
             }
         }
     }

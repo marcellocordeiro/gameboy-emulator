@@ -13,15 +13,20 @@ enum Priority {
 
 impl Graphics {
     pub fn draw_line(&mut self) {
-        let line_offset = SCREEN_WIDTH * (self.ly as usize);
         let mut priority = [Priority::Object; SCREEN_WIDTH];
 
-        self.draw_tiles(line_offset, &mut priority);
-        self.draw_sprites(line_offset, &priority);
+        self.draw_tiles(&mut priority);
+        self.draw_sprites(&priority);
     }
 
     #[allow(clippy::too_many_lines)]
-    fn draw_tiles(&mut self, line_offset: usize, priority: &mut [Priority; SCREEN_WIDTH]) {
+    fn draw_tiles(&mut self, priority: &mut [Priority; SCREEN_WIDTH]) {
+        let screen_line = {
+            let line_offset = SCREEN_WIDTH * (self.ly as usize);
+
+            &mut self.internal_screen.screen[line_offset..(line_offset + SCREEN_WIDTH)]
+        };
+
         let should_render_win = self.lcdc.get_win_enable() && self.wy <= self.ly;
         let should_render_bg = self.cgb_mode || self.lcdc.get_bg_enable();
 
@@ -51,10 +56,9 @@ impl Graphics {
 
                 (x, y, tile_map_base_address)
             } else {
-                let address = line_offset + (i as usize);
                 let pixel = Color::SYSTEM_DEFAULT;
 
-                self.screen.screen[address] = pixel;
+                screen_line[i as usize] = pixel;
 
                 continue;
             };
@@ -126,7 +130,6 @@ impl Graphics {
 
             let color_id = {
                 let bit = if x_flip { 7 - (x % 8) } else { x % 8 } as usize;
-                // let bit = (x % 8) as usize;
 
                 let lo = ((tile_data_lo << bit) >> 7) & 0b1;
                 let hi = ((tile_data_hi << bit) >> 7) & 0b1;
@@ -145,9 +148,8 @@ impl Graphics {
                     priority[i as usize] = Priority::Background;
                 }
 
-                let framebuffer_address = line_offset + (i as usize);
-                let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
-                self.screen.screen[framebuffer_address] = framebuffer_pixel;
+                let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
+                screen_line[i as usize] = pixel;
             } else {
                 let color_index = Color::apply_dmg_palette(color_id, self.bgp);
                 let raw_color = self.bg_cram.get_color_rgb555(0, color_index);
@@ -158,17 +160,22 @@ impl Graphics {
                     Priority::Background
                 };
 
-                let framebuffer_address = line_offset + (i as usize);
-                let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
-                self.screen.screen[framebuffer_address] = framebuffer_pixel;
+                let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
+                screen_line[i as usize] = pixel;
             }
         }
     }
 
-    fn draw_sprites(&mut self, line_offset: usize, priority: &[Priority; SCREEN_WIDTH]) {
+    fn draw_sprites(&mut self, priority: &[Priority; SCREEN_WIDTH]) {
         if !self.lcdc.get_obj_enable() {
             return;
         }
+
+        let screen_line = {
+            let line_offset = SCREEN_WIDTH * (self.ly as usize);
+
+            &mut self.internal_screen.screen[line_offset..(line_offset + SCREEN_WIDTH)]
+        };
 
         let obj_height = if self.lcdc.get_obj_size() { 16 } else { 8 };
         let sprite_buffer = if self.opri {
@@ -177,7 +184,8 @@ impl Graphics {
         } else {
             self.oam.get_sprites_in_line_by_oam(self.ly, obj_height)
         };
-        // Since `sprite_buffer`'s priority is increasing, we need to reverse the iterator.
+
+        // From lowest to highest priority.
         for sprite in sprite_buffer.iter().rev() {
             let selected_palette = if sprite.flags.obp1_selected {
                 self.obp1
@@ -254,10 +262,9 @@ impl Graphics {
                         .obj_cram
                         .get_color_rgb555(sprite.flags.palette_number, color_id);
 
-                    let framebuffer_address = line_offset + mapped_x;
-                    let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
+                    let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
 
-                    self.screen.screen[framebuffer_address] = framebuffer_pixel;
+                    screen_line[mapped_x] = pixel;
                 } else {
                     if priority[mapped_x] == Priority::Background && sprite.flags.bg_priority {
                         continue;
@@ -266,10 +273,9 @@ impl Graphics {
                     let color_index = Color::apply_dmg_palette(color_id, selected_palette);
                     let raw_color = self.obj_cram.get_color_rgb555(0, color_index);
 
-                    let framebuffer_address = line_offset + mapped_x;
-                    let framebuffer_pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
+                    let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
 
-                    self.screen.screen[framebuffer_address] = framebuffer_pixel;
+                    screen_line[mapped_x] = pixel;
                 }
             }
         }

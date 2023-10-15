@@ -13,7 +13,7 @@ impl Default for Screen {
 }
 
 impl Screen {
-    pub fn new() -> Screen {
+    pub fn new() -> Self {
         Self {
             screen: vec![Color::SYSTEM_DEFAULT; SCREEN_WIDTH * SCREEN_HEIGHT]
                 .into_boxed_slice()
