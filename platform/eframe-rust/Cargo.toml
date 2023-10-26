@@ -14,7 +14,7 @@ cgb = ["gb-core/cgb"]
 workspace = true
 
 [dependencies]
-clap = "4.4.6"
+clap = "4.4.7"
 eframe = { version = "0.23.0", default-features = false, features = [
     "glow",
     "wayland",
@@ -23,6 +23,6 @@ eframe = { version = "0.23.0", default-features = false, features = [
 egui = "0.23.0"
 env_logger = "0.10.0"
 log = "0.4.20"
-rfd = { version = "0.12.0", default-features = false, features = [
+rfd = { version = "0.12.1", default-features = false, features = [
     "xdg-portal",
 ] }
