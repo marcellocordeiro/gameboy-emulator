@@ -18,9 +18,6 @@ jobs:
         with:
           submodules: "true"
 
-      - name: Install system dependencies
-        run: sudo apt install libsdl2-dev
-
       - name: Build
         run: cargo build --verbose
 
