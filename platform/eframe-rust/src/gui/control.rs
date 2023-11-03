@@ -41,18 +41,18 @@ impl Control {
             .show(egui_ctx, |ui| {
                 if ui
                     .add_enabled(
-                        self.manual_control && gb_ctx.cpu.memory.cartridge.is_some(),
+                        self.manual_control && gb_ctx.memory.cartridge.is_some(),
                         Button::new("Step"),
                     )
                     .clicked()
                 {
-                    gb_ctx.cpu.step();
+                    gb_ctx.cpu.step(&mut gb_ctx.memory);
                     egui_ctx.request_repaint();
                 }
 
                 if ui
                     .add_enabled(
-                        self.manual_control && gb_ctx.cpu.memory.cartridge.is_some(),
+                        self.manual_control && gb_ctx.memory.cartridge.is_some(),
                         Button::new("Run frame"),
                     )
                     .clicked()

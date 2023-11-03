@@ -25,7 +25,17 @@ impl State {
         Window::new("State")
             .open(&mut self.opened)
             .show(egui_ctx, |ui| {
-                ui.label(RichText::new(gb_ctx.cpu.to_string()).font(FontId::monospace(14.0)));
+                let ie_line = format!("IE: {:#04X}", gb_ctx.memory.read(0xFFFF));
+                let if_line = format!("IF: {:#04X}", gb_ctx.memory.read(0xFF0F));
+
+                let ime_line = format!("EI: {}", gb_ctx.cpu.registers.ime);
+
+                let text = format!(
+                    "{}\n\n{}\n\n{}\n{}",
+                    gb_ctx.cpu.registers, ime_line, ie_line, if_line
+                );
+
+                ui.label(RichText::new(text).font(FontId::monospace(14.0)));
             });
     }
 }

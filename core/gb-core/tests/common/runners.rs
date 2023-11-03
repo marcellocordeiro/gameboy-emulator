@@ -11,8 +11,8 @@ const BREAK_OPCODE: u8 = 0x40; // LD B,B
 pub fn run_until_break(gb: &mut GameBoy) {
     let start_time = Instant::now();
 
-    while gb.cpu.memory.read(gb.cpu.registers.pc) != BREAK_OPCODE {
-        gb.cpu.step();
+    while gb.memory.read(gb.cpu.registers.pc) != BREAK_OPCODE {
+        gb.cpu.step(&mut gb.memory);
 
         if Instant::now() - start_time > TIMEOUT {
             panic!("Timed out");
@@ -24,7 +24,7 @@ pub fn run_until_serial_passed(gb: &mut GameBoy) {
     let (sender, receiver) = mpsc::channel::<u8>();
 
     let mut output = String::default();
-    gb.cpu.memory.serial.add_sender(sender);
+    gb.memory.serial.add_sender(sender);
 
     let start_time = Instant::now();
 
@@ -60,7 +60,7 @@ pub fn run_until_memory_status(gb: &mut GameBoy) {
         }
 
         let contents = (0xA004..(0xA004 + 100))
-            .map(|address| gb.cpu.memory.read(address))
+            .map(|address| gb.memory.read(address))
             .take_while(|value| *value != 0)
             .collect::<Vec<u8>>();
 

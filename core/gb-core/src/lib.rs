@@ -20,10 +20,12 @@
 use cartridge::error::Error as CartridgeError;
 use constants::ScreenPixels;
 use cpu::Cpu;
+use memory::Memory;
 use utils::button::Button;
 
 pub struct GameBoy {
     pub cpu: Cpu,
+    pub memory: Memory,
 }
 
 impl Default for GameBoy {
@@ -35,30 +37,34 @@ impl Default for GameBoy {
 impl GameBoy {
     pub fn new() -> Self {
         let mut cpu = Cpu::default();
+        let mut memory = Memory::default();
 
         if !cfg!(feature = "bootrom") {
             cpu.skip_bootrom();
+            memory.skip_bootrom();
         }
 
-        Self { cpu }
+        Self { cpu, memory }
     }
 
     pub fn reset(&mut self) {
         self.cpu.reset();
+        self.memory.reset();
 
         if !cfg!(feature = "bootrom") {
             self.cpu.skip_bootrom();
+            self.memory.skip_bootrom();
         }
     }
 
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         self.reset();
 
-        self.cpu.memory.load_cartridge(rom)
+        self.memory.load_cartridge(rom)
     }
 
     pub fn get_battery(&self) -> Option<&[u8]> {
-        if let Some(cartridge) = self.cpu.memory.cartridge.as_ref() {
+        if let Some(cartridge) = self.memory.cartridge.as_ref() {
             return Some(cartridge.get_battery());
         }
 
@@ -66,7 +72,7 @@ impl GameBoy {
     }
 
     pub fn load_battery(&mut self, file: Vec<u8>) {
-        if let Some(cartridge) = self.cpu.memory.cartridge.as_mut() {
+        if let Some(cartridge) = self.memory.cartridge.as_mut() {
             cartridge.load_battery(file);
         }
     }
@@ -74,24 +80,24 @@ impl GameBoy {
     pub fn run_frame(&mut self) {
         self.cpu.cycles = 0;
         while self.cpu.cycles < (70224 * 2) {
-            self.cpu.step();
+            self.cpu.step(&mut self.memory);
         }
     }
 
     pub fn key_down(&mut self, key: Button) {
-        self.cpu.memory.joypad.key_down(key);
+        self.memory.joypad.key_down(key);
     }
 
     pub fn key_up(&mut self, key: Button) {
-        self.cpu.memory.joypad.key_up(key);
+        self.memory.joypad.key_up(key);
     }
 
     pub fn draw_into_frame_rgba8888(&self, frame: &mut ScreenPixels) {
-        self.cpu.memory.screen().draw_into_frame_rgba8888(frame);
+        self.memory.screen().draw_into_frame_rgba8888(frame);
     }
 
     pub fn draw_into_frame_bgra8888(&self, frame: &mut ScreenPixels) {
-        self.cpu.memory.screen().draw_into_frame_bgra8888(frame);
+        self.memory.screen().draw_into_frame_bgra8888(frame);
     }
 }
 

@@ -1,33 +1,33 @@
-use crate::cpu::Cpu;
+use crate::{cpu::Cpu, memory::Memory};
 
 impl Cpu {
     // JR
-    pub(super) fn jump_relative(&mut self, offset: i8) {
-        self.tick();
+    pub(super) fn jump_relative(&mut self, memory: &mut Memory, offset: i8) {
+        self.tick(memory);
 
         // Offset can be negative.
         self.add_to_pc(offset);
     }
 
     // JP
-    pub(super) fn jump_absolute(&mut self, address: u16) {
-        self.tick();
+    pub(super) fn jump_absolute(&mut self, memory: &mut Memory, address: u16) {
+        self.tick(memory);
 
         self.registers.pc = address;
     }
 
     // CALL
-    pub(super) fn call_routine(&mut self, routine_address: u16) {
-        self.tick();
+    pub(super) fn call_routine(&mut self, memory: &mut Memory, routine_address: u16) {
+        self.tick(memory);
 
-        self.push_word_stack(self.registers.pc);
+        self.push_word_stack(memory, self.registers.pc);
         self.registers.pc = routine_address;
     }
 
     // RET
-    pub(super) fn return_from_routine(&mut self) {
-        self.tick();
+    pub(super) fn return_from_routine(&mut self, memory: &mut Memory) {
+        self.tick(memory);
 
-        self.registers.pc = self.pop_word_stack();
+        self.registers.pc = self.pop_word_stack(memory);
     }
 }

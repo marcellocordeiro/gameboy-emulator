@@ -79,7 +79,6 @@ impl Tiles {
 
     fn update_texture(&mut self, gb_ctx: &GameBoy) {
         gb_ctx
-            .cpu
             .memory
             .graphics
             .vram
@@ -87,7 +86,6 @@ impl Tiles {
 
         #[cfg(feature = "cgb")]
         gb_ctx
-            .cpu
             .memory
             .graphics
             .vram
