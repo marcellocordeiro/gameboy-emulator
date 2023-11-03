@@ -54,7 +54,7 @@ impl Cpu {
 
         let opcode = self.read_byte_operand();
 
-        self.run_next_instruction(opcode);
+        self.run_instruction(opcode);
     }
 
     fn tick(&mut self) {
@@ -177,16 +177,5 @@ impl std::fmt::Display for Cpu {
 }
 
 pub mod alu;
+pub mod instructions;
 pub mod registers;
-
-mod opcode_map;
-
-mod control_br;
-mod control_br_aux;
-mod control_misc;
-mod x16_alu;
-mod x16_lsm;
-mod x8_alu;
-mod x8_lsm;
-mod x8_rsb;
-mod x8_rsb_prefixed;

@@ -2,7 +2,7 @@ use super::Cpu;
 
 impl Cpu {
     #[allow(clippy::too_many_lines)]
-    pub(super) fn run_next_instruction(&mut self, opcode: u8) {
+    pub(super) fn run_instruction(&mut self, opcode: u8) {
         match opcode {
             0x00 => self.opcode_0x00(),
             0x01 => self.opcode_0x01(),
@@ -525,3 +525,13 @@ impl Cpu {
         }
     }
 }
+
+mod control_br;
+mod control_br_aux;
+mod control_misc;
+mod x16_alu;
+mod x16_lsm;
+mod x8_alu;
+mod x8_lsm;
+mod x8_rsb;
+mod x8_rsb_prefixed;

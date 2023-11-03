@@ -1,4 +1,4 @@
-use super::Cpu;
+use crate::cpu::Cpu;
 
 impl Cpu {
     pub(super) fn opcode_unused(&self) {}

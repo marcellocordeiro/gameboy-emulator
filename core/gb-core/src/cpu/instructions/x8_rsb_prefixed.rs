@@ -1,4 +1,4 @@
-use super::{alu, Cpu};
+use crate::cpu::{alu, Cpu};
 
 // Completed, will definitely need some refactoring.
 

@@ -1,4 +1,4 @@
-use super::{registers::Flags, Cpu};
+use crate::cpu::{registers::Flags, Cpu};
 
 // Completed.
 
