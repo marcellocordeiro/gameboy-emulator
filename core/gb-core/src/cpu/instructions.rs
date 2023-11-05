@@ -1,10 +1,10 @@
-use crate::memory::Memory;
+use crate::memory::MemoryInterface;
 
 use super::Cpu;
 
 impl Cpu {
     #[allow(clippy::too_many_lines)]
-    pub(super) fn run_instruction(&mut self, memory: &mut Memory, opcode: u8) {
+    pub(super) fn run_instruction(&mut self, memory: &mut impl MemoryInterface, opcode: u8) {
         match opcode {
             0x00 => self.opcode_0x00(),
             0x01 => self.opcode_0x01(memory),
@@ -266,7 +266,7 @@ impl Cpu {
     }
 
     #[allow(clippy::too_many_lines)]
-    pub(super) fn run_cb_instruction(&mut self, memory: &mut Memory, opcode: u8) {
+    pub(super) fn run_cb_instruction(&mut self, memory: &mut impl MemoryInterface, opcode: u8) {
         match opcode {
             0x00 => self.opcode_cb_0x00(),
             0x01 => self.opcode_cb_0x01(),

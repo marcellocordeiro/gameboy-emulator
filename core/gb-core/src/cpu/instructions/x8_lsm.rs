@@ -1,4 +1,4 @@
-use crate::{cpu::Cpu, memory::Memory};
+use crate::{cpu::Cpu, memory::MemoryInterface};
 
 // Completed, may need some refactoring.
 
@@ -19,7 +19,7 @@ macro_rules! ld_r8_hl {
 
 impl Cpu {
     /// LD (BC),A
-    pub(super) fn opcode_0x02(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x02(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_bc();
         let value = self.registers.a;
 
@@ -27,14 +27,14 @@ impl Cpu {
     }
 
     /// LD B,u8
-    pub(super) fn opcode_0x06(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x06(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.read_byte_operand(memory);
 
         self.registers.b = value;
     }
 
     /// LD A,(BC)
-    pub(super) fn opcode_0x0a(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x0a(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_bc();
         let value = self.read_byte(memory, address);
 
@@ -42,14 +42,14 @@ impl Cpu {
     }
 
     /// LD C,u8
-    pub(super) fn opcode_0x0e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x0e(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.read_byte_operand(memory);
 
         self.registers.c = value;
     }
 
     /// LD (DE),A
-    pub(super) fn opcode_0x12(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x12(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_de();
         let value = self.registers.a;
 
@@ -57,14 +57,14 @@ impl Cpu {
     }
 
     /// LD D,u8
-    pub(super) fn opcode_0x16(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x16(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.read_byte_operand(memory);
 
         self.registers.d = value;
     }
 
     /// LD A,(DE)
-    pub(super) fn opcode_0x1a(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x1a(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_de();
         let value = self.read_byte(memory, address);
 
@@ -72,14 +72,14 @@ impl Cpu {
     }
 
     /// LD E,u8
-    pub(super) fn opcode_0x1e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x1e(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.read_byte_operand(memory);
 
         self.registers.e = value;
     }
 
     /// LD (HL+),A
-    pub(super) fn opcode_0x22(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x22(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.a;
 
@@ -88,14 +88,14 @@ impl Cpu {
     }
 
     /// LD H,u8
-    pub(super) fn opcode_0x26(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x26(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.read_byte_operand(memory);
 
         self.registers.h = value;
     }
 
     /// LD A,(HL+)
-    pub(super) fn opcode_0x2a(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x2a(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.read_byte(memory, address);
 
@@ -104,14 +104,14 @@ impl Cpu {
     }
 
     /// LD L,u8
-    pub(super) fn opcode_0x2e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x2e(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.read_byte_operand(memory);
 
         self.registers.l = value;
     }
 
     /// LD (HL-),A
-    pub(super) fn opcode_0x32(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x32(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.a;
 
@@ -120,7 +120,7 @@ impl Cpu {
     }
 
     /// LD (HL),u8
-    pub(super) fn opcode_0x36(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x36(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.read_byte_operand(memory);
 
@@ -128,7 +128,7 @@ impl Cpu {
     }
 
     /// LD A,(HL-)
-    pub(super) fn opcode_0x3a(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x3a(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.read_byte(memory, self.registers.get_hl());
 
@@ -137,7 +137,7 @@ impl Cpu {
     }
 
     /// LD A,u8
-    pub(super) fn opcode_0x3e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x3e(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.read_byte_operand(memory);
 
         self.registers.a = value;
@@ -174,7 +174,7 @@ impl Cpu {
     }
 
     /// LD B,(HL)
-    pub(super) fn opcode_0x46(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x46(&mut self, memory: &mut impl MemoryInterface) {
         ld_r8_hl!(self, memory, b, [hl]);
     }
 
@@ -214,7 +214,7 @@ impl Cpu {
     }
 
     /// LD C,(HL)
-    pub(super) fn opcode_0x4e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x4e(&mut self, memory: &mut impl MemoryInterface) {
         ld_r8_hl!(self, memory, c, [hl]);
     }
 
@@ -254,7 +254,7 @@ impl Cpu {
     }
 
     /// LD D,(HL)
-    pub(super) fn opcode_0x56(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x56(&mut self, memory: &mut impl MemoryInterface) {
         ld_r8_hl!(self, memory, d, [hl]);
     }
 
@@ -294,7 +294,7 @@ impl Cpu {
     }
 
     /// LD E,(HL)
-    pub(super) fn opcode_0x5e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x5e(&mut self, memory: &mut impl MemoryInterface) {
         ld_r8_hl!(self, memory, e, [hl]);
     }
 
@@ -334,7 +334,7 @@ impl Cpu {
     }
 
     /// LD H,(HL)
-    pub(super) fn opcode_0x66(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x66(&mut self, memory: &mut impl MemoryInterface) {
         ld_r8_hl!(self, memory, h, [hl]);
     }
 
@@ -374,7 +374,7 @@ impl Cpu {
     }
 
     /// LD L,(HL)
-    pub(super) fn opcode_0x6e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x6e(&mut self, memory: &mut impl MemoryInterface) {
         ld_r8_hl!(self, memory, l, [hl]);
     }
 
@@ -384,7 +384,7 @@ impl Cpu {
     }
 
     /// LD (HL),B
-    pub(super) fn opcode_0x70(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x70(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.b;
 
@@ -392,7 +392,7 @@ impl Cpu {
     }
 
     /// LD (HL),C
-    pub(super) fn opcode_0x71(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x71(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.c;
 
@@ -400,7 +400,7 @@ impl Cpu {
     }
 
     /// LD (HL),D
-    pub(super) fn opcode_0x72(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x72(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.d;
 
@@ -408,7 +408,7 @@ impl Cpu {
     }
 
     /// LD (HL),E
-    pub(super) fn opcode_0x73(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x73(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.e;
 
@@ -416,7 +416,7 @@ impl Cpu {
     }
 
     /// LD (HL),H
-    pub(super) fn opcode_0x74(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x74(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.h;
 
@@ -424,7 +424,7 @@ impl Cpu {
     }
 
     /// LD (HL),L
-    pub(super) fn opcode_0x75(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x75(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.l;
 
@@ -432,7 +432,7 @@ impl Cpu {
     }
 
     /// LD (HL),A
-    pub(super) fn opcode_0x77(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x77(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.a;
 
@@ -470,7 +470,7 @@ impl Cpu {
     }
 
     /// LD A,(HL)
-    pub(super) fn opcode_0x7e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x7e(&mut self, memory: &mut impl MemoryInterface) {
         ld_r8_hl!(self, memory, a, [hl]);
     }
 
@@ -480,7 +480,7 @@ impl Cpu {
     }
 
     /// LD (FF00+u8),A
-    pub(super) fn opcode_0xe0(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0xe0(&mut self, memory: &mut impl MemoryInterface) {
         let address = 0xFF00 + (self.read_byte_operand(memory) as u16);
         let value = self.registers.a;
 
@@ -488,7 +488,7 @@ impl Cpu {
     }
 
     /// LD (FF00+C),A
-    pub(super) fn opcode_0xe2(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0xe2(&mut self, memory: &mut impl MemoryInterface) {
         let address = 0xFF00 + (self.registers.c as u16);
         let value = self.registers.a;
 
@@ -496,7 +496,7 @@ impl Cpu {
     }
 
     /// LD (u16),A
-    pub(super) fn opcode_0xea(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0xea(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.read_word_operand(memory);
         let value = self.registers.a;
 
@@ -504,7 +504,7 @@ impl Cpu {
     }
 
     /// LD A,(FF00+u8)
-    pub(super) fn opcode_0xf0(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0xf0(&mut self, memory: &mut impl MemoryInterface) {
         let address = 0xFF00 + (self.read_byte_operand(memory) as u16);
         let value = self.read_byte(memory, address);
 
@@ -512,7 +512,7 @@ impl Cpu {
     }
 
     /// LD A,(FF00+C)
-    pub(super) fn opcode_0xf2(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0xf2(&mut self, memory: &mut impl MemoryInterface) {
         let address = 0xFF00 + (self.registers.c as u16);
         let value = self.read_byte(memory, address);
 
@@ -520,7 +520,7 @@ impl Cpu {
     }
 
     /// LD A,(u16)
-    pub(super) fn opcode_0xfa(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0xfa(&mut self, memory: &mut impl MemoryInterface) {
         let address = self.read_word_operand(memory);
         let value = self.read_byte(memory, address);
 

@@ -1,5 +1,5 @@
 use egui::{Context, FontId, RichText, Ui, Window};
-use gb_core::GameBoy;
+use gb_core::{memory::MemoryInterface, GameBoy};
 
 #[derive(Debug, Default)]
 pub struct State {

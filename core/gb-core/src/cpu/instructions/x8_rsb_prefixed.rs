@@ -1,6 +1,6 @@
 use crate::{
     cpu::{alu, Cpu},
-    memory::Memory,
+    memory::MemoryInterface,
 };
 
 // Completed, will definitely need some refactoring.
@@ -78,7 +78,7 @@ impl Cpu {
     }
 
     /// RLC (HL)
-    pub(super) fn opcode_cb_0x06(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x06(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, rlc, [hl]);
     }
 
@@ -118,7 +118,7 @@ impl Cpu {
     }
 
     /// RRC (HL)
-    pub(super) fn opcode_cb_0x0e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x0e(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, rrc, [hl]);
     }
 
@@ -158,7 +158,7 @@ impl Cpu {
     }
 
     /// RL (HL)
-    pub(super) fn opcode_cb_0x16(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x16(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, rl, [hl]);
     }
 
@@ -198,7 +198,7 @@ impl Cpu {
     }
 
     /// RR (HL)
-    pub(super) fn opcode_cb_0x1e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x1e(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, rr, [hl]);
     }
 
@@ -238,7 +238,7 @@ impl Cpu {
     }
 
     /// SLA (HL)
-    pub(super) fn opcode_cb_0x26(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x26(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, sla, [hl]);
     }
 
@@ -278,7 +278,7 @@ impl Cpu {
     }
 
     /// SRA (HL)
-    pub(super) fn opcode_cb_0x2e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x2e(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, sra, [hl]);
     }
 
@@ -318,7 +318,7 @@ impl Cpu {
     }
 
     /// SWAP (HL)
-    pub(super) fn opcode_cb_0x36(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x36(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, swap, [hl]);
     }
 
@@ -358,7 +358,7 @@ impl Cpu {
     }
 
     /// SRL (HL)
-    pub(super) fn opcode_cb_0x3e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x3e(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, srl, [hl]);
     }
 
@@ -398,7 +398,7 @@ impl Cpu {
     }
 
     /// BIT 0,(HL)
-    pub(super) fn opcode_cb_0x46(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x46(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_bit_test!(self, memory, bit, 0, [hl]);
     }
 
@@ -438,7 +438,7 @@ impl Cpu {
     }
 
     /// BIT 1,(HL)
-    pub(super) fn opcode_cb_0x4e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x4e(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_bit_test!(self, memory, bit, 1, [hl]);
     }
 
@@ -478,7 +478,7 @@ impl Cpu {
     }
 
     /// BIT 2,(HL)
-    pub(super) fn opcode_cb_0x56(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x56(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_bit_test!(self, memory, bit, 2, [hl]);
     }
 
@@ -518,7 +518,7 @@ impl Cpu {
     }
 
     /// BIT 3,(HL)
-    pub(super) fn opcode_cb_0x5e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x5e(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_bit_test!(self, memory, bit, 3, [hl]);
     }
 
@@ -558,7 +558,7 @@ impl Cpu {
     }
 
     /// BIT 4,(HL)
-    pub(super) fn opcode_cb_0x66(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x66(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_bit_test!(self, memory, bit, 4, [hl]);
     }
 
@@ -598,7 +598,7 @@ impl Cpu {
     }
 
     /// BIT 5,(HL)
-    pub(super) fn opcode_cb_0x6e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x6e(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_bit_test!(self, memory, bit, 5, [hl]);
     }
 
@@ -638,7 +638,7 @@ impl Cpu {
     }
 
     /// BIT 6,(HL)
-    pub(super) fn opcode_cb_0x76(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x76(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_bit_test!(self, memory, bit, 6, [hl]);
     }
 
@@ -678,7 +678,7 @@ impl Cpu {
     }
 
     /// BIT 7,(HL)
-    pub(super) fn opcode_cb_0x7e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x7e(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_bit_test!(self, memory, bit, 7, [hl]);
     }
 
@@ -718,7 +718,7 @@ impl Cpu {
     }
 
     /// RES 0,(HL)
-    pub(super) fn opcode_cb_0x86(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x86(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, res, 0, [hl]);
     }
 
@@ -758,7 +758,7 @@ impl Cpu {
     }
 
     /// RES 1,(HL)
-    pub(super) fn opcode_cb_0x8e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x8e(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, res, 1, [hl]);
     }
 
@@ -798,7 +798,7 @@ impl Cpu {
     }
 
     /// RES 2,(HL)
-    pub(super) fn opcode_cb_0x96(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x96(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, res, 2, [hl]);
     }
 
@@ -838,7 +838,7 @@ impl Cpu {
     }
 
     /// RES 3,(HL)
-    pub(super) fn opcode_cb_0x9e(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0x9e(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, res, 3, [hl]);
     }
 
@@ -878,7 +878,7 @@ impl Cpu {
     }
 
     /// RES 4,(HL)
-    pub(super) fn opcode_cb_0xa6(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xa6(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, res, 4, [hl]);
     }
 
@@ -918,7 +918,7 @@ impl Cpu {
     }
 
     /// RES 5,(HL)
-    pub(super) fn opcode_cb_0xae(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xae(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, res, 5, [hl]);
     }
 
@@ -958,7 +958,7 @@ impl Cpu {
     }
 
     /// RES 6,(HL)
-    pub(super) fn opcode_cb_0xb6(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xb6(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, res, 6, [hl]);
     }
 
@@ -998,7 +998,7 @@ impl Cpu {
     }
 
     /// RES 7,(HL)
-    pub(super) fn opcode_cb_0xbe(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xbe(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, res, 7, [hl]);
     }
 
@@ -1038,7 +1038,7 @@ impl Cpu {
     }
 
     /// SET 0,(HL)
-    pub(super) fn opcode_cb_0xc6(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xc6(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, set, 0, [hl]);
     }
 
@@ -1078,7 +1078,7 @@ impl Cpu {
     }
 
     /// SET 1,(HL)
-    pub(super) fn opcode_cb_0xce(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xce(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, set, 1, [hl]);
     }
 
@@ -1118,7 +1118,7 @@ impl Cpu {
     }
 
     /// SET 2,(HL)
-    pub(super) fn opcode_cb_0xd6(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xd6(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, set, 2, [hl]);
     }
 
@@ -1158,7 +1158,7 @@ impl Cpu {
     }
 
     /// SET 3,(HL)
-    pub(super) fn opcode_cb_0xde(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xde(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, set, 3, [hl]);
     }
 
@@ -1198,7 +1198,7 @@ impl Cpu {
     }
 
     /// SET 4,(HL)
-    pub(super) fn opcode_cb_0xe6(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xe6(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, set, 4, [hl]);
     }
 
@@ -1238,7 +1238,7 @@ impl Cpu {
     }
 
     /// SET 5,(HL)
-    pub(super) fn opcode_cb_0xee(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xee(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, set, 5, [hl]);
     }
 
@@ -1278,7 +1278,7 @@ impl Cpu {
     }
 
     /// SET 6,(HL)
-    pub(super) fn opcode_cb_0xf6(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xf6(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, set, 6, [hl]);
     }
 
@@ -1318,7 +1318,7 @@ impl Cpu {
     }
 
     /// SET 7,(HL)
-    pub(super) fn opcode_cb_0xfe(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_cb_0xfe(&mut self, memory: &mut impl MemoryInterface) {
         alu_op_r8!(self, memory, set, 7, [hl]);
     }
 

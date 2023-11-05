@@ -17,6 +17,19 @@ use self::{
     undocumented_registers::UndocumentedRegisters, work_ram::WorkRam,
 };
 
+pub trait MemoryInterface {
+    fn tick(&mut self);
+
+    fn read(&self, address: u16) -> u8;
+    fn write(&mut self, address: u16, value: u8);
+
+    fn speed_switch(&self) -> &SpeedSwitch;
+    fn speed_switch_mut(&mut self) -> &mut SpeedSwitch;
+
+    fn interrupts(&self) -> &Interrupts;
+    fn interrupts_mut(&mut self) -> &mut Interrupts;
+}
+
 #[derive(Default)]
 pub struct Memory {
     pub bootrom: Bootrom,
@@ -41,78 +54,8 @@ pub struct Memory {
     pub cgb_mode: bool,
 }
 
-impl Memory {
-    pub fn reset(&mut self) {
-        self.bootrom = Bootrom::default();
-        self.wram = WorkRam::default();
-        self.hram = HighRam::default();
-        self.graphics = Graphics::default();
-        self.audio = Audio::default();
-        self.serial = Serial::default();
-        self.timer = Timer::default();
-        self.speed_switch = SpeedSwitch::default();
-        self.undocumented_registers = UndocumentedRegisters::default();
-
-        self.cgb_mode = false;
-
-        if let Some(cartridge) = self.cartridge.as_mut() {
-            cartridge.reset();
-
-            if cfg!(feature = "cgb")
-                && (cfg!(feature = "bootrom") || cartridge.info.cgb_flag.has_cgb_support())
-            {
-                self.set_cgb_mode(true);
-            }
-        };
-    }
-
-    pub fn screen(&self) -> &Screen {
-        self.graphics.screen()
-    }
-
-    pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
-        let cartridge = Cartridge::new(rom)?;
-
-        if cfg!(feature = "cgb") {
-            if cfg!(feature = "bootrom") {
-                self.set_cgb_mode(true);
-            } else {
-                self.handle_post_bootrom_setup(&cartridge.info);
-            }
-        }
-
-        self.cartridge = Some(cartridge);
-
-        Ok(())
-    }
-
-    pub fn set_cgb_mode(&mut self, value: bool) {
-        log::info!("{} CGB mode.", if value { "Enabling" } else { "Disabling" });
-
-        self.cgb_mode = value;
-
-        self.wram.set_cgb_mode(value);
-        self.graphics.set_cgb_mode(value);
-        self.speed_switch.set_cgb_mode(value);
-        self.undocumented_registers.set_cgb_mode(value);
-    }
-
-    pub fn skip_bootrom(&mut self) {
-        self.bootrom.disable();
-        self.graphics.skip_bootrom();
-        self.timer.skip_bootrom();
-        self.interrupts.skip_bootrom();
-    }
-
-    pub fn handle_post_bootrom_setup(&mut self, info: &Info) {
-        if info.cgb_flag.has_cgb_support() {
-            self.set_cgb_mode(true);
-        }
-
-        self.graphics.handle_post_bootrom_setup(info);
-    }
-
-    pub fn tick(&mut self) {
+impl MemoryInterface for Memory {
+    fn tick(&mut self) {
         // TODO: properly implement double speed.
         /*assert!(
             !self.speed_switch.in_double_speed(),
@@ -153,7 +96,7 @@ impl Memory {
         }
     }
 
-    pub fn read(&self, address: u16) -> u8 {
+    fn read(&self, address: u16) -> u8 {
         match address {
             0x0000..=0x00FF if self.bootrom.is_active() => self.bootrom.read(address),
 
@@ -263,7 +206,7 @@ impl Memory {
         }
     }
 
-    pub fn write(&mut self, address: u16, value: u8) {
+    fn write(&mut self, address: u16, value: u8) {
         match address {
             0x0000..=0x00FF if self.bootrom.is_active() => (),
 
@@ -364,6 +307,94 @@ impl Memory {
         }
     }
 
+    fn speed_switch(&self) -> &SpeedSwitch {
+        &self.speed_switch
+    }
+
+    fn speed_switch_mut(&mut self) -> &mut SpeedSwitch {
+        &mut self.speed_switch
+    }
+
+    fn interrupts(&self) -> &Interrupts {
+        &self.interrupts
+    }
+
+    fn interrupts_mut(&mut self) -> &mut Interrupts {
+        &mut self.interrupts
+    }
+}
+
+impl Memory {
+    pub fn reset(&mut self) {
+        self.bootrom = Bootrom::default();
+        self.wram = WorkRam::default();
+        self.hram = HighRam::default();
+        self.graphics = Graphics::default();
+        self.audio = Audio::default();
+        self.serial = Serial::default();
+        self.timer = Timer::default();
+        self.speed_switch = SpeedSwitch::default();
+        self.undocumented_registers = UndocumentedRegisters::default();
+
+        self.cgb_mode = false;
+
+        if let Some(cartridge) = self.cartridge.as_mut() {
+            cartridge.reset();
+
+            if cfg!(feature = "cgb")
+                && (cfg!(feature = "bootrom") || cartridge.info.cgb_flag.has_cgb_support())
+            {
+                self.set_cgb_mode(true);
+            }
+        };
+    }
+
+    pub fn screen(&self) -> &Screen {
+        self.graphics.screen()
+    }
+
+    pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
+        let cartridge = Cartridge::new(rom)?;
+
+        if cfg!(feature = "cgb") {
+            if cfg!(feature = "bootrom") {
+                self.set_cgb_mode(true);
+            } else {
+                self.handle_post_bootrom_setup(&cartridge.info);
+            }
+        }
+
+        self.cartridge = Some(cartridge);
+
+        Ok(())
+    }
+
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        log::info!("{} CGB mode.", if value { "Enabling" } else { "Disabling" });
+
+        self.cgb_mode = value;
+
+        self.wram.set_cgb_mode(value);
+        self.graphics.set_cgb_mode(value);
+        self.speed_switch.set_cgb_mode(value);
+        self.undocumented_registers.set_cgb_mode(value);
+    }
+
+    pub fn skip_bootrom(&mut self) {
+        self.bootrom.disable();
+        self.graphics.skip_bootrom();
+        self.timer.skip_bootrom();
+        self.interrupts.skip_bootrom();
+    }
+
+    pub fn handle_post_bootrom_setup(&mut self, info: &Info) {
+        if info.cgb_flag.has_cgb_support() {
+            self.set_cgb_mode(true);
+        }
+
+        self.graphics.handle_post_bootrom_setup(info);
+    }
+
     fn perform_oam_dma(&mut self) {
         if let Some((source, destination)) = self.graphics.oam_dma.perform_dma() {
             let value = self.read(source);
@@ -400,9 +431,9 @@ impl Memory {
     }
 }
 
-mod bootrom;
-mod high_ram;
-mod interrupts;
-mod speed_switch;
-mod undocumented_registers;
-mod work_ram;
+pub mod bootrom;
+pub mod high_ram;
+pub mod interrupts;
+pub mod speed_switch;
+pub mod undocumented_registers;
+pub mod work_ram;

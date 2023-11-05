@@ -3,7 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use gb_core::GameBoy;
+use gb_core::{memory::MemoryInterface, GameBoy};
 
 const TIMEOUT: Duration = Duration::from_secs(20);
 const BREAK_OPCODE: u8 = 0x40; // LD B,B

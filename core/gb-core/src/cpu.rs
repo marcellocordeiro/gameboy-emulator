@@ -1,4 +1,4 @@
-use crate::memory::Memory;
+use crate::memory::MemoryInterface;
 
 use self::registers::{ImeState, Registers};
 
@@ -35,13 +35,13 @@ impl Cpu {
         }
     }
 
-    pub fn step(&mut self, memory: &mut Memory) {
+    pub fn step(&mut self, memory: &mut impl MemoryInterface) {
         self.handle_interrupts(memory);
 
         if self.halt {
             self.tick(memory);
 
-            if !memory.interrupts.has_queued_irq() {
+            if !memory.interrupts().has_queued_irq() {
                 return;
             }
 
@@ -53,18 +53,18 @@ impl Cpu {
         self.run_instruction(memory, opcode);
     }
 
-    fn tick(&mut self, memory: &mut Memory) {
+    fn tick(&mut self, memory: &mut impl MemoryInterface) {
         memory.tick();
 
         self.cycles += 4;
     }
 
-    fn handle_interrupts(&mut self, memory: &mut Memory) {
+    fn handle_interrupts(&mut self, memory: &mut impl MemoryInterface) {
         if !self.registers.ime.is_enabled_mut() {
             return;
         }
 
-        let Some(address) = memory.interrupts.take_queued_irq() else {
+        let Some(address) = memory.interrupts_mut().take_queued_irq() else {
             return;
         };
 
@@ -74,19 +74,19 @@ impl Cpu {
         self.halt = false;
     }
 
-    fn push_byte_stack(&mut self, memory: &mut Memory, value: u8) {
+    fn push_byte_stack(&mut self, memory: &mut impl MemoryInterface, value: u8) {
         self.registers.sp = self.registers.sp.wrapping_sub(1);
         self.write_byte(memory, self.registers.sp, value);
     }
 
-    fn pop_byte_stack(&mut self, memory: &mut Memory) -> u8 {
+    fn pop_byte_stack(&mut self, memory: &mut impl MemoryInterface) -> u8 {
         let value = self.read_byte(memory, self.registers.sp);
         self.registers.sp = self.registers.sp.wrapping_add(1);
 
         value
     }
 
-    fn push_word_stack(&mut self, memory: &mut Memory, value: u16) {
+    fn push_word_stack(&mut self, memory: &mut impl MemoryInterface, value: u16) {
         let low = value as u8;
         let high = (value >> 8) as u8;
 
@@ -94,33 +94,33 @@ impl Cpu {
         self.push_byte_stack(memory, low);
     }
 
-    fn pop_word_stack(&mut self, memory: &mut Memory) -> u16 {
+    fn pop_word_stack(&mut self, memory: &mut impl MemoryInterface) -> u16 {
         let low = self.pop_byte_stack(memory) as u16;
         let high = self.pop_byte_stack(memory) as u16;
 
         (high << 8) | low
     }
 
-    fn read_byte(&mut self, memory: &mut Memory, address: u16) -> u8 {
+    fn read_byte(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u8 {
         self.tick(memory);
 
         memory.read(address)
     }
 
-    fn write_byte(&mut self, memory: &mut Memory, address: u16, value: u8) {
+    fn write_byte(&mut self, memory: &mut impl MemoryInterface, address: u16, value: u8) {
         self.tick(memory);
 
         memory.write(address, value);
     }
 
-    fn read_word(&mut self, memory: &mut Memory, address: u16) -> u16 {
+    fn read_word(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u16 {
         let low = self.read_byte(memory, address) as u16;
         let high = self.read_byte(memory, address + 1) as u16;
 
         (high << 8) | low
     }
 
-    fn write_word(&mut self, memory: &mut Memory, address: u16, value: u16) {
+    fn write_word(&mut self, memory: &mut impl MemoryInterface, address: u16, value: u16) {
         let low = value as u8;
         let high = (value >> 8) as u8;
 
@@ -128,14 +128,14 @@ impl Cpu {
         self.write_byte(memory, address + 1, high);
     }
 
-    fn read_byte_operand(&mut self, memory: &mut Memory) -> u8 {
+    fn read_byte_operand(&mut self, memory: &mut impl MemoryInterface) -> u8 {
         let value = self.read_byte(memory, self.registers.pc);
         self.add_to_pc(1);
 
         value
     }
 
-    fn read_word_operand(&mut self, memory: &mut Memory) -> u16 {
+    fn read_word_operand(&mut self, memory: &mut impl MemoryInterface) -> u16 {
         let value = self.read_word(memory, self.registers.pc);
         self.add_to_pc(2);
 
@@ -147,7 +147,7 @@ impl Cpu {
         self.registers.pc = self.registers.pc.wrapping_add_signed(offset as i16);
     }
 
-    fn jump_to_isr(&mut self, memory: &mut Memory, address: u16) {
+    fn jump_to_isr(&mut self, memory: &mut impl MemoryInterface, address: u16) {
         self.tick(memory);
 
         self.push_word_stack(memory, self.registers.pc);

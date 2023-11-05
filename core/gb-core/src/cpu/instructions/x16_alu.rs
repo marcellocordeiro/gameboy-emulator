@@ -1,13 +1,13 @@
 use crate::{
     cpu::{alu, Cpu},
-    memory::Memory,
+    memory::MemoryInterface,
 };
 
 // Completed, may need some refactoring.
 
 impl Cpu {
     /// INC BC
-    pub(super) fn opcode_0x03(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x03(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         self.registers
@@ -15,7 +15,7 @@ impl Cpu {
     }
 
     /// ADD HL,BC
-    pub(super) fn opcode_0x09(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x09(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         let hl = self.registers.get_hl();
@@ -27,7 +27,7 @@ impl Cpu {
     }
 
     /// DEC BC
-    pub(super) fn opcode_0x0b(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x0b(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         self.registers
@@ -35,7 +35,7 @@ impl Cpu {
     }
 
     /// INC DE
-    pub(super) fn opcode_0x13(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x13(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         self.registers
@@ -43,7 +43,7 @@ impl Cpu {
     }
 
     /// ADD HL,DE
-    pub(super) fn opcode_0x19(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x19(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         let hl = self.registers.get_hl();
@@ -55,7 +55,7 @@ impl Cpu {
     }
 
     /// DEC DE
-    pub(super) fn opcode_0x1b(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x1b(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         self.registers
@@ -63,7 +63,7 @@ impl Cpu {
     }
 
     /// INC HL
-    pub(super) fn opcode_0x23(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x23(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         self.registers
@@ -71,7 +71,7 @@ impl Cpu {
     }
 
     /// ADD HL,HL
-    pub(super) fn opcode_0x29(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x29(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         let hl = self.registers.get_hl();
@@ -83,7 +83,7 @@ impl Cpu {
     }
 
     /// DEC HL
-    pub(super) fn opcode_0x2b(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x2b(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         self.registers
@@ -91,14 +91,14 @@ impl Cpu {
     }
 
     /// INC SP
-    pub(super) fn opcode_0x33(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x33(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         self.registers.sp = self.registers.sp.wrapping_add(1);
     }
 
     /// ADD HL,SP
-    pub(super) fn opcode_0x39(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x39(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         let hl = self.registers.get_hl();
@@ -110,14 +110,14 @@ impl Cpu {
     }
 
     /// DEC SP
-    pub(super) fn opcode_0x3b(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x3b(&mut self, memory: &mut impl MemoryInterface) {
         self.tick(memory);
 
         self.registers.sp = self.registers.sp.wrapping_sub(1);
     }
 
     /// ADD SP,i8
-    pub(super) fn opcode_0xe8(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0xe8(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.read_byte_operand(memory) as i8;
 
         self.tick(memory);
@@ -127,7 +127,7 @@ impl Cpu {
     }
 
     /// LD HL,SP+i8
-    pub(super) fn opcode_0xf8(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0xf8(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.read_byte_operand(memory) as i8;
 
         let result = alu::add_to_sp(&mut self.registers.f, self.registers.sp, value.into());

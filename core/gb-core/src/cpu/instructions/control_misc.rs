@@ -1,4 +1,4 @@
-use crate::{cpu::Cpu, memory::Memory};
+use crate::{cpu::Cpu, memory::MemoryInterface};
 
 impl Cpu {
     pub(super) fn opcode_unused(&self) {}
@@ -10,15 +10,15 @@ impl Cpu {
     }
 
     /// STOP
-    pub(super) fn opcode_0x10(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0x10(&mut self, memory: &mut impl MemoryInterface) {
         // TODO?
 
-        memory.speed_switch.process_speed_switch();
+        memory.speed_switch_mut().process_speed_switch();
     }
 
     /// HALT
-    pub(super) fn opcode_0x76(&mut self, memory: &Memory) {
-        if self.registers.ime.is_enabled() && memory.interrupts.has_queued_irq() {
+    pub(super) fn opcode_0x76(&mut self, memory: &impl MemoryInterface) {
+        if self.registers.ime.is_enabled() && memory.interrupts().has_queued_irq() {
             // TODO: implement halt bug
         }
 
@@ -26,7 +26,7 @@ impl Cpu {
     }
 
     /// PREFIX CB
-    pub(super) fn opcode_0xcb(&mut self, memory: &mut Memory) {
+    pub(super) fn opcode_0xcb(&mut self, memory: &mut impl MemoryInterface) {
         let operand = self.read_byte_operand(memory);
 
         self.run_cb_instruction(memory, operand);
