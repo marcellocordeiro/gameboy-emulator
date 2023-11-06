@@ -115,7 +115,7 @@ impl Cpu {
 
     fn read_word(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u16 {
         let low = self.read_byte(memory, address) as u16;
-        let high = self.read_byte(memory, address + 1) as u16;
+        let high = self.read_byte(memory, address.wrapping_add(1)) as u16;
 
         (high << 8) | low
     }
@@ -125,7 +125,7 @@ impl Cpu {
         let high = (value >> 8) as u8;
 
         self.write_byte(memory, address, low);
-        self.write_byte(memory, address + 1, high);
+        self.write_byte(memory, address.wrapping_add(1), high);
     }
 
     fn read_byte_operand(&mut self, memory: &mut impl MemoryInterface) -> u8 {
