@@ -37,9 +37,7 @@ pub fn get_test_files() -> std::fs::ReadDir {
     let manifest = env!("CARGO_MANIFEST_DIR");
     let path = format!("{manifest}/../../external/sm83-test-data/cpu_tests/v1");
 
-    let files = std::fs::read_dir(path).unwrap();
-
-    files
+    std::fs::read_dir(path).unwrap()
 }
 
 pub fn parse_test(path: &PathBuf) -> Tests {

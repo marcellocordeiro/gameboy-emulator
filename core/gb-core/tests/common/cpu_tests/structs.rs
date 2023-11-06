@@ -59,7 +59,7 @@ pub struct Test {
 pub type Tests = Vec<Test>;
 
 impl Test {
-    pub fn verify_trace(&self, trace: &Vec<[String; 3]>) -> bool {
+    pub fn verify_trace(&self, trace: &[[String; 3]]) -> bool {
         self.cycles.iter().zip(trace.iter()).all(|(a, b)| a == b)
     }
 }
