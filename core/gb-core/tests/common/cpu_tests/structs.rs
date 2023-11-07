@@ -3,48 +3,46 @@ use std::collections::HashMap;
 use gb_core::cpu::registers::{Flags, ImeState, Registers};
 use serde::Deserialize;
 
-use super::deserializers::{
-    deserialize_ram_hashmap, deserialize_u16_hex_string, deserialize_u8_hex_string,
-};
+use super::deserializers::{deserialize_hex, deserialize_ram};
 
 #[derive(Deserialize)]
 pub struct State {
     pub cpu: CpuState,
 
-    #[serde(deserialize_with = "deserialize_ram_hashmap")]
+    #[serde(deserialize_with = "deserialize_ram")]
     pub ram: HashMap<u16, u8>,
 }
 
 #[derive(Deserialize)]
 pub struct CpuState {
-    #[serde(deserialize_with = "deserialize_u8_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub a: u8,
 
-    #[serde(deserialize_with = "deserialize_u8_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub b: u8,
 
-    #[serde(deserialize_with = "deserialize_u8_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub c: u8,
 
-    #[serde(deserialize_with = "deserialize_u8_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub d: u8,
 
-    #[serde(deserialize_with = "deserialize_u8_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub e: u8,
 
-    #[serde(deserialize_with = "deserialize_u8_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub f: u8,
 
-    #[serde(deserialize_with = "deserialize_u8_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub h: u8,
 
-    #[serde(deserialize_with = "deserialize_u8_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub l: u8,
 
-    #[serde(deserialize_with = "deserialize_u16_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub pc: u16,
 
-    #[serde(deserialize_with = "deserialize_u16_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub sp: u16,
 }
 

@@ -1,25 +1,25 @@
 use serde::Deserialize;
 
-use super::deserializers::deserialize_hex_string;
+use super::deserializers::deserialize_hex;
 
 #[derive(Deserialize)]
 pub struct TestResult {
-    #[serde(deserialize_with = "deserialize_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub value: u8,
 
-    #[serde(deserialize_with = "deserialize_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub flags: u8,
 }
 
 #[derive(Deserialize)]
 pub struct Test {
-    #[serde(deserialize_with = "deserialize_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub x: u8,
 
-    #[serde(deserialize_with = "deserialize_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub y: u8,
 
-    #[serde(deserialize_with = "deserialize_hex_string")]
+    #[serde(deserialize_with = "deserialize_hex")]
     pub flags: u8,
 
     pub result: TestResult,

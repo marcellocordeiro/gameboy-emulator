@@ -1,16 +1,13 @@
+use num::Unsigned;
 use serde::{Deserialize, Deserializer};
 
-pub fn deserialize_hex_string<'de, D>(deserializer: D) -> Result<u8, D::Error>
+pub fn deserialize_hex<'de, T, D>(deserializer: D) -> Result<T, D::Error>
 where
+    T: Unsigned,
+    T::FromStrRadixErr: std::fmt::Debug,
     D: Deserializer<'de>,
 {
-    #[derive(Deserialize)]
-    #[serde(untagged)]
-    enum StringOrInt {
-        String(String),
-    }
+    let hex_string = String::deserialize(deserializer)?;
 
-    match StringOrInt::deserialize(deserializer)? {
-        StringOrInt::String(s) => Ok(u8::from_str_radix(&s[2..], 16).unwrap()),
-    }
+    Ok(T::from_str_radix(&hex_string[2..], 16).unwrap())
 }

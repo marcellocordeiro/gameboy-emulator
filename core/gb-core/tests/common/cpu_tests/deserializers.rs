@@ -1,58 +1,38 @@
 use std::collections::HashMap;
 
+use num::Unsigned;
 use serde::{Deserialize, Deserializer};
 
-pub fn deserialize_u8_hex_string<'de, D>(deserializer: D) -> Result<u8, D::Error>
+pub fn deserialize_hex<'de, T, D>(deserializer: D) -> Result<T, D::Error>
 where
+    T: Unsigned,
+    T::FromStrRadixErr: std::fmt::Debug,
     D: Deserializer<'de>,
 {
-    #[derive(Deserialize)]
-    #[serde(untagged)]
-    enum StringOrInt {
-        String(String),
-    }
+    let hex_string = String::deserialize(deserializer)?;
 
-    match StringOrInt::deserialize(deserializer)? {
-        StringOrInt::String(s) => Ok(u8::from_str_radix(&s[2..], 16).unwrap()),
-    }
+    Ok(T::from_str_radix(&hex_string[2..], 16).unwrap())
 }
 
-pub fn deserialize_u16_hex_string<'de, D>(deserializer: D) -> Result<u16, D::Error>
+pub fn deserialize_ram<'de, D>(deserializer: D) -> Result<HashMap<u16, u8>, D::Error>
 where
     D: Deserializer<'de>,
 {
     #[derive(Deserialize)]
     #[serde(untagged)]
-    enum StringOrInt {
-        String(String),
+    enum Entries {
+        Entries(Vec<[String; 2]>),
     }
 
-    match StringOrInt::deserialize(deserializer)? {
-        StringOrInt::String(s) => Ok(u16::from_str_radix(&s[2..], 16).unwrap()),
-    }
-}
-
-pub fn deserialize_ram_hashmap<'de, D>(deserializer: D) -> Result<HashMap<u16, u8>, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    #[derive(Deserialize)]
-    #[serde(untagged)]
-    enum StringOrInt {
-        Vec(Vec<[String; 2]>),
-    }
-
-    Ok(match StringOrInt::deserialize(deserializer)? {
-        StringOrInt::Vec(s) => {
-            let mut h = HashMap::new();
-
-            for e in s.iter() {
-                let address = u16::from_str_radix(&e[0][2..], 16).unwrap();
-                let value = u8::from_str_radix(&e[1][2..], 16).unwrap();
-                h.insert(address, value);
-            }
-
-            h
-        }
+    Ok(match Entries::deserialize(deserializer)? {
+        Entries::Entries(entries) => entries
+            .into_iter()
+            .map(|[address, value]| {
+                (
+                    u16::from_str_radix(&address[2..], 16).unwrap(),
+                    u8::from_str_radix(&value[2..], 16).unwrap(),
+                )
+            })
+            .collect::<HashMap<u16, u8>>(),
     })
 }

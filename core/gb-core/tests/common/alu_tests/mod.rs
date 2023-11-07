@@ -1,4 +1,4 @@
 pub use structs::*;
 
-mod structs;
 mod deserializers;
+mod structs;
