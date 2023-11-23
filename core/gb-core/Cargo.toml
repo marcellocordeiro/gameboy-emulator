@@ -21,5 +21,5 @@ thiserror = "1.0.50"
 [dev-dependencies]
 image = { version = "0.24.7", default-features = false, features = ["png"] }
 num = { version = "0.4.1", default-features = false }
-serde = { version = "1.0.192", features = ["derive"] }
+serde = { version = "1.0.193", features = ["derive"] }
 serde_json = "1.0.108"
