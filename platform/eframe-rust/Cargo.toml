@@ -15,12 +15,12 @@ workspace = true
 
 [dependencies]
 clap = "4.4.8"
-eframe = { version = "0.23.0", default-features = false, features = [
+eframe = { version = "0.24.0", default-features = false, features = [
     "glow",
     "wayland",
     "x11",
 ] }
-egui = "0.23.0"
+egui = "0.24.0"
 env_logger = "0.10.1"
 log = "0.4.20"
 rfd = { version = "0.12.1", default-features = false, features = [

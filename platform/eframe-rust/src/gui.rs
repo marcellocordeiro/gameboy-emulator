@@ -1,4 +1,4 @@
-use egui::{menu, Context, TopBottomPanel};
+use egui::{menu, Context, TopBottomPanel, ViewportCommand};
 use gb_core::GameBoy;
 
 use self::{
@@ -27,22 +27,12 @@ impl Gui {
         }
     }
 
-    pub fn render(
-        &mut self,
-        eframe_frame: &mut eframe::Frame,
-        egui_ctx: &Context,
-        gb_ctx: &mut GameBoy,
-    ) {
-        self.render_ui(eframe_frame, egui_ctx, gb_ctx);
+    pub fn render(&mut self, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
+        self.render_ui(egui_ctx, gb_ctx);
         self.render_screen_area(egui_ctx, gb_ctx);
     }
 
-    fn render_ui(
-        &mut self,
-        eframe_frame: &mut eframe::Frame,
-        egui_ctx: &Context,
-        gb_ctx: &mut GameBoy,
-    ) {
+    fn render_ui(&mut self, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
         TopBottomPanel::top("top_panel").show(egui_ctx, |ui| {
             menu::bar(ui, |ui| {
                 ui.menu_button("File", |ui| {
@@ -53,7 +43,7 @@ impl Gui {
                     }
 
                     if ui.button("Quit").clicked() {
-                        eframe_frame.close();
+                        egui_ctx.send_viewport_cmd(ViewportCommand::Close);
                     }
                 });
 

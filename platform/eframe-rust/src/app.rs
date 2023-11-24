@@ -1,3 +1,4 @@
+use egui::ViewportCommand;
 use gb_core::{utils::button::Button, GameBoy};
 
 use crate::{gui::Gui, key_mappings};
@@ -15,12 +16,12 @@ impl App {
         }
     }
 
-    fn handle_input(&mut self, eframe_frame: &mut eframe::Frame, egui_ctx: &egui::Context) {
+    fn handle_input(&mut self, egui_ctx: &egui::Context) {
         egui_ctx.input(|i| {
             use egui::Key;
 
             if i.key_pressed(Key::Escape) {
-                eframe_frame.close();
+                egui_ctx.send_viewport_cmd(ViewportCommand::Close);
             }
 
             for button in Button::ALL_CASES {
@@ -37,14 +38,13 @@ impl App {
 }
 
 impl eframe::App for App {
-    fn update(&mut self, egui_ctx: &egui::Context, eframe_frame: &mut eframe::Frame) {
+    fn update(&mut self, egui_ctx: &egui::Context, _eframe_frame: &mut eframe::Frame) {
         if !self.gui.control.manual_control && self.gb.memory.cartridge.is_some() {
             self.gb.run_frame();
             egui_ctx.request_repaint();
         }
 
-        self.handle_input(eframe_frame, egui_ctx);
-
-        self.gui.render(eframe_frame, egui_ctx, &mut self.gb);
+        self.handle_input(egui_ctx);
+        self.gui.render(egui_ctx, &mut self.gb);
     }
 }
