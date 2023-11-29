@@ -1,3 +1,5 @@
+use crate::utils::macros::{device_is_cgb, in_cgb_mode};
+
 #[derive(Debug, Default)]
 pub struct UndocumentedRegisters {
     reg_0xff72: u8,
@@ -16,7 +18,7 @@ impl UndocumentedRegisters {
     }
 
     pub fn read_0xff72(&self) -> u8 {
-        if !cfg!(feature = "cgb") {
+        if !device_is_cgb!() {
             return 0xFF;
         }
 
@@ -24,7 +26,7 @@ impl UndocumentedRegisters {
     }
 
     pub fn read_0xff73(&self) -> u8 {
-        if !cfg!(feature = "cgb") {
+        if !device_is_cgb!() {
             return 0xFF;
         }
 
@@ -32,7 +34,7 @@ impl UndocumentedRegisters {
     }
 
     pub fn read_0xff74(&self) -> u8 {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        if !in_cgb_mode!(self) {
             return 0xFF;
         }
 
@@ -40,7 +42,7 @@ impl UndocumentedRegisters {
     }
 
     pub fn read_0xff75(&self) -> u8 {
-        if !cfg!(feature = "cgb") {
+        if !device_is_cgb!() {
             return 0xFF;
         }
 
@@ -48,7 +50,7 @@ impl UndocumentedRegisters {
     }
 
     pub fn write_0xff72(&mut self, value: u8) {
-        if !cfg!(feature = "cgb") {
+        if !device_is_cgb!() {
             return;
         }
 
@@ -56,7 +58,7 @@ impl UndocumentedRegisters {
     }
 
     pub fn write_0xff73(&mut self, value: u8) {
-        if !cfg!(feature = "cgb") {
+        if !device_is_cgb!() {
             return;
         }
 
@@ -64,7 +66,7 @@ impl UndocumentedRegisters {
     }
 
     pub fn write_0xff74(&mut self, value: u8) {
-        if !(cfg!(feature = "cgb") && self.cgb_mode) {
+        if !in_cgb_mode!(self) {
             return;
         }
 
@@ -72,7 +74,7 @@ impl UndocumentedRegisters {
     }
 
     pub fn write_0xff75(&mut self, value: u8) {
-        if !cfg!(feature = "cgb") {
+        if !device_is_cgb!() {
             return;
         }
 

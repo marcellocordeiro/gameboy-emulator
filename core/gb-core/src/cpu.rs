@@ -1,4 +1,4 @@
-use crate::memory::MemoryInterface;
+use crate::{memory::MemoryInterface, utils::macros::device_is_cgb};
 
 use self::registers::{ImeState, Registers};
 
@@ -22,7 +22,7 @@ impl Cpu {
         self.registers.pc = 0x0100;
         self.registers.sp = 0xFFFE;
 
-        if cfg!(feature = "cgb") {
+        if device_is_cgb!() {
             self.registers.set_af(0x1180);
             self.registers.set_bc(0x0000);
             self.registers.set_de(0x0008);

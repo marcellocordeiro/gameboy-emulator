@@ -71,7 +71,7 @@ impl Graphics {
     }
 
     pub fn handle_post_bootrom_setup(&mut self, info: &Info) {
-        if cfg!(feature = "cgb") {
+        if device_is_cgb!() {
             if !info.cgb_flag.has_cgb_support() {
                 self.opri = true;
 
@@ -307,7 +307,13 @@ impl Graphics {
                     return;
                 }
 
-                self.draw_line();
+                if device_is_cgb!() {
+                    #[cfg(feature = "cgb")]
+                    self.draw_line_cgb();
+                } else {
+                    self.draw_line_dmg();
+                }
+
                 self.switch_mode(StatusMode::Hblank);
 
                 if in_cgb_mode!(self) {

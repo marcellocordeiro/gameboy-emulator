@@ -12,15 +12,15 @@ enum Priority {
 }
 
 impl Graphics {
-    pub fn draw_line(&mut self) {
+    pub fn draw_line_cgb(&mut self) {
         let mut priority = [Priority::Object; SCREEN_WIDTH];
 
-        self.draw_tiles(&mut priority);
-        self.draw_sprites(&priority);
+        self.draw_tiles_cgb(&mut priority);
+        self.draw_sprites_cgb(&priority);
     }
 
     #[allow(clippy::too_many_lines)]
-    fn draw_tiles(&mut self, priority: &mut [Priority; SCREEN_WIDTH]) {
+    fn draw_tiles_cgb(&mut self, priority: &mut [Priority; SCREEN_WIDTH]) {
         let screen_line = {
             let line_offset = SCREEN_WIDTH * (self.ly as usize);
 
@@ -166,7 +166,7 @@ impl Graphics {
         }
     }
 
-    fn draw_sprites(&mut self, priority: &[Priority; SCREEN_WIDTH]) {
+    fn draw_sprites_cgb(&mut self, priority: &[Priority; SCREEN_WIDTH]) {
         if !self.lcdc.get_obj_enable() {
             return;
         }

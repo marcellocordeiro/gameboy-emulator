@@ -1,18 +1,16 @@
-#![cfg(not(feature = "cgb"))]
-
 use crate::{constants::SCREEN_WIDTH, utils::color::Color};
 
 use super::Graphics;
 
 impl Graphics {
-    pub fn draw_line(&mut self) {
+    pub fn draw_line_dmg(&mut self) {
         let mut bg_priority = [false; SCREEN_WIDTH];
 
-        self.draw_tiles(&mut bg_priority);
-        self.draw_sprites(&bg_priority);
+        self.draw_tiles_dmg(&mut bg_priority);
+        self.draw_sprites_dmg(&bg_priority);
     }
 
-    fn draw_tiles(&mut self, bg_priority: &mut [bool; SCREEN_WIDTH]) {
+    fn draw_tiles_dmg(&mut self, bg_priority: &mut [bool; SCREEN_WIDTH]) {
         let screen_line = {
             let line_offset = SCREEN_WIDTH * (self.ly as usize);
 
@@ -104,7 +102,7 @@ impl Graphics {
         }
     }
 
-    fn draw_sprites(&mut self, bg_priority: &[bool; SCREEN_WIDTH]) {
+    fn draw_sprites_dmg(&mut self, bg_priority: &[bool; SCREEN_WIDTH]) {
         if !self.lcdc.get_obj_enable() {
             return;
         }

@@ -1,5 +1,7 @@
 // TODO: everything
 
+use crate::utils::macros::device_is_cgb;
+
 #[derive(Default)]
 pub struct Audio {}
 
@@ -34,7 +36,7 @@ impl Audio {
             0xFF26 => 0xF1,
 
             0xFF76 => {
-                if !cfg!(feature = "cgb") {
+                if !device_is_cgb!() {
                     return 0xFF;
                 }
 
@@ -42,7 +44,7 @@ impl Audio {
             }
 
             0xFF77 => {
-                if !cfg!(feature = "cgb") {
+                if !device_is_cgb!() {
                     return 0xFF;
                 }
 

@@ -17,11 +17,24 @@
     clippy::cast_possible_wrap,
 )]
 
-use app::App;
+use clap::Parser;
 use gb_core::{
     constants::{SCREEN_HEIGHT, SCREEN_WIDTH},
     GameBoy,
 };
+
+use app::App;
+
+#[derive(Debug, Parser)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    /// Optional ROM path (will show file picker if not provided)
+    rom: Option<String>,
+
+    /// (Unused) Set the device type to CGB
+    #[arg(short, long, default_value_t = false)]
+    cgb: bool,
+}
 
 fn main() -> Result<(), eframe::Error> {
     env_logger::builder()
@@ -29,11 +42,9 @@ fn main() -> Result<(), eframe::Error> {
         .format_timestamp(None)
         .init();
 
-    let matches = clap::Command::new("gameboy-emulator")
-        .arg(clap::Arg::new("rom"))
-        .get_matches();
+    let args = Args::parse();
 
-    let rom_path = matches.get_one::<String>("rom");
+    let rom_path = args.rom;
 
     let mut gb = GameBoy::new();
 

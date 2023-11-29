@@ -9,7 +9,10 @@ use crate::{
     joypad::Joypad,
     serial::Serial,
     timer::Timer,
-    utils::{macros::in_cgb_mode, screen::Screen},
+    utils::{
+        macros::{device_is_cgb, in_cgb_mode},
+        screen::Screen,
+    },
 };
 
 use self::{
@@ -341,7 +344,7 @@ impl Memory {
         if let Some(cartridge) = self.cartridge.as_mut() {
             cartridge.reset();
 
-            if cfg!(feature = "cgb")
+            if device_is_cgb!()
                 && (cfg!(feature = "bootrom") || cartridge.info.cgb_flag.has_cgb_support())
             {
                 self.set_cgb_mode(true);
@@ -356,7 +359,7 @@ impl Memory {
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         let cartridge = Cartridge::new(rom)?;
 
-        if cfg!(feature = "cgb") {
+        if device_is_cgb!() {
             if cfg!(feature = "bootrom") {
                 self.set_cgb_mode(true);
             } else {
