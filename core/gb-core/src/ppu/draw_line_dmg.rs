@@ -1,8 +1,8 @@
 use crate::{constants::SCREEN_WIDTH, utils::color::Color};
 
-use super::Graphics;
+use super::Ppu;
 
-impl Graphics {
+impl Ppu {
     pub fn draw_line_dmg(&mut self) {
         let mut bg_priority = [false; SCREEN_WIDTH];
 

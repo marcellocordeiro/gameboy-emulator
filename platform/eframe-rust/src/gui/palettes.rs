@@ -24,8 +24,8 @@ impl Palettes {
             return;
         }
 
-        let bg_palettes = gb_ctx.memory.graphics.get_bg_cram();
-        let obj_palettes = gb_ctx.memory.graphics.get_obj_cram();
+        let bg_palettes = gb_ctx.memory.ppu.get_bg_cram();
+        let obj_palettes = gb_ctx.memory.ppu.get_obj_cram();
 
         Window::new("Palettes")
             .open(&mut self.opened)

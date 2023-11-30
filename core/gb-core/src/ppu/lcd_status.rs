@@ -1,6 +1,6 @@
 use bitflags::bitflags;
 
-use super::Graphics;
+use super::Ppu;
 
 #[derive(Default, Clone, Copy, PartialEq, Eq)]
 pub enum StatusMode {
@@ -69,7 +69,7 @@ impl LcdStatus {
     }
 }
 
-impl Graphics {
+impl Ppu {
     pub fn read_stat(&self) -> u8 {
         if !self.lcdc.get_lcd_enable() {
             return 0b1000_0000;

@@ -8,7 +8,7 @@ use crate::{
     },
 };
 
-use super::{lcd_status::StatusMode, Graphics};
+use super::{lcd_status::StatusMode, Ppu};
 
 #[cfg(not(feature = "cgb"))]
 const VRAM_BANKS: usize = 1;
@@ -150,7 +150,7 @@ impl VideoRam {
     }
 }
 
-impl Graphics {
+impl Ppu {
     pub fn read_vram(&self, address: u16) -> u8 {
         if self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing {
             return 0xFF;

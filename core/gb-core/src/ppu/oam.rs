@@ -1,6 +1,6 @@
 use arrayvec::ArrayVec;
 
-use super::{lcd_status::StatusMode, sprite::SpriteObject, Graphics};
+use super::{lcd_status::StatusMode, sprite::SpriteObject, Ppu};
 
 const OAM_SIZE: usize = 0xA0;
 
@@ -76,7 +76,7 @@ impl Oam {
     }
 }
 
-impl Graphics {
+impl Ppu {
     pub fn read_oam(&self, address: u16) -> u8 {
         if self.lcdc.get_lcd_enable()
             && (self.mode == StatusMode::OamScan || self.mode == StatusMode::Drawing)

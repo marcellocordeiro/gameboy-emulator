@@ -2,7 +2,7 @@ use bitflags::bitflags;
 
 use crate::utils::color::Color;
 
-use super::{lcd_status::StatusMode, Graphics};
+use super::{lcd_status::StatusMode, Ppu};
 
 bitflags!(
     /// FF40 — LCDC: LCD control
@@ -100,7 +100,7 @@ impl LcdControl {
     }
 }
 
-impl Graphics {
+impl Ppu {
     pub fn read_lcdc(&self) -> u8 {
         self.lcdc.bits()
     }

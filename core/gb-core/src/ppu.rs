@@ -18,7 +18,7 @@ use self::{
 
 #[allow(clippy::struct_excessive_bools)]
 #[derive(Default)]
-pub struct Graphics {
+pub struct Ppu {
     // Registers
     lcdc: LcdControl,
     stat: LcdStatus,
@@ -59,7 +59,7 @@ pub struct Graphics {
     cgb_mode: bool,
 }
 
-impl Graphics {
+impl Ppu {
     pub fn set_cgb_mode(&mut self, value: bool) {
         self.cgb_mode = value;
         self.vram.set_cgb_mode(value);

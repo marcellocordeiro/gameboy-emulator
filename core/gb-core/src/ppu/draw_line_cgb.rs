@@ -2,7 +2,7 @@
 
 use crate::{constants::SCREEN_WIDTH, utils::color::Color};
 
-use super::Graphics;
+use super::Ppu;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Priority {
@@ -11,7 +11,7 @@ enum Priority {
     Background,
 }
 
-impl Graphics {
+impl Ppu {
     pub fn draw_line_cgb(&mut self) {
         let mut priority = [Priority::Object; SCREEN_WIDTH];
 

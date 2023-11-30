@@ -80,7 +80,7 @@ impl Tiles {
     fn update_texture(&mut self, gb_ctx: &GameBoy) {
         gb_ctx
             .memory
-            .graphics
+            .ppu
             .vram
             .draw_tile_data_0_into_frame(self.pixels.as_mut());
 

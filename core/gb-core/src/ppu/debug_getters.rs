@@ -1,6 +1,6 @@
-use super::{color_ram::ColorRam, Graphics};
+use super::{color_ram::ColorRam, Ppu};
 
-impl Graphics {
+impl Ppu {
     pub fn get_bg_cram(&self) -> &ColorRam {
         &self.bg_cram
     }
