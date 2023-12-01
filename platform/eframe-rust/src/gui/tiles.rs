@@ -87,7 +87,7 @@ impl Tiles {
         #[cfg(feature = "cgb")]
         gb_ctx
             .memory
-            .graphics
+            .ppu
             .vram
             .draw_tile_data_1_into_frame(self.pixels.as_mut());
 
