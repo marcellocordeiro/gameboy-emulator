@@ -13,7 +13,7 @@ cgb = ["gb-core/cgb"]
 workspace = true
 
 [dependencies]
-clap = "4.4.10"
+clap = "4.4.11"
 env_logger = "0.10.1"
 log = "0.4.20"
 rfd = { version = "0.12.1", default-features = false, features = [
