@@ -1,18 +1,22 @@
+use self::{
+    structs::{Test, Tests},
+    test_memory::TestMemory,
+};
+use crate::cpu::Cpu;
 use std::path::PathBuf;
 
-use gb_core::cpu::Cpu;
+mod deserializers;
+mod structs;
+mod test_memory;
 
-mod common;
-use common::cpu_tests::{Test, TestMemory, Tests};
-
-pub fn test_cpu(file_name: String, test: Test) {
+pub fn test_cpu(file_name: &str, test: &Test) {
     let mut cpu = Cpu::default();
-    let mut test_memory = TestMemory::default();
+    let mut memory = TestMemory::default();
 
     cpu.registers = test.initial.cpu.to_cpu_registers();
-    test_memory.data = test.initial.ram.clone();
+    memory.data = test.initial.ram.clone();
 
-    cpu.step(&mut test_memory);
+    cpu.step(&mut memory);
 
     assert!(
         test.r#final.cpu.verify_cpu_registers(&cpu.registers),
@@ -21,13 +25,13 @@ pub fn test_cpu(file_name: String, test: Test) {
     );
 
     assert!(
-        test.r#final.verify_ram(&test_memory.data),
+        test.r#final.verify_ram(&memory.data),
         "Test `{}` from `{file_name}` failed. The final RAM does not match the expected result.",
         test.name
     );
 
     assert!(
-        test.verify_trace(test_memory.logs.borrow().as_ref()),
+        test.verify_trace(memory.logs.borrow().as_ref()),
         "Test `{}` from `{file_name}` failed. The trace does not match the expected result.",
         test.name
     );
@@ -58,18 +62,18 @@ fn test_00() {
 
     for file in files {
         let file_path = file.unwrap().path();
-        let file_name = file_path.file_stem().unwrap().to_str().unwrap().to_string();
+        let file_name = file_path.file_stem().unwrap().to_str().unwrap();
 
         assert_eq!(file_path.extension().unwrap(), "json");
 
-        if ignore.contains(&file_name.as_str()) {
+        if ignore.contains(&file_name) {
             continue;
         }
 
         let tests = parse_test(&file_path);
 
         for test in tests {
-            test_cpu(file_name.clone(), test);
+            test_cpu(file_name, &test);
         }
     }
 }

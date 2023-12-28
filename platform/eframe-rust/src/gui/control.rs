@@ -39,22 +39,18 @@ impl Control {
         Window::new("Control")
             .open(&mut self.opened)
             .show(egui_ctx, |ui| {
+                let enable_buttons = self.manual_control && gb_ctx.cartridge_inserted();
+
                 if ui
-                    .add_enabled(
-                        self.manual_control && gb_ctx.memory.cartridge.is_some(),
-                        Button::new("Step"),
-                    )
+                    .add_enabled(enable_buttons, Button::new("Step"))
                     .clicked()
                 {
-                    gb_ctx.cpu.step(&mut gb_ctx.memory);
+                    gb_ctx.step();
                     egui_ctx.request_repaint();
                 }
 
                 if ui
-                    .add_enabled(
-                        self.manual_control && gb_ctx.memory.cartridge.is_some(),
-                        Button::new("Run frame"),
-                    )
+                    .add_enabled(enable_buttons, Button::new("Run frame"))
                     .clicked()
                 {
                     gb_ctx.run_frame();

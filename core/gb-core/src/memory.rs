@@ -35,26 +35,26 @@ pub trait MemoryInterface {
 
 #[derive(Default)]
 pub struct Memory {
-    pub bootrom: Bootrom,
+    bootrom: Bootrom,
 
-    pub wram: WorkRam,
-    pub hram: HighRam,
+    wram: WorkRam,
+    hram: HighRam,
 
-    pub cartridge: Option<Cartridge>,
+    pub(crate) cartridge: Option<Cartridge>,
     pub ppu: Ppu,
-    pub audio: Audio,
+    audio: Audio,
 
-    pub joypad: Joypad,
+    pub(crate) joypad: Joypad,
     pub serial: Serial,
-    pub timer: Timer,
+    timer: Timer,
 
-    pub speed_switch: SpeedSwitch,
+    speed_switch: SpeedSwitch,
 
     pub interrupts: Interrupts,
 
-    pub undocumented_registers: UndocumentedRegisters,
+    undocumented_registers: UndocumentedRegisters,
 
-    pub cgb_mode: bool,
+    cgb_mode: bool,
 }
 
 impl MemoryInterface for Memory {
@@ -328,11 +328,11 @@ impl MemoryInterface for Memory {
 }
 
 impl Memory {
-    pub fn screen(&self) -> &Screen {
+    pub(crate) fn screen(&self) -> &Screen {
         self.ppu.screen()
     }
 
-    pub fn reset(&mut self) {
+    pub(crate) fn reset(&mut self) {
         let mut cartridge = std::mem::take(&mut self.cartridge);
 
         *self = Self::default();
@@ -352,7 +352,7 @@ impl Memory {
         self.cartridge = cartridge;
     }
 
-    pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
+    pub(crate) fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         let cartridge = Cartridge::new(rom)?;
 
         if device_is_cgb!() {
@@ -368,7 +368,7 @@ impl Memory {
         Ok(())
     }
 
-    pub fn set_cgb_mode(&mut self, value: bool) {
+    pub(crate) fn set_cgb_mode(&mut self, value: bool) {
         log::info!("{} CGB mode.", if value { "Enabling" } else { "Disabling" });
 
         self.cgb_mode = value;
@@ -379,14 +379,14 @@ impl Memory {
         self.undocumented_registers.set_cgb_mode(value);
     }
 
-    pub fn skip_bootrom(&mut self) {
+    pub(crate) fn skip_bootrom(&mut self) {
         self.bootrom.disable();
         self.ppu.skip_bootrom();
         self.timer.skip_bootrom();
         self.interrupts.skip_bootrom();
     }
 
-    pub fn handle_post_bootrom_setup(&mut self, info: &Info) {
+    pub(crate) fn handle_post_bootrom_setup(&mut self, info: &Info) {
         if info.cgb_flag.has_cgb_support() {
             self.set_cgb_mode(true);
         }
@@ -430,9 +430,9 @@ impl Memory {
     }
 }
 
-pub mod bootrom;
-pub mod high_ram;
+pub(crate) mod bootrom;
+pub(crate) mod high_ram;
 pub mod interrupts;
 pub mod speed_switch;
-pub mod undocumented_registers;
-pub mod work_ram;
+pub(crate) mod undocumented_registers;
+pub(crate) mod work_ram;

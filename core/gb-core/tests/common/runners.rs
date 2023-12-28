@@ -12,7 +12,7 @@ pub fn run_until_break(gb: &mut GameBoy) {
     let start_time = Instant::now();
 
     while gb.memory.read(gb.cpu.registers.pc) != BREAK_OPCODE {
-        gb.cpu.step(&mut gb.memory);
+        gb.step();
 
         if Instant::now() - start_time > TIMEOUT {
             panic!("Timed out");
@@ -59,27 +59,21 @@ pub fn run_until_memory_status(gb: &mut GameBoy) {
             gb.run_frame();
         }
 
-        let contents = (0xA004..(0xA004 + 100))
-            .map(|address| gb.memory.read(address))
+        let output = (0xA004..(0xA004 + 100))
             .take_while(|value| *value != 0)
-            .collect::<Vec<u8>>();
-
-        let decoded = String::from_utf8_lossy(&contents)
-            .trim()
-            .chars()
-            .filter(char::is_ascii)
+            .map(|address| gb.memory.read(address) as char)
             .collect::<String>();
 
-        if decoded.contains("Passed") {
+        if output.contains("Passed") {
             break;
         }
 
-        if decoded.contains("Failed") {
+        if output.contains("Failed") {
             panic!("Failed");
         }
 
         if Instant::now() - start_time > TIMEOUT {
-            panic!("Timed out: {decoded}");
+            panic!("Timed out: {output}");
         }
     }
 }

@@ -4,11 +4,12 @@ macro_rules! pure_read_write_methods_u8 {
     ($($field:ident),+) => {
         $(
             paste::paste! {
-                pub fn [<read_ $field>](&self) -> u8 {
+                pub(crate) fn [<read_ $field>](&self) -> u8 {
                     self.$field
                 }
 
-                pub fn [<write_ $field>](&mut self, value: u8) {
+                #[allow(dead_code)]
+                pub(crate) fn [<write_ $field>](&mut self, value: u8) {
                     self.$field = value;
                 }
             }

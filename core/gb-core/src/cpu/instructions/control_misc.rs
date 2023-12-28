@@ -5,7 +5,6 @@ impl Cpu {
 
     /// NOP
     pub(super) fn opcode_0x00(&self) {
-
         // Do absolutely nothing.
     }
 

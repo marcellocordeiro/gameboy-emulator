@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-
 use num::Unsigned;
 use serde::{Deserialize, Deserializer};
+use std::collections::HashMap;
 
 pub fn deserialize_hex<'de, T, D>(deserializer: D) -> Result<T, D::Error>
 where
@@ -33,6 +32,6 @@ where
                     u8::from_str_radix(&value[2..], 16).unwrap(),
                 )
             })
-            .collect::<HashMap<u16, u8>>(),
+            .collect(),
     })
 }

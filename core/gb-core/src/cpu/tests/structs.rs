@@ -1,9 +1,7 @@
-use std::collections::HashMap;
-
-use gb_core::cpu::registers::{Flags, ImeState, Registers};
-use serde::Deserialize;
-
 use super::deserializers::{deserialize_hex, deserialize_ram};
+use crate::cpu::registers::{Flags, ImeState, Registers};
+use serde::Deserialize;
+use std::collections::HashMap;
 
 #[derive(Deserialize)]
 pub struct State {

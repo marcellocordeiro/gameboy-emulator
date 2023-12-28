@@ -55,24 +55,23 @@ impl Oam {
     }
 
     fn update_sprite_buffer(&mut self, ly: u8, obj_height: u8) {
-        self.sprite_buffer.clear();
+        self.sprite_buffer = self
+            .data
+            .chunks_exact(4)
+            .filter_map(|chunk| {
+                let y = chunk[0].wrapping_sub(16);
+                let x = chunk[1].wrapping_sub(8);
+                let tile_index = chunk[2];
+                let flags = chunk[3];
 
-        for chunk in self.data.chunks_exact(4) {
-            let y = chunk[0].wrapping_sub(16);
-            let x = chunk[1].wrapping_sub(8);
-            let tile_index = chunk[2];
-            let flags = chunk[3];
-
-            if ly.wrapping_sub(y) < obj_height {
-                let element = SpriteObject::from_bytes(y, x, tile_index, flags);
-
-                self.sprite_buffer.push(element);
-            }
-
-            if self.sprite_buffer.is_full() {
-                break;
-            }
-        }
+                if ly.wrapping_sub(y) < obj_height {
+                    Some(SpriteObject::from_bytes(y, x, tile_index, flags))
+                } else {
+                    None
+                }
+            })
+            .take(10)
+            .collect();
     }
 }
 

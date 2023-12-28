@@ -1,6 +1,5 @@
-use crate::utils::button::Button;
-
 use self::line_selection::{LineSelection, JOYP_SELECTION_MASK};
+use crate::utils::button::Button;
 
 const JOYP_UNUSED_MASK: u8 = 0b1100_0000;
 const JOYP_BUTTONS_MASK: u8 = 0b0000_1111;
@@ -9,7 +8,7 @@ pub struct Joypad {
     joyp: u8,
     buttons: u8,
 
-    pub irq: bool,
+    pub(crate) irq: bool,
 }
 
 impl Default for Joypad {
@@ -26,11 +25,11 @@ impl Default for Joypad {
 impl Joypad {
     // 0xFF00
 
-    pub fn read(&self) -> u8 {
+    pub(crate) fn read(&self) -> u8 {
         JOYP_UNUSED_MASK | self.joyp
     }
 
-    pub fn write(&mut self, value: u8) {
+    pub(crate) fn write(&mut self, value: u8) {
         // Only bits 4 and 5 are writable.
         self.joyp &= !JOYP_SELECTION_MASK;
         self.joyp |= value & JOYP_SELECTION_MASK;
@@ -38,19 +37,7 @@ impl Joypad {
         self.update_joyp();
     }
 
-    fn update_joyp(&mut self) {
-        let buttons_bits = match LineSelection::from_joyp_bits(self.joyp) {
-            LineSelection::Both => (self.buttons | (self.buttons >> 4)) & 0b1111,
-            LineSelection::Action => self.buttons & 0b1111,
-            LineSelection::Direction => self.buttons >> 4,
-            LineSelection::None => 0b0000,
-        };
-
-        self.joyp &= !JOYP_BUTTONS_MASK;
-        self.joyp |= !buttons_bits & JOYP_BUTTONS_MASK;
-    }
-
-    pub fn key_down(&mut self, key: Button) {
+    pub(crate) fn key_down(&mut self, key: Button) {
         let current_buttons = self.buttons;
         let new_buttons = self.buttons | (key as u8);
 
@@ -66,6 +53,18 @@ impl Joypad {
         self.buttons &= !(key as u8);
 
         self.update_joyp();
+    }
+
+    fn update_joyp(&mut self) {
+        let buttons_bits = match LineSelection::from_joyp_bits(self.joyp) {
+            LineSelection::Both => (self.buttons | (self.buttons >> 4)) & 0b1111,
+            LineSelection::Action => self.buttons & 0b1111,
+            LineSelection::Direction => self.buttons >> 4,
+            LineSelection::None => 0b0000,
+        };
+
+        self.joyp &= !JOYP_BUTTONS_MASK;
+        self.joyp |= !buttons_bits & JOYP_BUTTONS_MASK;
     }
 }
 

@@ -1,15 +1,8 @@
-use gb_core::cpu::{alu::*, registers::Flags};
+use self::structs::parse_tests;
+use crate::cpu::{alu::*, registers::Flags};
 
-use common::alu_tests::Tests;
-mod common;
-
-pub fn parse_tests(name: &str) -> Tests {
-    let manifest = env!("CARGO_MANIFEST_DIR");
-    let path = format!("{manifest}/../../external/sm83-test-data/alu_tests/v1/{name}.json");
-    let json = std::fs::read_to_string(path).unwrap();
-
-    serde_json::from_str::<Tests>(json.as_str()).unwrap()
-}
+mod deserializers;
+mod structs;
 
 #[test]
 fn test_add() {

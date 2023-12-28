@@ -20,7 +20,7 @@
 use cartridge::error::Error as CartridgeError;
 use constants::ScreenPixels;
 use cpu::Cpu;
-use memory::Memory;
+use memory::{Memory, MemoryInterface};
 use utils::button::Button;
 
 pub struct GameBoy {
@@ -63,6 +63,10 @@ impl GameBoy {
         self.memory.load_cartridge(rom)
     }
 
+    pub fn cartridge_inserted(&self) -> bool {
+        self.memory.cartridge.is_some()
+    }
+
     pub fn get_battery(&self) -> Option<&[u8]> {
         if let Some(cartridge) = self.memory.cartridge.as_ref() {
             return Some(cartridge.get_battery());
@@ -75,6 +79,10 @@ impl GameBoy {
         if let Some(cartridge) = self.memory.cartridge.as_mut() {
             cartridge.load_battery(file);
         }
+    }
+
+    pub fn step(&mut self) {
+        self.cpu.step(&mut self.memory);
     }
 
     pub fn run_frame(&mut self) {
@@ -101,13 +109,25 @@ impl GameBoy {
     }
 }
 
-pub mod audio;
-pub mod cartridge;
+#[derive(Default)]
+pub struct GameBoyDummy<Mem: MemoryInterface> {
+    pub cpu: Cpu,
+    pub memory: Mem,
+}
+
+impl<Mem: MemoryInterface> GameBoyDummy<Mem> {
+    pub fn step(&mut self) {
+        self.cpu.step(&mut self.memory);
+    }
+}
+
+pub(crate) mod audio;
+pub(crate) mod cartridge;
 pub mod constants;
 pub mod cpu;
-pub mod joypad;
+pub(crate) mod joypad;
 pub mod memory;
-pub mod ppu;
-pub mod serial;
-pub mod timer;
+pub(crate) mod ppu;
+pub(crate) mod serial;
+pub(crate) mod timer;
 pub mod utils;

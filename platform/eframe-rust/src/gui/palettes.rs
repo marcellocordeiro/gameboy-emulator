@@ -1,7 +1,6 @@
+use super::components::color_rect::color_rect;
 use egui::{epaint::Color32, Context, Ui, Window};
 use gb_core::{utils::color::Color, GameBoy};
-
-use super::components::color_rect::color_rect;
 
 #[derive(Debug, Default)]
 pub struct Palettes {
@@ -24,8 +23,8 @@ impl Palettes {
             return;
         }
 
-        let bg_palettes = gb_ctx.memory.ppu.get_bg_cram();
-        let obj_palettes = gb_ctx.memory.ppu.get_obj_cram();
+        let bg_palettes = &gb_ctx.memory.ppu.bg_cram;
+        let obj_palettes = &gb_ctx.memory.ppu.obj_cram;
 
         Window::new("Palettes")
             .open(&mut self.opened)

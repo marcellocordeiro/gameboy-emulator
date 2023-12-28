@@ -6,7 +6,7 @@ enum TimaState {
     Loading(u8),
 }
 
-#[derive(Debug, Default)]
+#[derive(Default)]
 pub struct Timer {
     system_counter: u16, // [15-8] Divider (R/W).
     tima: u8,            // Timer counter (R/W).
@@ -14,7 +14,7 @@ pub struct Timer {
     tac: u8,             // Timer Control (R/W).
     tima_state: TimaState,
 
-    pub irq: bool,
+    pub(crate) irq: bool,
 }
 
 impl Timer {

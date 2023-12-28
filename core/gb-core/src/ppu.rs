@@ -33,22 +33,22 @@ pub struct Ppu {
     wx: u8,
     window_internal_counter: u8,
 
-    bcps: u8,          // (CGB) Background color palette specification
-    bg_cram: ColorRam, // (CGB) Accessed through background color palette data (BCPD)
+    bcps: u8,              // (CGB) Background color palette specification
+    pub bg_cram: ColorRam, // (CGB) Accessed through background color palette data (BCPD)
 
-    ocps: u8,           // (CGB) Object color palette specification
-    obj_cram: ColorRam, // (CGB) Accessed through object color palette data (OCPD)
+    ocps: u8,               // (CGB) Object color palette specification
+    pub obj_cram: ColorRam, // (CGB) Accessed through object color palette data (OCPD)
 
     opri: bool, // (CGB) Object priority mode
 
-    pub stat_irq: bool,
-    pub vblank_irq: bool,
+    pub(crate) stat_irq: bool,
+    pub(crate) vblank_irq: bool,
 
     pub vram: VideoRam,
-    pub oam: Oam,
+    pub(crate) oam: Oam,
 
-    pub oam_dma: OamDma,
-    pub vram_dma: VramDma,
+    pub(crate) oam_dma: OamDma,
+    pub(crate) vram_dma: VramDma,
 
     mode: StatusMode,
     cycles: u32,
@@ -60,17 +60,17 @@ pub struct Ppu {
 }
 
 impl Ppu {
-    pub fn set_cgb_mode(&mut self, value: bool) {
+    pub(crate) fn set_cgb_mode(&mut self, value: bool) {
         self.cgb_mode = value;
         self.vram.set_cgb_mode(value);
     }
 
-    pub fn skip_bootrom(&mut self) {
+    pub(crate) fn skip_bootrom(&mut self) {
         self.lcdc = LcdControl::from_bits_truncate(0x91);
         self.bgp = 0xFC;
     }
 
-    pub fn handle_post_bootrom_setup(&mut self, info: &Info) {
+    pub(crate) fn handle_post_bootrom_setup(&mut self, info: &Info) {
         if device_is_cgb!() {
             if !info.cgb_flag.has_cgb_support() {
                 self.opri = true;
@@ -91,15 +91,15 @@ impl Ppu {
         }
     }
 
-    pub fn screen(&self) -> &Screen {
+    pub(crate) fn screen(&self) -> &Screen {
         &self.screen
     }
 
-    pub fn in_hblank(&self) -> bool {
+    pub(crate) fn in_hblank(&self) -> bool {
         self.mode == StatusMode::Hblank
     }
 
-    pub fn read_bcps(&self) -> u8 {
+    pub(crate) fn read_bcps(&self) -> u8 {
         // TODO: lock after bootrom is finished?
         if !device_is_cgb!() {
             return 0xFF;
@@ -108,7 +108,7 @@ impl Ppu {
         0b0100_0000 | self.bcps
     }
 
-    pub fn write_bcps(&mut self, value: u8) {
+    pub(crate) fn write_bcps(&mut self, value: u8) {
         // TODO: lock after bootrom is finished?
         if !device_is_cgb!() {
             return;
@@ -117,7 +117,7 @@ impl Ppu {
         self.bcps = value & 0b1011_1111;
     }
 
-    pub fn read_bcpd(&self) -> u8 {
+    pub(crate) fn read_bcpd(&self) -> u8 {
         // TODO: lock after bootrom is finished?
         if !device_is_cgb!() {
             return 0xFF;
@@ -132,7 +132,7 @@ impl Ppu {
         self.bg_cram.read(address)
     }
 
-    pub fn write_bcpd(&mut self, value: u8) {
+    pub(crate) fn write_bcpd(&mut self, value: u8) {
         // TODO: lock after bootrom is finished?
 
         if !device_is_cgb!() {
@@ -152,7 +152,7 @@ impl Ppu {
         }
     }
 
-    pub fn read_ocps(&self) -> u8 {
+    pub(crate) fn read_ocps(&self) -> u8 {
         // TODO: lock after bootrom is finished?
         if !device_is_cgb!() {
             return 0xFF;
@@ -161,7 +161,7 @@ impl Ppu {
         0b0100_0000 | self.ocps
     }
 
-    pub fn write_ocps(&mut self, value: u8) {
+    pub(crate) fn write_ocps(&mut self, value: u8) {
         // TODO: lock after bootrom is finished?
         if !device_is_cgb!() {
             return;
@@ -170,7 +170,7 @@ impl Ppu {
         self.ocps = value & 0b1011_1111;
     }
 
-    pub fn read_ocpd(&self) -> u8 {
+    pub(crate) fn read_ocpd(&self) -> u8 {
         // TODO: lock after bootrom is finished?
         if !device_is_cgb!() {
             return 0xFF;
@@ -185,7 +185,7 @@ impl Ppu {
         self.obj_cram.read(address)
     }
 
-    pub fn write_ocpd(&mut self, value: u8) {
+    pub(crate) fn write_ocpd(&mut self, value: u8) {
         // TODO: lock after bootrom is finished?
         if !device_is_cgb!() {
             return;
@@ -204,7 +204,7 @@ impl Ppu {
         }
     }
 
-    pub fn read_opri(&self) -> u8 {
+    pub(crate) fn read_opri(&self) -> u8 {
         // TODO: lock after bootrom is finished?
         if !in_cgb_mode!(self) {
             return 0xFF;
@@ -213,7 +213,7 @@ impl Ppu {
         self.opri as u8
     }
 
-    pub fn write_opri(&mut self, value: u8) {
+    pub(crate) fn write_opri(&mut self, value: u8) {
         // TODO: lock after bootrom is finished?
         if !device_is_cgb!() {
             return;
@@ -234,7 +234,7 @@ impl Ppu {
         wx
     }
 
-    pub fn tick(&mut self) {
+    pub(crate) fn tick(&mut self) {
         if !self.lcdc.get_lcd_enable() {
             return;
         }
@@ -364,7 +364,6 @@ impl Ppu {
 }
 
 mod color_ram;
-mod debug_getters;
 mod draw_line_cgb;
 mod draw_line_dmg;
 mod lcd_control;

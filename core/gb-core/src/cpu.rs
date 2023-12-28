@@ -1,24 +1,23 @@
-use crate::{memory::MemoryInterface, utils::macros::device_is_cgb};
-
 use self::registers::{ImeState, Registers};
+use crate::{memory::MemoryInterface, utils::macros::device_is_cgb};
 
 #[derive(Default)]
 pub struct Cpu {
     pub registers: Registers,
 
-    pub halt: bool,
+    halt: bool,
 
     pub cycles: i32,
 }
 
 impl Cpu {
-    pub fn reset(&mut self) {
+    pub(crate) fn reset(&mut self) {
         self.registers = Registers::default();
         self.halt = false;
         self.cycles = 0;
     }
 
-    pub fn skip_bootrom(&mut self) {
+    pub(crate) fn skip_bootrom(&mut self) {
         self.registers.pc = 0x0100;
         self.registers.sp = 0xFFFE;
 
@@ -35,7 +34,7 @@ impl Cpu {
         }
     }
 
-    pub fn step(&mut self, memory: &mut impl MemoryInterface) {
+    pub(crate) fn step(&mut self, memory: &mut impl MemoryInterface) {
         self.handle_interrupts(memory);
 
         if self.halt {
@@ -157,6 +156,9 @@ impl Cpu {
     }
 }
 
-pub mod alu;
-pub mod instructions;
+mod alu;
+mod instructions;
 pub mod registers;
+
+#[cfg(test)]
+mod tests;
