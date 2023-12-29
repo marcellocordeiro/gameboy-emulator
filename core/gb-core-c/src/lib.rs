@@ -17,12 +17,8 @@
     clippy::cast_possible_wrap,
 )]
 
+use gb_core::{GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH};
 use std::ffi::{c_uchar, c_ulonglong};
-
-use gb_core::{
-    constants::{ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH},
-    GameBoy,
-};
 
 #[no_mangle]
 pub extern "C" fn gameboy_new() -> *mut GameBoy {

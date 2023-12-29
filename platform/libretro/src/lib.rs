@@ -17,11 +17,7 @@
     clippy::cast_possible_wrap,
 )]
 
-use gb_core::{
-    constants::{ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
-    utils::button::Button,
-    GameBoy,
-};
+use gb_core::{Button, GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
 use libretro_rs::{
     libretro_core, sys::RETRO_MEMORY_SAVE_RAM, RetroAudioInfo, RetroCore, RetroEnvironment,
     RetroGame, RetroLoadGameResult, RetroPixelFormat, RetroRuntime, RetroSystemInfo,

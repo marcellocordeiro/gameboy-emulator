@@ -1,17 +1,44 @@
 use egui::ViewportCommand;
-use gb_core::{utils::button::Button, GameBoy};
+use gb_core::{Button, GameBoy};
 
-use crate::{gui::Gui, key_mappings};
+use crate::{
+    cartridge::{load_battery, save_battery},
+    gui::Gui,
+    key_mappings,
+};
 
 pub struct App {
     gb: GameBoy,
+    rom_path: String,
+
     gui: Gui,
 }
 
 impl App {
-    pub fn new(cc: &eframe::CreationContext, gb: GameBoy) -> Self {
+    pub fn new(cc: &eframe::CreationContext, rom_path: Option<String>) -> Self {
+        let mut gb = GameBoy::new();
+
+        // Maybe let the UI handle the errors?
+        let rom_path = {
+            if let Some(path) = rom_path {
+                path
+            } else {
+                let builder = rfd::FileDialog::new()
+                    .add_filter("Game Boy/Game Boy Color ROM", &["gb", "gbc"]);
+                let path = builder.pick_file().unwrap().to_str().unwrap().to_owned();
+
+                path
+            }
+        };
+
+        let rom = std::fs::read(&rom_path).unwrap();
+
+        gb.load_cartridge(rom).unwrap();
+        load_battery(&mut gb, &rom_path);
+
         Self {
             gb,
+            rom_path,
             gui: Gui::new(&cc.egui_ctx),
         }
     }
@@ -38,6 +65,10 @@ impl App {
 }
 
 impl eframe::App for App {
+    fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
+        save_battery(&mut self.gb, &self.rom_path);
+    }
+
     fn update(&mut self, egui_ctx: &egui::Context, _eframe_frame: &mut eframe::Frame) {
         if !self.gui.control.manual_control && self.gb.cartridge_inserted() {
             self.gb.run_frame();

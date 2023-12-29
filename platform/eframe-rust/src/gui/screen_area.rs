@@ -1,13 +1,9 @@
+use crate::utils::scaling::integer_scaling_size;
 use egui::{
     epaint::{ColorImage, TextureHandle},
     CentralPanel, Color32, Context, Image, TextureOptions,
 };
-use gb_core::{
-    constants::{ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
-    GameBoy,
-};
-
-use crate::utils::scaling::integer_scaling_size;
+use gb_core::{GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
 
 pub struct ScreenArea {
     pixels: Box<ScreenPixels>,

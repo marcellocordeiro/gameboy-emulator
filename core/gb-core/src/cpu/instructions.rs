@@ -1,6 +1,5 @@
-use crate::memory::MemoryInterface;
-
 use super::Cpu;
+use crate::memory::MemoryInterface;
 
 impl Cpu {
     #[allow(clippy::too_many_lines)]

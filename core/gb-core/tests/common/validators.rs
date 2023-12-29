@@ -1,10 +1,7 @@
-use gb_core::{
-    constants::{SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
-    GameBoy,
-};
+use gb_core::{GameBoy, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
 
 pub fn validate_fibonacci(gb: GameBoy) {
-    let regs = &gb.cpu.registers;
+    let regs = gb.cpu().registers();
 
     let is_fibonacci = regs.a == 0
         && regs.b == 3

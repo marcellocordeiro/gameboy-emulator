@@ -11,3 +11,21 @@ bitflags! {
         // Bits 0-3 are unused.
     }
 }
+
+impl Flags {
+    pub fn zero(&self) -> bool {
+        self.contains(Self::ZERO)
+    }
+
+    pub fn n_add_sub(&self) -> bool {
+        self.contains(Self::N_ADD_SUB)
+    }
+
+    pub fn half_carry(&self) -> bool {
+        self.contains(Self::HALF_CARRY)
+    }
+
+    pub fn carry(&self) -> bool {
+        self.contains(Self::CARRY)
+    }
+}

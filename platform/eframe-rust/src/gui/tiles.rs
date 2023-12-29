@@ -1,15 +1,11 @@
+use crate::utils::scaling::integer_scaling_size;
 use egui::{
     epaint::{ColorImage, TextureHandle, Vec2},
     Color32, Context, Image, TextureOptions, Ui, Window,
 };
 use gb_core::{
-    constants::{
-        TileDataFrame, TILE_DATA_FRAME_HEIGHT, TILE_DATA_FRAME_SIZE, TILE_DATA_FRAME_WIDTH,
-    },
-    GameBoy,
+    GameBoy, TileDataFrame, TILE_DATA_FRAME_HEIGHT, TILE_DATA_FRAME_SIZE, TILE_DATA_FRAME_WIDTH,
 };
-
-use crate::utils::scaling::integer_scaling_size;
 
 pub struct Tiles {
     opened: bool,
@@ -79,14 +75,14 @@ impl Tiles {
 
     fn update_texture(&mut self, gb_ctx: &GameBoy) {
         gb_ctx
-            .memory
+            .memory()
             .ppu
             .vram
             .draw_tile_data_0_into_frame(self.pixels.as_mut());
 
         #[cfg(feature = "cgb")]
         gb_ctx
-            .memory
+            .memory()
             .ppu
             .vram
             .draw_tile_data_1_into_frame(self.pixels.as_mut());

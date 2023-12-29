@@ -1,4 +1,4 @@
-use gb_core::utils::button::Button;
+use gb_core::Button;
 use libretro_rs::RetroJoypadButton;
 
 pub fn map_button(button: Button) -> RetroJoypadButton {

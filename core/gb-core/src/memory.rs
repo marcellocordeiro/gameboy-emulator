@@ -1,3 +1,7 @@
+use self::{
+    bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, speed_switch::SpeedSwitch,
+    undocumented_registers::UndocumentedRegisters, work_ram::WorkRam,
+};
 use crate::{
     audio::Audio,
     cartridge::{
@@ -9,15 +13,7 @@ use crate::{
     ppu::Ppu,
     serial::Serial,
     timer::Timer,
-    utils::{
-        macros::{device_is_cgb, in_cgb_mode},
-        screen::Screen,
-    },
-};
-
-use self::{
-    bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, speed_switch::SpeedSwitch,
-    undocumented_registers::UndocumentedRegisters, work_ram::WorkRam,
+    utils::macros::{device_is_cgb, in_cgb_mode},
 };
 
 pub trait MemoryInterface {
@@ -328,10 +324,6 @@ impl MemoryInterface for Memory {
 }
 
 impl Memory {
-    pub(crate) fn screen(&self) -> &Screen {
-        self.ppu.screen()
-    }
-
     pub(crate) fn reset(&mut self) {
         let mut cartridge = std::mem::take(&mut self.cartridge);
 
@@ -430,9 +422,9 @@ impl Memory {
     }
 }
 
-pub(crate) mod bootrom;
-pub(crate) mod high_ram;
+mod bootrom;
+mod high_ram;
 pub mod interrupts;
 pub mod speed_switch;
-pub(crate) mod undocumented_registers;
-pub(crate) mod work_ram;
+mod undocumented_registers;
+mod work_ram;

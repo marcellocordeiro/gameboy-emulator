@@ -2,13 +2,11 @@ use egui::{menu, Context, TopBottomPanel, ViewportCommand};
 use gb_core::GameBoy;
 
 use self::{
-    control::Control, file_loader::FileLoader, palettes::Palettes, screen_area::ScreenArea,
-    state::State, tiles::Tiles,
+    control::Control, palettes::Palettes, screen_area::ScreenArea, state::State, tiles::Tiles,
 };
 
 pub struct Gui {
     pub control: Control,
-    pub file_loader: FileLoader,
     pub palettes: Palettes,
     pub state: State,
     pub tiles: Tiles,
@@ -19,7 +17,6 @@ impl Gui {
     pub fn new(egui_ctx: &Context) -> Self {
         Self {
             control: Control::default(),
-            file_loader: FileLoader,
             palettes: Palettes::default(),
             state: State::default(),
             tiles: Tiles::new(egui_ctx),
@@ -36,8 +33,6 @@ impl Gui {
         TopBottomPanel::top("top_panel").show(egui_ctx, |ui| {
             menu::bar(ui, |ui| {
                 ui.menu_button("File", |ui| {
-                    self.file_loader.draw_button(ui, gb_ctx);
-
                     if ui.button("Reset").clicked() {
                         gb_ctx.reset();
                     }
@@ -68,7 +63,6 @@ impl Gui {
 
 mod components;
 mod control;
-mod file_loader;
 mod palettes;
 mod screen_area;
 mod state;

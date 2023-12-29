@@ -3,7 +3,7 @@ use crate::{memory::MemoryInterface, utils::macros::device_is_cgb};
 
 #[derive(Default)]
 pub struct Cpu {
-    pub registers: Registers,
+    registers: Registers,
 
     halt: bool,
 
@@ -11,6 +11,10 @@ pub struct Cpu {
 }
 
 impl Cpu {
+    pub fn registers(&self) -> &Registers {
+        &self.registers
+    }
+
     pub(crate) fn reset(&mut self) {
         self.registers = Registers::default();
         self.halt = false;
@@ -50,6 +54,13 @@ impl Cpu {
         let opcode = self.read_byte_operand(memory);
 
         self.run_instruction(memory, opcode);
+    }
+
+    pub(crate) fn run_frame(&mut self, memory: &mut impl MemoryInterface) {
+        self.cycles = 0;
+        while self.cycles < (70224 * 2) {
+            self.step(memory);
+        }
     }
 
     fn tick(&mut self, memory: &mut impl MemoryInterface) {
@@ -158,7 +169,7 @@ impl Cpu {
 
 mod alu;
 mod instructions;
-pub mod registers;
+mod registers;
 
 #[cfg(test)]
 mod tests;

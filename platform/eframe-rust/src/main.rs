@@ -17,13 +17,9 @@
     clippy::cast_possible_wrap,
 )]
 
-use clap::Parser;
-use gb_core::{
-    constants::{SCREEN_HEIGHT, SCREEN_WIDTH},
-    GameBoy,
-};
-
 use app::App;
+use clap::Parser;
+use gb_core::{SCREEN_HEIGHT, SCREEN_WIDTH};
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
@@ -46,21 +42,6 @@ fn main() -> Result<(), eframe::Error> {
 
     let rom_path = args.rom;
 
-    let mut gb = GameBoy::new();
-
-    // Maybe let the UI handle the errors?
-    if let Some(path) = rom_path {
-        let rom = std::fs::read(path).unwrap();
-        gb.load_cartridge(rom).unwrap();
-    } else {
-        let builder =
-            rfd::FileDialog::new().add_filter("Game Boy/Game Boy Color ROM", &["gb", "gbc"]);
-        let path = builder.pick_file().unwrap();
-
-        let rom = std::fs::read(path).unwrap();
-        gb.load_cartridge(rom).unwrap();
-    }
-
     #[allow(clippy::cast_precision_loss)]
     let initial_window_size = egui::vec2((SCREEN_WIDTH * 5) as f32, (SCREEN_HEIGHT * 5) as f32);
 
@@ -72,11 +53,12 @@ fn main() -> Result<(), eframe::Error> {
     eframe::run_native(
         "gameboy-emulator",
         native_options,
-        Box::new(move |cc| Box::new(App::new(cc, gb))),
+        Box::new(move |cc| Box::new(App::new(cc, rom_path))),
     )
 }
 
 mod app;
+mod cartridge;
 mod gui;
 mod key_mappings;
 mod utils;

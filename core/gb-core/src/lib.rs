@@ -18,14 +18,17 @@
 )]
 
 use cartridge::error::Error as CartridgeError;
-use constants::ScreenPixels;
 use cpu::Cpu;
-use memory::{Memory, MemoryInterface};
-use utils::button::Button;
+use memory::Memory;
+use std::sync::mpsc;
+
+pub use constants::*;
+pub use memory::MemoryInterface;
+pub use utils::{button::Button, color::Color};
 
 pub struct GameBoy {
-    pub cpu: Cpu,
-    pub memory: Memory,
+    cpu: Cpu,
+    memory: Memory,
 }
 
 impl Default for GameBoy {
@@ -45,6 +48,14 @@ impl GameBoy {
         }
 
         Self { cpu, memory }
+    }
+
+    pub fn cpu(&self) -> &Cpu {
+        &self.cpu
+    }
+
+    pub fn memory(&self) -> &Memory {
+        &self.memory
     }
 
     pub fn reset(&mut self) {
@@ -86,10 +97,7 @@ impl GameBoy {
     }
 
     pub fn run_frame(&mut self) {
-        self.cpu.cycles = 0;
-        while self.cpu.cycles < (70224 * 2) {
-            self.cpu.step(&mut self.memory);
-        }
+        self.cpu.run_frame(&mut self.memory);
     }
 
     pub fn key_down(&mut self, key: Button) {
@@ -101,33 +109,25 @@ impl GameBoy {
     }
 
     pub fn draw_into_frame_rgba8888(&self, frame: &mut ScreenPixels) {
-        self.memory.screen().draw_into_frame_rgba8888(frame);
+        self.memory.ppu.screen().draw_into_frame_rgba8888(frame);
     }
 
     pub fn draw_into_frame_bgra8888(&self, frame: &mut ScreenPixels) {
-        self.memory.screen().draw_into_frame_bgra8888(frame);
+        self.memory.ppu.screen().draw_into_frame_bgra8888(frame);
+    }
+
+    pub fn add_serial_channel(&mut self, channel: mpsc::Sender<u8>) {
+        self.memory.serial.add_sender(channel);
     }
 }
 
-#[derive(Default)]
-pub struct GameBoyDummy<Mem: MemoryInterface> {
-    pub cpu: Cpu,
-    pub memory: Mem,
-}
-
-impl<Mem: MemoryInterface> GameBoyDummy<Mem> {
-    pub fn step(&mut self) {
-        self.cpu.step(&mut self.memory);
-    }
-}
-
-pub(crate) mod audio;
-pub(crate) mod cartridge;
-pub mod constants;
-pub mod cpu;
-pub(crate) mod joypad;
-pub mod memory;
-pub(crate) mod ppu;
-pub(crate) mod serial;
-pub(crate) mod timer;
-pub mod utils;
+mod audio;
+mod cartridge;
+mod constants;
+mod cpu;
+mod joypad;
+mod memory;
+mod ppu;
+mod serial;
+mod timer;
+mod utils;

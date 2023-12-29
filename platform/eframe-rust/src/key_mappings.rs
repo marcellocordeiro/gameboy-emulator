@@ -1,5 +1,5 @@
 use egui::Key;
-use gb_core::utils::button::Button;
+use gb_core::Button;
 
 pub fn map_button(button: Button) -> Key {
     match button {

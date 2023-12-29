@@ -1,9 +1,8 @@
+use gb_core::{GameBoy, MemoryInterface};
 use std::{
     sync::mpsc,
     time::{Duration, Instant},
 };
-
-use gb_core::{memory::MemoryInterface, GameBoy};
 
 const TIMEOUT: Duration = Duration::from_secs(20);
 const BREAK_OPCODE: u8 = 0x40; // LD B,B
@@ -11,7 +10,7 @@ const BREAK_OPCODE: u8 = 0x40; // LD B,B
 pub fn run_until_break(gb: &mut GameBoy) {
     let start_time = Instant::now();
 
-    while gb.memory.read(gb.cpu.registers.pc) != BREAK_OPCODE {
+    while gb.memory().read(gb.cpu().registers().pc) != BREAK_OPCODE {
         gb.step();
 
         if Instant::now() - start_time > TIMEOUT {
@@ -24,7 +23,7 @@ pub fn run_until_serial_passed(gb: &mut GameBoy) {
     let (sender, receiver) = mpsc::channel::<u8>();
 
     let mut output = String::default();
-    gb.memory.serial.add_sender(sender);
+    gb.add_serial_channel(sender);
 
     let start_time = Instant::now();
 
@@ -61,7 +60,7 @@ pub fn run_until_memory_status(gb: &mut GameBoy) {
 
         let output = (0xA004..(0xA004 + 100))
             .take_while(|value| *value != 0)
-            .map(|address| gb.memory.read(address) as char)
+            .map(|address| gb.memory().read(address) as char)
             .collect::<String>();
 
         if output.contains("Passed") {

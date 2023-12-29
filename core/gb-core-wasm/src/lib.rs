@@ -17,13 +17,9 @@
     clippy::cast_possible_wrap,
 )]
 
+use gb_core::{GameBoy as GameBoyInternal, ScreenPixels, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
 use wasm_bindgen::{prelude::wasm_bindgen, Clamped};
 use web_sys::{CanvasRenderingContext2d, ImageData};
-
-use gb_core::{
-    constants::{ScreenPixels, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
-    GameBoy as GameBoyInternal,
-};
 
 fn init_logging() {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
