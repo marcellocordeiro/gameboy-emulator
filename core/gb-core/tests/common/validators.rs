@@ -1,6 +1,6 @@
 use gb_core::{GameBoy, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
 
-pub fn validate_fibonacci(gb: GameBoy) {
+pub fn validate_fibonacci(gb: &GameBoy) {
     let regs = gb.cpu().registers();
 
     let is_fibonacci = regs.a == 0
@@ -14,7 +14,7 @@ pub fn validate_fibonacci(gb: GameBoy) {
     assert!(is_fibonacci, "Validation failure");
 }
 
-pub fn validate_screenshot(gb: GameBoy, name: &'static str) {
+pub fn validate_screenshot(gb: &GameBoy, name: &'static str) {
     let mut frame = [0; SCREEN_PIXELS_SIZE];
 
     gb.draw_into_frame_rgba8888(&mut frame);

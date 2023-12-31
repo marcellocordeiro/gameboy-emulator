@@ -45,9 +45,8 @@ impl SpeedSwitch {
 
 #[cfg(test)]
 mod tests {
-    use crate::utils::macros::device_is_cgb;
-
     use super::*;
+    use crate::utils::macros::device_is_cgb;
 
     #[test]
     fn test_my_sanity() {

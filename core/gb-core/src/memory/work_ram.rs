@@ -93,7 +93,6 @@ impl WorkRam {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     use crate::utils::macros::device_is_cgb;
 
     #[test]

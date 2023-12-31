@@ -1,5 +1,6 @@
 use std::ops::RangeInclusive;
 
+use super::{lcd_status::StatusMode, Ppu};
 use crate::{
     constants::{TileDataFrame, TILES_PER_LINE, TILE_DATA_FRAME_WIDTH},
     utils::{
@@ -7,8 +8,6 @@ use crate::{
         macros::{device_is_cgb, in_cgb_mode},
     },
 };
-
-use super::{lcd_status::StatusMode, Ppu};
 
 #[cfg(not(feature = "cgb"))]
 const VRAM_BANKS: usize = 1;

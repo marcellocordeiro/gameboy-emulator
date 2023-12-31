@@ -3,7 +3,8 @@ name = "gb-core"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lints]
+workspace = true
 
 [features]
 # default = ["bootrom", "cgb"]
@@ -16,10 +17,12 @@ bitflags = "2.4.1"
 enum_dispatch = "0.3.12"
 log = "0.4.20"
 paste = "1.0.14"
-thiserror = "1.0.52"
+thiserror = "1.0.53"
 
 [dev-dependencies]
 image = { version = "0.24.7", default-features = false, features = ["png"] }
 num = { version = "0.4.1", default-features = false }
 serde = { version = "1.0.193", features = ["derive"] }
 serde_json = "1.0.108"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

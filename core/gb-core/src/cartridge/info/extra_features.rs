@@ -1,6 +1,5 @@
-use crate::cartridge::error::Error as CartridgeError;
-
 use super::cartridge_type::CARTRIDGE_TYPE_ADDRESS;
+use crate::cartridge::error::Error as CartridgeError;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExtraFeature {

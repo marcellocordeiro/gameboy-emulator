@@ -1,5 +1,10 @@
-use crate::constants::ONE_KIB;
-
+pub use self::{
+    cartridge_type::CartridgeType,
+    cgb_flag::CgbFlag,
+    extra_features::ExtraFeature,
+    ram_size::RAM_BANK_SIZE,
+    rom_size::ROM_BANK_SIZE,
+};
 use self::{
     dmg_compatibility_palettes::DmgCompatibilityPalettes,
     licensee_code::LicenseeCode,
@@ -8,11 +13,7 @@ use self::{
     sgb_flag::SGB_FLAG_ADDRESS,
     title::Title,
 };
-
-pub use self::{
-    cartridge_type::CartridgeType, cgb_flag::CgbFlag, extra_features::ExtraFeature,
-    ram_size::RAM_BANK_SIZE, rom_size::ROM_BANK_SIZE,
-};
+use crate::constants::ONE_KIB;
 
 pub struct Info {
     // Header info

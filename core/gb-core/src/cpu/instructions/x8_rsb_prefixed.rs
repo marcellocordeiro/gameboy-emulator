@@ -6,7 +6,7 @@ use crate::{
 // Completed, will definitely need some refactoring.
 
 macro_rules! alu_op_r8 {
-    ($self:ident, $memory:ident, $F:ident, [hl]) => {
+    ($self:ident, $memory:ident, $F:ident,[hl]) => {
         let address = $self.registers.get_hl();
         let value = $self.read_byte($memory, address);
 
@@ -15,7 +15,7 @@ macro_rules! alu_op_r8 {
         $self.write_byte($memory, address, result)
     };
 
-    ($self:ident, $memory:ident, $F:ident, $bit:literal, [hl]) => {
+    ($self:ident, $memory:ident, $F:ident, $bit:literal,[hl]) => {
         let address = $self.registers.get_hl();
         let value = $self.read_byte($memory, address);
 
@@ -34,7 +34,7 @@ macro_rules! alu_op_r8 {
 }
 
 macro_rules! alu_op_bit_test {
-    ($self:ident, $memory:ident, $F:ident, $bit:literal, [hl]) => {
+    ($self:ident, $memory:ident, $F:ident, $bit:literal,[hl]) => {
         let address = $self.registers.get_hl();
         let value = $self.read_byte($memory, address);
 

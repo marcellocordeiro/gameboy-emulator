@@ -1,6 +1,5 @@
-use crate::cartridge::info::{CartridgeType, Info, ROM_BANK_SIZE};
-
 use super::MbcInterface;
+use crate::cartridge::info::{CartridgeType, Info, ROM_BANK_SIZE};
 
 pub struct Mbc2 {
     rom: Vec<u8>,

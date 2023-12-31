@@ -9,7 +9,7 @@ macro_rules! ld_r8_r8 {
 }
 
 macro_rules! ld_r8_hl {
-    ($self:ident, $memory:ident, $reg:ident, [hl]) => {
+    ($self:ident, $memory:ident, $reg:ident,[hl]) => {
         let address = $self.registers.get_hl();
         let value = $self.read_byte($memory, address);
 

@@ -1,9 +1,10 @@
+use enum_dispatch::enum_dispatch;
+
 pub use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc30::Mbc30, mbc5::Mbc5, no_mbc::NoMbc};
 use super::{
     error::Error as CartridgeError,
     info::{CartridgeType, Info},
 };
-use enum_dispatch::enum_dispatch;
 
 #[enum_dispatch]
 pub(super) trait MbcInterface {

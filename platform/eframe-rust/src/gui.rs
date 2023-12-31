@@ -2,7 +2,11 @@ use egui::{menu, Context, TopBottomPanel, ViewportCommand};
 use gb_core::GameBoy;
 
 use self::{
-    control::Control, palettes::Palettes, screen_area::ScreenArea, state::State, tiles::Tiles,
+    control::Control,
+    palettes::Palettes,
+    screen_area::ScreenArea,
+    state::State,
+    tiles::Tiles,
 };
 
 pub struct Gui {

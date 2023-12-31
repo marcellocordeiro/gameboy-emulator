@@ -1,4 +1,4 @@
-# Assorted development notes
+# Development notes
 
 ## TODO
 
@@ -9,12 +9,15 @@
 - Lock access to some registers after the bootrom is finished (CGB).
 - Add more linter rules
 
-## Linting
+## Formatting and linting
 
 TODO: Add more rules from both `clippy` and `rustc`.
 
 ```sh
-cargo clippy
+cargo +nightly fmt --all
+cargo clippy --all-targets
+
+cargo +nightly fmt --all && cargo clippy --all-targets
 ```
 
 ## Profiling

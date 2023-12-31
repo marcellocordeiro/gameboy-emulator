@@ -1,6 +1,7 @@
-use super::components::color_rect::color_rect;
 use egui::{epaint::Color32, Context, Ui, Window};
 use gb_core::{Color, GameBoy};
+
+use super::components::color_rect::color_rect;
 
 #[derive(Debug, Default)]
 pub struct Palettes {

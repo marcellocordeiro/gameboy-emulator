@@ -1,5 +1,6 @@
-use super::deserializers::deserialize_hex;
 use serde::Deserialize;
+
+use super::deserializers::deserialize_hex;
 
 #[derive(Deserialize)]
 pub struct TestResult {

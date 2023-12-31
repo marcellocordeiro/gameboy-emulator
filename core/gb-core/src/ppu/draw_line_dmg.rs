@@ -1,9 +1,8 @@
+use super::Ppu;
 use crate::{constants::SCREEN_WIDTH, utils::color::Color};
 
-use super::Ppu;
-
 impl Ppu {
-    pub fn draw_line_dmg(&mut self) {
+    pub(super) fn draw_line_dmg(&mut self) {
         let mut bg_priority = [false; SCREEN_WIDTH];
 
         self.draw_tiles_dmg(&mut bg_priority);

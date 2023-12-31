@@ -1,9 +1,8 @@
+use super::MbcInterface;
 use crate::{
     cartridge::info::{CartridgeType, Info},
     constants::ONE_KIB,
 };
-
-use super::MbcInterface;
 
 pub struct NoMbc {
     rom: Vec<u8>,

@@ -1,11 +1,3 @@
-use crate::{
-    cartridge::info::Info,
-    utils::{
-        macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
-        screen::Screen,
-    },
-};
-
 use self::{
     color_ram::ColorRam,
     lcd_control::LcdControl,
@@ -14,6 +6,13 @@ use self::{
     oam_dma::OamDma,
     video_ram::VideoRam,
     vram_dma::VramDma,
+};
+use crate::{
+    cartridge::info::Info,
+    utils::{
+        macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
+        screen::Screen,
+    },
 };
 
 #[allow(clippy::struct_excessive_bools)]
@@ -60,6 +59,18 @@ pub struct Ppu {
 }
 
 impl Ppu {
+    pure_read_write_methods_u8! {
+        scy,
+        scx,
+        ly,
+        lyc,
+        bgp,
+        obp0,
+        obp1,
+        wy,
+        wx
+    }
+
     pub(crate) fn set_cgb_mode(&mut self, value: bool) {
         self.cgb_mode = value;
         self.vram.set_cgb_mode(value);
@@ -220,18 +231,6 @@ impl Ppu {
         }
 
         self.opri = (value & 0b1) != 0;
-    }
-
-    pure_read_write_methods_u8! {
-        scy,
-        scx,
-        ly,
-        lyc,
-        bgp,
-        obp0,
-        obp1,
-        wy,
-        wx
     }
 
     pub(crate) fn tick(&mut self) {

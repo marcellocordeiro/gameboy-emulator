@@ -1,6 +1,7 @@
+use std::path::Path;
+
 use gb_core::GameBoy;
 use log::info;
-use std::path::Path;
 
 pub fn load_battery<P: AsRef<Path>>(gb: &mut GameBoy, rom_path: P) {
     let rom_path = rom_path.as_ref();

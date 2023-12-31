@@ -1,6 +1,7 @@
-use crate::key_mappings;
 use gb_core::{GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
 use sdl2::{event::Event, keyboard::Keycode, pixels::PixelFormatEnum, render::Texture};
+
+use crate::key_mappings;
 
 pub struct App {
     gb: GameBoy,

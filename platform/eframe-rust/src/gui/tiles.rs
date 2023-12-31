@@ -1,11 +1,21 @@
-use crate::utils::scaling::integer_scaling_size;
 use egui::{
     epaint::{ColorImage, TextureHandle, Vec2},
-    Color32, Context, Image, TextureOptions, Ui, Window,
+    Color32,
+    Context,
+    Image,
+    TextureOptions,
+    Ui,
+    Window,
 };
 use gb_core::{
-    GameBoy, TileDataFrame, TILE_DATA_FRAME_HEIGHT, TILE_DATA_FRAME_SIZE, TILE_DATA_FRAME_WIDTH,
+    GameBoy,
+    TileDataFrame,
+    TILE_DATA_FRAME_HEIGHT,
+    TILE_DATA_FRAME_SIZE,
+    TILE_DATA_FRAME_WIDTH,
 };
+
+use crate::utils::scaling::integer_scaling_size;
 
 pub struct Tiles {
     opened: bool,

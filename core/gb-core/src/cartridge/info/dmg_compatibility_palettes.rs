@@ -2,12 +2,12 @@
 // 1. https://gbdev.io/pandocs/Power_Up_Sequence.html#compatibility-palettes
 // 2. https://github.com/LIJI32/SameBoy/blob/master/BootROMs/cgb_boot.asm
 
-use super::{licensee_code::LicenseeCode, title::Title};
-
 use self::{
-    palette_combinations::PALETTE_COMBINATIONS, palette_id_lookup_table::PALETTE_ID_LOOKUP_TABLE,
+    palette_combinations::PALETTE_COMBINATIONS,
+    palette_id_lookup_table::PALETTE_ID_LOOKUP_TABLE,
     title_checksum_lookup_table::TITLE_CHECKSUM_LOOKUP_TABLE,
 };
+use super::{licensee_code::LicenseeCode, title::Title};
 
 pub struct DmgCompatibilityPalettes {
     pub bg0: [u16; 4],

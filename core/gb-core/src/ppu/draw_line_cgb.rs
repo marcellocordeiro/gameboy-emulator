@@ -1,8 +1,7 @@
 #![cfg(feature = "cgb")]
 
-use crate::{constants::SCREEN_WIDTH, utils::color::Color};
-
 use super::Ppu;
+use crate::{constants::SCREEN_WIDTH, utils::color::Color};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Priority {
@@ -12,7 +11,7 @@ enum Priority {
 }
 
 impl Ppu {
-    pub fn draw_line_cgb(&mut self) {
+    pub(super) fn draw_line_cgb(&mut self) {
         let mut priority = [Priority::Object; SCREEN_WIDTH];
 
         self.draw_tiles_cgb(&mut priority);

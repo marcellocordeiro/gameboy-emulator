@@ -3,7 +3,8 @@ name = "gb-core-c"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lints]
+workspace = true
 
 [lib]
 crate-type = ["staticlib", "dylib"]
@@ -14,3 +15,5 @@ cgb = ["gb-core/cgb"]
 
 [dependencies.gb-core]
 path = "../gb-core"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

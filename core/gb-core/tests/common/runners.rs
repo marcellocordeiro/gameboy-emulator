@@ -1,8 +1,9 @@
-use gb_core::{GameBoy, MemoryInterface};
 use std::{
     sync::mpsc,
     time::{Duration, Instant},
 };
+
+use gb_core::{GameBoy, MemoryInterface};
 
 const TIMEOUT: Duration = Duration::from_secs(20);
 const BREAK_OPCODE: u8 = 0x40; // LD B,B
@@ -13,9 +14,7 @@ pub fn run_until_break(gb: &mut GameBoy) {
     while gb.memory().read(gb.cpu().registers().pc) != BREAK_OPCODE {
         gb.step();
 
-        if Instant::now() - start_time > TIMEOUT {
-            panic!("Timed out");
-        }
+        assert!(start_time.elapsed() <= TIMEOUT, "Timed out");
     }
 }
 
@@ -40,13 +39,8 @@ pub fn run_until_serial_passed(gb: &mut GameBoy) {
             break;
         }
 
-        if output.contains("Failed") {
-            panic!("Failed");
-        }
-
-        if Instant::now() - start_time > TIMEOUT {
-            panic!("Timed out");
-        }
+        assert!(!output.contains("Failed"), "Failed");
+        assert!(start_time.elapsed() <= TIMEOUT, "Timed out");
     }
 }
 
@@ -67,12 +61,7 @@ pub fn run_until_memory_status(gb: &mut GameBoy) {
             break;
         }
 
-        if output.contains("Failed") {
-            panic!("Failed");
-        }
-
-        if Instant::now() - start_time > TIMEOUT {
-            panic!("Timed out: {output}");
-        }
+        assert!(!output.contains("Failed"), "Failed");
+        assert!(start_time.elapsed() <= TIMEOUT, "Timed out");
     }
 }

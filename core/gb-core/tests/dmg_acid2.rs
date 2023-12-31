@@ -1,6 +1,5 @@
 mod common;
 use common::{runners::run_until_break, validators::validate_screenshot};
-
 use gb_core::GameBoy;
 
 #[cfg(not(feature = "cgb"))]
@@ -13,7 +12,7 @@ fn test_dmg_acid2_dmg() {
     gb.load_cartridge(rom.to_vec()).unwrap();
 
     run_until_break(&mut gb);
-    validate_screenshot(gb, name);
+    validate_screenshot(&gb, name);
 }
 
 #[cfg(feature = "cgb")]

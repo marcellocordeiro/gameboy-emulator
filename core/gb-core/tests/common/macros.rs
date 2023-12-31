@@ -11,7 +11,7 @@ macro_rules! testcases_mooneye {
             gb.load_cartridge(rom.to_vec()).unwrap();
 
             run_until_break(&mut gb);
-            validate_fibonacci(gb);
+            validate_fibonacci(&gb);
         }
     };
 

@@ -1,6 +1,7 @@
+use std::collections::HashMap;
+
 use num::Unsigned;
 use serde::{Deserialize, Deserializer};
-use std::collections::HashMap;
 
 pub fn deserialize_hex<'de, T, D>(deserializer: D) -> Result<T, D::Error>
 where

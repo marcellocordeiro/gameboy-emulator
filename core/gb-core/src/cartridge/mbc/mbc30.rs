@@ -1,11 +1,10 @@
 // TODO: merge this with MBC3.
 
+use super::MbcInterface;
 use crate::{
     cartridge::info::{CartridgeType, Info, RAM_BANK_SIZE, ROM_BANK_SIZE},
     constants::ONE_KIB,
 };
-
-use super::MbcInterface;
 
 pub struct Mbc30 {
     rom: Vec<u8>,

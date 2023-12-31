@@ -1,5 +1,4 @@
-pub use self::flags::Flags;
-pub use self::ime_state::ImeState;
+pub use self::{flags::Flags, ime_state::ImeState};
 
 #[derive(Default)]
 pub struct Registers {

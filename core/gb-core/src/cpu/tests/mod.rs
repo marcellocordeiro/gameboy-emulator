@@ -1,9 +1,10 @@
+use std::path::PathBuf;
+
 use self::{
     structs::{Test, Tests},
     test_memory::TestMemory,
 };
 use crate::cpu::Cpu;
-use std::path::PathBuf;
 
 mod deserializers;
 mod structs;

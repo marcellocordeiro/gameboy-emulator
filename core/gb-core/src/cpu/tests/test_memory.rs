@@ -1,5 +1,6 @@
-use crate::memory::{interrupts::Interrupts, speed_switch::SpeedSwitch, MemoryInterface};
 use std::{cell::RefCell, collections::HashMap};
+
+use crate::memory::{interrupts::Interrupts, speed_switch::SpeedSwitch, MemoryInterface};
 
 #[derive(Default)]
 pub struct TestMemory {

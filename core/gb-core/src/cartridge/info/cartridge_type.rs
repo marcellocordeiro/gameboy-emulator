@@ -1,6 +1,5 @@
-use crate::cartridge::error::Error as CartridgeError;
-
 use super::ram_size::{get_ram_banks, RAM_BANKS_CODE_ADDRESS};
+use crate::cartridge::error::Error as CartridgeError;
 
 pub const CARTRIDGE_TYPE_ADDRESS: usize = 0x0147;
 

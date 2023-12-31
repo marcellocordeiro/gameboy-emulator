@@ -38,9 +38,8 @@ pub fn get_rom_banks(code: u8) -> Result<usize, CartridgeError> {
 mod tests {
     use std::collections::HashMap;
 
-    use crate::constants::ONE_MIB_TO_KIB;
-
     use super::*;
+    use crate::constants::ONE_MIB_TO_KIB;
 
     #[test]
     fn test_sizes() {

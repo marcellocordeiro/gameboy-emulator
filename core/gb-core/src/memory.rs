@@ -1,6 +1,10 @@
 use self::{
-    bootrom::Bootrom, high_ram::HighRam, interrupts::Interrupts, speed_switch::SpeedSwitch,
-    undocumented_registers::UndocumentedRegisters, work_ram::WorkRam,
+    bootrom::Bootrom,
+    high_ram::HighRam,
+    interrupts::Interrupts,
+    speed_switch::SpeedSwitch,
+    undocumented_registers::UndocumentedRegisters,
+    work_ram::WorkRam,
 };
 use crate::{
     audio::Audio,
