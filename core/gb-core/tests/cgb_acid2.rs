@@ -13,5 +13,5 @@ fn test_cgb_acid2() {
     gb.load_cartridge(rom.to_vec()).unwrap();
 
     run_until_break(&mut gb);
-    validate_screenshot(gb, name);
+    validate_screenshot(&gb, name);
 }
