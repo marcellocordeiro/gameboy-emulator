@@ -1,6 +1,7 @@
-mod common;
 use common::{runners::run_until_break, validators::validate_screenshot};
 use gb_core::GameBoy;
+
+mod common;
 
 #[cfg(not(feature = "cgb"))]
 #[test]

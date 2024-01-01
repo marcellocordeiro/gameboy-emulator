@@ -1,8 +1,9 @@
 #![cfg(feature = "cgb")]
 
-mod common;
 use common::{runners::run_until_break, validators::validate_screenshot};
 use gb_core::GameBoy;
+
+mod common;
 
 #[test]
 fn test_cgb_acid2() {

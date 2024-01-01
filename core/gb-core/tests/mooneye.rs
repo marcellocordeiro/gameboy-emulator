@@ -1,6 +1,7 @@
-mod common;
 use common::{runners::run_until_break, validators::validate_fibonacci};
 use gb_core::GameBoy;
+
+mod common;
 
 // Acceptance
 testcases_mooneye! {
