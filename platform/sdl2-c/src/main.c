@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
       SCREEN_HEIGHT
   );
 
-  int quit = 0;
+  bool quit = false;
 
   while (!quit) {
     SDL_Event event;
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
         case SDL_QUIT:
-          quit = 1;
+          quit = true;
           break;
 
         default:
@@ -72,8 +72,8 @@ int main(int argc, char* argv[]) {
     gameboy_run_frame(gb);
     gameboy_draw_into_frame_rgba8888(gb, framebuffer);
 
-    SDL_UpdateTexture(texture, NULL, framebuffer, SCREEN_WIDTH * sizeof(uint32_t));
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_UpdateTexture(texture, nullptr, framebuffer, SCREEN_WIDTH * sizeof(uint32_t));
+    SDL_RenderCopy(renderer, texture, nullptr, nullptr);
     SDL_RenderPresent(renderer);
   }
 

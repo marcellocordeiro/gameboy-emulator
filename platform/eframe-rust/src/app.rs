@@ -65,10 +65,6 @@ impl App {
 }
 
 impl eframe::App for App {
-    fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
-        save_battery(&self.gb, &self.rom_path);
-    }
-
     fn update(&mut self, egui_ctx: &egui::Context, _eframe_frame: &mut eframe::Frame) {
         if !self.gui.control.manual_control && self.gb.cartridge_inserted() {
             self.gb.run_frame();
@@ -77,5 +73,9 @@ impl eframe::App for App {
 
         self.handle_input(egui_ctx);
         self.gui.render(egui_ctx, &mut self.gb);
+    }
+
+    fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
+        save_battery(&self.gb, &self.rom_path);
     }
 }
