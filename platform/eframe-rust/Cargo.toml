@@ -15,7 +15,7 @@ cgb = ["gb-core/cgb"]
 workspace = true
 
 [dependencies]
-clap = { version = "4.4.12", features = ["derive"] }
+clap = { version = "4.4.13", features = ["derive"] }
 eframe = { version = "0.24.1", default-features = false, features = [
     "glow",
     "wayland",
