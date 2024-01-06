@@ -1,5 +1,5 @@
 use egui::ViewportCommand;
-use gb_core::{Button, GameBoy};
+use gb_core::{Button, GameBoy, EXTENSIONS, EXTENSIONS_DESCRIPTION};
 
 use crate::{
     cartridge::{load_battery, save_battery},
@@ -23,8 +23,8 @@ impl App {
             if let Some(path) = rom_path {
                 path
             } else {
-                let builder = rfd::FileDialog::new()
-                    .add_filter("Game Boy/Game Boy Color ROM", &["gb", "gbc"]);
+                let builder =
+                    rfd::FileDialog::new().add_filter(EXTENSIONS_DESCRIPTION, &EXTENSIONS);
                 let path = builder.pick_file().unwrap().to_str().unwrap().to_owned();
 
                 path

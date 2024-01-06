@@ -20,3 +20,6 @@ pub const TILES_PER_LINE: usize = 16;
 
 pub type ScreenPixels = [u8; SCREEN_PIXELS_SIZE];
 pub type TileDataFrame = [u8; TILE_DATA_FRAME_SIZE];
+
+pub const EXTENSIONS_DESCRIPTION: &str = "Game Boy/Game Boy Color ROM";
+pub const EXTENSIONS: [&str; 2] = ["gb", "gbc"];
