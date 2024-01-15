@@ -19,6 +19,7 @@ env_logger = "0.10.1"
 log = "0.4.20"
 rfd = { version = "0.13.0", default-features = false, features = [
     "xdg-portal",
+    "async-std",  # Required for `xdg-portal`s
 ] }
 sdl2 = { version = "0.36.0", features = ["bundled"] }
 
