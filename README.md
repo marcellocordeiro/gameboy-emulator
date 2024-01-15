@@ -2,7 +2,7 @@
 
 Experimental Game Boy emulator written in Rust.
 
-**_Disclaimer_**: this emulator is an experimental and educational project. The development and use of emulators is legal, as long as no copyrighted content is illegally obtained. This means you are responsible for dumping your own bootroms and games. Please note that there are free open-source and homebrew content available.
+**_Disclaimer_**: this emulator is an experimental project for educational purposes. The development and use of emulators is legal, as long as no copyrighted content is illegally obtained. This means you are responsible for dumping your own boot ROMs and games. However, there exists free and open-source content in case you'd like to test this project and/or contribute :blush:
 
 ## Features
 
@@ -21,10 +21,11 @@ Experimental Game Boy emulator written in Rust.
 - [ ] Saving
 - [x] Debugging UI
 - [ ] More debugging UI
-- [x] Automated ROM tests
-  - [ ] blargg
-  - [x] mooneye-test-suite (failing tests are commented out)
-  - [x] dmg-acid2 (DMG only)
+- [x] Automated ROM tests (failing tests are disabled, typically with a reason)
+  - [x] blargg
+  - [x] mooneye-test-suite
+  - [x] dmg-acid2 (DMG and CGB)
+  - [x] cgb-acid2
 
 ## Screenshots
 
