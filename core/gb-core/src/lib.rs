@@ -81,6 +81,10 @@ impl GameBoy {
         self.cpu.run_frame(&mut self.memory);
     }
 
+    pub fn set_key(&mut self, key: Button, value: bool) {
+        self.memory.joypad.set_key(key, value);
+    }
+
     pub fn key_down(&mut self, key: Button) {
         self.memory.joypad.key_down(key);
     }

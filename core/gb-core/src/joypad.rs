@@ -37,6 +37,14 @@ impl Joypad {
         self.update_joyp();
     }
 
+    pub(crate) fn set_key(&mut self, key: Button, value: bool) {
+        if value {
+            self.key_down(key);
+        } else {
+            self.key_up(key);
+        }
+    }
+
     pub(crate) fn key_down(&mut self, key: Button) {
         let current_buttons = self.buttons;
         let new_buttons = self.buttons | (key as u8);
@@ -49,7 +57,7 @@ impl Joypad {
         }
     }
 
-    pub fn key_up(&mut self, key: Button) {
+    pub(crate) fn key_up(&mut self, key: Button) {
         self.buttons &= !(key as u8);
 
         self.update_joyp();
