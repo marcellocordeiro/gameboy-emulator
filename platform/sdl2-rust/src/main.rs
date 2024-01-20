@@ -11,24 +11,11 @@ fn main() {
         .arg(clap::Arg::new("rom"))
         .get_matches();
 
-    let rom_path = matches.get_one::<String>("rom");
+    let rom_path = matches.get_one::<String>("rom").map(String::to_owned);
 
-    let mut gb = GameBoy::new();
+    let gb = GameBoy::new();
 
-    // Maybe let the UI handle the errors?
-    if let Some(path) = rom_path {
-        let rom = std::fs::read(path).unwrap();
-        gb.load_cartridge(rom).unwrap();
-    } else {
-        let builder =
-            rfd::FileDialog::new().add_filter("Game Boy/Game Boy Color ROM", &["gb", "gbc"]);
-        let path = builder.pick_file().unwrap();
-
-        let rom = std::fs::read(path).unwrap();
-        gb.load_cartridge(rom).unwrap();
-    }
-
-    App::new(gb).run();
+    App::new(gb, rom_path).run();
 }
 
 mod app;
