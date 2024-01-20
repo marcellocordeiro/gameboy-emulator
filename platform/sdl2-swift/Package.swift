@@ -3,9 +3,9 @@
 
 import PackageDescription
 
-let packageDirectory = Context.packageDirectory
-let rootDirectory = "\(packageDirectory)/../.."
-let coreDirectory = "\(rootDirectory)/core/gb-core-swift"
+let packageDir = Context.packageDirectory
+let rootDir = "\(packageDir)/../.."
+let coreDir = "\(rootDir)/core/gb-core-swift"
 
 let package = Package(
     name: "GameBoyEmulator",
@@ -13,7 +13,7 @@ let package = Package(
         .macOS(.v14)
     ],
     dependencies: [
-        .package(path: coreDirectory),
+        .package(path: coreDir),
         .package(url: "https://github.com/ctreffs/SwiftSDL2.git", from: "1.4.1")
     ],
     targets: [

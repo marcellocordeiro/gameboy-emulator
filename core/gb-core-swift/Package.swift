@@ -3,25 +3,28 @@
 
 import PackageDescription
 
-let packageDirectory = Context.packageDirectory
-let rootDirectory = "\(packageDirectory)/../.."
-
 #if DEBUG
-let libDirectory = "\(rootDirectory)/target/debug"
+let configDir = "debug"
 #else
-let libDirectory = "\(rootDirectory)/target/release"
+let configDir = "release"
 #endif
 
-let staticLibPath = "\(libDirectory)/libgb_core_c.a"
+
+let packageDir = Context.packageDirectory
+let rootDir = "\(packageDir)/../.."
+let libsDir = "\(rootDir)/target/\(configDir)"
+
+let libName = "gb_core_c"
+let staticLibFile = "lib\(libName).a"
 
 let linkerSettings: [PackageDescription.LinkerSetting]
 #if os(macOS)
 linkerSettings = [
-    .unsafeFlags(["-L\(libDirectory)/"]),
-    .linkedLibrary("gb_core_c")
+    .unsafeFlags(["-L\(libsDir)/"]),
+    .linkedLibrary(libName)
 ]
 #else
-linkerSettings = [.linkedLibrary(staticLibPath)]
+linkerSettings = [.linkedLibrary("\(libsDir)/\(staticLibFile)")]
 #endif
 
 let package = Package(
@@ -30,13 +33,11 @@ let package = Package(
         .macOS(.v14)
     ],
     products: [
-        .library(name: "CGameBoyCore", type: .static, targets: ["CGameBoyCore"]),
-        .library(name: "GameBoyCore", type: .static, targets: ["GameBoyCore"]),
+        .library(name: "GameBoyCore", targets: ["GameBoyCore"])
     ],
     targets: [
         .target(
             name: "CGameBoyCore",
-            dependencies: [],
             linkerSettings: linkerSettings
         ),
         .target(

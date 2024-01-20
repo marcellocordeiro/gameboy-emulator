@@ -61,16 +61,8 @@ public final class GameBoy {
         gameboy_destroy(gb)
     }
     
-    public func load(_ url: URL) {
-        guard let data = NSData(contentsOf: url) else {
-            return
-        }
-        
-        load(data)
-    }
-    
-    public func load(_ data: NSData) {
-        gameboy_load_cartridge(gb, data.bytes, UInt(data.length))
+    public func load(_ rom: [UInt8]) {
+        gameboy_load_cartridge(gb, rom, UInt(rom.count))
     }
     
     public func runFrame() {
@@ -81,14 +73,7 @@ public final class GameBoy {
         gameboy_set_key(gb, button.toGameBoyButton, value)
     }
     
-    public func draw() -> [UInt8] {
-        var pixels = [UInt8](repeating: 0, count: Int(Self.width * Self.height) * 4)
-        gameboy_draw_into_frame_rgba8888(gb, &pixels)
-        
-        return pixels
-    }
-    
-    public func draw(pixels: inout [UInt8]) {
-        gameboy_draw_into_frame_rgba8888(gb, &pixels)
+    public func draw(frame: inout [UInt8]) {
+        gameboy_draw_into_frame_rgba8888(gb, &frame)
     }
 }

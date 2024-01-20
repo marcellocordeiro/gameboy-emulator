@@ -3,16 +3,11 @@ import GameBoyCore
 import SDL
 
 let filePath = CommandLine.arguments[1]
-
-guard let data = NSData(contentsOfFile: filePath) else {
-    exit(1)
-}
+let url = URL(filePath: filePath)
+let rom = try [UInt8](Data(contentsOf: url))
 
 let gb = GameBoy()
-gb.load(data)
-
-let SCREEN_WIDTH = Int32(160)
-let SCREEN_HEIGHT = Int32(144)
+gb.load(rom)
 
 guard SDL_Init(SDL_INIT_VIDEO) == 0 else {
     fatalError("SDL could not initialize! SDL_Error: \(String(cString: SDL_GetError()))")
@@ -31,16 +26,16 @@ let renderer = SDL_CreateRenderer(
     SDL_RENDERER_PRESENTVSYNC.rawValue | SDL_RENDERER_ACCELERATED.rawValue
 )
 
-SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT)
+SDL_RenderSetLogicalSize(renderer, Int32(GameBoy.width), Int32(GameBoy.height))
 
 let texture = SDL_CreateTexture(
     renderer,
     SDL_PIXELFORMAT_ABGR8888.rawValue,
     Int32(SDL_TEXTUREACCESS_STREAMING.rawValue),
-    SCREEN_WIDTH, SCREEN_HEIGHT
+    Int32(GameBoy.width), Int32(GameBoy.height)
 )
 
-var framebuffer = [UInt8](repeating: 0, count: Int(SCREEN_WIDTH * SCREEN_HEIGHT) * 4)
+var frame = [UInt8](repeating: 0, count: GameBoy.width * GameBoy.height * 4)
 
 var quit = false
 var event = SDL_Event()
@@ -58,9 +53,9 @@ while !quit {
     }
     
     gb.runFrame()
-    gb.draw(pixels: &framebuffer)
+    gb.draw(frame: &frame)
 
-    SDL_UpdateTexture(texture, nil, framebuffer, SCREEN_WIDTH * 4)
+    SDL_UpdateTexture(texture, nil, frame, Int32(GameBoy.width) * 4)
     SDL_RenderCopy(renderer, texture, nil, nil)
     SDL_RenderPresent(renderer)
 }
