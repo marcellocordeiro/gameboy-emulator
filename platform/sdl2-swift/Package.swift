@@ -5,45 +5,22 @@ import PackageDescription
 
 let packageDirectory = Context.packageDirectory
 let rootDirectory = "\(packageDirectory)/../.."
-
-let gbHeaderPath = "\(rootDirectory)/core/gb-core-c/gb-bindings.h"
-
-#if DEBUG
-let libDirectory = "\(rootDirectory)/target/debug"
-#else
-let libDirectory = "\(rootDirectory)/target/release"
-#endif
-
-let staticLibPath = "\(libDirectory)/libgb_core_c.a"
-
-let linkerSettings: [PackageDescription.LinkerSetting]
-#if os(macOS)
-linkerSettings = [
-    .unsafeFlags(["-L\(libDirectory)/"]),
-    .linkedLibrary("gb_core_c")
-]
-#else
-linkerSettings = [.linkedLibrary(staticLibPath)]
-#endif
+let coreDirectory = "\(rootDirectory)/core/gb-core-swift"
 
 let package = Package(
     name: "GameBoyEmulator",
     platforms: [
-        .macOS(.v13)
+        .macOS(.v14)
     ],
     dependencies: [
+        .package(path: coreDirectory),
         .package(url: "https://github.com/ctreffs/SwiftSDL2.git", from: "1.4.1")
     ],
     targets: [
-        .target(
-            name: "GameBoyCore",
-            dependencies: [],
-            linkerSettings: linkerSettings
-        ),
         .executableTarget(
             name: "GameBoy",
             dependencies: [
-                "GameBoyCore",
+                .product(name: "GameBoyCore", package: "gb-core-swift"),
                 .product(name: "SDL", package: "SwiftSDL2")
             ]
         )
