@@ -1,3 +1,5 @@
+use std::time::{Duration, Instant};
+
 use gb_core::{GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
 use sdl2::{event::Event, keyboard::Keycode, pixels::PixelFormatEnum, render::Texture};
 
@@ -60,6 +62,9 @@ impl App {
 
         let mut event_pump = sdl_context.event_pump().unwrap();
 
+        let mut current_timer = Instant::now();
+        let mut elapsed_frames = 0;
+
         'running: loop {
             for event in event_pump.poll_iter() {
                 match event {
@@ -99,6 +104,21 @@ impl App {
 
             self.gb.run_frame();
             self.update_tex(&mut texture);
+
+            let elapsed = current_timer.elapsed();
+
+            if elapsed > Duration::from_secs(1) {
+                let fps = (elapsed_frames as f64) / elapsed.as_secs_f64();
+                let title = format!("gameboy-emulator | {fps:5.2}fps");
+
+                let window = canvas.window_mut();
+                let _ = window.set_title(&title).unwrap();
+
+                current_timer = Instant::now();
+                elapsed_frames = 0;
+            }
+
+            elapsed_frames += 1;
 
             canvas.copy(&texture, None, None).unwrap();
             canvas.present();
