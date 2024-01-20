@@ -38,19 +38,21 @@ int main(int argc, char* argv[]) {
   SDL_Init(SDL_INIT_VIDEO);
 
   SDL_Window* window = SDL_CreateWindow(
-      "gameboy-emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-      SCREEN_WIDTH * 3, SCREEN_HEIGHT * 3, 0
+    "gameboy-emulator",
+    SDL_WINDOWPOS_CENTERED,
+    SDL_WINDOWPOS_CENTERED,
+    SCREEN_WIDTH * 3,
+    SCREEN_HEIGHT * 3,
+    0
   );
 
-  SDL_Renderer* renderer = SDL_CreateRenderer(
-      window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED
-  );
+  SDL_Renderer* renderer =
+    SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
   SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   SDL_Texture* texture = SDL_CreateTexture(
-      renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH,
-      SCREEN_HEIGHT
+    renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH, SCREEN_HEIGHT
   );
 
   bool quit = false;
@@ -60,12 +62,9 @@ int main(int argc, char* argv[]) {
 
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
-        case SDL_QUIT:
-          quit = true;
-          break;
+        case SDL_QUIT: quit = true; break;
 
-        default:
-          break;
+        default: break;
       }
     }
 
