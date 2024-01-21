@@ -112,7 +112,7 @@ impl App {
                 let title = format!("gameboy-emulator | {fps:5.2}fps");
 
                 let window = canvas.window_mut();
-                let _ = window.set_title(&title).unwrap();
+                window.set_title(&title).unwrap();
 
                 current_timer = Instant::now();
                 elapsed_frames = 0;
