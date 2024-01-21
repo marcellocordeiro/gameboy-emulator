@@ -1,31 +1,5 @@
-use gb_core::{Button, GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH};
-
-#[repr(C)]
-pub enum GameBoyButton {
-    A = 0,
-    B = 1,
-    SELECT = 2,
-    START = 3,
-    RIGHT = 4,
-    LEFT = 5,
-    UP = 6,
-    DOWN = 7,
-}
-
-impl From<GameBoyButton> for Button {
-    fn from(value: GameBoyButton) -> Self {
-        match value {
-            GameBoyButton::A => Self::A,
-            GameBoyButton::B => Self::B,
-            GameBoyButton::SELECT => Self::Select,
-            GameBoyButton::START => Self::Start,
-            GameBoyButton::RIGHT => Self::Right,
-            GameBoyButton::LEFT => Self::Left,
-            GameBoyButton::UP => Self::Up,
-            GameBoyButton::DOWN => Self::Down,
-        }
-    }
-}
+use button::Button;
+use gb_core::{GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH};
 
 #[no_mangle]
 pub extern "C" fn gameboy_new() -> *mut GameBoy {
@@ -89,30 +63,30 @@ pub unsafe extern "C" fn gameboy_run_frame(gb_ptr: *mut GameBoy) {
 ///
 /// The Game Boy core pointer cannot be null.
 #[no_mangle]
-pub unsafe extern "C" fn gameboy_set_key(gb_ptr: *mut GameBoy, button: GameBoyButton, value: bool) {
+pub unsafe extern "C" fn gameboy_set_key(gb_ptr: *mut GameBoy, button: Button, value: bool) {
     let gb = unsafe { &mut *gb_ptr };
 
-    gb.set_key(Button::from(button), value);
+    gb.set_key(button.into(), value);
 }
 
 /// # Safety
 ///
 /// The Game Boy core pointer cannot be null.
 #[no_mangle]
-pub unsafe extern "C" fn gameboy_key_up(gb_ptr: *mut GameBoy, button: GameBoyButton) {
+pub unsafe extern "C" fn gameboy_key_up(gb_ptr: *mut GameBoy, button: Button) {
     let gb = unsafe { &mut *gb_ptr };
 
-    gb.key_up(Button::from(button));
+    gb.key_up(button.into());
 }
 
 /// # Safety
 ///
 /// The Game Boy core pointer cannot be null.
 #[no_mangle]
-pub unsafe extern "C" fn gameboy_key_down(gb_ptr: *mut GameBoy, button: GameBoyButton) {
+pub unsafe extern "C" fn gameboy_key_down(gb_ptr: *mut GameBoy, button: Button) {
     let gb = unsafe { &mut *gb_ptr };
 
-    gb.key_down(Button::from(button));
+    gb.key_down(button.into());
 }
 
 /// # Safety
@@ -132,3 +106,5 @@ pub unsafe extern "C" fn gameboy_draw_into_frame_rgba8888(gb_ptr: *mut GameBoy, 
 
     gb.draw_into_frame_rgba8888(slice);
 }
+
+pub mod button;
