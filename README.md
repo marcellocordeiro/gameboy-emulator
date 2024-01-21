@@ -2,6 +2,8 @@
 
 Experimental Game Boy emulator written in Rust.
 
+There are several frontends available for no reason but to experiment with different languages and frameworks consuming the main core written in Rust. The [`eframe`](platform/eframe/) frontend provides some debugging tools.
+
 **_Disclaimer_**: this emulator is an experimental project for educational purposes. The development and use of emulators is legal, as long as no copyrighted content is illegally obtained. This means you are responsible for dumping your own boot ROMs and games. However, there exists free and open-source content in case you'd like to test this project and/or contribute :blush:
 
 ## Features
@@ -37,15 +39,17 @@ boop
 - **[`external`](external/)**: External dependencies.
 - **[`core`](core/)**: Core modules.
   - **[`gb-core`](core/gb-core/)**: Main core written in Rust.
-  - **[`gb-core-c`](core/gb-core-c/)**: `gb-core` shims for use in other languages (interoperability). Contains a C/C++ header file with the function declarations.
+  - **[`gb-core-c`](core/gb-core-c/)**: `gb-core` shims for use in other languages. Contains a C/C++ header file with the function declarations.
+  - **[`gb-core-swift`](core/gb-core-swift/)**: Contains a Swift package that wraps `gb-core-c` in a Swift class.
   - **[`gb-core-wasm`](core/gb-core-wasm/)**: `gb-core` wrapper targeting WASM.
   - **[`gb-opcode-info`](core/gb-opcode-info/)**: Contains opcode info for use in other modules.
 - **[`platform`](platform/)**: Language/framework specific frontends.
   - **[`browser`](platform/browser/)**: Browser app written in TypeScript using Vite and React.
-  - **[`eframe-rust`](platform/eframe-rust/)**: Native app written in Rust using eframe.
-  - **[`sdl2-c`](platform/sdl2-c/)**: Native app written in C using `gb-core-c` and SDL2.
+  - **[`eframe`](platform/eframe/)**: Native app written in Rust using eframe.
+  - **[`sdl2-c`](platform/sdl2-c/)**: Native app written in C using SDL2.
   - **[`sdl2-rust`](platform/sdl2-rust/)**: Native app written in Rust using SDL2.
-  - **[`sdl2-swift`](platform/sdl2-swift/)**: Native app written in Swift using `gb-core-c` and SDL2. Likely unsupported on Windows and Linux, but was briefly tested on the latter.
+  - **[`sdl2-swift`](platform/sdl2-swift/)**: Native app written in Swift using SDL2. Likely unsupported on Windows and Linux, but was briefly tested on the latter.
+  - **[`swiftui`](platform/swiftui/)**: Native app written in Swift using SwiftUI.
 
 ## Setup
 
@@ -101,7 +105,7 @@ pnpm build # Will build the Rust dependencies as well
 
 # Swift
 cargo build --release
-cd gb-ui-sdl2-swift
+cd platform/sdl2-swift
 swift build
 ```
 
@@ -120,13 +124,13 @@ pnpm i
 pnpm dev
 
 # Swift
-cd gb-ui-sdl2-swift
-swift run GameBoy ../roms/rom.gb
+cd platform/sdl2-swift
+swift run GameBoy ../../roms/rom.gb
 ```
 
 ## Tests
 
-Check `gb-core/tests` for some of the supported tests. Most of blargg's tests are supported but not included (yet) in the test suite. `dmg-acid2` passes.
+Check [`gb-core/tests`](core/gb-core/tests) for all the supported integration tests. Any failing test is commented out, typically with a reason. Unit tests are also included for some modules. Both the ALU and the instructions are being tested using `sm83-test-data`, so it may take a while for the tests to finish.
 
 ```sh
 cargo test
@@ -136,14 +140,14 @@ cargo test
 
 - Improve code and repo quality
 - APU
-- Input
+- Input (implemented for some frontends. Needs to be improved)
 - Saving
 - Improve accuracy
   - Implement FIFO fetcher instead of a scanline renderer
 - Better debugging UI
 - More automated ROM tests
 - Pass more tests
-- Game Boy Color support
+- Game Boy Color support (done? ish.)
 
 ## References
 
