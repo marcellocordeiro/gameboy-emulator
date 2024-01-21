@@ -1,0 +1,372 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AD2B832F2B5BD21000D26D7D /* GameBoyCore in Frameworks */ = {isa = PBXBuildFile; productRef = AD2B832E2B5BD21000D26D7D /* GameBoyCore */; };
+		AD38D4452B584949001E4FE7 /* GameBoyContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD38D4442B584949001E4FE7 /* GameBoyContext.swift */; };
+		AD3E588E2B595746001C6CED /* ButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3E588D2B595746001C6CED /* ButtonsView.swift */; };
+		AD7E32E32B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7E32E22B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift */; };
+		AD7E32E52B5DC22D009C7B9A /* KeyboardContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7E32E42B5DC22D009C7B9A /* KeyboardContext.swift */; };
+		AD9D70CF2B583F2B0002119A /* GameBoyEmulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9D70CE2B583F2B0002119A /* GameBoyEmulatorApp.swift */; };
+		AD9D70D12B583F2B0002119A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9D70D02B583F2B0002119A /* ContentView.swift */; };
+		AD9D70D32B583F2D0002119A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD9D70D22B583F2D0002119A /* Assets.xcassets */; };
+		AD9D70D62B583F2D0002119A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD9D70D52B583F2D0002119A /* Preview Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AD2B832D2B5BD20100D26D7D /* gb-core-swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "gb-core-swift"; path = "../../core/gb-core-swift"; sourceTree = "<group>"; };
+		AD38D4442B584949001E4FE7 /* GameBoyContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoyContext.swift; sourceTree = "<group>"; };
+		AD3E588D2B595746001C6CED /* ButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsView.swift; sourceTree = "<group>"; };
+		AD7E32E22B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JoypadButtons+Extensions.swift"; sourceTree = "<group>"; };
+		AD7E32E42B5DC22D009C7B9A /* KeyboardContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardContext.swift; sourceTree = "<group>"; };
+		AD9D70CB2B583F2B0002119A /* GameBoyEmulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameBoyEmulator.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD9D70CE2B583F2B0002119A /* GameBoyEmulatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoyEmulatorApp.swift; sourceTree = "<group>"; };
+		AD9D70D02B583F2B0002119A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AD9D70D22B583F2D0002119A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AD9D70D52B583F2D0002119A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		AD9D70D72B583F2D0002119A /* GameBoyEmulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GameBoyEmulator.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AD9D70C82B583F2B0002119A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD2B832F2B5BD21000D26D7D /* GameBoyCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AD9D70C22B583F2B0002119A = {
+			isa = PBXGroup;
+			children = (
+				AD2B832D2B5BD20100D26D7D /* gb-core-swift */,
+				AD9D70CD2B583F2B0002119A /* GameBoyEmulator */,
+				AD9D70CC2B583F2B0002119A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AD9D70CC2B583F2B0002119A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AD9D70CB2B583F2B0002119A /* GameBoyEmulator.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AD9D70CD2B583F2B0002119A /* GameBoyEmulator */ = {
+			isa = PBXGroup;
+			children = (
+				AD9D70D72B583F2D0002119A /* GameBoyEmulator.entitlements */,
+				AD3E588D2B595746001C6CED /* ButtonsView.swift */,
+				AD9D70D02B583F2B0002119A /* ContentView.swift */,
+				AD38D4442B584949001E4FE7 /* GameBoyContext.swift */,
+				AD9D70CE2B583F2B0002119A /* GameBoyEmulatorApp.swift */,
+				AD7E32E22B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift */,
+				AD7E32E42B5DC22D009C7B9A /* KeyboardContext.swift */,
+				AD9D70D22B583F2D0002119A /* Assets.xcassets */,
+				AD9D70D42B583F2D0002119A /* Preview Content */,
+			);
+			path = GameBoyEmulator;
+			sourceTree = "<group>";
+		};
+		AD9D70D42B583F2D0002119A /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				AD9D70D52B583F2D0002119A /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AD9D70CA2B583F2B0002119A /* GameBoyEmulator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AD9D70DA2B583F2D0002119A /* Build configuration list for PBXNativeTarget "GameBoyEmulator" */;
+			buildPhases = (
+				AD9D70C72B583F2B0002119A /* Sources */,
+				AD9D70C82B583F2B0002119A /* Frameworks */,
+				AD9D70C92B583F2B0002119A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GameBoyEmulator;
+			packageProductDependencies = (
+				AD2B832E2B5BD21000D26D7D /* GameBoyCore */,
+			);
+			productName = GameBoyEmulator;
+			productReference = AD9D70CB2B583F2B0002119A /* GameBoyEmulator.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AD9D70C32B583F2B0002119A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 1520;
+				TargetAttributes = {
+					AD9D70CA2B583F2B0002119A = {
+						CreatedOnToolsVersion = 15.2;
+					};
+				};
+			};
+			buildConfigurationList = AD9D70C62B583F2B0002119A /* Build configuration list for PBXProject "GameBoyEmulator" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AD9D70C22B583F2B0002119A;
+			productRefGroup = AD9D70CC2B583F2B0002119A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AD9D70CA2B583F2B0002119A /* GameBoyEmulator */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AD9D70C92B583F2B0002119A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD9D70D62B583F2D0002119A /* Preview Assets.xcassets in Resources */,
+				AD9D70D32B583F2D0002119A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AD9D70C72B583F2B0002119A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD9D70D12B583F2B0002119A /* ContentView.swift in Sources */,
+				AD9D70CF2B583F2B0002119A /* GameBoyEmulatorApp.swift in Sources */,
+				AD7E32E52B5DC22D009C7B9A /* KeyboardContext.swift in Sources */,
+				AD3E588E2B595746001C6CED /* ButtonsView.swift in Sources */,
+				AD38D4452B584949001E4FE7 /* GameBoyContext.swift in Sources */,
+				AD7E32E32B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AD9D70D82B583F2D0002119A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AD9D70D92B583F2D0002119A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		AD9D70DB2B583F2D0002119A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = GameBoyEmulator/GameBoyEmulator.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"GameBoyEmulator/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.org.GameBoyEmulator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AD9D70DC2B583F2D0002119A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = GameBoyEmulator/GameBoyEmulator.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"GameBoyEmulator/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.org.GameBoyEmulator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AD9D70C62B583F2B0002119A /* Build configuration list for PBXProject "GameBoyEmulator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AD9D70D82B583F2D0002119A /* Debug */,
+				AD9D70D92B583F2D0002119A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AD9D70DA2B583F2D0002119A /* Build configuration list for PBXNativeTarget "GameBoyEmulator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AD9D70DB2B583F2D0002119A /* Debug */,
+				AD9D70DC2B583F2D0002119A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AD2B832E2B5BD21000D26D7D /* GameBoyCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GameBoyCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = AD9D70C32B583F2B0002119A /* Project object */;
+}
