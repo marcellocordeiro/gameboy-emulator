@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use enum_dispatch::enum_dispatch;
 
 pub use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc30::Mbc30, mbc5::Mbc5, no_mbc::NoMbc};
@@ -8,8 +10,6 @@ use super::{
 
 #[enum_dispatch]
 pub(super) trait MbcInterface {
-    fn reset(&mut self);
-
     fn get_battery(&self) -> &[u8];
     fn load_battery(&mut self, file: Vec<u8>);
 
@@ -34,7 +34,7 @@ pub enum Mbc {
 }
 
 impl Mbc {
-    pub(crate) fn try_new(rom: Vec<u8>, info: &Info) -> Result<Self, CartridgeError> {
+    pub(crate) fn try_new(rom: Arc<Box<[u8]>>, info: &Info) -> Result<Self, CartridgeError> {
         Ok(match info.cartridge_type {
             CartridgeType::NoMbc => NoMbc::new(rom, info).into(),
             CartridgeType::Mbc1 => Mbc1::new(rom, info).into(),

@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use self::{
     bootrom::Bootrom,
     high_ram::HighRam,
@@ -328,27 +330,7 @@ impl MemoryInterface for Memory {
 }
 
 impl Memory {
-    pub(crate) fn reset(&mut self) {
-        let mut cartridge = std::mem::take(&mut self.cartridge);
-
-        *self = Self::default();
-
-        if let Some(cartridge) = cartridge.as_mut() {
-            cartridge.reset();
-
-            if device_is_cgb!() {
-                if cfg!(feature = "bootrom") {
-                    self.set_cgb_mode(true);
-                } else {
-                    self.handle_post_bootrom_setup(&cartridge.info);
-                }
-            }
-        }
-
-        self.cartridge = cartridge;
-    }
-
-    pub(crate) fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
+    pub(crate) fn load_cartridge(&mut self, rom: Arc<Box<[u8]>>) -> Result<(), CartridgeError> {
         let cartridge = Cartridge::new(rom)?;
 
         if device_is_cgb!() {

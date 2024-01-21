@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use super::MbcInterface;
 use crate::{
     cartridge::info::{CartridgeType, Info},
@@ -5,28 +7,24 @@ use crate::{
 };
 
 pub struct NoMbc {
-    rom: Vec<u8>,
-    ram: Vec<u8>,
+    rom: Arc<Box<[u8]>>,
+    ram: Box<[u8]>,
 }
 
 impl NoMbc {
-    pub fn new(rom: Vec<u8>, info: &Info) -> Self {
+    pub fn new(rom: Arc<Box<[u8]>>, info: &Info) -> Self {
         assert_eq!(info.cartridge_type, CartridgeType::NoMbc);
 
         let ram_banks = info.ram_banks;
 
         Self {
             rom,
-            ram: vec![0; ram_banks * (8 * ONE_KIB)],
+            ram: vec![0; ram_banks * (8 * ONE_KIB)].into_boxed_slice(),
         }
     }
 }
 
 impl MbcInterface for NoMbc {
-    fn reset(&mut self) {
-        self.ram.fill(0);
-    }
-
     fn get_battery(&self) -> &[u8] {
         &self.ram
     }
@@ -40,7 +38,7 @@ impl MbcInterface for NoMbc {
             return;
         }
 
-        self.ram = file;
+        self.ram = file.into_boxed_slice();
     }
 
     fn read_rom_bank_0(&self, address: u16) -> u8 {

@@ -1,8 +1,9 @@
-use std::sync::mpsc;
+use std::sync::{mpsc, Arc};
 
 use cartridge::error::Error as CartridgeError;
 pub use constants::*;
 use cpu::Cpu;
+use log::error;
 use memory::Memory;
 pub use memory::MemoryInterface;
 pub use utils::{button::Button, color::Color};
@@ -10,6 +11,8 @@ pub use utils::{button::Button, color::Color};
 pub struct GameBoy {
     cpu: Cpu,
     memory: Memory,
+
+    rom: Option<Arc<Box<[u8]>>>,
 }
 
 impl Default for GameBoy {
@@ -28,7 +31,11 @@ impl GameBoy {
             memory.skip_bootrom();
         }
 
-        Self { cpu, memory }
+        Self {
+            cpu,
+            memory,
+            rom: None,
+        }
     }
 
     pub fn cpu(&self) -> &Cpu {
@@ -40,8 +47,16 @@ impl GameBoy {
     }
 
     pub fn reset(&mut self) {
-        self.cpu.reset();
-        self.memory.reset();
+        self.cpu = Cpu::default();
+        self.memory = Memory::default();
+
+        if let Some(rom) = self.rom.clone() {
+            let result = self.memory.load_cartridge(rom);
+
+            if let Err(error) = result {
+                error!("{error}");
+            }
+        }
 
         if !cfg!(feature = "bootrom") {
             self.cpu.skip_bootrom();
@@ -50,9 +65,17 @@ impl GameBoy {
     }
 
     pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
-        self.reset();
+        if self.rom.is_some() {
+            self.rom = None;
+            self.reset();
+        }
 
-        self.memory.load_cartridge(rom)
+        let rom = Arc::<Box<[u8]>>::from(rom.into_boxed_slice());
+
+        self.memory.load_cartridge(rom.clone())?;
+        self.rom = Some(rom);
+
+        Ok(())
     }
 
     pub fn cartridge_inserted(&self) -> bool {

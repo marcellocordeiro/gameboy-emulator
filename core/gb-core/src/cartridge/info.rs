@@ -31,10 +31,10 @@ pub struct Info {
     pub file_size: usize,
 }
 
-impl TryFrom<&Vec<u8>> for Info {
+impl TryFrom<&[u8]> for Info {
     type Error = super::error::Error;
 
-    fn try_from(rom: &Vec<u8>) -> Result<Self, Self::Error> {
+    fn try_from(rom: &[u8]) -> Result<Self, Self::Error> {
         let title = Title::with_rom(rom)?;
 
         let rom_size_code = *rom

@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use super::MbcInterface;
 use crate::{
     cartridge::info::{CartridgeType, Info, RAM_BANK_SIZE, ROM_BANK_SIZE},
@@ -5,8 +7,8 @@ use crate::{
 };
 
 pub struct Mbc3 {
-    rom: Vec<u8>,
-    ram: Vec<u8>,
+    rom: Arc<Box<[u8]>>,
+    ram: Box<[u8]>,
 
     ram_enable: bool,
 
@@ -15,14 +17,14 @@ pub struct Mbc3 {
 }
 
 impl Mbc3 {
-    pub fn new(rom: Vec<u8>, info: &Info) -> Self {
+    pub fn new(rom: Arc<Box<[u8]>>, info: &Info) -> Self {
         assert_eq!(info.cartridge_type, CartridgeType::Mbc3);
 
         let ram_banks = info.ram_banks;
 
         Self {
             rom,
-            ram: vec![0; ram_banks * (8 * ONE_KIB)],
+            ram: vec![0; ram_banks * (8 * ONE_KIB)].into_boxed_slice(),
 
             ram_enable: false,
 
@@ -41,13 +43,6 @@ impl Mbc3 {
 }
 
 impl MbcInterface for Mbc3 {
-    fn reset(&mut self) {
-        self.ram.fill(0);
-        self.ram_enable = false;
-        self.rom_bank = 0x01;
-        self.ram_rtc_sel = 0x00;
-    }
-
     fn get_battery(&self) -> &[u8] {
         &self.ram
     }
@@ -61,7 +56,7 @@ impl MbcInterface for Mbc3 {
             return;
         }
 
-        self.ram = file;
+        self.ram = file.into_boxed_slice();
     }
 
     fn read_rom_bank_0(&self, address: u16) -> u8 {

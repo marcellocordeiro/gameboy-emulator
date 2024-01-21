@@ -1,8 +1,10 @@
+use std::sync::Arc;
+
 use super::MbcInterface;
 use crate::cartridge::info::{CartridgeType, Info, ROM_BANK_SIZE};
 
 pub struct Mbc2 {
-    rom: Vec<u8>,
+    rom: Arc<Box<[u8]>>,
     ram: Box<[u8; 512]>,
 
     rom_bank_mask: usize,
@@ -13,7 +15,7 @@ pub struct Mbc2 {
 }
 
 impl Mbc2 {
-    pub fn new(rom: Vec<u8>, info: &Info) -> Self {
+    pub fn new(rom: Arc<Box<[u8]>>, info: &Info) -> Self {
         assert_eq!(info.cartridge_type, CartridgeType::Mbc2);
 
         let rom_bank_mask = info.rom_banks - 1;
@@ -36,12 +38,6 @@ impl Mbc2 {
 }
 
 impl MbcInterface for Mbc2 {
-    fn reset(&mut self) {
-        self.ram.fill(0);
-        self.ram_enable = false;
-        self.rom_bank = 0x01;
-    }
-
     fn get_battery(&self) -> &[u8] {
         self.ram.as_ref()
     }

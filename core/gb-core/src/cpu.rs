@@ -15,12 +15,6 @@ impl Cpu {
         &self.registers
     }
 
-    pub(crate) fn reset(&mut self) {
-        self.registers = Registers::default();
-        self.halt = false;
-        self.cycles = 0;
-    }
-
     pub(crate) fn skip_bootrom(&mut self) {
         self.registers.pc = 0x0100;
         self.registers.sp = 0xFFFE;
