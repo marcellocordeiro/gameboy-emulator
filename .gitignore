@@ -1,8 +1,8 @@
 /build
 /target
 
-# Created by https://www.toptal.com/developers/gitignore/api/swiftpackagemanager,xcode,macos
-# Edit at https://www.toptal.com/developers/gitignore?templates=swiftpackagemanager,xcode,macos
+# Created by https://www.toptal.com/developers/gitignore/api/macos,xcode
+# Edit at https://www.toptal.com/developers/gitignore?templates=macos,xcode
 
 ### macOS ###
 # General
@@ -37,14 +37,6 @@ Temporary Items
 # iCloud generated files
 *.icloud
 
-### SwiftPackageManager ###
-Packages
-.build/
-xcuserdata
-DerivedData/
-*.xcodeproj
-
-
 ### Xcode ###
 ## User settings
 xcuserdata/
@@ -62,7 +54,7 @@ xcuserdata/
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
 
-# End of https://www.toptal.com/developers/gitignore/api/swiftpackagemanager,xcode,macos
+# End of https://www.toptal.com/developers/gitignore/api/macos,xcode
 
 # Logs
 logs

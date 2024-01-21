@@ -5,7 +5,7 @@ members = [
   "core/gb-core-c",
   "core/gb-core-wasm",
   "core/gb-opcode-info",
-  "platform/eframe-rust",
+  "platform/eframe",
   "platform/libretro",
   "platform/sdl2-rust",
 ]
