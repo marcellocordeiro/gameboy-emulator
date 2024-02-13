@@ -4,9 +4,7 @@ use crate::{memory::MemoryInterface, utils::macros::device_is_cgb};
 #[derive(Default)]
 pub struct Cpu {
     registers: Registers,
-
     halt: bool,
-
     pub cycles: i32,
 }
 
@@ -52,7 +50,7 @@ impl Cpu {
 
     pub(crate) fn run_frame(&mut self, memory: &mut impl MemoryInterface) {
         self.cycles = 0;
-        while self.cycles < (70224 * 2) {
+        while self.cycles < 70224 {
             self.step(memory);
         }
     }
