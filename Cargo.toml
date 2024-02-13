@@ -33,3 +33,9 @@ option_if_let_else = "allow"                 # This one is annoying and less rea
 
 [workspace.dependencies.gb-core]
 path = "./core/gb-core"
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
