@@ -82,7 +82,7 @@ impl App {
                         let button = key_mappings::map_keycode(keycode);
 
                         if let Some(button) = button {
-                            self.gb.key_down(button);
+                            self.gb.joypad_button_down(button);
                         }
                     }
 
@@ -94,7 +94,7 @@ impl App {
                         let button = key_mappings::map_keycode(keycode);
 
                         if let Some(button) = button {
-                            self.gb.key_up(button);
+                            self.gb.joypad_button_up(button);
                         }
                     }
 

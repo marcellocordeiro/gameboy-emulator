@@ -63,30 +63,34 @@ pub unsafe extern "C" fn gameboy_run_frame(gb_ptr: *mut GameBoy) {
 ///
 /// The Game Boy core pointer cannot be null.
 #[no_mangle]
-pub unsafe extern "C" fn gameboy_set_key(gb_ptr: *mut GameBoy, button: Button, value: bool) {
+pub unsafe extern "C" fn gameboy_set_joypad_button(
+    gb_ptr: *mut GameBoy,
+    button: Button,
+    value: bool,
+) {
     let gb = unsafe { &mut *gb_ptr };
 
-    gb.set_key(button.into(), value);
+    gb.set_joypad_button(button.into(), value);
 }
 
 /// # Safety
 ///
 /// The Game Boy core pointer cannot be null.
 #[no_mangle]
-pub unsafe extern "C" fn gameboy_key_up(gb_ptr: *mut GameBoy, button: Button) {
+pub unsafe extern "C" fn gameboy_joypad_button_up(gb_ptr: *mut GameBoy, button: Button) {
     let gb = unsafe { &mut *gb_ptr };
 
-    gb.key_up(button.into());
+    gb.joypad_button_up(button.into());
 }
 
 /// # Safety
 ///
 /// The Game Boy core pointer cannot be null.
 #[no_mangle]
-pub unsafe extern "C" fn gameboy_key_down(gb_ptr: *mut GameBoy, button: Button) {
+pub unsafe extern "C" fn gameboy_joypad_button_down(gb_ptr: *mut GameBoy, button: Button) {
     let gb = unsafe { &mut *gb_ptr };
 
-    gb.key_down(button.into());
+    gb.joypad_button_down(button.into());
 }
 
 /// # Safety

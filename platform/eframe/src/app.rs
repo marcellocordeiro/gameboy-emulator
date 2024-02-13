@@ -55,9 +55,9 @@ impl App {
                 let key = key_mappings::map_button(button);
 
                 if i.key_pressed(key) {
-                    self.gb.key_down(button);
+                    self.gb.joypad_button_down(button);
                 } else if i.key_released(key) {
-                    self.gb.key_up(button);
+                    self.gb.joypad_button_up(button);
                 }
             }
         });

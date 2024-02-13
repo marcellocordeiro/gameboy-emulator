@@ -104,16 +104,16 @@ impl GameBoy {
         self.cpu.run_frame(&mut self.memory);
     }
 
-    pub fn set_key(&mut self, key: Button, value: bool) {
-        self.memory.joypad.set_key(key, value);
+    pub fn set_joypad_button(&mut self, button: Button, value: bool) {
+        self.memory.joypad.set_joypad_button(button, value);
     }
 
-    pub fn key_down(&mut self, key: Button) {
-        self.memory.joypad.key_down(key);
+    pub fn joypad_button_down(&mut self, key: Button) {
+        self.memory.joypad.joypad_button_down(key);
     }
 
-    pub fn key_up(&mut self, key: Button) {
-        self.memory.joypad.key_up(key);
+    pub fn joypad_button_up(&mut self, key: Button) {
+        self.memory.joypad.joypad_button_up(key);
     }
 
     pub fn draw_into_frame_rgba8888(&self, frame: &mut ScreenPixels) {

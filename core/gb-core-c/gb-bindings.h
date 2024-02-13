@@ -34,9 +34,9 @@ void gameboy_destroy(struct GameBoy* gb_ptr);
 void gameboy_reset(struct GameBoy* gb_ptr);
 void gameboy_load_cartridge(struct GameBoy* gb_ptr, const uint8_t* rom, uintptr_t rom_size);
 void gameboy_run_frame(struct GameBoy* gb_ptr);
-void gameboy_set_key(struct GameBoy* gb_ptr, enum Button button, bool value);
-void gameboy_key_up(struct GameBoy* gb_ptr, enum Button button);
-void gameboy_key_down(struct GameBoy* gb_ptr, enum Button button);
+void gameboy_set_joypad_button(struct GameBoy* gb_ptr, enum Button button, bool value);
+void gameboy_joypad_button_up(struct GameBoy* gb_ptr, enum Button button);
+void gameboy_joypad_button_down(struct GameBoy* gb_ptr, enum Button button);
 void gameboy_draw_into_frame_rgba8888(struct GameBoy* gb_ptr, uint8_t* frame);
 #ifdef __cplusplus
 }

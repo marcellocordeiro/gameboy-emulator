@@ -37,17 +37,17 @@ impl Joypad {
         self.update_joyp();
     }
 
-    pub(crate) fn set_key(&mut self, key: Button, value: bool) {
+    pub(crate) fn set_joypad_button(&mut self, button: Button, value: bool) {
         if value {
-            self.key_down(key);
+            self.joypad_button_down(button);
         } else {
-            self.key_up(key);
+            self.joypad_button_up(button);
         }
     }
 
-    pub(crate) fn key_down(&mut self, key: Button) {
+    pub(crate) fn joypad_button_down(&mut self, button: Button) {
         let current_buttons = self.buttons;
-        let new_buttons = self.buttons | (key as u8);
+        let new_buttons = self.buttons | (button as u8);
 
         if new_buttons != current_buttons {
             self.buttons = new_buttons;
@@ -57,7 +57,7 @@ impl Joypad {
         }
     }
 
-    pub(crate) fn key_up(&mut self, key: Button) {
+    pub(crate) fn joypad_button_up(&mut self, key: Button) {
         self.buttons &= !(key as u8);
 
         self.update_joyp();
@@ -109,7 +109,7 @@ mod tests {
         assert_eq!(joypad.read(), 0b1100_1111);
 
         joypad.write(0b0001_0000);
-        joypad.key_down(Button::A);
+        joypad.joypad_button_down(Button::A);
 
         // Only A is down
         assert_eq!(joypad.read(), 0b1101_1110);

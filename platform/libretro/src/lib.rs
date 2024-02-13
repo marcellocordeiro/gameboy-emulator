@@ -1,4 +1,5 @@
 use gb_core::{Button, GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
+use key_mappings::PlatformKeyMappings;
 use libretro_rs::{
     libretro_core,
     sys::RETRO_MEMORY_SAVE_RAM,
@@ -43,13 +44,10 @@ impl RetroCore for Emulator {
 
     fn run(&mut self, _env: &RetroEnvironment, runtime: &RetroRuntime) {
         for button in Button::ALL_CASES {
-            let key = key_mappings::map_button(button);
+            let key = button.mapped_to();
+            let value = runtime.is_joypad_button_pressed(0, key);
 
-            if runtime.is_joypad_button_pressed(0, key) {
-                self.gb.key_down(button);
-            } else {
-                self.gb.key_up(button);
-            }
+            self.gb.set_joypad_button(button, value);
         }
 
         self.gb.run_frame();

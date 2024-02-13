@@ -22,7 +22,7 @@ public final class GameBoy {
     }
     
     public func setButton(button: JoypadButton, value: Bool) {
-        gameboy_set_key(gb, button.toCoreButton, value)
+        gameboy_set_joypad_button(gb, button.toCoreButton, value)
     }
     
     public func draw(frame: inout [UInt8]) {
