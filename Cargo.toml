@@ -31,11 +31,11 @@ cast_possible_wrap = "allow"
 unreadable_literal = "allow"
 option_if_let_else = "allow"                 # This one is annoying and less readable.
 
-[workspace.dependencies.gb-core]
-path = "./core/gb-core"
+[workspace.dependencies]
+gb-core = { path = "./core/gb-core" }
 
 [profile.dev]
 opt-level = 1
 
 [profile.dev.package."*"]
-opt-level = 3
+opt-level = 2

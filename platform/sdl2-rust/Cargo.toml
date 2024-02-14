@@ -1,5 +1,5 @@
 [package]
-name = "gameboy-emulator-sdl2"
+name = "gb-sdl2"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,16 +10,14 @@ workspace = true
 bootrom = ["gb-core/bootrom"]
 cgb = ["gb-core/cgb"]
 
-[dependencies.gb-core]
-workspace = true
-
 [dependencies]
 clap = { version = "4.5.0", features = ["derive"] }
-env_logger = "0.11.1"
+env_logger = "0.11.2"
+gb-core = { workspace = true }
 log = "0.4.20"
 rfd = { version = "0.13.0", default-features = false, features = [
+    "async-std",
     "xdg-portal",
-    "async-std",  # Required for `xdg-portal`s
 ] }
 sdl2 = { version = "0.36.0", features = ["bundled"] }
 
