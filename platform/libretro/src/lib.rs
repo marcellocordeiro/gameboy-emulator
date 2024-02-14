@@ -1,5 +1,5 @@
 use gb_core::{Button, GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
-use key_mappings::PlatformKeyMappings;
+use key_mappings::LibretroKeyMappings;
 use libretro_rs::{
     libretro_core,
     sys::RETRO_MEMORY_SAVE_RAM,

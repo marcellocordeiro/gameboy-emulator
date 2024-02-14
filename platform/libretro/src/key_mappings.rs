@@ -1,11 +1,11 @@
 use gb_core::Button;
 use libretro_rs::RetroJoypadButton;
 
-pub trait PlatformKeyMappings {
+pub trait LibretroKeyMappings {
     fn mapped_to(self) -> RetroJoypadButton;
 }
 
-impl PlatformKeyMappings for Button {
+impl LibretroKeyMappings for Button {
     fn mapped_to(self) -> RetroJoypadButton {
         match self {
             Self::A => RetroJoypadButton::A,
