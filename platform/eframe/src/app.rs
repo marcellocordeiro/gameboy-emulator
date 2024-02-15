@@ -4,7 +4,7 @@ use gb_core::{Button, GameBoy, EXTENSIONS, EXTENSIONS_DESCRIPTION};
 use crate::{
     cartridge::{load_battery, save_battery},
     gui::Gui,
-    key_mappings,
+    key_mappings::EguiKeyMappings,
 };
 
 pub struct App {
@@ -52,7 +52,7 @@ impl App {
             }
 
             for button in Button::ALL_CASES {
-                let key = key_mappings::map_button(button);
+                let key = button.mapped_to();
 
                 if i.key_pressed(key) {
                     self.gb.joypad_button_down(button);
