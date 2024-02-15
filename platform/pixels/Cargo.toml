@@ -1,0 +1,32 @@
+[package]
+name = "gb-pixels"
+version = "0.1.0"
+edition = "2021"
+
+[lints]
+workspace = true
+
+[dependencies]
+clap = { version = "4.5.0", features = ["derive"] }
+egui = "0.26.2"
+egui-wgpu = "0.26.2"
+egui-winit = { version = "0.26.2", default-features = false, features = [
+    "wayland",
+    "x11",
+] }
+env_logger = "0.11.2"
+error-iter = "0.4.1"
+gb-core = { workspace = true }
+log = "0.4.20"
+rfd = { version = "0.13.0", default-features = false, features = [
+    "async-std",
+    "xdg-portal",
+] }
+winit = "0.29.10"
+winit_input_helper = "0.15.3"
+
+[dependencies.pixels]
+git = "https://github.com/marcellocordeiro/pixels"
+rev = "56615cb978814d72ee1d71128e1a776d594a8bf4"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

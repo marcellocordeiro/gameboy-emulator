@@ -24,12 +24,12 @@ impl Palettes {
             return;
         }
 
+        let bg_palettes = &gb_ctx.memory().ppu.bg_cram;
+        let obj_palettes = &gb_ctx.memory().ppu.obj_cram;
+
         Window::new("Palettes")
             .open(&mut self.opened)
             .show(egui_ctx, |ui| {
-                let bg_palettes = &gb_ctx.memory().ppu.bg_cram;
-                let obj_palettes = &gb_ctx.memory().ppu.obj_cram;
-
                 ui.horizontal(|ui| {
                     ui.vertical(|ui| {
                         for palette_number in 0..8 {
