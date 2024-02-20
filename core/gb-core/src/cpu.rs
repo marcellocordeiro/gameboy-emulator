@@ -71,8 +71,11 @@ impl Cpu {
         };
 
         self.registers.ime = ImeState::Disabled;
+        self.tick(memory);
 
-        self.jump_to_isr(memory, address);
+        self.push_word_stack(memory, self.registers.pc);
+        self.registers.pc = address;
+
         self.halt = false;
     }
 
@@ -91,6 +94,8 @@ impl Cpu {
     fn push_word_stack(&mut self, memory: &mut impl MemoryInterface, value: u16) {
         let low = value as u8;
         let high = (value >> 8) as u8;
+
+        self.tick(memory);
 
         self.push_byte_stack(memory, high);
         self.push_byte_stack(memory, low);
@@ -147,15 +152,6 @@ impl Cpu {
     // Control
     fn add_to_pc(&mut self, offset: i8) {
         self.registers.pc = self.registers.pc.wrapping_add_signed(offset as i16);
-    }
-
-    fn jump_to_isr(&mut self, memory: &mut impl MemoryInterface, address: u16) {
-        self.tick(memory);
-
-        self.push_word_stack(memory, self.registers.pc);
-        self.registers.pc = address;
-
-        self.tick(memory);
     }
 }
 

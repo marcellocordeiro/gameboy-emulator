@@ -50,8 +50,6 @@ impl Cpu {
     pub(super) fn opcode_0xc5(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.registers.get_bc();
 
-        self.tick(memory);
-
         self.push_word_stack(memory, value);
     }
 
@@ -65,8 +63,6 @@ impl Cpu {
     /// PUSH DE
     pub(super) fn opcode_0xd5(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.registers.get_de();
-
-        self.tick(memory);
 
         self.push_word_stack(memory, value);
     }
@@ -82,8 +78,6 @@ impl Cpu {
     pub(super) fn opcode_0xe5(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.registers.get_hl();
 
-        self.tick(memory);
-
         self.push_word_stack(memory, value);
     }
 
@@ -97,8 +91,6 @@ impl Cpu {
     /// PUSH AF
     pub(super) fn opcode_0xf5(&mut self, memory: &mut impl MemoryInterface) {
         let value = self.registers.get_af();
-
-        self.tick(memory);
 
         self.push_word_stack(memory, value);
     }
