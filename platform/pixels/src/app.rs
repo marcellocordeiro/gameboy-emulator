@@ -5,8 +5,7 @@ use crate::{egui_framework::EguiUi, gui::Gui, key_mappings};
 
 pub struct App {
     gb: GameBoy,
-    rom_path: String,
-
+    // rom_path: String,
     gui: Gui,
 }
 
@@ -27,14 +26,14 @@ impl App {
             }
         };
 
-        let rom = std::fs::read(&rom_path).unwrap();
+        let rom = std::fs::read(rom_path).unwrap();
 
         gb.load_cartridge(rom).unwrap();
         // load_battery(&mut gb, &rom_path);
 
         Self {
             gb,
-            rom_path,
+            // rom_path,
             gui: Gui::new(egui_ctx),
         }
     }
