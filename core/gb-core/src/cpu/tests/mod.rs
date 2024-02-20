@@ -4,7 +4,7 @@ use self::{
     structs::{Test, Tests},
     test_memory::TestMemory,
 };
-use crate::cpu::Cpu;
+use crate::cpu::{tests::structs::CpuState, Cpu};
 
 mod deserializers;
 mod structs;
@@ -14,25 +14,27 @@ pub fn test_cpu(file_name: &str, test: &Test) {
     let mut cpu = Cpu::default();
     let mut memory = TestMemory::default();
 
-    cpu.registers = test.initial.cpu.to_cpu_registers();
+    cpu.registers = test.initial.cpu.clone().into();
     memory.data = test.initial.ram.clone();
 
     cpu.step(&mut memory);
 
-    assert!(
-        test.r#final.cpu.verify_cpu_registers(&cpu.registers),
+    assert_eq!(
+        CpuState::from(cpu.registers),
+        test.r#final.cpu,
         "Test `{}` from `{file_name}` failed. The final registers do not match the expected result.",
         test.name
     );
 
-    assert!(
-        test.r#final.verify_ram(&memory.data),
+    assert_eq!(
+        memory.data, test.r#final.ram,
         "Test `{}` from `{file_name}` failed. The final RAM does not match the expected result.",
         test.name
     );
 
-    assert!(
-        test.verify_trace(memory.logs.borrow().as_ref()),
+    assert_eq!(
+        test.cycles,
+        *memory.logs.borrow(),
         "Test `{}` from `{file_name}` failed. The trace does not match the expected result.",
         test.name
     );
@@ -52,7 +54,7 @@ pub fn parse_test(path: &PathBuf) -> Tests {
 }
 
 #[test]
-fn test_00() {
+fn all_tests() {
     let files = get_test_files();
     let ignore = [
         "e7", "03", "c4", "76", "3b", "cc", "dc", "c5", "2b", "33", "cd", "23", "1b", "0b", "ef",

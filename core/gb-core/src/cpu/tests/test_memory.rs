@@ -5,7 +5,7 @@ use crate::memory::{interrupts::Interrupts, speed_switch::SpeedSwitch, MemoryInt
 #[derive(Default)]
 pub struct TestMemory {
     pub data: HashMap<u16, u8>,
-    pub logs: RefCell<Vec<[String; 3]>>,
+    pub logs: RefCell<Vec<Option<[String; 3]>>>,
 }
 
 impl MemoryInterface for TestMemory {
@@ -14,21 +14,21 @@ impl MemoryInterface for TestMemory {
     fn read(&self, address: u16) -> u8 {
         let value = *self.data.get(&address).unwrap();
 
-        self.logs.borrow_mut().push([
+        self.logs.borrow_mut().push(Some([
             format!("{address:#x}"),
             format!("{value:#x}"),
             "read".to_string(),
-        ]);
+        ]));
 
         value
     }
 
     fn write(&mut self, address: u16, value: u8) {
-        self.logs.borrow_mut().push([
+        self.logs.borrow_mut().push(Some([
             format!("{address:#x}"),
             format!("{value:#x}"),
             "write".to_string(),
-        ]);
+        ]));
 
         self.data
             .entry(address)
