@@ -97,7 +97,7 @@ impl Cpu {
 
     /// LD SP,HL
     pub(super) fn opcode_0xf9(&mut self, memory: &mut impl MemoryInterface) {
-        self.tick(memory);
+        self.force_cycle_memory(memory);
 
         self.registers.sp = self.registers.get_hl();
     }

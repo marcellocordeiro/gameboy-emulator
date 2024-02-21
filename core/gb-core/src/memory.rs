@@ -23,10 +23,13 @@ use crate::{
 };
 
 pub trait MemoryInterface {
-    fn tick(&mut self);
+    fn force_cycle(&mut self) {}
 
     fn read(&self, address: u16) -> u8;
     fn write(&mut self, address: u16, value: u8);
+
+    fn read_cycle(&mut self, address: u16) -> u8;
+    fn write_cycle(&mut self, address: u16, value: u8);
 
     fn speed_switch(&self) -> &SpeedSwitch;
     fn speed_switch_mut(&mut self) -> &mut SpeedSwitch;
@@ -60,45 +63,8 @@ pub struct Memory {
 }
 
 impl MemoryInterface for Memory {
-    fn tick(&mut self) {
-        // TODO: properly implement double speed.
-        /*assert!(
-            !self.speed_switch.in_double_speed(),
-            "CGB double speed not yet supported."
-        );*/
-
-        self.perform_oam_dma();
-        self.perform_vram_dma();
-
-        for _ in 0..4 {
-            self.timer.tick();
-            self.ppu.tick();
-        }
-
-        if self.ppu.vblank_irq {
-            self.interrupts.request_vblank();
-            self.ppu.vblank_irq = false;
-        }
-
-        if self.ppu.stat_irq {
-            self.interrupts.request_lcd_stat();
-            self.ppu.stat_irq = false;
-        }
-
-        if self.timer.irq {
-            self.interrupts.request_timer();
-            self.timer.irq = false;
-        }
-
-        if self.serial.irq {
-            self.interrupts.request_serial();
-            self.serial.irq = false;
-        }
-
-        if self.joypad.irq {
-            self.interrupts.request_joypad();
-            self.joypad.irq = false;
-        }
+    fn force_cycle(&mut self) {
+        self.cycle();
     }
 
     fn read(&self, address: u16) -> u8 {
@@ -312,6 +278,16 @@ impl MemoryInterface for Memory {
         }
     }
 
+    fn read_cycle(&mut self, address: u16) -> u8 {
+        self.cycle();
+        self.read(address)
+    }
+
+    fn write_cycle(&mut self, address: u16, value: u8) {
+        self.cycle();
+        self.write(address, value);
+    }
+
     fn speed_switch(&self) -> &SpeedSwitch {
         &self.speed_switch
     }
@@ -330,6 +306,47 @@ impl MemoryInterface for Memory {
 }
 
 impl Memory {
+    fn cycle(&mut self) {
+        // TODO: properly implement double speed.
+        /*assert!(
+            !self.speed_switch.in_double_speed(),
+            "CGB double speed not yet supported."
+        );*/
+
+        self.perform_oam_dma();
+        self.perform_vram_dma();
+
+        for _ in 0..4 {
+            self.timer.tick();
+            self.ppu.tick();
+        }
+
+        if self.ppu.vblank_irq {
+            self.interrupts.request_vblank();
+            self.ppu.vblank_irq = false;
+        }
+
+        if self.ppu.stat_irq {
+            self.interrupts.request_lcd_stat();
+            self.ppu.stat_irq = false;
+        }
+
+        if self.timer.irq {
+            self.interrupts.request_timer();
+            self.timer.irq = false;
+        }
+
+        if self.serial.irq {
+            self.interrupts.request_serial();
+            self.serial.irq = false;
+        }
+
+        if self.joypad.irq {
+            self.interrupts.request_joypad();
+            self.joypad.irq = false;
+        }
+    }
+
     pub(crate) fn load_cartridge(&mut self, rom: Arc<Box<[u8]>>) -> Result<(), CartridgeError> {
         let cartridge = Cartridge::new(rom)?;
 

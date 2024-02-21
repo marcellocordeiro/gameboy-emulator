@@ -34,7 +34,7 @@ impl Cpu {
         self.handle_interrupts(memory);
 
         if self.halt {
-            self.tick(memory);
+            self.force_cycle_memory(memory);
 
             if !memory.interrupts().has_queued_irq() {
                 return;
@@ -55,10 +55,13 @@ impl Cpu {
         }
     }
 
-    fn tick(&mut self, memory: &mut impl MemoryInterface) {
-        memory.tick();
-
+    fn add_cycles(&mut self) {
         self.cycles += 4;
+    }
+
+    fn force_cycle_memory(&mut self, memory: &mut impl MemoryInterface) {
+        memory.force_cycle();
+        self.add_cycles();
     }
 
     fn handle_interrupts(&mut self, memory: &mut impl MemoryInterface) {
@@ -71,7 +74,7 @@ impl Cpu {
         };
 
         self.registers.ime = ImeState::Disabled;
-        self.tick(memory);
+        self.force_cycle_memory(memory);
 
         self.push_word_stack(memory, self.registers.pc);
         self.registers.pc = address;
@@ -95,7 +98,7 @@ impl Cpu {
         let low = value as u8;
         let high = (value >> 8) as u8;
 
-        self.tick(memory);
+        self.force_cycle_memory(memory);
 
         self.push_byte_stack(memory, high);
         self.push_byte_stack(memory, low);
@@ -109,15 +112,13 @@ impl Cpu {
     }
 
     fn read_byte(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u8 {
-        self.tick(memory);
-
-        memory.read(address)
+        self.add_cycles();
+        memory.read_cycle(address)
     }
 
     fn write_byte(&mut self, memory: &mut impl MemoryInterface, address: u16, value: u8) {
-        self.tick(memory);
-
-        memory.write(address, value);
+        self.add_cycles();
+        memory.write_cycle(address, value);
     }
 
     fn read_word(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u16 {

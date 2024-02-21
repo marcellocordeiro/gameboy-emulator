@@ -6,13 +6,13 @@ impl Cpu {
     /// The offset can be negative.
     pub(super) fn jr(&mut self, memory: &mut impl MemoryInterface, offset: i8) {
         self.registers.pc = self.registers.pc.wrapping_add_signed(offset as i16);
-        self.tick(memory);
+        self.force_cycle_memory(memory);
     }
 
     /// JP (absolute jump to address)
     pub(super) fn jp(&mut self, memory: &mut impl MemoryInterface, address: u16) {
         self.registers.pc = address;
-        self.tick(memory);
+        self.force_cycle_memory(memory);
     }
 
     /// CALL (call address)
@@ -24,7 +24,7 @@ impl Cpu {
     /// RET (return from routine)
     pub(super) fn ret(&mut self, memory: &mut impl MemoryInterface) {
         self.registers.pc = self.pop_word_stack(memory);
-        self.tick(memory);
+        self.force_cycle_memory(memory);
     }
 
     /// JR cc (conditional JR)
@@ -38,7 +38,7 @@ impl Cpu {
 
     /// RET cc (conditional RET)
     pub(super) fn ret_cc(&mut self, memory: &mut impl MemoryInterface, condition: bool) {
-        self.tick(memory);
+        self.force_cycle_memory(memory);
 
         if condition {
             self.ret(memory);
