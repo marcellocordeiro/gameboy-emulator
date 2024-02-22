@@ -26,9 +26,8 @@ impl Cpu {
 
     /// PREFIX CB
     pub(super) fn opcode_0xcb(&mut self, memory: &mut impl MemoryInterface) {
-        let operand = self.read_byte_operand(memory);
-
-        self.run_cb_instruction(memory, operand);
+        let opcode = self.read_byte_operand(memory);
+        self.run_cb_instruction(memory, opcode);
     }
 
     /// DI

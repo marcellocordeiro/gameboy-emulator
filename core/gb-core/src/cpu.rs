@@ -55,15 +55,6 @@ impl Cpu {
         }
     }
 
-    fn add_cycles(&mut self) {
-        self.cycles += 4;
-    }
-
-    fn force_cycle_memory(&mut self, memory: &mut impl MemoryInterface) {
-        memory.force_cycle();
-        self.add_cycles();
-    }
-
     fn handle_interrupts(&mut self, memory: &mut impl MemoryInterface) {
         if !self.registers.ime.is_enabled_mut() {
             return;
@@ -80,6 +71,40 @@ impl Cpu {
         self.registers.pc = address;
 
         self.halt = false;
+    }
+
+    fn notify_cycle(&mut self) {
+        self.cycles += 4;
+    }
+
+    fn force_cycle_memory(&mut self, memory: &mut impl MemoryInterface) {
+        memory.force_cycle();
+        self.notify_cycle();
+    }
+
+    fn read_byte(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u8 {
+        self.notify_cycle();
+        memory.read_cycle(address)
+    }
+
+    fn write_byte(&mut self, memory: &mut impl MemoryInterface, address: u16, value: u8) {
+        self.notify_cycle();
+        memory.write_cycle(address, value);
+    }
+
+    fn read_word(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u16 {
+        let low = self.read_byte(memory, address) as u16;
+        let high = self.read_byte(memory, address.wrapping_add(1)) as u16;
+
+        (high << 8) | low
+    }
+
+    fn write_word(&mut self, memory: &mut impl MemoryInterface, address: u16, value: u16) {
+        let low = value as u8;
+        let high = (value >> 8) as u8;
+
+        self.write_byte(memory, address, low);
+        self.write_byte(memory, address.wrapping_add(1), high);
     }
 
     fn push_byte_stack(&mut self, memory: &mut impl MemoryInterface, value: u8) {
@@ -109,31 +134,6 @@ impl Cpu {
         let high = self.pop_byte_stack(memory) as u16;
 
         (high << 8) | low
-    }
-
-    fn read_byte(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u8 {
-        self.add_cycles();
-        memory.read_cycle(address)
-    }
-
-    fn write_byte(&mut self, memory: &mut impl MemoryInterface, address: u16, value: u8) {
-        self.add_cycles();
-        memory.write_cycle(address, value);
-    }
-
-    fn read_word(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u16 {
-        let low = self.read_byte(memory, address) as u16;
-        let high = self.read_byte(memory, address.wrapping_add(1)) as u16;
-
-        (high << 8) | low
-    }
-
-    fn write_word(&mut self, memory: &mut impl MemoryInterface, address: u16, value: u16) {
-        let low = value as u8;
-        let high = (value >> 8) as u8;
-
-        self.write_byte(memory, address, low);
-        self.write_byte(memory, address.wrapping_add(1), high);
     }
 
     fn read_byte_operand(&mut self, memory: &mut impl MemoryInterface) -> u8 {
