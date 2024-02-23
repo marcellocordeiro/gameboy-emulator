@@ -13,6 +13,9 @@ use crate::{
         macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
         screen::Screen,
     },
+    DeviceConfig,
+    DeviceModel,
+    OptionalCgbComponent,
 };
 
 #[allow(clippy::struct_excessive_bools)]
@@ -55,7 +58,30 @@ pub struct Ppu {
     screen: Screen,
     internal_screen: Screen,
 
-    cgb_mode: bool,
+    device_config: DeviceConfig,
+}
+
+impl OptionalCgbComponent for Ppu {
+    fn with_device_model(model: DeviceModel) -> Self {
+        let device_config = DeviceConfig {
+            model,
+            ..Default::default()
+        };
+
+        let vram = VideoRam::with_device_model(model);
+
+        Self {
+            vram,
+            device_config,
+            ..Default::default()
+        }
+    }
+
+    fn set_cgb_mode(&mut self, value: bool) {
+        self.vram.set_cgb_mode(value);
+
+        self.device_config.cgb_mode = value;
+    }
 }
 
 impl Ppu {
@@ -71,18 +97,13 @@ impl Ppu {
         wx
     }
 
-    pub(crate) fn set_cgb_mode(&mut self, value: bool) {
-        self.cgb_mode = value;
-        self.vram.set_cgb_mode(value);
-    }
-
     pub(crate) fn skip_bootrom(&mut self) {
         self.lcdc = LcdControl::from_bits_truncate(0x91);
         self.bgp = 0xFC;
     }
 
     pub(crate) fn handle_post_bootrom_setup(&mut self, info: &Info) {
-        if device_is_cgb!() {
+        if device_is_cgb!(self) {
             if !info.cgb_flag.has_cgb_support() {
                 self.opri = true;
 
@@ -112,7 +133,7 @@ impl Ppu {
 
     pub(crate) fn read_bcps(&self) -> u8 {
         // TODO: lock after bootrom is finished?
-        if !device_is_cgb!() {
+        if !device_is_cgb!(self) {
             return 0xFF;
         }
 
@@ -121,7 +142,7 @@ impl Ppu {
 
     pub(crate) fn write_bcps(&mut self, value: u8) {
         // TODO: lock after bootrom is finished?
-        if !device_is_cgb!() {
+        if !device_is_cgb!(self) {
             return;
         }
 
@@ -130,7 +151,7 @@ impl Ppu {
 
     pub(crate) fn read_bcpd(&self) -> u8 {
         // TODO: lock after bootrom is finished?
-        if !device_is_cgb!() {
+        if !device_is_cgb!(self) {
             return 0xFF;
         }
 
@@ -146,7 +167,7 @@ impl Ppu {
     pub(crate) fn write_bcpd(&mut self, value: u8) {
         // TODO: lock after bootrom is finished?
 
-        if !device_is_cgb!() {
+        if !device_is_cgb!(self) {
             return;
         }
 
@@ -165,7 +186,7 @@ impl Ppu {
 
     pub(crate) fn read_ocps(&self) -> u8 {
         // TODO: lock after bootrom is finished?
-        if !device_is_cgb!() {
+        if !device_is_cgb!(self) {
             return 0xFF;
         }
 
@@ -174,7 +195,7 @@ impl Ppu {
 
     pub(crate) fn write_ocps(&mut self, value: u8) {
         // TODO: lock after bootrom is finished?
-        if !device_is_cgb!() {
+        if !device_is_cgb!(self) {
             return;
         }
 
@@ -183,7 +204,7 @@ impl Ppu {
 
     pub(crate) fn read_ocpd(&self) -> u8 {
         // TODO: lock after bootrom is finished?
-        if !device_is_cgb!() {
+        if !device_is_cgb!(self) {
             return 0xFF;
         }
 
@@ -198,7 +219,7 @@ impl Ppu {
 
     pub(crate) fn write_ocpd(&mut self, value: u8) {
         // TODO: lock after bootrom is finished?
-        if !device_is_cgb!() {
+        if !device_is_cgb!(self) {
             return;
         }
 
@@ -226,7 +247,7 @@ impl Ppu {
 
     pub(crate) fn write_opri(&mut self, value: u8) {
         // TODO: lock after bootrom is finished?
-        if !device_is_cgb!() {
+        if !device_is_cgb!(self) {
             return;
         }
 
@@ -306,8 +327,7 @@ impl Ppu {
                     return;
                 }
 
-                if device_is_cgb!() {
-                    #[cfg(feature = "cgb")]
+                if device_is_cgb!(self) {
                     self.draw_line_cgb();
                 } else {
                     self.draw_line_dmg();

@@ -18,14 +18,14 @@ macro_rules! pure_read_write_methods_u8 {
 }
 
 macro_rules! device_is_cgb {
-    () => {
-        cfg!(feature = "cgb")
+    ($self:ident) => {
+        $self.device_config.is_cgb()
     };
 }
 
 macro_rules! in_cgb_mode {
     ($self:ident) => {
-        (cfg!(feature = "cgb") && $self.cgb_mode)
+        $self.device_config.in_cgb_mode()
     };
 }
 

@@ -1,9 +1,13 @@
 use button::Button;
-use gb_core::{GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH};
+use gb_core::{DeviceModel, GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH};
 
 #[no_mangle]
-pub extern "C" fn gameboy_new() -> *mut GameBoy {
-    Box::into_raw(Box::new(GameBoy::new()))
+pub extern "C" fn gameboy_new(is_cgb: bool) -> *mut GameBoy {
+    Box::into_raw(Box::new(GameBoy::new(if is_cgb {
+        DeviceModel::Cgb
+    } else {
+        DeviceModel::Dmg
+    })))
 }
 
 /// # Safety

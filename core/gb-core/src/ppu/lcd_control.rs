@@ -1,7 +1,7 @@
 use bitflags::bitflags;
 
 use super::{lcd_status::StatusMode, Ppu};
-use crate::utils::color::Color;
+use crate::utils::{color::Color, macros::device_is_cgb};
 
 bitflags!(
     /// FF40 — LCDC: LCD control
@@ -115,7 +115,11 @@ impl Ppu {
             self.cycles = 0;
             self.ly = 0;
 
-            self.internal_screen.screen.fill(Color::SYSTEM_DEFAULT);
+            if device_is_cgb!(self) {
+                self.internal_screen.screen.fill(Color::CGB_SYSTEM_DEFAULT);
+            } else {
+                self.internal_screen.screen.fill(Color::DMG_SYSTEM_DEFAULT);
+            }
         }
 
         self.lcdc = new_lcdc;

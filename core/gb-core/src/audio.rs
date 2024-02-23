@@ -1,9 +1,26 @@
 // TODO: everything
 
-use crate::utils::macros::device_is_cgb;
+use crate::{utils::macros::device_is_cgb, DeviceConfig, DeviceModel, OptionalCgbComponent};
 
 #[derive(Default)]
-pub struct Audio {}
+pub struct Audio {
+    device_config: DeviceConfig,
+}
+
+impl OptionalCgbComponent for Audio {
+    fn with_device_model(model: DeviceModel) -> Self {
+        let device_config = DeviceConfig {
+            model,
+            ..Default::default()
+        };
+
+        Self { device_config }
+    }
+
+    fn set_cgb_mode(&mut self, value: bool) {
+        self.device_config.cgb_mode = value;
+    }
+}
 
 impl Audio {
     // 0xFF10 ~ 0xFF3F
@@ -36,7 +53,7 @@ impl Audio {
             0xFF26 => 0xF1,
 
             0xFF76 => {
-                if !device_is_cgb!() {
+                if !device_is_cgb!(self) {
                     return 0xFF;
                 }
 
@@ -44,7 +61,7 @@ impl Audio {
             }
 
             0xFF77 => {
-                if !device_is_cgb!() {
+                if !device_is_cgb!(self) {
                     return 0xFF;
                 }
 

@@ -11,20 +11,15 @@ pub use utils::{button::Button, color::Color};
 pub struct GameBoy {
     cpu: Cpu,
     memory: Memory,
-
     rom: Option<Arc<Box<[u8]>>>,
-}
 
-impl Default for GameBoy {
-    fn default() -> Self {
-        Self::new()
-    }
+    pub device_model: DeviceModel,
 }
 
 impl GameBoy {
-    pub fn new() -> Self {
-        let mut cpu = Cpu::default();
-        let mut memory = Memory::default();
+    pub fn new(device_model: DeviceModel) -> Self {
+        let mut cpu = Cpu::with_device_model(device_model);
+        let mut memory = Memory::with_device_model(device_model);
 
         if !cfg!(feature = "bootrom") {
             cpu.skip_bootrom();
@@ -35,6 +30,7 @@ impl GameBoy {
             cpu,
             memory,
             rom: None,
+            device_model,
         }
     }
 
@@ -130,7 +126,7 @@ impl GameBoy {
 }
 
 mod audio;
-mod cartridge;
+pub mod cartridge;
 mod constants;
 mod cpu;
 mod joypad;

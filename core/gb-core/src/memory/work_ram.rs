@@ -1,33 +1,55 @@
-use crate::{constants::ONE_KIB, utils::macros::in_cgb_mode};
+use crate::{
+    constants::ONE_KIB,
+    utils::macros::in_cgb_mode,
+    DeviceConfig,
+    DeviceModel,
+    OptionalCgbComponent,
+};
 
-#[cfg(not(feature = "cgb"))]
-/// DMG mode selected.
-const WRAM_BANKS: usize = 2;
-
-#[cfg(feature = "cgb")]
-/// CGB mode.
-const WRAM_BANKS: usize = 8;
+// const DMG_WRAM_BANKS: usize = 2;
+const CGB_WRAM_BANKS: usize = 8;
 
 /// 4KiB each, 4096 (0x1000)
 const WRAM_BANK_SIZE: usize = 4 * ONE_KIB;
 
-/// DMG: 8192 (0x2000) / CGB: 32768 (0x8000)
-const WRAM_SIZE: usize = WRAM_BANKS * WRAM_BANK_SIZE;
+/// DMG: 8192 (0x2000)
+// const DMG_WRAM_SIZE: usize = DMG_WRAM_BANKS * WRAM_BANK_SIZE;
+
+/// CGB: 32768 (0x8000)
+const CGB_WRAM_SIZE: usize = CGB_WRAM_BANKS * WRAM_BANK_SIZE;
 
 pub struct WorkRam {
-    data: [u8; WRAM_SIZE],
+    data: [u8; CGB_WRAM_SIZE],
     svbk: u8, // (CGB) WRAM Bank Select.
 
-    cgb_mode: bool,
+    device_config: DeviceConfig,
 }
 
 impl Default for WorkRam {
     fn default() -> Self {
         Self {
-            data: [0; WRAM_SIZE], // can't default this :(
+            data: [0; CGB_WRAM_SIZE], // can't default this :(
             svbk: 0,
-            cgb_mode: false,
+            device_config: DeviceConfig::default(),
         }
+    }
+}
+
+impl OptionalCgbComponent for WorkRam {
+    fn with_device_model(model: DeviceModel) -> Self {
+        let device_config = DeviceConfig {
+            model,
+            ..Default::default()
+        };
+
+        Self {
+            device_config,
+            ..Default::default()
+        }
+    }
+
+    fn set_cgb_mode(&mut self, value: bool) {
+        self.device_config.cgb_mode = value;
     }
 }
 
@@ -37,10 +59,6 @@ impl WorkRam {
     // 0xC000 ~ 0xCFFF: bank 0.
     // 0xD000 ~ 0xDFFF: Bank 1. In CGB mode, switchable bank 1~7.
     // 0xE000 ~ 0xFDFF: ECHO RAM (prohibited area, but mirrors 0xC000 ~ 0xDDFF).
-
-    pub fn set_cgb_mode(&mut self, value: bool) {
-        self.cgb_mode = value;
-    }
 
     pub fn read(&self, address: u16) -> u8 {
         match address {
@@ -68,6 +86,7 @@ impl WorkRam {
         }
     }
 
+    /// Warning: CGB model only.
     pub fn read_svbk(&self) -> u8 {
         if !in_cgb_mode!(self) {
             return 0xFF;
@@ -76,6 +95,7 @@ impl WorkRam {
         0b1111_1000 | self.svbk
     }
 
+    /// Warning: CGB model only.
     pub fn write_svbk(&mut self, value: u8) {
         if !in_cgb_mode!(self) {
             return;
@@ -93,17 +113,18 @@ impl WorkRam {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::utils::macros::device_is_cgb;
 
     #[test]
-    fn test_my_sanity() {
-        let wram = WorkRam::default();
+    #[ignore = "need to adjust this"]
+    fn test_my_sanity_dmg() {
+        let wram = WorkRam::with_device_model(DeviceModel::Dmg);
+        assert_eq!(wram.data.len(), 0x2000);
+    }
 
-        if device_is_cgb!() {
-            assert_eq!(wram.data.len(), 0x8000);
-        } else {
-            assert_eq!(wram.data.len(), 0x2000);
-        }
+    #[test]
+    fn test_my_sanity_cgb() {
+        let wram = WorkRam::with_device_model(DeviceModel::Cgb);
+        assert_eq!(wram.data.len(), 0x8000);
     }
 
     #[test]

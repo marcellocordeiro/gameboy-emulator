@@ -1,4 +1,10 @@
-use gb_core::{GameBoy as GameBoyInternal, ScreenPixels, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
+use gb_core::{
+    DeviceModel,
+    GameBoy as GameBoyInternal,
+    ScreenPixels,
+    SCREEN_PIXELS_SIZE,
+    SCREEN_WIDTH,
+};
 use wasm_bindgen::{prelude::wasm_bindgen, Clamped};
 use web_sys::{CanvasRenderingContext2d, ImageData};
 
@@ -20,7 +26,7 @@ impl GameBoy {
         init_logging();
 
         Self {
-            gb: GameBoyInternal::new(),
+            gb: GameBoyInternal::new(DeviceModel::Dmg),
             frame: vec![0; SCREEN_PIXELS_SIZE]
                 .into_boxed_slice()
                 .try_into()
