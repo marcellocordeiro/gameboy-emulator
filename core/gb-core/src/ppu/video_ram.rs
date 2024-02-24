@@ -189,7 +189,7 @@ mod tests {
     use super::*;
 
     #[test]
-    #[ignore = "need to adjust this"]
+    #[ignore = "maybe adjust this?"]
     fn test_my_sanity_dmg() {
         let vram = VideoRam::with_device_model(DeviceModel::Dmg);
         assert_eq!(vram.data.len(), 0x2000);
@@ -202,14 +202,13 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "cgb")]
     fn test_read_banks() {
-        let mut vram = VideoRam::default();
+        let mut vram = VideoRam::with_device_model(DeviceModel::Cgb);
         vram.set_cgb_mode(true);
 
         let chunks = vram.data.chunks_exact_mut(VRAM_BANK_SIZE);
 
-        assert_eq!(chunks.len(), VRAM_BANKS); // 2 banks
+        assert_eq!(chunks.len(), CGB_VRAM_BANKS); // 2 banks
 
         for (bank, chunk) in chunks.enumerate() {
             let chunk_iter = chunk.iter_mut();
@@ -225,9 +224,8 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "cgb")]
     fn test_write_banks() {
-        let mut vram = VideoRam::default();
+        let mut vram = VideoRam::with_device_model(DeviceModel::Cgb);
         vram.set_cgb_mode(true);
 
         // Bank 0
@@ -246,8 +244,10 @@ mod tests {
         verify_banks(&mut vram);
     }
 
-    #[cfg(feature = "cgb")]
+    #[allow(clippy::identity_op)]
     fn verify_banks(vram: &mut VideoRam) {
+        assert!(vram.device_config.in_cgb_mode());
+
         // Bank 0
         vram.write_vbk(0b1111_1110 | 0b0);
         assert_eq!(vram.vbk, 0b0, "Should ignore bits 1-7");

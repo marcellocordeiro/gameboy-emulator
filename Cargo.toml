@@ -12,25 +12,36 @@ members = [
 ]
 
 [workspace.lints.clippy]
+# Groups
 pedantic = { level = "warn", priority = -1 }
 nursery = { level = "warn", priority = -1 }
-match_same_arms = "allow"
-cast_lossless = "allow"
-unused_self = "allow"
-similar_names = "allow"
-enum_glob_use = "allow"
-must_use_candidate = "allow"
-missing_panics_doc = "allow"
-missing_errors_doc = "allow"
-collapsible_if = "allow"
+
+# style
 new_without_default = "allow"
-module_name_repetitions = "allow"
-missing_const_for_fn = "allow"
-cast_possible_truncation = "allow"           # Intentional, but may be possible to mitigate.
-verbose_bit_mask = "allow"                   # As per the docs, LLVM may not be able to generate better code.
-cast_possible_wrap = "allow"
-unreadable_literal = "allow"
-option_if_let_else = "allow"                 # This one is annoying and less readable.
+
+# pedantic
+cast_lossless = "allow"            # Noisy and verbose.
+cast_possible_truncation = "allow" # Intentional, but may be possible to mitigate.
+cast_possible_wrap = "allow"       # Used intentionally and extensively.
+collapsible_if = "allow"
+match_same_arms = "allow"
+module_name_repetitions = "allow"  # Annoying.
+must_use_candidate = "allow"       # This one should be fixed.
+similar_names = "allow"            # Nope.
+too_many_lines = "allow"
+unreadable_literal = "allow"       # May not improve readability.
+unused_self = "allow"
+verbose_bit_mask = "allow"         # LLVM generates worse code on x86_64.
+
+# nursery
+enum_variant_names = "allow"   # Annoying.
+missing_const_for_fn = "allow" # Noisy, could address this one.
+option_if_let_else = "allow"   # Annoying and less readable.
+redundant_pub_crate = "allow"  # Some occurrences can be improved.
+
+# Can be addressed by adding documentation.
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
 
 [workspace.dependencies]
 gb-core = { path = "./core/gb-core" }

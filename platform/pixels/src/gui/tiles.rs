@@ -8,6 +8,7 @@ use egui::{
     Window,
 };
 use gb_core::{
+    DeviceModel,
     GameBoy,
     TileDataFrame,
     TILE_DATA_FRAME_HEIGHT,
@@ -90,12 +91,13 @@ impl Tiles {
             .vram
             .draw_tile_data_0_into_frame(self.pixels.as_mut());
 
-        #[cfg(feature = "cgb")]
-        gb_ctx
-            .memory()
-            .ppu
-            .vram
-            .draw_tile_data_1_into_frame(self.pixels.as_mut());
+        if gb_ctx.device_model == DeviceModel::Cgb {
+            gb_ctx
+                .memory()
+                .ppu
+                .vram
+                .draw_tile_data_1_into_frame(self.pixels.as_mut());
+        }
 
         let image = ColorImage::from_rgba_unmultiplied(
             [TILE_DATA_FRAME_WIDTH, TILE_DATA_FRAME_HEIGHT],

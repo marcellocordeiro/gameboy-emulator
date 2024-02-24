@@ -20,7 +20,6 @@ impl Ppu {
         self.draw_sprites_cgb(&priority);
     }
 
-    #[allow(clippy::too_many_lines)]
     fn draw_tiles_cgb(&mut self, priority: &mut [Priority; SCREEN_WIDTH]) {
         let screen_line = {
             let line_offset = SCREEN_WIDTH * (self.ly as usize);

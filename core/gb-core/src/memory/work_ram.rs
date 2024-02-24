@@ -12,7 +12,7 @@ const CGB_WRAM_BANKS: usize = 8;
 /// 4KiB each, 4096 (0x1000)
 const WRAM_BANK_SIZE: usize = 4 * ONE_KIB;
 
-/// DMG: 8192 (0x2000)
+// DMG: 8192 (0x2000)
 // const DMG_WRAM_SIZE: usize = DMG_WRAM_BANKS * WRAM_BANK_SIZE;
 
 /// CGB: 32768 (0x8000)
@@ -104,7 +104,12 @@ impl WorkRam {
         self.svbk = value & 0b111;
     }
 
+    /// Warning: CGB model only.
     fn bank_offset(&self) -> usize {
+        if !in_cgb_mode!(self) {
+            return 0;
+        }
+
         let bank = self.svbk.max(0b001);
         WRAM_BANK_SIZE * (bank as usize - 1)
     }
@@ -115,7 +120,7 @@ mod tests {
     use super::*;
 
     #[test]
-    #[ignore = "need to adjust this"]
+    #[ignore = "maybe adjust this?"]
     fn test_my_sanity_dmg() {
         let wram = WorkRam::with_device_model(DeviceModel::Dmg);
         assert_eq!(wram.data.len(), 0x2000);
@@ -128,14 +133,13 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "cgb")]
     fn test_read_banks() {
-        let mut wram = WorkRam::default();
+        let mut wram = WorkRam::with_device_model(DeviceModel::Cgb);
         wram.set_cgb_mode(true);
 
         let chunks = wram.data.chunks_exact_mut(WRAM_BANK_SIZE);
 
-        assert_eq!(chunks.len(), WRAM_BANKS); // 8 banks
+        assert_eq!(chunks.len(), CGB_WRAM_BANKS); // 8 banks
 
         for (bank, chunk) in chunks.enumerate() {
             let chunk_iter = chunk.iter_mut();
@@ -151,9 +155,9 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "cgb")]
+    #[allow(clippy::identity_op)]
     fn test_write_banks() {
-        let mut wram = WorkRam::default();
+        let mut wram = WorkRam::with_device_model(DeviceModel::Cgb);
         wram.set_cgb_mode(true);
 
         // Bank 0
@@ -198,8 +202,10 @@ mod tests {
         verify_banks(&mut wram);
     }
 
-    #[cfg(feature = "cgb")]
+    #[allow(clippy::identity_op)]
     fn verify_banks(wram: &mut WorkRam) {
+        assert!(wram.device_config.in_cgb_mode());
+
         // Bank 0
         for address in 0xC000..=0xCFFF {
             assert_eq!(wram.read(address), 0);

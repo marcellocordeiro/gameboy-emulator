@@ -7,10 +7,10 @@ pub const SCREEN_HEIGHT: usize = 144;
 
 pub const SCREEN_PIXELS_SIZE: usize = SCREEN_WIDTH * SCREEN_HEIGHT * std::mem::size_of::<u32>();
 
-#[cfg(not(feature = "cgb"))]
-pub const TILE_DATA_FRAME_WIDTH: usize = 128;
+// #[cfg(not(feature = "cgb"))]
+// pub const TILE_DATA_FRAME_WIDTH: usize = 128;
 
-#[cfg(feature = "cgb")]
+// #[cfg(feature = "cgb")]
 pub const TILE_DATA_FRAME_WIDTH: usize = 128 * 2;
 
 pub const TILE_DATA_FRAME_HEIGHT: usize = 192;

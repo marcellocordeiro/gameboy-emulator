@@ -18,14 +18,8 @@ jobs:
         with:
           submodules: "true"
 
-      - name: Build default
+      - name: Build
         run: cargo build --verbose
 
-      - name: Run default tests
+      - name: Run tests
         run: cargo test --verbose
-
-      - name: Build CGB
-        run: cargo build --verbose --features "cgb"
-
-      - name: Run CGB tests
-        run: cargo test --verbose --features "cgb"
