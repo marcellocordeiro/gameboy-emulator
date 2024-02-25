@@ -7,15 +7,18 @@ use crate::key_mappings;
 
 pub struct App {
     gb: GameBoy,
+
+    bootrom_path: Option<String>,
     rom_path: Option<String>,
 
     pixels: Box<ScreenPixels>,
 }
 
 impl App {
-    pub fn new(gb: GameBoy, rom_path: Option<String>) -> Self {
+    pub fn new(gb: GameBoy, bootrom_path: Option<String>, rom_path: Option<String>) -> Self {
         Self {
             gb,
+            bootrom_path,
             rom_path,
             pixels: vec![0; SCREEN_PIXELS_SIZE]
                 .into_boxed_slice()
@@ -38,17 +41,24 @@ impl App {
             .build()
             .unwrap();
 
+        if let Some(path) = &self.bootrom_path {
+            let bootrom = std::fs::read(path).unwrap();
+            self.gb.insert_bootrom(Some(bootrom));
+        } else {
+            self.gb.insert_bootrom(None);
+        }
+
         // Maybe let the UI handle the errors?
-        if let Some(path) = self.rom_path.as_ref() {
+        if let Some(path) = &self.rom_path {
             let rom = std::fs::read(path).unwrap();
-            self.gb.load_cartridge(rom).unwrap();
+            self.gb.insert_cartridge(rom).unwrap();
         } else {
             let builder =
                 rfd::FileDialog::new().add_filter("Game Boy/Game Boy Color ROM", &["gb", "gbc"]);
             let path = builder.pick_file().unwrap();
 
             let rom = std::fs::read(path).unwrap();
-            self.gb.load_cartridge(rom).unwrap();
+            self.gb.insert_cartridge(rom).unwrap();
         }
 
         let mut canvas = window.into_canvas().present_vsync().build().unwrap();

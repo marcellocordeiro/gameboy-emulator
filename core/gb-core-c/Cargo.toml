@@ -7,11 +7,10 @@ edition = "2021"
 workspace = true
 
 [lib]
-crate-type = ["staticlib", "dylib"]
+crate-type = ["dylib", "staticlib"]
 
 [features]
 bootrom = ["gb-core/bootrom"]
-cgb = ["gb-core/cgb"]
 
 [dependencies.gb-core]
 path = "../gb-core"

@@ -47,8 +47,7 @@ impl VramDma {
     /// HDMA5 (length/mode/start)
     pub fn read_hdma5(&self) -> u8 {
         match self.mode {
-            DmaMode::Idle => 0xFF,
-            DmaMode::General => 0xFF,
+            DmaMode::Idle | DmaMode::General => 0xFF,
 
             DmaMode::Hblank {
                 remaining_steps, ..

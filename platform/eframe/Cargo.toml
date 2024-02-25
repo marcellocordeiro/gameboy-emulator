@@ -7,9 +7,7 @@ edition = "2021"
 workspace = true
 
 [features]
-# default = ["bootrom", "cgb"]
 bootrom = ["gb-core/bootrom"]
-cgb = ["gb-core/cgb"]
 
 [dependencies]
 clap = { version = "4.5.1", features = ["derive"] }

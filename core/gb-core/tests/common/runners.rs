@@ -3,22 +3,41 @@ use std::{
     time::{Duration, Instant},
 };
 
-use gb_core::{GameBoy, MemoryInterface};
+use gb_core::{DeviceModel, GameBoy, MemoryInterface};
+
+use super::error::Error;
 
 const TIMEOUT: Duration = Duration::from_secs(20);
 const BREAK_OPCODE: u8 = 0x40; // LD B,B
 
-pub fn run_until_break(gb: &mut GameBoy) {
+pub fn run_test<F>(device_model: DeviceModel, rom: &'static [u8], runner: F) -> Result<(), Error>
+where
+    F: FnOnce(&mut GameBoy) -> Result<(), Error>,
+{
+    let mut gb = GameBoy::new(device_model);
+    gb.insert_bootrom(None);
+    gb.insert_cartridge(rom.to_vec()).unwrap();
+    
+    runner(&mut gb)?;
+
+    Ok(())
+}
+
+pub fn run_until_break(gb: &mut GameBoy) -> Result<(), Error> {
     let start_time = Instant::now();
 
     while gb.memory().read(gb.cpu().registers().pc) != BREAK_OPCODE {
         gb.step();
 
-        assert!(start_time.elapsed() <= TIMEOUT, "Timed out");
+        if start_time.elapsed() > TIMEOUT {
+            return Err(Error::Timeout);
+        }
     }
+
+    Ok(())
 }
 
-pub fn run_until_serial_passed(gb: &mut GameBoy) {
+pub fn run_until_serial_passed(gb: &mut GameBoy) -> Result<(), Error> {
     let (sender, receiver) = mpsc::channel::<u8>();
 
     let mut output = String::default();
@@ -36,15 +55,20 @@ pub fn run_until_serial_passed(gb: &mut GameBoy) {
         }
 
         if output.contains("Passed") {
-            break;
+            return Ok(());
         }
 
-        assert!(!output.contains("Failed"), "Failed");
-        assert!(start_time.elapsed() <= TIMEOUT, "Timed out");
+        if output.contains("Failed") {
+            return Err(Error::SerialOutputFailure(output));
+        }
+
+        if start_time.elapsed() > TIMEOUT {
+            return Err(Error::Timeout);
+        }
     }
 }
 
-pub fn run_until_memory_status(gb: &mut GameBoy) {
+pub fn run_until_memory_status(gb: &mut GameBoy) -> Result<(), Error> {
     let start_time = Instant::now();
 
     loop {
@@ -58,10 +82,15 @@ pub fn run_until_memory_status(gb: &mut GameBoy) {
             .collect::<String>();
 
         if output.contains("Passed") {
-            break;
+            return Ok(());
         }
 
-        assert!(!output.contains("Failed"), "Failed");
-        assert!(start_time.elapsed() <= TIMEOUT, "Timed out");
+        if output.contains("Failed") {
+            return Err(Error::MemoryOutputFailure(output));
+        }
+
+        if start_time.elapsed() > TIMEOUT {
+            return Err(Error::Timeout);
+        }
     }
 }

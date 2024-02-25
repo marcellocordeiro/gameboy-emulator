@@ -1,17 +1,31 @@
-use crate::utils::macros::in_cgb_mode;
+use crate::{utils::macros::in_cgb_mode, DeviceConfig, DeviceModel, OptionalCgbComponent};
 
 #[derive(Debug, Default)]
 pub struct SpeedSwitch {
     key0: u8,
 
-    cgb_mode: bool,
+    device_config: DeviceConfig,
+}
+
+impl OptionalCgbComponent for SpeedSwitch {
+    fn with_device_model(model: DeviceModel) -> Self {
+        let device_config = DeviceConfig {
+            model,
+            ..Default::default()
+        };
+
+        Self {
+            device_config,
+            ..Default::default()
+        }
+    }
+
+    fn set_cgb_mode(&mut self, value: bool) {
+        self.device_config.cgb_mode = value;
+    }
 }
 
 impl SpeedSwitch {
-    pub fn set_cgb_mode(&mut self, value: bool) {
-        self.cgb_mode = value;
-    }
-
     pub fn in_double_speed(&self) -> bool {
         (self.key0 & 0b1000_0000) != 0
     }
@@ -46,70 +60,70 @@ impl SpeedSwitch {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::utils::macros::device_is_cgb;
 
     #[test]
-    fn test_my_sanity() {
-        let mut speed_switch = SpeedSwitch::default();
+    fn test_my_sanity_dmg() {
+        let mut speed_switch = SpeedSwitch::with_device_model(DeviceModel::Dmg);
 
-        if device_is_cgb!() {
-            speed_switch.set_cgb_mode(true);
-
-            assert_eq!(speed_switch.read(), 0b0111_1110);
-
-            speed_switch.write(0xFF);
-            assert_eq!(speed_switch.read(), 0b0111_1111);
-        } else {
-            assert_eq!(speed_switch.read(), 0xFF);
-            speed_switch.write(0xFF);
-            assert_eq!(speed_switch.read(), 0xFF);
-        }
+        assert_eq!(speed_switch.read(), 0xFF);
+        speed_switch.write(0xFF);
+        assert_eq!(speed_switch.read(), 0xFF);
     }
 
     #[test]
-    #[cfg(feature = "cgb")]
+    fn test_my_sanity_cgb() {
+        let mut speed_switch = SpeedSwitch::with_device_model(DeviceModel::Cgb);
+        speed_switch.set_cgb_mode(true);
+
+        assert_eq!(speed_switch.read(), 0b0111_1110);
+
+        speed_switch.write(0xFF);
+        assert_eq!(speed_switch.read(), 0b0111_1111);
+    }
+
+    #[test]
     fn test_switch() {
-        let mut speed_switch = SpeedSwitch::default();
+        let mut speed_switch = SpeedSwitch::with_device_model(DeviceModel::Cgb);
         speed_switch.set_cgb_mode(true);
 
         assert_eq!(speed_switch.key0, 0);
         assert_eq!(speed_switch.read(), 0b0111_1110);
-        assert_eq!(speed_switch.in_double_speed(), false);
+        assert!(!speed_switch.in_double_speed());
 
         // No changes.
         speed_switch.write(0b1111_1110);
         assert_eq!(speed_switch.key0, 0);
         assert_eq!(speed_switch.read(), 0b0111_1110);
-        assert_eq!(speed_switch.in_double_speed(), false);
+        assert!(!speed_switch.in_double_speed());
 
         // No changes.
         speed_switch.process_speed_switch();
         assert_eq!(speed_switch.key0, 0);
         assert_eq!(speed_switch.read(), 0b0111_1110);
-        assert_eq!(speed_switch.in_double_speed(), false);
+        assert!(!speed_switch.in_double_speed());
 
         // Request speed switch (Single -> Double).
         speed_switch.write(0b1111_1111);
         assert_eq!(speed_switch.key0, 0b1);
         assert_eq!(speed_switch.read(), 0b0111_1111);
-        assert_eq!(speed_switch.in_double_speed(), false);
+        assert!(!speed_switch.in_double_speed());
 
         // Process speed switch (Single -> Double).
         speed_switch.process_speed_switch();
         assert_eq!(speed_switch.key0, 0b1000_0000);
         assert_eq!(speed_switch.read(), 0b1111_1110);
-        assert_eq!(speed_switch.in_double_speed(), true);
+        assert!(speed_switch.in_double_speed());
 
         // Request speed switch (Double -> Single).
         speed_switch.write(0b1111_1111);
         assert_eq!(speed_switch.key0, 0b1000_0001);
         assert_eq!(speed_switch.read(), 0b1111_1111);
-        assert_eq!(speed_switch.in_double_speed(), true);
+        assert!(speed_switch.in_double_speed());
 
         // Process speed switch (Double -> Single).
         speed_switch.process_speed_switch();
         assert_eq!(speed_switch.key0, 0b0000_0000);
         assert_eq!(speed_switch.read(), 0b0111_1110);
-        assert_eq!(speed_switch.in_double_speed(), false);
+        assert!(!speed_switch.in_double_speed());
     }
 }

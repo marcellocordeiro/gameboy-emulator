@@ -13,28 +13,22 @@ pub struct GameBoy {
     memory: Memory,
 
     rom: Option<Arc<Box<[u8]>>>,
-}
+    bootrom: Option<Arc<Box<[u8]>>>,
 
-impl Default for GameBoy {
-    fn default() -> Self {
-        Self::new()
-    }
+    pub device_model: DeviceModel,
 }
 
 impl GameBoy {
-    pub fn new() -> Self {
-        let mut cpu = Cpu::default();
-        let mut memory = Memory::default();
-
-        if !cfg!(feature = "bootrom") {
-            cpu.skip_bootrom();
-            memory.skip_bootrom();
-        }
+    pub fn new(device_model: DeviceModel) -> Self {
+        let cpu = Cpu::with_device_model(device_model);
+        let memory = Memory::with_device_model(device_model);
 
         Self {
             cpu,
             memory,
             rom: None,
+            bootrom: None,
+            device_model,
         }
     }
 
@@ -47,8 +41,15 @@ impl GameBoy {
     }
 
     pub fn reset(&mut self) {
-        self.cpu = Cpu::default();
-        self.memory = Memory::default();
+        self.cpu = Cpu::with_device_model(self.device_model);
+        self.memory = Memory::with_device_model(self.device_model);
+
+        if let Some(bootrom) = self.bootrom.clone() {
+            self.memory.use_bootrom(bootrom);
+        } else {
+            self.cpu.skip_bootrom();
+            self.memory.skip_bootrom();
+        }
 
         if let Some(rom) = self.rom.clone() {
             let result = self.memory.load_cartridge(rom);
@@ -57,19 +58,29 @@ impl GameBoy {
                 error!("{error}");
             }
         }
-
-        if !cfg!(feature = "bootrom") {
-            self.cpu.skip_bootrom();
-            self.memory.skip_bootrom();
-        }
     }
 
-    pub fn load_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
-        if self.rom.is_some() {
-            self.rom = None;
-            self.reset();
-        }
+    /// Insert the bootrom before the cartridge (TODO: improve this).
+    pub fn insert_bootrom(&mut self, bootrom: Option<Vec<u8>>) {
+        assert!(!self.cartridge_inserted());
 
+        let bootrom = if let Some(bootrom) = bootrom {
+            let bootrom = Arc::<Box<[u8]>>::from(bootrom.into_boxed_slice());
+            self.memory.use_bootrom(bootrom.clone());
+
+            Some(bootrom)
+        } else {
+            self.cpu.skip_bootrom();
+            self.memory.skip_bootrom();
+
+            None
+        };
+
+        self.bootrom = bootrom;
+    }
+
+    /// Reset before inserting a new cartridge.
+    pub fn insert_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         let rom = Arc::<Box<[u8]>>::from(rom.into_boxed_slice());
 
         self.memory.load_cartridge(rom.clone())?;
@@ -130,7 +141,7 @@ impl GameBoy {
 }
 
 mod audio;
-mod cartridge;
+pub mod cartridge;
 mod constants;
 mod cpu;
 mod joypad;

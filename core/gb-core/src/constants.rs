@@ -7,10 +7,10 @@ pub const SCREEN_HEIGHT: usize = 144;
 
 pub const SCREEN_PIXELS_SIZE: usize = SCREEN_WIDTH * SCREEN_HEIGHT * std::mem::size_of::<u32>();
 
-#[cfg(not(feature = "cgb"))]
-pub const TILE_DATA_FRAME_WIDTH: usize = 128;
+// #[cfg(not(feature = "cgb"))]
+// pub const TILE_DATA_FRAME_WIDTH: usize = 128;
 
-#[cfg(feature = "cgb")]
+// #[cfg(feature = "cgb")]
 pub const TILE_DATA_FRAME_WIDTH: usize = 128 * 2;
 
 pub const TILE_DATA_FRAME_HEIGHT: usize = 192;
@@ -23,3 +23,31 @@ pub type TileDataFrame = [u8; TILE_DATA_FRAME_SIZE];
 
 pub const EXTENSIONS_DESCRIPTION: &str = "Game Boy/Game Boy Color ROM";
 pub const EXTENSIONS: [&str; 2] = ["gb", "gbc"];
+
+pub(crate) trait OptionalCgbComponent {
+    fn with_device_model(model: DeviceModel) -> Self;
+    fn set_cgb_mode(&mut self, value: bool);
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub enum DeviceModel {
+    #[default]
+    Dmg,
+    Cgb,
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct DeviceConfig {
+    pub model: DeviceModel,
+    pub cgb_mode: bool,
+}
+
+impl DeviceConfig {
+    pub fn is_cgb(&self) -> bool {
+        self.model == DeviceModel::Cgb
+    }
+
+    pub fn in_cgb_mode(&self) -> bool {
+        self.is_cgb() && self.cgb_mode
+    }
+}

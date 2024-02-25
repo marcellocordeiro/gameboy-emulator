@@ -1,5 +1,5 @@
 use egui::ViewportCommand;
-use gb_core::{Button, GameBoy, EXTENSIONS, EXTENSIONS_DESCRIPTION};
+use gb_core::{Button, DeviceModel, GameBoy, EXTENSIONS, EXTENSIONS_DESCRIPTION};
 
 use crate::{egui_framework::EguiUi, gui::Gui, key_mappings};
 
@@ -10,8 +10,12 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(egui_ctx: &egui::Context, rom_path: Option<String>) -> Self {
-        let mut gb = GameBoy::new();
+    pub fn new(
+        egui_ctx: &egui::Context,
+        device_model: DeviceModel,
+        rom_path: Option<String>,
+    ) -> Self {
+        let mut gb = GameBoy::new(device_model);
 
         // Maybe let the UI handle the errors?
         let rom_path = {
@@ -28,7 +32,8 @@ impl App {
 
         let rom = std::fs::read(rom_path).unwrap();
 
-        gb.load_cartridge(rom).unwrap();
+        gb.insert_bootrom(None);
+        gb.insert_cartridge(rom).unwrap();
         // load_battery(&mut gb, &rom_path);
 
         Self {

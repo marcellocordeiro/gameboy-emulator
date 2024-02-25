@@ -1,16 +1,20 @@
 use app::App;
 use clap::Parser;
-use gb_core::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use gb_core::{DeviceModel, SCREEN_HEIGHT, SCREEN_WIDTH};
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    /// Optional ROM path (will show file picker if not provided)
-    rom: Option<String>,
-
-    /// (Unused) Set the device type to CGB
+    /// Set the device model to CGB
     #[arg(short, long, default_value_t = false)]
     cgb: bool,
+
+    /// Optional bootrom path
+    #[arg(short, long)]
+    bootrom: Option<String>,
+
+    /// Optional ROM path (will show file picker if not provided)
+    rom: Option<String>,
 }
 
 fn main() -> Result<(), eframe::Error> {
@@ -21,6 +25,12 @@ fn main() -> Result<(), eframe::Error> {
 
     let args = Args::parse();
 
+    let device_model = if args.cgb {
+        DeviceModel::Cgb
+    } else {
+        DeviceModel::Dmg
+    };
+    let bootrom_path = args.bootrom;
     let rom_path = args.rom;
 
     #[allow(clippy::cast_precision_loss)]
@@ -34,7 +44,7 @@ fn main() -> Result<(), eframe::Error> {
     eframe::run_native(
         "gameboy-emulator",
         native_options,
-        Box::new(move |cc| Box::new(App::new(cc, rom_path))),
+        Box::new(move |cc| Box::new(App::new(cc, device_model, bootrom_path, rom_path))),
     )
 }
 

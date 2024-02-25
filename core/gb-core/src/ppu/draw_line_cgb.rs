@@ -1,7 +1,8 @@
-#![cfg(feature = "cgb")]
-
 use super::Ppu;
-use crate::{constants::SCREEN_WIDTH, utils::color::Color};
+use crate::{
+    constants::SCREEN_WIDTH,
+    utils::{color::Color, macros::in_cgb_mode},
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Priority {
@@ -11,6 +12,7 @@ enum Priority {
 }
 
 impl Ppu {
+    /// Warning: CGB model only.
     pub(super) fn draw_line_cgb(&mut self) {
         let mut priority = [Priority::Object; SCREEN_WIDTH];
 
@@ -18,7 +20,6 @@ impl Ppu {
         self.draw_sprites_cgb(&priority);
     }
 
-    #[allow(clippy::too_many_lines)]
     fn draw_tiles_cgb(&mut self, priority: &mut [Priority; SCREEN_WIDTH]) {
         let screen_line = {
             let line_offset = SCREEN_WIDTH * (self.ly as usize);
@@ -27,7 +28,7 @@ impl Ppu {
         };
 
         let should_render_win = self.lcdc.get_win_enable() && self.wy <= self.ly;
-        let should_render_bg = self.cgb_mode || self.lcdc.get_bg_enable();
+        let should_render_bg = in_cgb_mode!(self) || self.lcdc.get_bg_enable();
 
         let window_x = self.wx.saturating_sub(7);
 
@@ -55,7 +56,7 @@ impl Ppu {
 
                 (x, y, tile_map_base_address)
             } else {
-                let pixel = Color::SYSTEM_DEFAULT;
+                let pixel = Color::CGB_SYSTEM_DEFAULT;
 
                 screen_line[i as usize] = pixel;
 
@@ -70,7 +71,7 @@ impl Ppu {
             };
 
             let tile_map_attributes = {
-                if self.cgb_mode {
+                if in_cgb_mode!(self) {
                     self.vram.read_bank_1(tile_map_address)
                 } else {
                     0
@@ -136,7 +137,7 @@ impl Ppu {
                 (hi << 1) | lo
             };
 
-            if self.cgb_mode {
+            if in_cgb_mode!(self) {
                 let raw_color = self.bg_cram.get_color_rgb555(palette_number, color_id);
 
                 if color_id == 0 || !self.lcdc.get_bg_enable() {
@@ -249,7 +250,7 @@ impl Ppu {
                     continue;
                 }
 
-                if self.cgb_mode {
+                if in_cgb_mode!(self) {
                     if !(priority[mapped_x] == Priority::Object
                         || (priority[mapped_x] == Priority::OamAttribute
                             && !sprite.flags.bg_priority))

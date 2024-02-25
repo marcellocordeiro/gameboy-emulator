@@ -1,6 +1,3 @@
-use common::{runners::run_until_break, validators::validate_fibonacci};
-use gb_core::GameBoy;
-
 mod common;
 
 // Acceptance
@@ -20,7 +17,7 @@ testcases_mooneye! {
 
     // boot_regs_dmg0("acceptance/boot_regs-dmg0.gb"); // DMG0 is unsupported.
 
-    // boot_regs_dmg_abc("acceptance/boot_regs-dmgABC.gb"); // DMG only. Tested separately.
+    boot_regs_dmg_abc("acceptance/boot_regs-dmgABC.gb", dmg); // DMG only.
 
     // boot_regs_mgb("acceptance/boot_regs-mgb.gb"); // MGB is unsupported.
     // boot_regs_sgb("acceptance/boot_regs-sgb.gb"); // SGB is unsupported.
@@ -128,32 +125,10 @@ testcases_mooneye! {
 }
 
 // Acceptance
-// DMG only tests.
-#[cfg(not(feature = "cgb"))]
-testcases_mooneye! {
-    boot_regs_dmg_abc("acceptance/boot_regs-dmgABC.gb");
-}
-
-// Acceptance
 // DMG only tests (bootrom is unsupported).
-#[cfg(not(any(feature = "cgb", feature = "bootrom")))]
+#[cfg(not(feature = "bootrom"))]
 testcases_mooneye! {
-    boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb.gb");
-}
-
-// Misc
-// CGB only tests.
-#[cfg(feature = "cgb")]
-testcases_mooneye! {
-    boot_regs_cgb("misc/boot_regs-cgb.gb");
-}
-
-// Misc
-// CGB only tests (needs bootrom).
-#[cfg(all(feature = "cgb", feature = "bootrom"))]
-testcases_mooneye! {
-    boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb");
-    boot_hwio_c("misc/boot_hwio-C.gb"); // Why is this failing without the bootrom?
+    boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb.gb", dmg);
 }
 
 // TODO: compare screenshots
@@ -162,21 +137,29 @@ testcases_mooneye! {
 //     sprite_priority("manual-only/sprite_priority.gb");
 // }
 
-// misc
-// testcases_mooneye! {
-// boot_div_a("misc/boot_div-A.gb"); // AGS is unsupported.
+// Misc
+testcases_mooneye! {
+    // boot_div_a("misc/boot_div-A.gb"); // AGS is unsupported.
 
-// boot_div_cgb0("misc/boot_div-cgb0.gb"); // CGB0 is unsupported.
+    // boot_div_cgb0("misc/boot_div-cgb0.gb"); // CGB0 is unsupported.
 
-// boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb"); // CGB only. Tested separately.
-// boot_hwio_c("misc/boot_hwio-C.gb"); // CGB only. Tested separately.
+    // boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb"); // CGB only. Tested separately.
+    // boot_hwio_c("misc/boot_hwio-C.gb"); // CGB only. Tested separately.
 
-// boot_regs_a("misc/boot_regs-A.gb"); // AGS is unsupported.
+    // boot_regs_a("misc/boot_regs-A.gb"); // AGS is unsupported.
 
-// boot_regs_cgb("misc/boot_regs-cgb.gb"); // CGB only. Tested separately.
-// bits_unused_hwio_c("misc/bits/unused_hwio-C.gb");  // TODO: why is this failing?
-// ppu_vblank_stat_intr_c("misc/ppu/vblank_stat_intr-C.gb");
-// }
+    boot_regs_cgb("misc/boot_regs-cgb.gb", cgb); // CGB only.
+    // bits_unused_hwio_c("misc/bits/unused_hwio-C.gb");  // TODO: why is this failing?
+    // ppu_vblank_stat_intr_c("misc/ppu/vblank_stat_intr-C.gb");
+}
+
+// Misc
+// CGB only tests (requires bootrom).
+#[cfg(feature = "bootrom")]
+testcases_mooneye! {
+    boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb", cgb);
+    boot_hwio_c("misc/boot_hwio-C.gb", cgb); // Why is this failing without the bootrom?
+}
 
 // From: https://github.com/Gekkio/mooneye-test-suite
 //

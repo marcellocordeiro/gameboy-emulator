@@ -1,7 +1,7 @@
 use app::App;
 use clap::Parser;
 use error_iter::ErrorIter as _;
-use gb_core::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use gb_core::{DeviceModel, SCREEN_HEIGHT, SCREEN_WIDTH};
 use log::error;
 use pixels::{Error, Pixels, SurfaceTexture};
 use winit::{
@@ -24,12 +24,12 @@ mod utils;
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    /// Optional ROM path (will show file picker if not provided)
-    rom: Option<String>,
-
-    /// (Unused) Set the device type to CGB
+    /// Set the device model to CGB
     #[arg(short, long, default_value_t = false)]
     cgb: bool,
+
+    /// Optional ROM path (will show file picker if not provided)
+    rom: Option<String>,
 }
 
 fn main() -> Result<(), Error> {
@@ -40,6 +40,11 @@ fn main() -> Result<(), Error> {
 
     let args = Args::parse();
 
+    let device_model = if args.cgb {
+        DeviceModel::Cgb
+    } else {
+        DeviceModel::Dmg
+    };
     let rom_path = args.rom;
 
     #[allow(clippy::cast_precision_loss)]
@@ -80,7 +85,7 @@ fn main() -> Result<(), Error> {
     };
 
     // let mut gui = Gui::new();
-    let mut app = App::new(&egui_framework.egui_ctx, rom_path);
+    let mut app = App::new(&egui_framework.egui_ctx, device_model, rom_path);
 
     let result = event_loop.run(|event, elwt| {
         // Handle input events

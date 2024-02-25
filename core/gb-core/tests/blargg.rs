@@ -1,6 +1,3 @@
-use common::runners::{run_until_memory_status, run_until_serial_passed};
-use gb_core::GameBoy;
-
 mod common;
 
 testcases_blargg_serial! {

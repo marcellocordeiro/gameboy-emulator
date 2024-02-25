@@ -45,7 +45,7 @@ impl Ppu {
 
                 (x, y, tile_map_base_address)
             } else {
-                let pixel = Color::SYSTEM_DEFAULT;
+                let pixel = Color::DMG_SYSTEM_DEFAULT;
 
                 screen_line[i as usize] = pixel;
 

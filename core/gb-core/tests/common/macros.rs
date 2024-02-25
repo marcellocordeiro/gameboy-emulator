@@ -1,93 +1,76 @@
 #[macro_export]
+macro_rules! run_for_model {
+    ($F:path, $rom:ident) => {
+        run_for_model!(dmg, $F, $rom);
+        run_for_model!(cgb, $F, $rom);
+    };
+
+    (dmg, $F:path, $rom:ident) => {
+        if let Err(e) = $F(gb_core::DeviceModel::Dmg, $rom) {
+            panic!("DMG failure: {e}");
+        }
+    };
+
+    (cgb, $F:path, $rom:ident) => {
+        if let Err(e) = $F(gb_core::DeviceModel::Cgb, $rom) {
+            panic!("CGB failure: {e}");
+        }
+    };
+}
+
+#[macro_export]
 macro_rules! testcases_mooneye {
-    (
-        $name:ident($path:expr);
-    ) => {
+    ($name:ident($path:literal $(, $model:ident)?);) => {
         #[test]
         fn $name() {
             let rom = include_bytes!(concat!("../../../external/gameboy-test-roms/", "mooneye-test-suite/", $path));
-
-            let mut gb = GameBoy::new();
-            gb.load_cartridge(rom.to_vec()).unwrap();
-
-            run_until_break(&mut gb);
-            validate_fibonacci(&gb);
+            run_for_model!($($model, )? common::mooneye::run, rom);
         }
     };
 
     (
-        $name:ident($path:expr);
-        $(
-            $names:ident($paths:expr);
-        )+
+        $name:ident($path:literal $(, $model:ident)?);
+        $($names:ident($paths:literal $(, $models:ident)?);)+
     ) => {
-        testcases_mooneye! { $name($path); }
-        testcases_mooneye! {
-            $(
-                $names($paths);
-            )+
-        }
+        testcases_mooneye! { $name($path $(, $model)?); }
+        testcases_mooneye! { $($names($paths $(, $models)?);)+ }
     };
 }
 
 #[macro_export]
 macro_rules! testcases_blargg_serial {
-    (
-        $name:ident($path:expr);
-    ) => {
+    ($name:ident($path:literal $(, $model:ident)?);) => {
         #[test]
         fn $name() {
             let rom = include_bytes!(concat!("../../../external/gameboy-test-roms/", "blargg/", $path));
-
-            let mut gb = GameBoy::new();
-            gb.load_cartridge(rom.to_vec()).unwrap();
-
-            run_until_serial_passed(&mut gb);
+            run_for_model!($($model, )? common::blargg::run_serial, rom);
         }
     };
 
     (
-        $name:ident($path:expr);
-        $(
-            $names:ident($paths:expr);
-        )+
+        $name:ident($path:literal $(, $model:ident)?);
+        $($names:ident($paths:literal $(, $models:ident)?);)+
     ) => {
-        testcases_blargg_serial! { $name($path); }
-        testcases_blargg_serial! {
-            $(
-                $names($paths);
-            )+
-        }
+        testcases_blargg_serial! { $name($path $(, $model)?); }
+        testcases_blargg_serial! { $($names($paths $(, $models)?);)+ }
     };
 }
 
 #[macro_export]
 macro_rules! testcases_blargg_memory {
-    (
-        $name:ident($path:expr);
-    ) => {
+    ($name:ident($path:literal $(, $model:ident)?);) => {
         #[test]
         fn $name() {
             let rom = include_bytes!(concat!("../../../external/gameboy-test-roms/", "blargg/", $path));
-
-            let mut gb = GameBoy::new();
-            gb.load_cartridge(rom.to_vec()).unwrap();
-
-            run_until_memory_status(&mut gb);
+            run_for_model!($($model, )? common::blargg::run_memory, rom);
         }
     };
 
     (
-        $name:ident($path:expr);
-        $(
-            $names:ident($paths:expr);
-        )+
+        $name:ident($path:literal $(, $model:ident)?);
+        $($names:ident($paths:literal $(, $models:ident)?);)+
     ) => {
-        testcases_blargg_memory! { $name($path); }
-        testcases_blargg_memory! {
-            $(
-                $names($paths);
-            )+
-        }
+        testcases_blargg_memory! { $name($path $(, $model)?); }
+        testcases_blargg_memory! { $($names($paths $(, $models)?);)+ }
     };
 }

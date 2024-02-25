@@ -1,4 +1,12 @@
-use gb_core::{Button, GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
+use gb_core::{
+    Button,
+    DeviceModel,
+    GameBoy,
+    ScreenPixels,
+    SCREEN_HEIGHT,
+    SCREEN_PIXELS_SIZE,
+    SCREEN_WIDTH,
+};
 use key_mappings::LibretroKeyMappings;
 use libretro_rs::{
     libretro_core,
@@ -25,7 +33,7 @@ impl RetroCore for Emulator {
         env_logger::init();
 
         Self {
-            gb: GameBoy::default(),
+            gb: GameBoy::new(DeviceModel::Cgb),
             pixels: vec![0; SCREEN_PIXELS_SIZE]
                 .into_boxed_slice()
                 .try_into()
@@ -79,7 +87,8 @@ impl RetroCore for Emulator {
             }
         };
 
-        let result = self.gb.load_cartridge(rom);
+        self.gb.insert_bootrom(None);
+        let result = self.gb.insert_cartridge(rom);
 
         match result {
             Ok(()) => RetroLoadGameResult::Success {

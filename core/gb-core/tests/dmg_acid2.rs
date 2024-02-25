@@ -1,30 +1,30 @@
 use common::{runners::run_until_break, validators::validate_screenshot};
-use gb_core::GameBoy;
+use gb_core::{DeviceModel, GameBoy};
 
 mod common;
 
-#[cfg(not(feature = "cgb"))]
 #[test]
 fn test_dmg_acid2_dmg() {
     let name = "dmg-acid2_dmg";
     let rom = include_bytes!("../../../external/gameboy-test-roms/dmg-acid2.gb");
 
-    let mut gb = GameBoy::new();
-    gb.load_cartridge(rom.to_vec()).unwrap();
+    let mut gb = GameBoy::new(DeviceModel::Dmg);
+    gb.insert_bootrom(None);
+    gb.insert_cartridge(rom.to_vec()).unwrap();
 
-    run_until_break(&mut gb);
-    validate_screenshot(&gb, name);
+    run_until_break(&mut gb).unwrap();
+    validate_screenshot(&gb, name).unwrap();
 }
 
-#[cfg(feature = "cgb")]
 #[test]
 fn test_dmg_acid2_cgb() {
     let name = "dmg-acid2_cgb";
     let rom = include_bytes!("../../../external/gameboy-test-roms/dmg-acid2.gb");
 
-    let mut gb = GameBoy::new();
-    gb.load_cartridge(rom.to_vec()).unwrap();
+    let mut gb = GameBoy::new(DeviceModel::Cgb);
+    gb.insert_bootrom(None);
+    gb.insert_cartridge(rom.to_vec()).unwrap();
 
-    run_until_break(&mut gb);
-    validate_screenshot(&gb, name);
+    run_until_break(&mut gb).unwrap();
+    validate_screenshot(&gb, name).unwrap();
 }

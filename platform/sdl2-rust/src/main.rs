@@ -1,16 +1,20 @@
 use app::App;
 use clap::Parser;
-use gb_core::GameBoy;
+use gb_core::{DeviceModel, GameBoy};
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    /// Optional ROM path (will show file picker if not provided)
-    rom: Option<String>,
-
-    /// (Unused) Set the device type to CGB
+    /// Set the device model to CGB
     #[arg(short, long, default_value_t = false)]
     cgb: bool,
+
+    /// Optional bootrom path
+    #[arg(short, long)]
+    bootrom: Option<String>,
+
+    /// Optional ROM path (will show file picker if not provided)
+    rom: Option<String>,
 }
 
 fn main() {
@@ -21,10 +25,16 @@ fn main() {
 
     let args = Args::parse();
 
+    let device_model = if args.cgb {
+        DeviceModel::Cgb
+    } else {
+        DeviceModel::Dmg
+    };
+    let bootrom_path = args.bootrom;
     let rom_path = args.rom;
-    let gb = GameBoy::new();
+    let gb = GameBoy::new(device_model);
 
-    App::new(gb, rom_path).run();
+    App::new(gb, bootrom_path, rom_path).run();
 }
 
 mod app;

@@ -6,11 +6,9 @@ pub struct Color {
 }
 
 impl Color {
+    pub const CGB_SYSTEM_DEFAULT: Self = Self::WHITE_RGB555;
     pub const DMG_PALETTE: [u8; 4] = [0xFF, 0xAA, 0x55, 0x00];
-    #[cfg(not(feature = "cgb"))]
-    pub const SYSTEM_DEFAULT: Self = Self::WHITE;
-    #[cfg(feature = "cgb")]
-    pub const SYSTEM_DEFAULT: Self = Self::WHITE_RGB555;
+    pub const DMG_SYSTEM_DEFAULT: Self = Self::WHITE;
     pub const WHITE: Self = Self::new(0xFF, 0xFF, 0xFF);
     pub const WHITE_RGB555: Self =
         Self::from_rgb555_u16_to_rgba8888((0x7F << 10) | (0x7F << 5) | 0x7F);

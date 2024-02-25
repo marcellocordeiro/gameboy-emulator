@@ -47,7 +47,8 @@ impl Oam {
     ///
     /// This is the default behaviour in the CGB, but the bootrom can change this
     /// by modifying the OPRI (0xFF6C) register.
-    #[cfg(feature = "cgb")]
+    ///
+    /// Warning: CGB model only.
     pub fn get_sprites_in_line_by_oam(&mut self, ly: u8, obj_height: u8) -> &[SpriteObject] {
         self.update_sprite_buffer(ly, obj_height);
 
