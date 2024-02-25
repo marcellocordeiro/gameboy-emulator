@@ -9,7 +9,8 @@ fn test_dmg_acid2_dmg() {
     let rom = include_bytes!("../../../external/gameboy-test-roms/dmg-acid2.gb");
 
     let mut gb = GameBoy::new(DeviceModel::Dmg);
-    gb.load_cartridge(rom.to_vec()).unwrap();
+    gb.insert_bootrom(None);
+    gb.insert_cartridge(rom.to_vec()).unwrap();
 
     run_until_break(&mut gb).unwrap();
     validate_screenshot(&gb, name).unwrap();
@@ -21,7 +22,8 @@ fn test_dmg_acid2_cgb() {
     let rom = include_bytes!("../../../external/gameboy-test-roms/dmg-acid2.gb");
 
     let mut gb = GameBoy::new(DeviceModel::Cgb);
-    gb.load_cartridge(rom.to_vec()).unwrap();
+    gb.insert_bootrom(None);
+    gb.insert_cartridge(rom.to_vec()).unwrap();
 
     run_until_break(&mut gb).unwrap();
     validate_screenshot(&gb, name).unwrap();

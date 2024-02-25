@@ -38,8 +38,9 @@ impl GameBoy {
         self.gb.reset();
     }
 
-    pub fn load_cartridge(&mut self, rom: Vec<u8>) {
-        self.gb.load_cartridge(rom).unwrap();
+    pub fn insert_cartridge(&mut self, rom: Vec<u8>) {
+        self.gb.insert_bootrom(None);
+        self.gb.insert_cartridge(rom).unwrap();
     }
 
     pub fn run_frame(&mut self) {

@@ -9,6 +9,10 @@ struct Args {
     #[arg(short, long, default_value_t = false)]
     cgb: bool,
 
+    /// Optional bootrom path
+    #[arg(short, long)]
+    bootrom: Option<String>,
+
     /// Optional ROM path (will show file picker if not provided)
     rom: Option<String>,
 }
@@ -26,10 +30,11 @@ fn main() {
     } else {
         DeviceModel::Dmg
     };
+    let bootrom_path = args.bootrom;
     let rom_path = args.rom;
     let gb = GameBoy::new(device_model);
 
-    App::new(gb, rom_path).run();
+    App::new(gb, bootrom_path, rom_path).run();
 }
 
 mod app;

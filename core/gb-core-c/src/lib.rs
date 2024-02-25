@@ -41,7 +41,7 @@ pub unsafe extern "C" fn gameboy_reset(gb_ptr: *mut GameBoy) {
 /// 2. The ROM array pointer cannot be null.
 /// 3. The allocated size for the ROM has to be equal to `rom_size`.
 #[no_mangle]
-pub unsafe extern "C" fn gameboy_load_cartridge(
+pub unsafe extern "C" fn gameboy_insert_cartridge(
     gb_ptr: *mut GameBoy,
     rom: *const u8,
     rom_size: usize,
@@ -50,7 +50,8 @@ pub unsafe extern "C" fn gameboy_load_cartridge(
 
     let vec = unsafe { std::slice::from_raw_parts(rom, rom_size).to_vec() };
 
-    gb.load_cartridge(vec).unwrap();
+    gb.insert_bootrom(None);
+    gb.insert_cartridge(vec).unwrap();
 }
 
 /// # Safety

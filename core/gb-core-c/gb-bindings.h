@@ -32,7 +32,7 @@ struct GameBoy;
 struct GameBoy* gameboy_new();
 void gameboy_destroy(struct GameBoy* gb_ptr);
 void gameboy_reset(struct GameBoy* gb_ptr);
-void gameboy_load_cartridge(struct GameBoy* gb_ptr, const uint8_t* rom, uintptr_t rom_size);
+void gameboy_insert_cartridge(struct GameBoy* gb_ptr, const uint8_t* rom, uintptr_t rom_size);
 void gameboy_run_frame(struct GameBoy* gb_ptr);
 void gameboy_set_joypad_button(struct GameBoy* gb_ptr, enum Button button, bool value);
 void gameboy_joypad_button_up(struct GameBoy* gb_ptr, enum Button button);

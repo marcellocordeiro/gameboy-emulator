@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use log::info;
+
 use self::{
     bootrom::Bootrom,
     high_ram::HighRam,
@@ -391,7 +393,7 @@ impl Memory {
         let cartridge = Cartridge::new(rom)?;
 
         if device_is_cgb!(self) {
-            if cfg!(feature = "bootrom") {
+            if self.bootrom.is_loaded() {
                 self.set_cgb_mode(true);
             } else {
                 self.handle_post_bootrom_setup(&cartridge.info);
@@ -401,6 +403,11 @@ impl Memory {
         self.cartridge = Some(cartridge);
 
         Ok(())
+    }
+
+    pub(crate) fn use_bootrom(&mut self, bootrom: Arc<Box<[u8]>>) {
+        self.bootrom.insert(self.device_config.model, bootrom);
+        info!("Bootrom loaded.");
     }
 
     pub(crate) fn skip_bootrom(&mut self) {

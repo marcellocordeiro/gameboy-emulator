@@ -32,7 +32,8 @@ impl App {
 
         let rom = std::fs::read(rom_path).unwrap();
 
-        gb.load_cartridge(rom).unwrap();
+        gb.insert_bootrom(None);
+        gb.insert_cartridge(rom).unwrap();
         // load_battery(&mut gb, &rom_path);
 
         Self {
