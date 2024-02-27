@@ -9,16 +9,16 @@ use self::{
 };
 use super::{licensee_code::LicenseeCode, title::Title};
 
-pub struct DmgCompatibilityPalettes {
+pub struct CompatibilityPalettes {
     pub bg0: [u16; 4],
     pub obj0: [u16; 4],
     pub obj1: [u16; 4],
 }
 
-impl DmgCompatibilityPalettes {
+impl CompatibilityPalettes {
     pub const DEFAULT: Self = PALETTE_COMBINATIONS[0].into_palettes();
 
-    pub fn with_header_info(licensee_code: &LicenseeCode, title: &Title) -> Self {
+    pub fn from_header_info(licensee_code: &LicenseeCode, title: &Title) -> Self {
         match licensee_code.old() {
             0x33 => {
                 if !(licensee_code.new_as_string() == "01"

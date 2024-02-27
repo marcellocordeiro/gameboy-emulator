@@ -1,5 +1,4 @@
-use super::cartridge_type::CARTRIDGE_TYPE_ADDRESS;
-use crate::cartridge::error::Error as CartridgeError;
+use super::{cartridge_type::CARTRIDGE_TYPE_ADDRESS, header::Header};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExtraFeature {
@@ -11,15 +10,13 @@ pub enum ExtraFeature {
 }
 
 impl ExtraFeature {
-    pub fn features_with_rom(rom: &[u8]) -> Result<Box<[Self]>, CartridgeError> {
-        let cartridge_type_code = *rom
-            .get(CARTRIDGE_TYPE_ADDRESS)
-            .ok_or(CartridgeError::InvalidRom)?;
+    pub fn features_from_header(header: &Header) -> Box<[Self]> {
+        let code = header[CARTRIDGE_TYPE_ADDRESS];
 
-        Ok(Self::features_from_code(cartridge_type_code))
+        Self::features_from_code(code)
     }
 
-    pub fn features_from_code(code: u8) -> Box<[Self]> {
+    fn features_from_code(code: u8) -> Box<[Self]> {
         match code {
             // $08 ROM+RAM
             // $09 ROM+RAM+BATTERY

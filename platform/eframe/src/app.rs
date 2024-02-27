@@ -23,7 +23,7 @@ impl App {
     ) -> Self {
         let mut gb = GameBoy::new(device_model);
 
-        if let Some(path) = &bootrom_path {
+        if let Some(path) = bootrom_path {
             let bootrom = std::fs::read(path).unwrap();
             gb.insert_bootrom(Some(bootrom));
         } else {

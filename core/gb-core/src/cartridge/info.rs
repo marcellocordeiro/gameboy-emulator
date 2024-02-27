@@ -2,15 +2,12 @@ pub use self::{
     cartridge_type::CartridgeType,
     cgb_flag::CgbFlag,
     extra_features::ExtraFeature,
-    ram_size::RAM_BANK_SIZE,
-    rom_size::ROM_BANK_SIZE,
+    ram_banks::RAM_BANK_SIZE,
+    rom_banks::ROM_BANK_SIZE,
 };
 use self::{
-    dmg_compatibility_palettes::DmgCompatibilityPalettes,
+    compatibility_palettes::CompatibilityPalettes,
     licensee_code::LicenseeCode,
-    ram_size::{get_ram_banks, RAM_BANKS_CODE_ADDRESS},
-    rom_size::{get_rom_banks, ROM_BANKS_CODE_ADDRESS},
-    sgb_flag::SGB_FLAG_ADDRESS,
     title::Title,
 };
 use crate::constants::ONE_KIB;
@@ -35,27 +32,19 @@ impl TryFrom<&[u8]> for Info {
     type Error = super::error::Error;
 
     fn try_from(rom: &[u8]) -> Result<Self, Self::Error> {
-        let title = Title::with_rom(rom)?;
+        let header = header::try_from(rom)?;
 
-        let rom_size_code = *rom
-            .get(ROM_BANKS_CODE_ADDRESS)
-            .ok_or(Self::Error::InvalidRom)?;
+        let title = Title::from_header(header)?;
 
-        let ram_size_code = *rom
-            .get(RAM_BANKS_CODE_ADDRESS)
-            .ok_or(Self::Error::InvalidRom)?;
+        let cgb_flag = CgbFlag::from_header(header);
 
-        let cgb_flag = CgbFlag::with_rom(rom)?;
+        let licensee_code = LicenseeCode::from_header(header)?;
 
-        let sgb_flag_code = *rom.get(SGB_FLAG_ADDRESS).ok_or(Self::Error::InvalidRom)?;
-
-        let licensee_code = LicenseeCode::with_rom(rom)?;
-
-        let rom_banks = get_rom_banks(rom_size_code)?;
-        let ram_banks = get_ram_banks(ram_size_code)?;
-        let cartridge_type = CartridgeType::with_rom(rom)?;
-        let extra_features = ExtraFeature::features_with_rom(rom)?;
-        let sgb_flag = sgb_flag::from(sgb_flag_code);
+        let rom_banks = rom_banks::from_header(header)?;
+        let ram_banks = ram_banks::from_header(header)?;
+        let cartridge_type = CartridgeType::from_header(header)?;
+        let extra_features = ExtraFeature::features_from_header(header);
+        let sgb_flag = sgb_flag::from_header(header);
 
         let file_size = rom.len();
 
@@ -113,17 +102,18 @@ impl Info {
         );
     }
 
-    pub fn dmg_compatibility_palettes(&self) -> DmgCompatibilityPalettes {
-        DmgCompatibilityPalettes::with_header_info(&self.licensee_code, &self.title)
+    pub fn dmg_compatibility_palettes(&self) -> CompatibilityPalettes {
+        CompatibilityPalettes::from_header_info(&self.licensee_code, &self.title)
     }
 }
 
 mod cartridge_type;
 mod cgb_flag;
-pub mod dmg_compatibility_palettes;
+pub mod compatibility_palettes;
 mod extra_features;
+mod header;
 mod licensee_code;
-mod ram_size;
-mod rom_size;
+mod ram_banks;
+mod rom_banks;
 mod sgb_flag;
 mod title;

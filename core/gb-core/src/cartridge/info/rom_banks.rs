@@ -1,4 +1,5 @@
-use crate::{cartridge::error::Error as CartridgeError, constants::ONE_KIB};
+use super::header::Header;
+use crate::{cartridge::error::Error, constants::ONE_KIB};
 
 pub const ROM_BANK_SIZE: usize = 16 * ONE_KIB; // 0x4000
 pub const ROM_BANKS_CODE_ADDRESS: usize = 0x0148;
@@ -16,7 +17,13 @@ pub const ROM_BANKS_CODE_ADDRESS: usize = 0x0148;
 /// | $08  |   8 MiB |             512 |
 ///
 /// Note: each bank is 16 KiB.
-pub fn get_rom_banks(code: u8) -> Result<usize, CartridgeError> {
+pub fn from_header(header: &Header) -> Result<usize, Error> {
+    let code = header[ROM_BANKS_CODE_ADDRESS];
+
+    from_code(code)
+}
+
+fn from_code(code: u8) -> Result<usize, Error> {
     let result = match code {
         0x00 => 2,   // 32 KiB
         0x01 => 4,   // 64 KiB
@@ -28,7 +35,7 @@ pub fn get_rom_banks(code: u8) -> Result<usize, CartridgeError> {
         0x07 => 256, // 4 MiB
         0x08 => 512, // 8 MiB
 
-        _ => return Err(CartridgeError::UnsupportedRomSize { code }),
+        _ => return Err(Error::UnsupportedRomSize { code }),
     };
 
     Ok(result)
@@ -56,7 +63,7 @@ mod tests {
         mapping.insert(0x08, 8 * ONE_MIB_TO_KIB);
 
         for (code, size) in mapping {
-            let banks = get_rom_banks(code).unwrap();
+            let banks = from_code(code).unwrap();
 
             assert_eq!(banks, size / 16);
         }

@@ -1,4 +1,5 @@
-use crate::cartridge::error::Error as CartridgeError;
+use super::header::Header;
+use crate::cartridge::error::Error;
 
 pub const OLD_LICENSEE_CODE_ADDRESS: usize = 0x014B;
 
@@ -11,20 +12,16 @@ pub struct LicenseeCode {
 }
 
 impl LicenseeCode {
-    pub fn with_rom(rom: &[u8]) -> Result<Self, CartridgeError> {
-        let old_licensee_code = *rom
-            .get(OLD_LICENSEE_CODE_ADDRESS)
-            .ok_or(CartridgeError::InvalidRom)?;
-
-        let new_licensee_code_bytes = rom
-            .get(NEW_LICENSEE_CODE_ADDRESS_BEGIN..=NEW_LICENSEE_CODE_ADDRESS_END)
-            .ok_or(CartridgeError::InvalidRom)?;
+    pub fn from_header(header: &Header) -> Result<Self, Error> {
+        let old_licensee_code = header[OLD_LICENSEE_CODE_ADDRESS];
+        let new_licensee_code_bytes =
+            &header[NEW_LICENSEE_CODE_ADDRESS_BEGIN..=NEW_LICENSEE_CODE_ADDRESS_END];
 
         Ok(Self {
             old: old_licensee_code,
             new_bytes: new_licensee_code_bytes
                 .try_into()
-                .map_err(|_err| CartridgeError::InvalidRom)?,
+                .map_err(|_err| Error::InvalidRom)?,
         })
     }
 

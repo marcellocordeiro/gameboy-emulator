@@ -1,5 +1,5 @@
-use super::ram_size::{get_ram_banks, RAM_BANKS_CODE_ADDRESS};
-use crate::cartridge::error::Error as CartridgeError;
+use super::{header::Header, ram_banks};
+use crate::cartridge::error::Error;
 
 pub const CARTRIDGE_TYPE_ADDRESS: usize = 0x0147;
 
@@ -21,21 +21,14 @@ pub enum CartridgeType {
 }
 
 impl CartridgeType {
-    pub fn with_rom(rom: &[u8]) -> Result<Self, CartridgeError> {
-        let cartridge_type_code = *rom
-            .get(CARTRIDGE_TYPE_ADDRESS)
-            .ok_or(CartridgeError::InvalidRom)?;
+    pub fn from_header(header: &Header) -> Result<Self, Error> {
+        let cartridge_type_code = header[CARTRIDGE_TYPE_ADDRESS];
+        let ram_banks = ram_banks::from_header(header)?;
 
-        let ram_size_code = *rom
-            .get(RAM_BANKS_CODE_ADDRESS)
-            .ok_or(CartridgeError::InvalidRom)?;
-
-        let ram_banks = get_ram_banks(ram_size_code)?;
-
-        Self::with_code_and_ram_banks(cartridge_type_code, ram_banks)
+        Self::from_code_and_ram_banks(cartridge_type_code, ram_banks)
     }
 
-    pub fn with_code_and_ram_banks(code: u8, ram_banks: usize) -> Result<Self, CartridgeError> {
+    fn from_code_and_ram_banks(code: u8, ram_banks: usize) -> Result<Self, Error> {
         Ok(match code {
             // $00 ROM ONLY
             // $08 ROM+RAM
@@ -90,7 +83,7 @@ impl CartridgeType {
             // $FF HuC1+RAM+BATTERY
             0xFF => Self::Huc1,
 
-            code => return Err(CartridgeError::InvalidMbcCode { code }),
+            code => return Err(Error::InvalidMbcCode { code }),
         })
     }
 }

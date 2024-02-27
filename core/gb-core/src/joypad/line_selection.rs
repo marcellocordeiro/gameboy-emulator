@@ -25,8 +25,6 @@ impl LineSelection {
 mod tests {
     use super::*;
 
-    const JOYP_SELECTION_MASK: u8 = 0b0011_0000;
-
     #[test]
     fn test_both_selection_from_joyp() {
         for joyp in 0..=u8::MAX {

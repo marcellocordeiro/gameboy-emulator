@@ -1,4 +1,5 @@
-use crate::{cartridge::error::Error as CartridgeError, constants::ONE_KIB};
+use super::header::Header;
+use crate::{cartridge::error::Error, constants::ONE_KIB};
 
 pub const RAM_BANK_SIZE: usize = 8 * ONE_KIB; // 0x2000
 pub const RAM_BANKS_CODE_ADDRESS: usize = 0x0149;
@@ -13,7 +14,13 @@ pub const RAM_BANKS_CODE_ADDRESS: usize = 0x0149;
 /// | $05  |  64 KiB |               8 |
 ///
 /// Note: each bank is 8 KiB.
-pub fn get_ram_banks(code: u8) -> Result<usize, CartridgeError> {
+pub fn from_header(header: &Header) -> Result<usize, Error> {
+    let code = header[RAM_BANKS_CODE_ADDRESS];
+
+    from_code(code)
+}
+
+fn from_code(code: u8) -> Result<usize, Error> {
     let result = match code {
         0x00 => 0,
         0x01 => 1, // Unofficial.
@@ -22,7 +29,7 @@ pub fn get_ram_banks(code: u8) -> Result<usize, CartridgeError> {
         0x04 => 16,
         0x05 => 8,
 
-        _ => return Err(CartridgeError::UnsupportedRamSize { code }),
+        _ => return Err(Error::UnsupportedRamSize { code }),
     };
 
     Ok(result)

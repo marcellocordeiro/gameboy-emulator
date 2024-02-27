@@ -1,4 +1,4 @@
-use crate::cartridge::error::Error as CartridgeError;
+use super::header::Header;
 
 pub const CGB_FLAG_ADDRESS: usize = 0x0143;
 
@@ -10,15 +10,13 @@ pub enum CgbFlag {
 }
 
 impl CgbFlag {
-    pub fn with_rom(rom: &[u8]) -> Result<Self, CartridgeError> {
-        let code = *rom
-            .get(CGB_FLAG_ADDRESS)
-            .ok_or(CartridgeError::InvalidRom)?;
+    pub fn from_header(header: &Header) -> Self {
+        let code = header[CGB_FLAG_ADDRESS];
 
-        Ok(Self::with_code(code))
+        Self::from_code(code)
     }
 
-    pub fn with_code(code: u8) -> Self {
+    pub fn from_code(code: u8) -> Self {
         match code {
             0x80 => Self::CgbEnhanced,
             0xC0 => Self::CgbOnly,
