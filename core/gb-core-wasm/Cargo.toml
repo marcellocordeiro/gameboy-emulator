@@ -16,11 +16,11 @@ bootrom = ["gb-core/bootrom"]
 console_error_panic_hook = "0.1.7"
 console_log = "1.0.0"
 gb-core = { workspace = true }
-log = "0.4.20"
-wasm-bindgen = "0.2.91"
+log = "0.4.21"
+wasm-bindgen = "0.2.92"
 
 [dependencies.web-sys]
-version = "0.3.68"
+version = "0.3.69"
 features = ["CanvasRenderingContext2d", "HtmlCanvasElement", "ImageData"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

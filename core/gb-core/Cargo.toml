@@ -13,12 +13,12 @@ bootrom = []
 arrayvec = "0.7.4"
 bitflags = "2.4.2"
 enum_dispatch = "0.3.12"
-log = "0.4.20"
+log = "0.4.21"
 paste = "1.0.14"
 thiserror = "1.0.57"
 
 [dev-dependencies]
-image = { version = "0.24.9", default-features = false, features = ["png"] }
+image = { version = "0.25.0", default-features = false, features = ["png"] }
 num = { version = "0.4.1", default-features = false }
 serde = { version = "1.0.197", features = ["derive"] }
 serde_json = "1.0.114"
