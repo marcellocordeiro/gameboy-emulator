@@ -138,9 +138,13 @@ impl GameBoy {
     pub fn add_serial_channel(&mut self, channel: mpsc::Sender<u8>) {
         self.memory.serial.add_sender(channel);
     }
+
+    pub fn add_audio_callback(&mut self, callback: Box<dyn Fn(&[f32])>) {
+        self.memory.apu.add_callback(callback);
+    }
 }
 
-mod audio;
+mod apu;
 pub mod cartridge;
 mod constants;
 mod cpu;

@@ -11,7 +11,7 @@ use self::{
     work_ram::WorkRam,
 };
 use crate::{
-    audio::Audio,
+    apu::Apu,
     cartridge::{
         error::Error as CartridgeError,
         info::{CgbFlag, Info},
@@ -52,7 +52,7 @@ pub struct Memory {
 
     pub(crate) cartridge: Option<Cartridge>,
     pub ppu: Ppu,
-    audio: Audio,
+    pub(crate) apu: Apu,
 
     pub(crate) joypad: Joypad,
     pub serial: Serial,
@@ -113,8 +113,10 @@ impl MemoryInterface for Memory {
 
             0xFF0F => self.interrupts.read_flags(),
 
-            0xFF10..=0xFF14 => self.audio.read(address),
-            0xFF16..=0xFF3F => self.audio.read(address),
+            0xFF10..=0xFF14 => self.apu.read(address),
+            0xFF16..=0xFF1E => self.apu.read(address),
+            0xFF20..=0xFF26 => self.apu.read(address),
+            0xFF30..=0xFF3F => self.apu.read(address),
 
             0xFF40 => self.ppu.read_lcdc(),
             0xFF41 => self.ppu.read_stat(),
@@ -144,6 +146,8 @@ impl MemoryInterface for Memory {
             0xFF54 => self.ppu.vram_dma.read_hdma4(),
             0xFF55 => self.ppu.vram_dma.read_hdma5(),
 
+            0xFF56 => 0xFF, // (CGB) RP: Infrared.
+
             // (CGB) BG / OBJ Palettes.
             0xFF68 => self.ppu.read_bcps(),
             0xFF69 => self.ppu.read_bcpd(),
@@ -159,26 +163,21 @@ impl MemoryInterface for Memory {
             0xFF74 => self.undocumented_registers.read_0xff74(),
             0xFF75 => self.undocumented_registers.read_0xff75(),
 
-            0xFF76 | 0xFF77 => self.audio.read(address),
+            0xFF76 | 0xFF77 => self.apu.read(address),
 
             0xFF80..=0xFFFE => self.hram.read(address),
 
             0xFFFF => self.interrupts.read_enable(),
 
             0xFF03 => 0xFF,          // Unused.
-            0xFF08 => 0xFF,          // Unused.
-            0xFF09 => 0xFF,          // Unused.
-            0xFF0A => 0xFF,          // Unused.
-            0xFF0B => 0xFF,          // Unused.
-            0xFF0C => 0xFF,          // Unused.
-            0xFF0D => 0xFF,          // Unused.
-            0xFF0E => 0xFF,          // Unused.
+            0xFF08..=0xFF0E => 0xFF, // Unused.
             0xFF15 => 0xFF,          // Unused.
+            0xFF1F => 0xFF,          // Unused.
+            0xFF27..=0xFF2F => 0xFF, // Unused.
             0xFF4E => 0xFF,          // Unused.
-            0xFF56 => 0xFF,          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => 0xFF, // Unused.
             0xFF6D..=0xFF6F => 0xFF, // Unused.
-            0xFF71..=0xFF71 => 0xFF, // Unused.
+            0xFF71 => 0xFF,          // Unused.
             0xFF78..=0xFF7F => 0xFF, // Unused.
         }
     }
@@ -214,14 +213,16 @@ impl MemoryInterface for Memory {
 
             0xFF0F => self.interrupts.write_flags(value),
 
-            0xFF10..=0xFF14 => self.audio.write(address, value),
-            0xFF16..=0xFF3F => self.audio.write(address, value),
+            0xFF10..=0xFF14 => self.apu.write(address, value),
+            0xFF16..=0xFF1E => self.apu.write(address, value),
+            0xFF20..=0xFF26 => self.apu.write(address, value),
+            0xFF30..=0xFF3F => self.apu.write(address, value),
 
             0xFF40 => self.ppu.write_lcdc(value),
             0xFF41 => self.ppu.write_stat(value),
             0xFF42 => self.ppu.write_scy(value),
             0xFF43 => self.ppu.write_scx(value),
-            0xFF44 => (),
+            0xFF44 => (), // LY
             0xFF45 => self.ppu.write_lyc(value),
             0xFF46 => self.ppu.oam_dma.write(value),
             0xFF47 => self.ppu.write_bgp(value),
@@ -245,6 +246,8 @@ impl MemoryInterface for Memory {
             0xFF54 => self.ppu.vram_dma.write_hdma4(value),
             0xFF55 => self.ppu.vram_dma.write_hdma5(value),
 
+            0xFF56 => (), // (CGB) RP: Infrared.
+
             // (CGB) BG / OBJ Palettes.
             0xFF68 => self.ppu.write_bcps(value),
             0xFF69 => self.ppu.write_bcpd(value),
@@ -260,26 +263,21 @@ impl MemoryInterface for Memory {
             0xFF74 => self.undocumented_registers.write_0xff74(value),
             0xFF75 => self.undocumented_registers.write_0xff75(value),
 
-            0xFF76 | 0xFF77 => self.audio.write(address, value),
+            0xFF76 | 0xFF77 => self.apu.write(address, value),
 
             0xFF80..=0xFFFE => self.hram.write(address, value),
 
             0xFFFF => self.interrupts.write_enable(value),
 
             0xFF03 => (),          // Unused.
-            0xFF08 => (),          // Unused.
-            0xFF09 => (),          // Unused.
-            0xFF0A => (),          // Unused.
-            0xFF0B => (),          // Unused.
-            0xFF0C => (),          // Unused.
-            0xFF0D => (),          // Unused.
-            0xFF0E => (),          // Unused.
+            0xFF08..=0xFF0E => (), // Unused.
             0xFF15 => (),          // Unused.
+            0xFF1F => (),          // Unused.
+            0xFF27..=0xFF2F => (), // Unused.
             0xFF4E => (),          // Unused.
-            0xFF56 => (),          // (CGB) RP: Infrared.
             0xFF57..=0xFF67 => (), // Unused.
             0xFF6D..=0xFF6F => (), // Unused.
-            0xFF71..=0xFF71 => (), // Unused.
+            0xFF71 => (),          // Unused.
             0xFF78..=0xFF7F => (), // Unused.
         }
     }
