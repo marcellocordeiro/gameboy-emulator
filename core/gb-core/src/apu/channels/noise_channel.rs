@@ -1,6 +1,10 @@
+#![allow(dead_code, unused_variables)]
+
 #[derive(Default)]
 /// NR4x
-pub struct NoiseChannel;
+pub struct NoiseChannel {
+    pub enabled: bool,
+}
 
 impl NoiseChannel {
     // Read

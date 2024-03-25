@@ -1,6 +1,10 @@
+#![allow(dead_code, unused_variables)]
+
 #[derive(Default)]
 /// NR3x
 pub struct WaveChannel {
+    pub enabled: bool,
+
     wave_pattern_ram: [u8; 16],
 }
 

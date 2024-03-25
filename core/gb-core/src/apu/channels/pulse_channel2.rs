@@ -1,6 +1,10 @@
+#![allow(dead_code, unused_variables)]
+
 #[derive(Default)]
 /// NR2x
-pub struct PulseChannel2;
+pub struct PulseChannel2 {
+    pub enabled: bool,
+}
 
 impl PulseChannel2 {
     // Read

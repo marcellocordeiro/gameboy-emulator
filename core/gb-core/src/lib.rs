@@ -139,7 +139,7 @@ impl GameBoy {
         self.memory.serial.add_sender(channel);
     }
 
-    pub fn add_audio_callback(&mut self, callback: Box<dyn Fn(&[f32])>) {
+    pub fn add_audio_callback(&mut self, callback: Box<apu::Callback>) {
         self.memory.apu.add_callback(callback);
     }
 }

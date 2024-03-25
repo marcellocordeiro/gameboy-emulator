@@ -1,5 +1,7 @@
 // TODO: everything
 
+#![allow(dead_code, unused_variables)]
+
 use self::channels::{NoiseChannel, PulseChannel1, PulseChannel2, WaveChannel};
 use crate::{utils::macros::device_is_cgb, DeviceConfig, DeviceModel, OptionalCgbComponent};
 
@@ -10,8 +12,14 @@ pub struct Apu {
     channel3: WaveChannel,
     channel4: NoiseChannel,
 
+    master_enable: bool,
+
     device_config: DeviceConfig,
+
+    callback: Option<Box<Callback>>,
 }
+
+pub type Callback = dyn Fn(&[f32]);
 
 impl OptionalCgbComponent for Apu {
     fn with_device_model(model: DeviceModel) -> Self {
@@ -41,10 +49,15 @@ impl Apu {
     // 0xFF76
     // 0xFF77
 
-    pub fn tick(&mut self) {}
+    pub fn skip_bootrom(&mut self) {
+        self.master_enable = true;
+        self.channel1.enabled = true;
+    }
 
-    pub fn add_callback(&mut self, _callback: Box<dyn Fn(&[f32])>) {
-        // self.callback = Some(callback);
+    pub fn tick(&mut self, _div: u8) {}
+
+    pub fn add_callback(&mut self, callback: Box<Callback>) {
+        self.callback = Some(callback);
     }
 
     pub fn read(&self, address: u16) -> u8 {
@@ -76,13 +89,13 @@ impl Apu {
             0xFF23 => self.channel4.read_nr44(),
 
             // FF24 — NR50: Master volume & VIN panning
-            0xFF24 => 0x77,
+            0xFF24 => self.read_nr50(), // 0x77,
 
             // FF25 — NR51: Sound panning
-            0xFF25 => 0xF3,
+            0xFF25 => self.read_nr51(),
 
             // FF26 — NR52: Audio master control
-            0xFF26 => 0xF1,
+            0xFF26 => self.read_nr52(),
 
             // Channel 4's wave pattern RAM
             0xFF30..=0xFF3F => self.channel3.read_wave_pattern_ram(address),
@@ -147,20 +160,35 @@ impl Apu {
             // Channel 4's wave pattern RAM
             0xFF30..=0xFF3F => self.channel3.write_wave_pattern_ram(address, value),
 
-            0xFF76 => {
-                if !device_is_cgb!(self) {
-                    ()
-                }
-            }
+            0xFF76 => if !device_is_cgb!(self) {},
 
-            0xFF77 => {
-                if !device_is_cgb!(self) {
-                    ()
-                }
-            }
+            0xFF77 => if !device_is_cgb!(self) {},
 
             _ => unreachable!("[apu.rs] Invalid write: ({address:#06x}) = {value:#04x}"),
         };
+    }
+
+    fn read_nr50(&self) -> u8 {
+        0x77
+    }
+
+    fn read_nr51(&self) -> u8 {
+        0xF3
+    }
+
+    /// FF26 — NR52: Audio master control
+    fn read_nr52(&self) -> u8 {
+        const MASK: u8 = 0b0111_0000;
+        // 0b11110001
+        // 0xF1
+
+        let audio_on = if self.master_enable { 1 << 7 } else { 0 };
+        let ch4_on = if self.channel4.enabled { 1 << 3 } else { 0 };
+        let ch3_on = if self.channel3.enabled { 1 << 2 } else { 0 };
+        let ch2_on = if self.channel2.enabled { 1 << 1 } else { 0 };
+        let ch1_on = if self.channel1.enabled { 1 << 0 } else { 0 };
+
+        audio_on | MASK | ch4_on | ch3_on | ch2_on | ch1_on
     }
 }
 

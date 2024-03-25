@@ -1,6 +1,10 @@
+#![allow(dead_code, unused_variables)]
+
 #[derive(Default)]
 /// NR1x
-pub struct PulseChannel1;
+pub struct PulseChannel1 {
+    pub enabled: bool,
+}
 
 impl PulseChannel1 {
     /// FF10 — NR10: Channel 1 sweep
