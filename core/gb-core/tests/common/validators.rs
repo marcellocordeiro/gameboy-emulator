@@ -16,7 +16,7 @@ pub fn validate_fibonacci(gb: &GameBoy) -> Result<(), Error> {
     if is_fibonacci {
         Ok(())
     } else {
-        Err(Error::Timeout)
+        Err(Error::FibonacciValidationFailure)
     }
 }
 

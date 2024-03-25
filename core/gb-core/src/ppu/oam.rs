@@ -78,9 +78,11 @@ impl Oam {
 
 impl Ppu {
     pub fn read_oam(&self, address: u16) -> u8 {
-        if self.lcdc.get_lcd_enable()
-            && (self.mode == StatusMode::OamScan || self.mode == StatusMode::Drawing)
-        {
+        if self.oam_dma.is_active() {
+            return 0xFF;
+        }
+
+        if self.mode == StatusMode::OamScan || self.mode == StatusMode::Drawing {
             return 0xFF;
         }
 
@@ -88,9 +90,11 @@ impl Ppu {
     }
 
     pub fn write_oam(&mut self, address: u16, value: u8) {
-        if self.lcdc.get_lcd_enable()
-            && (self.mode == StatusMode::OamScan || self.mode == StatusMode::Drawing)
-        {
+        if self.oam_dma.is_active() {
+            return;
+        }
+
+        if self.mode == StatusMode::OamScan || self.mode == StatusMode::Drawing {
             return;
         }
 

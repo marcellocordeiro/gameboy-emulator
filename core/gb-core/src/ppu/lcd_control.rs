@@ -111,7 +111,7 @@ impl Ppu {
         let new_lcd_enable = new_lcdc.get_lcd_enable();
 
         if lcd_enable && !new_lcd_enable {
-            self.mode = StatusMode::OamScan;
+            self.mode = StatusMode::Hblank;
             self.cycles = 0;
             self.ly = 0;
 

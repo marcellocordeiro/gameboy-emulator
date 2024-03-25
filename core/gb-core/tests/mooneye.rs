@@ -2,7 +2,7 @@ mod common;
 
 // Acceptance
 testcases_mooneye! {
-    // add_sp_e_timing("acceptance/add_sp_e_timing.gb");
+    add_sp_e_timing("acceptance/add_sp_e_timing.gb");
 
     // boot_div_s("acceptance/boot_div-S.gb"); // SGB is unsupported.
     // boot_div_dmg0("acceptance/boot_div-dmg0.gb"); // DMG0 is unsupported.
@@ -17,16 +17,16 @@ testcases_mooneye! {
 
     // boot_regs_dmg0("acceptance/boot_regs-dmg0.gb"); // DMG0 is unsupported.
 
-    boot_regs_dmg_abc("acceptance/boot_regs-dmgABC.gb", dmg); // DMG only.
+    boot_regs_dmg_abc("acceptance/boot_regs-dmgABC.gb", dmg);
 
     // boot_regs_mgb("acceptance/boot_regs-mgb.gb"); // MGB is unsupported.
     // boot_regs_sgb("acceptance/boot_regs-sgb.gb"); // SGB is unsupported.
     // boot_regs_sgb2("acceptance/boot_regs-sgb2.gb"); SGB is unsupported.
 
-    // call_cc_timing("acceptance/call_cc_timing.gb");
-    // call_cc_timing2("acceptance/call_cc_timing2.gb");
-    // call_timing("acceptance/call_timing.gb");
-    // call_timing2("acceptance/call_timing2.gb");
+    call_cc_timing("acceptance/call_cc_timing.gb");
+    call_cc_timing2("acceptance/call_cc_timing2.gb");
+    call_timing("acceptance/call_timing.gb");
+    call_timing2("acceptance/call_timing2.gb");
     di_timing_gs("acceptance/di_timing-GS.gb");
     div_timing("acceptance/div_timing.gb");
     ei_sequence("acceptance/ei_sequence.gb");
@@ -37,25 +37,25 @@ testcases_mooneye! {
     // halt_ime1_timing2_gs("acceptance/halt_ime1_timing2-GS.gb");
     if_ie_registers("acceptance/if_ie_registers.gb");
     // intr_timing("acceptance/intr_timing.gb");
-    // jp_cc_timing("acceptance/jp_cc_timing.gb");
-    // jp_timing("acceptance/jp_timing.gb");
-    // ld_hl_sp_e_timing("acceptance/ld_hl_sp_e_timing.gb");
-    // oam_dma_restart("acceptance/oam_dma_restart.gb");
-    // oam_dma_start("acceptance/oam_dma_start.gb");
-    // oam_dma_timing("acceptance/oam_dma_timing.gb");
+    jp_cc_timing("acceptance/jp_cc_timing.gb");
+    jp_timing("acceptance/jp_timing.gb");
+    ld_hl_sp_e_timing("acceptance/ld_hl_sp_e_timing.gb");
+    oam_dma_restart("acceptance/oam_dma_restart.gb");
+    oam_dma_start("acceptance/oam_dma_start.gb");
+    oam_dma_timing("acceptance/oam_dma_timing.gb");
     pop_timing("acceptance/pop_timing.gb");
-    // push_timing("acceptance/push_timing.gb");
+    push_timing("acceptance/push_timing.gb");
     rapid_di_ei("acceptance/rapid_di_ei.gb");
-    // ret_cc_timing("acceptance/ret_cc_timing.gb");
-    // ret_timing("acceptance/ret_timing.gb");
-    // reti_intr_timing("acceptance/reti_intr_timing.gb");
-    // reti_timing("acceptance/reti_timing.gb");
-    // rst_timing("acceptance/rst_timing.gb");
+    ret_cc_timing("acceptance/ret_cc_timing.gb");
+    ret_timing("acceptance/ret_timing.gb");
+    reti_intr_timing("acceptance/reti_intr_timing.gb");
+    reti_timing("acceptance/reti_timing.gb");
+    rst_timing("acceptance/rst_timing.gb");
     bits_mem_oam("acceptance/bits/mem_oam.gb");
     bits_reg_f("acceptance/bits/reg_f.gb");
     // bits_unused_hwio_gs("acceptance/bits/unused_hwio-GS.gb");
     instr_daa("acceptance/instr/daa.gb");
-    // interrupts_ie_push("acceptance/interrupts/ie_push.gb");
+    interrupts_ie_push("acceptance/interrupts/ie_push.gb");
     oam_dma_basic("acceptance/oam_dma/basic.gb");
     oam_dma_reg_read("acceptance/oam_dma/reg_read.gb");
     oam_dma_sources_gs("acceptance/oam_dma/sources-GS.gb"); // ! This should fail on CGB.
