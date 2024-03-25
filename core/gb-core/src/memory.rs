@@ -410,6 +410,7 @@ impl Memory {
 
     pub(crate) fn skip_bootrom(&mut self) {
         self.bootrom.disable();
+        self.apu.skip_bootrom();
         self.ppu.skip_bootrom();
         self.timer.skip_bootrom();
         self.interrupts.skip_bootrom();
