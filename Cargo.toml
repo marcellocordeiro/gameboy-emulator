@@ -44,4 +44,38 @@ missing_errors_doc = "allow"
 missing_panics_doc = "allow"
 
 [workspace.dependencies]
+arrayvec = "0.7.4"
+bitflags = "2.5.0"
+clap = { version = "4.5.3", features = ["derive"] }
+console_error_panic_hook = "0.1.7"
+console_log = "1.0.0"
+eframe = { version = "0.26.2", default-features = false }
+egui = "0.26.2"
+egui-wgpu = "0.26.2"
+egui-winit = { version = "0.26.2", default-features = false }
+enum_dispatch = "0.3.12"
+env_logger = "0.11.3"
+error-iter = "0.4.1"
 gb-core = { path = "./core/gb-core" }
+image = { version = "0.25.0", default-features = false }
+itertools = "0.12.1"
+libretro-rs = "0.1.3"
+log = "0.4.21"
+num = { version = "0.4.1", default-features = false }
+paste = "1.0.14"
+rfd = "0.14.1"
+sdl2 = "0.36.0"
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json = "1.0.114"
+thiserror = "1.0.58"
+wasm-bindgen = "0.2.92"
+winit = "0.29.15"
+winit_input_helper = "0.16.0"
+
+[workspace.dependencies.pixels]
+git = "https://github.com/marcellocordeiro/pixels"
+rev = "56615cb978814d72ee1d71128e1a776d594a8bf4"
+
+[workspace.dependencies.web-sys]
+features = ["CanvasRenderingContext2d", "HtmlCanvasElement", "ImageData"]
+version = "0.3.69"

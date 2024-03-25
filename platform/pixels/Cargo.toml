@@ -7,23 +7,17 @@ edition = "2021"
 workspace = true
 
 [dependencies]
-clap = { version = "4.5.3", features = ["derive"] }
-egui = "0.26.2"
-egui-wgpu = "0.26.2"
-egui-winit = { version = "0.26.2", default-features = false, features = [
-    "wayland",
-    "x11",
-] }
-env_logger = "0.11.3"
-error-iter = "0.4.1"
+clap = { workspace = true }
+egui = { workspace = true }
+egui-wgpu = { workspace = true }
+egui-winit = { workspace = true, features = ["wayland", "x11"] }
+env_logger = { workspace = true }
+error-iter = { workspace = true }
 gb-core = { workspace = true }
-log = "0.4.21"
-rfd = "0.14.1"
-winit = "0.29.15"
-winit_input_helper = "0.16.0"
-
-[dependencies.pixels]
-git = "https://github.com/marcellocordeiro/pixels"
-rev = "56615cb978814d72ee1d71128e1a776d594a8bf4"
+log = { workspace = true }
+pixels = { workspace = true }
+rfd = { workspace = true }
+winit = { workspace = true }
+winit_input_helper = { workspace = true }
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

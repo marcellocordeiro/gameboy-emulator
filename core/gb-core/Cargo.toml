@@ -10,18 +10,18 @@ workspace = true
 bootrom = []
 
 [dependencies]
-arrayvec = "0.7.4"
-bitflags = "2.5.0"
-enum_dispatch = "0.3.12"
-log = "0.4.21"
-paste = "1.0.14"
-thiserror = "1.0.58"
+arrayvec = { workspace = true }
+bitflags = { workspace = true }
+enum_dispatch = { workspace = true }
+log = { workspace = true }
+paste = { workspace = true }
+thiserror = { workspace = true }
 
 [dev-dependencies]
-image = { version = "0.25.0", default-features = false, features = ["png"] }
-num = { version = "0.4.1", default-features = false }
-serde = { version = "1.0.197", features = ["derive"] }
-serde_json = "1.0.114"
-thiserror = "1.0.58"
+image = { workspace = true, features = ["png"] }
+num = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
