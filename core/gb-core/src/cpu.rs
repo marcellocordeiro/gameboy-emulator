@@ -85,15 +85,31 @@ impl Cpu {
             return;
         }
 
-        let Some(address) = memory.interrupts_mut().take_queued_irq() else {
+        if !memory.interrupts().has_queued_irq() {
             return;
         };
 
         self.registers.ime = ImeState::Disabled;
         self.force_cycle_memory(memory);
 
-        self.push_word_stack(memory, self.registers.pc);
+        let address = {
+            let low = self.registers.pc as u8;
+            let high = ((self.registers.pc) >> 8) as u8;
+
+            self.push_byte_stack(memory, high);
+
+            let address = memory
+                .interrupts_mut()
+                .take_queued_irq_address()
+                .unwrap_or(0x0000);
+
+            self.push_byte_stack(memory, low);
+
+            address
+        };
+
         self.registers.pc = address;
+        self.force_cycle_memory(memory);
 
         self.halt = false;
     }

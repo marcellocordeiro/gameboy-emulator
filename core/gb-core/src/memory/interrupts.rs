@@ -30,7 +30,7 @@ impl Interrupts {
         !intersection.is_empty()
     }
 
-    pub fn take_queued_irq(&mut self) -> Option<u16> {
+    pub fn take_queued_irq_address(&mut self) -> Option<u16> {
         let interrupt = self.get_queued_irq()?;
 
         let address = match interrupt {
@@ -40,7 +40,7 @@ impl Interrupts {
             InterruptBits::SERIAL => 0x0058,
             InterruptBits::JOYPAD => 0x0060,
 
-            _ => return None,
+            _ => unreachable!(),
         };
 
         self.flags.remove(interrupt);
@@ -121,7 +121,7 @@ mod tests {
         assert!(interrupts.has_queued_irq());
         assert_eq!(interrupts.get_queued_irq(), Some(InterruptBits::LCD_STAT));
 
-        let queued_irq = interrupts.take_queued_irq().unwrap();
+        let queued_irq = interrupts.take_queued_irq_address().unwrap();
 
         assert_eq!(queued_irq, 0x0048);
 
@@ -132,7 +132,7 @@ mod tests {
         assert!(interrupts.has_queued_irq());
         assert_eq!(interrupts.get_queued_irq(), Some(InterruptBits::SERIAL));
 
-        let queued_irq = interrupts.take_queued_irq().unwrap();
+        let queued_irq = interrupts.take_queued_irq_address().unwrap();
 
         assert_eq!(queued_irq, 0x0058);
 
@@ -142,6 +142,6 @@ mod tests {
         // Test none
         assert!(!interrupts.has_queued_irq());
         assert_eq!(interrupts.get_queued_irq(), None);
-        assert_eq!(interrupts.take_queued_irq(), None);
+        assert_eq!(interrupts.take_queued_irq_address(), None);
     }
 }
