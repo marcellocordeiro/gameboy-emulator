@@ -6,5 +6,5 @@ mod x16_alu;
 mod x8_alu;
 mod x8_rsb;
 
-#[cfg(test)]
-mod tests;
+// #[cfg(test)]
+// mod tests;

@@ -1,7 +1,9 @@
-use std::path::PathBuf;
+use std::{ffi::OsStr, path::PathBuf};
+
+use itertools::Itertools;
 
 use self::{structs::Test, test_memory::TestMemory};
-use crate::cpu::{tests::jsmoo_cpu_tests::structs::State, Cpu};
+use crate::cpu::{tests::sm83_json_tests::structs::State, Cpu};
 
 mod structs;
 mod test_memory;
@@ -29,11 +31,19 @@ fn test_cpu(file_name: &str, test: &Test) {
     );
 }
 
-fn get_test_files() -> std::fs::ReadDir {
+fn get_test_files() -> Vec<std::fs::DirEntry> {
     let manifest = env!("CARGO_MANIFEST_DIR");
-    let path = format!("{manifest}/../../external/jsmoo-sm83-tests/v1");
+    let path = format!("{manifest}/../../external/sm83-json-tests/v1");
 
-    std::fs::read_dir(path).unwrap()
+    std::fs::read_dir(path)
+        .unwrap()
+        .filter_map(|file| {
+            let file = file.unwrap();
+
+            (file.path().extension() == Some(OsStr::new("json"))).then_some(file)
+        })
+        .sorted_by(|a, b| a.path().cmp(&b.path()))
+        .collect()
 }
 
 fn parse_test(path: &PathBuf) -> Vec<Test> {
@@ -43,8 +53,7 @@ fn parse_test(path: &PathBuf) -> Vec<Test> {
 }
 
 #[test]
-#[ignore = "todo"]
-fn jsmoo_cpu_tests() {
+fn sm83_cpu_tests() {
     let files = get_test_files();
     let ignore = [
         "10", // STOP
@@ -52,10 +61,8 @@ fn jsmoo_cpu_tests() {
     ];
 
     for file in files {
-        let file_path = file.unwrap().path();
+        let file_path = file.path();
         let file_name = file_path.file_stem().unwrap().to_str().unwrap();
-
-        assert_eq!(file_path.extension().unwrap(), "json");
 
         if ignore.contains(&file_name) {
             continue;

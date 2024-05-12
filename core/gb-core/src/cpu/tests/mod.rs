@@ -1,2 +1,2 @@
-mod jsmoo_cpu_tests;
-mod sm83_test_data;
+mod gameboy_cpu_tests;
+mod sm83_json_tests;
