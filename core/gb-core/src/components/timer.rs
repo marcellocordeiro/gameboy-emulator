@@ -72,7 +72,7 @@ impl Timer {
         }
     }
 
-    fn read_div(&self) -> u8 {
+    pub fn read_div(&self) -> u8 {
         (self.system_counter >> 8) as u8
     }
 

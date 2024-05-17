@@ -135,18 +135,11 @@ impl GameBoy {
         self.memory.serial.add_sender(channel);
     }
 
-    pub fn add_audio_callback(&mut self, callback: Box<apu::Callback>) {
+    pub fn add_audio_callback(&mut self, callback: Box<components::apu::Callback>) {
         self.memory.apu.add_callback(callback);
     }
 }
 
-mod apu;
-pub mod cartridge;
+mod components;
 mod constants;
-mod cpu;
-mod joypad;
-mod memory;
-mod ppu;
-mod serial;
-mod timer;
 mod utils;
