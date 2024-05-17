@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-use super::info::CartridgeType;
+use super::info::MbcType;
 
 #[derive(Debug, Error)]
 pub enum Error {
@@ -11,7 +11,7 @@ pub enum Error {
     InvalidMbcCode { code: u8 },
 
     #[error("Unsupported MBC (type = {cartridge_type:?}).")]
-    UnsupportedMbc { cartridge_type: CartridgeType },
+    UnsupportedMbc { cartridge_type: MbcType },
 
     #[error("Unsupported number of ROM banks (code = {code:#04X}).")]
     UnsupportedRomSize { code: u8 },

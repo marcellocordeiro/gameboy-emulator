@@ -8,7 +8,7 @@ use self::{
     vram_dma::VramDma,
 };
 use crate::{
-    cartridge::info::Info,
+    cartridge::info::CartridgeInfo,
     utils::{
         macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
         screen::Screen,
@@ -94,7 +94,7 @@ impl Ppu {
         self.bgp = 0xFC;
     }
 
-    pub(crate) fn handle_post_bootrom_setup(&mut self, info: &Info) {
+    pub(crate) fn handle_post_bootrom_setup(&mut self, info: &CartridgeInfo) {
         if device_is_cgb!(self) {
             if !info.cgb_flag.has_cgb_support() {
                 self.opri = true;

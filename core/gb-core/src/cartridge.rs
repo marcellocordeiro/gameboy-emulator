@@ -1,26 +1,22 @@
 use std::sync::Arc;
 
 use self::{
-    error::Error as CartridgeError,
-    info::Info,
+    info::CartridgeInfo,
     mbc::{Mbc, MbcInterface},
 };
 
 pub struct Cartridge {
-    pub(crate) info: Info,
     mbc: Mbc,
 }
 
 impl Cartridge {
-    pub(crate) fn new(rom: Arc<Box<[u8]>>) -> Result<Self, CartridgeError> {
-        let info = Info::try_from(rom.as_ref().as_ref())?;
-
+    pub(crate) fn new(cartridge_info: &CartridgeInfo, rom: Arc<Box<[u8]>>) -> Self {
         // Panics if the validation fails.
-        info.validate();
+        cartridge_info.validate();
 
-        let mbc = Mbc::try_new(rom, &info)?;
+        let mbc = Mbc::new(cartridge_info, rom);
 
-        Ok(Self { info, mbc })
+        Self { mbc }
     }
 
     pub(crate) fn get_battery(&self) -> &[u8] {

@@ -1,4 +1,4 @@
-use super::{cartridge_type::CARTRIDGE_TYPE_ADDRESS, header::Header};
+use super::{header::Header, mbc_type::MBC_TYPE_ADDRESS};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExtraFeature {
@@ -10,13 +10,13 @@ pub enum ExtraFeature {
 }
 
 impl ExtraFeature {
-    pub fn features_from_header(header: &Header) -> Box<[Self]> {
-        let code = header[CARTRIDGE_TYPE_ADDRESS];
+    pub fn from_header(header: &Header) -> Box<[Self]> {
+        let code = header[MBC_TYPE_ADDRESS];
 
-        Self::features_from_code(code)
+        Self::from_code(code)
     }
 
-    fn features_from_code(code: u8) -> Box<[Self]> {
+    fn from_code(code: u8) -> Box<[Self]> {
         match code {
             // $08 ROM+RAM
             // $09 ROM+RAM+BATTERY

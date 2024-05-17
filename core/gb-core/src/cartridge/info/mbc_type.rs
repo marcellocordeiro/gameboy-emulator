@@ -1,28 +1,28 @@
 use super::{header::Header, ram_banks};
 use crate::cartridge::error::Error;
 
-pub const CARTRIDGE_TYPE_ADDRESS: usize = 0x0147;
+pub const MBC_TYPE_ADDRESS: usize = 0x0147;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CartridgeType {
+pub enum MbcType {
     NoMbc,
     Mbc1,
     Mbc2,
-    Mmm01,
+    // Mmm01,
     Mbc3,
     Mbc30,
     Mbc5,
-    Mbc6,
-    Mbc7,
-    PocketCamera,
-    BandaiTama5,
-    Huc3,
-    Huc1,
+    // Mbc6,
+    // Mbc7,
+    // PocketCamera,
+    // BandaiTama5,
+    // Huc3,
+    // Huc1,
 }
 
-impl CartridgeType {
+impl MbcType {
     pub fn from_header(header: &Header) -> Result<Self, Error> {
-        let cartridge_type_code = header[CARTRIDGE_TYPE_ADDRESS];
+        let cartridge_type_code = header[MBC_TYPE_ADDRESS];
         let ram_banks = ram_banks::from_header(header)?;
 
         Self::from_code_and_ram_banks(cartridge_type_code, ram_banks)
@@ -47,7 +47,7 @@ impl CartridgeType {
             // $0B MMM01
             // $0C MMM01+RAM
             // $0D MMM01+RAM+BATTERY
-            0x0B..=0x0D => Self::Mmm01,
+            // 0x0B..=0x0D => Self::Mmm01,
 
             // $0F MBC3+TIMER+BATTERY
             // $10 MBC3+TIMER+RAM+BATTERY
@@ -66,44 +66,43 @@ impl CartridgeType {
             0x19..=0x1E => Self::Mbc5,
 
             // $20 MBC6
-            0x20 => Self::Mbc6,
+            // 0x20 => Self::Mbc6,
 
             // $22 MBC7+SENSOR+RUMBLE+RAM+BATTERY
-            0x22 => Self::Mbc7,
+            // 0x22 => Self::Mbc7,
 
             // $FC POCKET CAMERA
-            0xFC => Self::PocketCamera,
+            // 0xFC => Self::PocketCamera,
 
             // $FD BANDAI TAMA5
-            0xFD => Self::BandaiTama5,
+            // 0xFD => Self::BandaiTama5,
 
             // $FE HuC3
-            0xFE => Self::Huc3,
+            // 0xFE => Self::Huc3,
 
             // $FF HuC1+RAM+BATTERY
-            0xFF => Self::Huc1,
-
+            // 0xFF => Self::Huc1,
             code => return Err(Error::InvalidMbcCode { code }),
         })
     }
 }
 
-impl std::fmt::Display for CartridgeType {
+impl std::fmt::Display for MbcType {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         let name = match self {
             Self::NoMbc => "No MBC",
             Self::Mbc1 => "MBC1",
             Self::Mbc2 => "MBC2",
-            Self::Mmm01 => "MMM01",
+            // Self::Mmm01 => "MMM01",
             Self::Mbc3 => "MBC3",
             Self::Mbc30 => "MBC30",
             Self::Mbc5 => "MBC5",
-            Self::Mbc6 => "MBC6",
-            Self::Mbc7 => "MBC7",
-            Self::PocketCamera => "POCKET CAMERA",
-            Self::BandaiTama5 => "BANDAI TAMA5",
-            Self::Huc3 => "HuC3",
-            Self::Huc1 => "HuC1",
+            // Self::Mbc6 => "MBC6",
+            // Self::Mbc7 => "MBC7",
+            // Self::PocketCamera => "POCKET CAMERA",
+            // Self::BandaiTama5 => "BANDAI TAMA5",
+            // Self::Huc3 => "HuC3",
+            // Self::Huc1 => "HuC1",
         };
 
         write!(f, "{name}")

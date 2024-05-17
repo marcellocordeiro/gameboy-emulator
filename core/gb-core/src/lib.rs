@@ -1,9 +1,8 @@
 use std::sync::{mpsc, Arc};
 
-use cartridge::error::Error as CartridgeError;
+use cartridge::{error::Error as CartridgeError, info::CartridgeInfo};
 pub use constants::*;
 use cpu::Cpu;
-use log::error;
 use memory::Memory;
 pub use memory::MemoryInterface;
 pub use utils::{button::Button, color::Color};
@@ -12,7 +11,7 @@ pub struct GameBoy {
     cpu: Cpu,
     memory: Memory,
 
-    rom: Option<Arc<Box<[u8]>>>,
+    cartridge: Option<(CartridgeInfo, Arc<Box<[u8]>>)>,
     bootrom: Option<Arc<Box<[u8]>>>,
 
     pub device_model: DeviceModel,
@@ -26,7 +25,7 @@ impl GameBoy {
         Self {
             cpu,
             memory,
-            rom: None,
+            cartridge: None,
             bootrom: None,
             device_model,
         }
@@ -51,12 +50,8 @@ impl GameBoy {
             self.memory.skip_bootrom();
         }
 
-        if let Some(rom) = self.rom.clone() {
-            let result = self.memory.load_cartridge(rom);
-
-            if let Err(error) = result {
-                error!("{error}");
-            }
+        if let Some((cartridge_info, rom)) = &self.cartridge {
+            self.memory.load_cartridge(cartridge_info, rom.clone());
         }
     }
 
@@ -82,9 +77,10 @@ impl GameBoy {
     /// Reset before inserting a new cartridge.
     pub fn insert_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         let rom = Arc::<Box<[u8]>>::from(rom.into_boxed_slice());
+        let cartridge_info = cartridge::info::CartridgeInfo::try_from(rom.as_ref().as_ref())?;
 
-        self.memory.load_cartridge(rom.clone())?;
-        self.rom = Some(rom);
+        self.memory.load_cartridge(&cartridge_info, rom.clone());
+        self.cartridge = Some((cartridge_info, rom));
 
         Ok(())
     }

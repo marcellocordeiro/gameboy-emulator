@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use super::MbcInterface;
 use crate::{
-    cartridge::info::{CartridgeType, Info, RAM_BANK_SIZE, ROM_BANK_SIZE},
+    cartridge::info::{CartridgeInfo, MbcType, RAM_BANK_SIZE, ROM_BANK_SIZE},
     constants::ONE_KIB,
 };
 
@@ -22,8 +22,8 @@ pub struct Mbc1 {
 }
 
 impl Mbc1 {
-    pub fn new(rom: Arc<Box<[u8]>>, info: &Info) -> Self {
-        assert_eq!(info.cartridge_type, CartridgeType::Mbc1);
+    pub fn new(info: &CartridgeInfo, rom: Arc<Box<[u8]>>) -> Self {
+        assert_eq!(info.mbc_type, MbcType::Mbc1);
 
         let ram_banks = info.ram_banks;
 

@@ -3,10 +3,7 @@ use std::sync::Arc;
 use enum_dispatch::enum_dispatch;
 
 pub use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc30::Mbc30, mbc5::Mbc5, no_mbc::NoMbc};
-use super::{
-    error::Error as CartridgeError,
-    info::{CartridgeType, Info},
-};
+use super::info::{CartridgeInfo, MbcType};
 
 #[enum_dispatch]
 pub(super) trait MbcInterface {
@@ -34,17 +31,15 @@ pub enum Mbc {
 }
 
 impl Mbc {
-    pub(crate) fn try_new(rom: Arc<Box<[u8]>>, info: &Info) -> Result<Self, CartridgeError> {
-        Ok(match info.cartridge_type {
-            CartridgeType::NoMbc => NoMbc::new(rom, info).into(),
-            CartridgeType::Mbc1 => Mbc1::new(rom, info).into(),
-            CartridgeType::Mbc2 => Mbc2::new(rom, info).into(),
-            CartridgeType::Mbc3 => Mbc3::new(rom, info).into(),
-            CartridgeType::Mbc30 => Mbc30::new(rom, info).into(),
-            CartridgeType::Mbc5 => Mbc5::new(rom, info).into(),
-
-            cartridge_type => return Err(CartridgeError::UnsupportedMbc { cartridge_type }),
-        })
+    pub(crate) fn new(info: &CartridgeInfo, rom: Arc<Box<[u8]>>) -> Self {
+        match info.mbc_type {
+            MbcType::NoMbc => NoMbc::new(info, rom).into(),
+            MbcType::Mbc1 => Mbc1::new(info, rom).into(),
+            MbcType::Mbc2 => Mbc2::new(info, rom).into(),
+            MbcType::Mbc3 => Mbc3::new(info, rom).into(),
+            MbcType::Mbc30 => Mbc30::new(info, rom).into(),
+            MbcType::Mbc5 => Mbc5::new(info, rom).into(),
+        }
     }
 }
 

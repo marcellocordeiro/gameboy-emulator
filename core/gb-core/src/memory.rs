@@ -13,8 +13,7 @@ use self::{
 use crate::{
     apu::Apu,
     cartridge::{
-        error::Error as CartridgeError,
-        info::{CgbFlag, Info},
+        info::{CartridgeInfo, CgbFlag},
         Cartridge,
     },
     joypad::Joypad,
@@ -350,7 +349,6 @@ impl Memory {
         self.perform_vram_dma();
 
         for _ in 0..4 {
-            self.apu.tick(self.timer.read_div());
             self.timer.tick();
             self.ppu.tick();
         }
@@ -381,20 +379,18 @@ impl Memory {
         }
     }
 
-    pub(crate) fn load_cartridge(&mut self, rom: Arc<Box<[u8]>>) -> Result<(), CartridgeError> {
-        let cartridge = Cartridge::new(rom)?;
+    pub(crate) fn load_cartridge(&mut self, cartridge_info: &CartridgeInfo, rom: Arc<Box<[u8]>>) {
+        let cartridge = Cartridge::new(cartridge_info, rom);
 
         if device_is_cgb!(self) {
             if self.bootrom.is_loaded() {
                 self.set_cgb_mode(true);
             } else {
-                self.handle_post_bootrom_setup(&cartridge.info);
+                self.handle_post_bootrom_setup(cartridge_info);
             }
         }
 
         self.cartridge = Some(cartridge);
-
-        Ok(())
     }
 
     pub(crate) fn use_bootrom(&mut self, bootrom: Arc<Box<[u8]>>) {
@@ -410,7 +406,7 @@ impl Memory {
         self.interrupts.skip_bootrom();
     }
 
-    pub(crate) fn handle_post_bootrom_setup(&mut self, info: &Info) {
+    pub(crate) fn handle_post_bootrom_setup(&mut self, info: &CartridgeInfo) {
         if info.cgb_flag.has_cgb_support() {
             self.set_cgb_mode(true);
         }
