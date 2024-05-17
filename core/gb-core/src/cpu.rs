@@ -1,39 +1,29 @@
 use self::registers::{ImeState, Registers};
-use crate::{
-    memory::MemoryInterface,
-    utils::macros::device_is_cgb,
-    DeviceConfig,
-    DeviceModel,
-    OptionalCgbComponent,
-};
+use crate::{memory::MemoryInterface, utils::macros::device_is_cgb, DeviceModel};
 
 #[derive(Default)]
 pub struct Cpu {
     registers: Registers,
     halt: bool,
     pub cycles: i32,
-    device_config: DeviceConfig,
+
+    cgb_mode: bool,
+
+    device_model: DeviceModel,
 }
 
-impl OptionalCgbComponent for Cpu {
-    fn with_device_model(model: DeviceModel) -> Self {
-        let device_config = DeviceConfig {
-            model,
-            ..Default::default()
-        };
-
+impl Cpu {
+    pub fn with_device_model(device_model: DeviceModel) -> Self {
         Self {
-            device_config,
+            device_model,
             ..Default::default()
         }
     }
 
-    fn set_cgb_mode(&mut self, value: bool) {
-        self.device_config.cgb_mode = value;
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        self.cgb_mode = value;
     }
-}
 
-impl Cpu {
     pub fn registers(&self) -> &Registers {
         &self.registers
     }

@@ -1,10 +1,4 @@
-use crate::{
-    constants::ONE_KIB,
-    utils::macros::in_cgb_mode,
-    DeviceConfig,
-    DeviceModel,
-    OptionalCgbComponent,
-};
+use crate::{constants::ONE_KIB, utils::macros::in_cgb_mode, DeviceModel};
 
 // const DMG_WRAM_BANKS: usize = 2;
 const CGB_WRAM_BANKS: usize = 8;
@@ -22,7 +16,8 @@ pub struct WorkRam {
     data: [u8; CGB_WRAM_SIZE],
     svbk: u8, // (CGB) WRAM Bank Select.
 
-    device_config: DeviceConfig,
+    cgb_mode: bool,
+    device_model: DeviceModel,
 }
 
 impl Default for WorkRam {
@@ -30,26 +25,9 @@ impl Default for WorkRam {
         Self {
             data: [0; CGB_WRAM_SIZE], // can't default this :(
             svbk: 0,
-            device_config: DeviceConfig::default(),
+            cgb_mode: false,
+            device_model: DeviceModel::default(),
         }
-    }
-}
-
-impl OptionalCgbComponent for WorkRam {
-    fn with_device_model(model: DeviceModel) -> Self {
-        let device_config = DeviceConfig {
-            model,
-            ..Default::default()
-        };
-
-        Self {
-            device_config,
-            ..Default::default()
-        }
-    }
-
-    fn set_cgb_mode(&mut self, value: bool) {
-        self.device_config.cgb_mode = value;
     }
 }
 
@@ -59,6 +37,17 @@ impl WorkRam {
     // 0xC000 ~ 0xCFFF: bank 0.
     // 0xD000 ~ 0xDFFF: Bank 1. In CGB mode, switchable bank 1~7.
     // 0xE000 ~ 0xFDFF: ECHO RAM (prohibited area, but mirrors 0xC000 ~ 0xDDFF).
+
+    pub fn with_device_model(device_model: DeviceModel) -> Self {
+        Self {
+            device_model,
+            ..Default::default()
+        }
+    }
+
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        self.cgb_mode = value;
+    }
 
     pub fn read(&self, address: u16) -> u8 {
         match address {
@@ -204,7 +193,7 @@ mod tests {
 
     #[allow(clippy::identity_op)]
     fn verify_banks(wram: &mut WorkRam) {
-        assert!(wram.device_config.in_cgb_mode());
+        assert!(in_cgb_mode!(wram));
 
         // Bank 0
         for address in 0xC000..=0xCFFF {

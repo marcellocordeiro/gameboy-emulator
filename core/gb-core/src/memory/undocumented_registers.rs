@@ -1,8 +1,6 @@
 use crate::{
     utils::macros::{device_is_cgb, in_cgb_mode},
-    DeviceConfig,
     DeviceModel,
-    OptionalCgbComponent,
 };
 
 #[derive(Debug, Default)]
@@ -12,29 +10,23 @@ pub struct UndocumentedRegisters {
     reg_0xff74: u8,
     reg_0xff75: u8,
 
-    device_config: DeviceConfig,
-}
-
-impl OptionalCgbComponent for UndocumentedRegisters {
-    fn with_device_model(model: DeviceModel) -> Self {
-        let device_config = DeviceConfig {
-            model,
-            ..Default::default()
-        };
-
-        Self {
-            device_config,
-            ..Default::default()
-        }
-    }
-
-    fn set_cgb_mode(&mut self, value: bool) {
-        self.device_config.cgb_mode = value;
-    }
+    cgb_mode: bool,
+    device_model: DeviceModel,
 }
 
 impl UndocumentedRegisters {
     const REG_FF75_MASK: u8 = 0b0111_0000;
+
+    pub fn with_device_model(device_model: DeviceModel) -> Self {
+        Self {
+            device_model,
+            ..Default::default()
+        }
+    }
+
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        self.cgb_mode = value;
+    }
 
     pub fn read_0xff72(&self) -> u8 {
         if !device_is_cgb!(self) {

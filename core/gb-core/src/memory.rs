@@ -22,9 +22,7 @@ use crate::{
     serial::Serial,
     timer::Timer,
     utils::macros::{device_is_cgb, in_cgb_mode},
-    DeviceConfig,
     DeviceModel,
-    OptionalCgbComponent,
 };
 
 pub trait MemoryInterface {
@@ -64,7 +62,9 @@ pub struct Memory {
 
     undocumented_registers: UndocumentedRegisters,
 
-    device_config: DeviceConfig,
+    cgb_mode: bool,
+
+    device_model: DeviceModel,
 }
 
 impl MemoryInterface for Memory {
@@ -309,43 +309,36 @@ impl MemoryInterface for Memory {
     }
 }
 
-impl OptionalCgbComponent for Memory {
-    fn with_device_model(model: DeviceModel) -> Self {
-        let device_config = DeviceConfig {
-            model,
-            ..Default::default()
-        };
-
-        let wram = WorkRam::with_device_model(model);
-        let ppu = Ppu::with_device_model(model);
-        let speed_switch = SpeedSwitch::with_device_model(model);
-        let undocumented_registers = UndocumentedRegisters::with_device_model(model);
+impl Memory {
+    pub fn with_device_model(device_model: DeviceModel) -> Self {
+        let wram = WorkRam::with_device_model(device_model);
+        let ppu = Ppu::with_device_model(device_model);
+        let speed_switch = SpeedSwitch::with_device_model(device_model);
+        let undocumented_registers = UndocumentedRegisters::with_device_model(device_model);
 
         Self {
             wram,
             ppu,
             speed_switch,
             undocumented_registers,
-            device_config,
+            device_model,
             ..Default::default()
         }
     }
 
-    fn set_cgb_mode(&mut self, value: bool) {
+    pub fn set_cgb_mode(&mut self, value: bool) {
         log::info!("{} CGB mode.", if value { "Enabling" } else { "Disabling" });
 
-        assert!(self.device_config.model == DeviceModel::Cgb);
+        assert!(device_is_cgb!(self));
 
         self.wram.set_cgb_mode(value);
         self.ppu.set_cgb_mode(value);
         self.speed_switch.set_cgb_mode(value);
         self.undocumented_registers.set_cgb_mode(value);
 
-        self.device_config.cgb_mode = value;
+        self.cgb_mode = value;
     }
-}
 
-impl Memory {
     fn cycle(&mut self) {
         // TODO: properly implement double speed.
         /*assert!(
@@ -357,6 +350,7 @@ impl Memory {
         self.perform_vram_dma();
 
         for _ in 0..4 {
+            self.apu.tick(self.timer.read_div());
             self.timer.tick();
             self.ppu.tick();
         }
@@ -404,7 +398,7 @@ impl Memory {
     }
 
     pub(crate) fn use_bootrom(&mut self, bootrom: Arc<Box<[u8]>>) {
-        self.bootrom.insert(self.device_config.model, bootrom);
+        self.bootrom = Bootrom::new(self.device_model, Some(bootrom));
         info!("Bootrom loaded.");
     }
 

@@ -39,14 +39,23 @@ pub struct Bootrom {
 } */
 
 impl Bootrom {
-    pub fn insert(&mut self, device_model: DeviceModel, bootrom: Arc<Box<[u8]>>) {
-        match device_model {
-            DeviceModel::Dmg => assert_eq!(bootrom.len(), DMG_BOOTROM_SIZE),
-            DeviceModel::Cgb => assert_eq!(bootrom.len(), CGB_BOOTROM_SIZE),
-        };
+    pub fn new(device_model: DeviceModel, bootrom: Option<Arc<Box<[u8]>>>) -> Self {
+        if let Some(bootrom) = bootrom {
+            match device_model {
+                DeviceModel::Dmg => assert_eq!(bootrom.len(), DMG_BOOTROM_SIZE),
+                DeviceModel::Cgb => assert_eq!(bootrom.len(), CGB_BOOTROM_SIZE),
+            };
 
-        self.data = Some(bootrom);
-        self.is_active = true;
+            Self {
+                data: Some(bootrom),
+                is_active: true,
+            }
+        } else {
+            Self {
+                data: None,
+                is_active: false,
+            }
+        }
     }
 
     pub fn is_loaded(&self) -> bool {

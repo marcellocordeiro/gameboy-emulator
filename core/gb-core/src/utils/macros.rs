@@ -19,13 +19,19 @@ macro_rules! pure_read_write_methods_u8 {
 
 macro_rules! device_is_cgb {
     ($self:ident) => {
-        $self.device_config.is_cgb()
+        $self.device_model == crate::DeviceModel::Cgb
     };
 }
 
 macro_rules! in_cgb_mode {
     ($self:ident) => {
-        $self.device_config.in_cgb_mode()
+        if $self.cgb_mode {
+            // #[cfg(test)]
+            assert!(crate::utils::macros::device_is_cgb!($self));
+            true
+        } else {
+            false
+        }
     };
 }
 

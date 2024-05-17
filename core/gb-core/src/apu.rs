@@ -3,7 +3,7 @@
 #![allow(dead_code, unused_variables)]
 
 use self::channels::{NoiseChannel, PulseChannel1, PulseChannel2, WaveChannel};
-use crate::{utils::macros::device_is_cgb, DeviceConfig, DeviceModel, OptionalCgbComponent};
+use crate::{utils::macros::device_is_cgb, DeviceModel};
 
 #[derive(Default)]
 pub struct Apu {
@@ -14,30 +14,14 @@ pub struct Apu {
 
     master_enable: bool,
 
-    device_config: DeviceConfig,
+    cgb_mode: bool,
+
+    device_model: DeviceModel,
 
     callback: Option<Box<Callback>>,
 }
 
 pub type Callback = dyn Fn(&[f32]);
-
-impl OptionalCgbComponent for Apu {
-    fn with_device_model(model: DeviceModel) -> Self {
-        let device_config = DeviceConfig {
-            model,
-            ..Default::default()
-        };
-
-        Self {
-            device_config,
-            ..Default::default()
-        }
-    }
-
-    fn set_cgb_mode(&mut self, value: bool) {
-        self.device_config.cgb_mode = value;
-    }
-}
 
 impl Apu {
     // 0xFF10 ~ 0xFF3F
@@ -48,6 +32,17 @@ impl Apu {
     // Undocumented
     // 0xFF76
     // 0xFF77
+
+    fn with_device_model(device_model: DeviceModel) -> Self {
+        Self {
+            device_model,
+            ..Default::default()
+        }
+    }
+
+    fn set_cgb_mode(&mut self, value: bool) {
+        self.cgb_mode = value;
+    }
 
     pub fn skip_bootrom(&mut self) {
         self.master_enable = true;

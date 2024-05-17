@@ -13,9 +13,7 @@ use crate::{
         macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
         screen::Screen,
     },
-    DeviceConfig,
     DeviceModel,
-    OptionalCgbComponent,
 };
 
 #[allow(clippy::struct_excessive_bools)]
@@ -55,33 +53,11 @@ pub struct Ppu {
     mode: StatusMode,
     cycles: u32,
 
+    cgb_mode: bool,
+    device_model: DeviceModel,
+
     screen: Screen,
     internal_screen: Screen,
-
-    device_config: DeviceConfig,
-}
-
-impl OptionalCgbComponent for Ppu {
-    fn with_device_model(model: DeviceModel) -> Self {
-        let device_config = DeviceConfig {
-            model,
-            ..Default::default()
-        };
-
-        let vram = VideoRam::with_device_model(model);
-
-        Self {
-            vram,
-            device_config,
-            ..Default::default()
-        }
-    }
-
-    fn set_cgb_mode(&mut self, value: bool) {
-        self.vram.set_cgb_mode(value);
-
-        self.device_config.cgb_mode = value;
-    }
 }
 
 impl Ppu {
@@ -95,6 +71,22 @@ impl Ppu {
         obp1,
         wy,
         wx
+    }
+
+    pub fn with_device_model(device_model: DeviceModel) -> Self {
+        let vram = VideoRam::with_device_model(device_model);
+
+        Self {
+            vram,
+            device_model,
+            ..Default::default()
+        }
+    }
+
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        self.vram.set_cgb_mode(value);
+
+        self.cgb_mode = value;
     }
 
     pub(crate) fn skip_bootrom(&mut self) {

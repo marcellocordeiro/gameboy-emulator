@@ -1,31 +1,25 @@
-use crate::{utils::macros::in_cgb_mode, DeviceConfig, DeviceModel, OptionalCgbComponent};
+use crate::{utils::macros::in_cgb_mode, DeviceModel};
 
 #[derive(Debug, Default)]
 pub struct SpeedSwitch {
     key0: u8,
 
-    device_config: DeviceConfig,
+    cgb_mode: bool,
+    device_model: DeviceModel,
 }
 
-impl OptionalCgbComponent for SpeedSwitch {
-    fn with_device_model(model: DeviceModel) -> Self {
-        let device_config = DeviceConfig {
-            model,
-            ..Default::default()
-        };
-
+impl SpeedSwitch {
+    pub fn with_device_model(device_model: DeviceModel) -> Self {
         Self {
-            device_config,
+            device_model,
             ..Default::default()
         }
     }
 
-    fn set_cgb_mode(&mut self, value: bool) {
-        self.device_config.cgb_mode = value;
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        self.cgb_mode = value;
     }
-}
 
-impl SpeedSwitch {
     pub fn in_double_speed(&self) -> bool {
         (self.key0 & 0b1000_0000) != 0
     }
@@ -35,7 +29,7 @@ impl SpeedSwitch {
             return;
         }
 
-        if self.key0 & 0b1 == 1 {
+        if self.key0 & 0b1 == 0b1 {
             self.key0 = !self.key0 & 0b1000_0000;
         }
     }

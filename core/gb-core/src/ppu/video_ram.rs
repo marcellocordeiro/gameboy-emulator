@@ -7,9 +7,7 @@ use crate::{
         color::Color,
         macros::{device_is_cgb, in_cgb_mode},
     },
-    DeviceConfig,
     DeviceModel,
-    OptionalCgbComponent,
 };
 
 // const DMG_VRAM_BANKS: usize = 1;
@@ -23,7 +21,9 @@ const CGB_VRAM_SIZE: usize = CGB_VRAM_BANKS * VRAM_BANK_SIZE; // CGB: 16384 (0x4
 pub struct VideoRam {
     data: [u8; CGB_VRAM_SIZE],
     vbk: u8,
-    device_config: DeviceConfig,
+
+    cgb_mode: bool,
+    device_model: DeviceModel,
 }
 
 impl Default for VideoRam {
@@ -31,31 +31,25 @@ impl Default for VideoRam {
         Self {
             data: [0; CGB_VRAM_SIZE], // can't default this :(
             vbk: 0,
-            device_config: DeviceConfig::default(),
+            cgb_mode: false,
+            device_model: DeviceModel::default(),
         }
-    }
-}
-
-impl OptionalCgbComponent for VideoRam {
-    fn with_device_model(model: DeviceModel) -> Self {
-        let device_config = DeviceConfig {
-            model,
-            ..Default::default()
-        };
-
-        Self {
-            device_config,
-            ..Default::default()
-        }
-    }
-
-    fn set_cgb_mode(&mut self, cgb_mode: bool) {
-        self.device_config.cgb_mode = cgb_mode;
     }
 }
 
 impl VideoRam {
     // 0x8000 ~ 0x9FFF
+
+    pub fn with_device_model(device_model: DeviceModel) -> Self {
+        Self {
+            device_model,
+            ..Default::default()
+        }
+    }
+
+    pub fn set_cgb_mode(&mut self, cgb_mode: bool) {
+        self.cgb_mode = cgb_mode;
+    }
 
     pub fn draw_tile_data_0_into_frame(&self, frame: &mut TileDataFrame) {
         const TILE_DATA_0_START: usize = 0;
@@ -246,7 +240,7 @@ mod tests {
 
     #[allow(clippy::identity_op)]
     fn verify_banks(vram: &mut VideoRam) {
-        assert!(vram.device_config.in_cgb_mode());
+        assert!(in_cgb_mode!(vram));
 
         // Bank 0
         vram.write_vbk(0b1111_1110 | 0b0);
