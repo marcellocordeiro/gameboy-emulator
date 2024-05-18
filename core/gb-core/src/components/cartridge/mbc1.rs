@@ -1,8 +1,10 @@
 use std::sync::Arc;
 
-use super::MbcInterface;
 use crate::{
-    cartridge::info::{CartridgeInfo, MbcType, RAM_BANK_SIZE, ROM_BANK_SIZE},
+    components::mbc::{
+        info::{CartridgeInfo, MbcType, RAM_BANK_SIZE, ROM_BANK_SIZE},
+        MbcInterface,
+    },
     constants::ONE_KIB,
 };
 

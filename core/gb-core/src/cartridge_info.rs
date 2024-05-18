@@ -29,7 +29,7 @@ pub struct CartridgeInfo {
 }
 
 impl TryFrom<&[u8]> for CartridgeInfo {
-    type Error = super::error::Error;
+    type Error = self::error::Error;
 
     fn try_from(rom: &[u8]) -> Result<Self, Self::Error> {
         let header = header::try_from(rom)?;
@@ -109,6 +109,7 @@ impl CartridgeInfo {
 
 mod cgb_flag;
 pub mod compatibility_palettes;
+pub mod error;
 mod extra_features;
 mod header;
 mod licensee_code;

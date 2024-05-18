@@ -1,10 +1,9 @@
 use std::sync::{mpsc, Arc};
 
-use cartridge::{error::Error as CartridgeError, info::CartridgeInfo};
+use cartridge_info::{error::Error as CartridgeError, CartridgeInfo};
+pub use components::memory::MemoryInterface;
+use components::{cpu::Cpu, mbc::MbcInterface, memory::Memory};
 pub use constants::*;
-use cpu::Cpu;
-use memory::Memory;
-pub use memory::MemoryInterface;
 pub use utils::{button::Button, color::Color};
 
 pub struct GameBoy {
@@ -77,7 +76,10 @@ impl GameBoy {
     /// Reset before inserting a new cartridge.
     pub fn insert_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         let rom = Arc::<Box<[u8]>>::from(rom.into_boxed_slice());
-        let cartridge_info = cartridge::info::CartridgeInfo::try_from(rom.as_ref().as_ref())?;
+        let cartridge_info = CartridgeInfo::try_from(rom.as_ref().as_ref())?;
+
+        // Panics if the validation fails.
+        cartridge_info.validate();
 
         self.memory.load_cartridge(&cartridge_info, rom.clone());
         self.cartridge = Some((cartridge_info, rom));
@@ -86,20 +88,20 @@ impl GameBoy {
     }
 
     pub fn cartridge_inserted(&self) -> bool {
-        self.memory.cartridge.is_some()
+        self.memory.mbc.is_some()
     }
 
     pub fn get_battery(&self) -> Option<&[u8]> {
-        if let Some(cartridge) = self.memory.cartridge.as_ref() {
-            return Some(cartridge.get_battery());
+        if let Some(mbc) = self.memory.mbc.as_ref() {
+            return Some(mbc.get_battery());
         }
 
         None
     }
 
     pub fn load_battery(&mut self, file: Vec<u8>) {
-        if let Some(cartridge) = self.memory.cartridge.as_mut() {
-            cartridge.load_battery(file);
+        if let Some(mbc) = self.memory.mbc.as_mut() {
+            mbc.load_battery(file);
         }
     }
 
@@ -140,6 +142,7 @@ impl GameBoy {
     }
 }
 
-mod components;
+pub mod cartridge_info;
+pub mod components;
 mod constants;
 mod utils;

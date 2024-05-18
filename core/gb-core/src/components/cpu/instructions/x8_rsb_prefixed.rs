@@ -1,4 +1,4 @@
-use crate::{
+use crate::components::{
     cpu::{alu, Cpu},
     memory::MemoryInterface,
 };

@@ -1,4 +1,4 @@
-use crate::cartridge::error::Error;
+use super::error::Error;
 
 /// Not the actual start, we're starting at 0 for convenience, as 0..0x100 is the bootrom area.
 /// The actual start is at 0x100.

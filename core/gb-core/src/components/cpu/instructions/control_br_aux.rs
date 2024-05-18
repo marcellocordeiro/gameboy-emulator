@@ -1,4 +1,4 @@
-use crate::{cpu::Cpu, memory::MemoryInterface};
+use crate::components::{cpu::Cpu, memory::MemoryInterface};
 
 impl Cpu {
     /// JR (relative jump to address)

@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-use super::info::MbcType;
+use super::MbcType;
 
 #[derive(Debug, Error)]
 pub enum Error {

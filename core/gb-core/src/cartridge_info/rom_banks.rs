@@ -1,5 +1,5 @@
-use super::header::Header;
-use crate::{cartridge::error::Error, constants::ONE_KIB};
+use super::{error::Error, header::Header};
+use crate::ONE_KIB;
 
 pub const ROM_BANK_SIZE: usize = 16 * ONE_KIB; // 0x4000
 pub const ROM_BANKS_CODE_ADDRESS: usize = 0x0148;

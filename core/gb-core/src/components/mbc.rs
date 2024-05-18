@@ -2,11 +2,11 @@ use std::sync::Arc;
 
 use enum_dispatch::enum_dispatch;
 
-pub use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc30::Mbc30, mbc5::Mbc5, no_mbc::NoMbc};
-use super::info::{CartridgeInfo, MbcType};
+use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc30::Mbc30, mbc5::Mbc5, no_mbc::NoMbc};
+use crate::cartridge_info::{CartridgeInfo, MbcType};
 
 #[enum_dispatch]
-pub(super) trait MbcInterface {
+pub(crate) trait MbcInterface {
     fn get_battery(&self) -> &[u8];
     fn load_battery(&mut self, file: Vec<u8>);
 
@@ -19,7 +19,6 @@ pub(super) trait MbcInterface {
     fn write_ram(&mut self, address: u16, value: u8);
 }
 
-#[allow(clippy::enum_variant_names)]
 #[enum_dispatch(MbcInterface)]
 pub enum Mbc {
     NoMbc,

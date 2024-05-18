@@ -1,5 +1,5 @@
 use self::registers::{ImeState, Registers};
-use crate::{memory::MemoryInterface, utils::macros::device_is_cgb, DeviceModel};
+use crate::{components::memory::MemoryInterface, utils::macros::device_is_cgb, DeviceModel};
 
 #[derive(Default)]
 pub struct Cpu {

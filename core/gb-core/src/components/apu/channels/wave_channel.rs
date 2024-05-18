@@ -1,7 +1,7 @@
 #![allow(dead_code, unused_variables)]
 
 #[derive(Default)]
-/// NR3x
+/// `NR3x`
 pub struct WaveChannel {
     pub enabled: bool,
 

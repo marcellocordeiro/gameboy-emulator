@@ -11,15 +11,15 @@ use self::{
     work_ram::WorkRam,
 };
 use crate::{
-    apu::Apu,
-    cartridge::{
-        info::{CartridgeInfo, CgbFlag},
-        Cartridge,
+    cartridge_info::{CartridgeInfo, CgbFlag},
+    components::{
+        apu::Apu,
+        joypad::Joypad,
+        mbc::{Mbc, MbcInterface},
+        ppu::Ppu,
+        serial::Serial,
+        timer::Timer,
     },
-    joypad::Joypad,
-    ppu::Ppu,
-    serial::Serial,
-    timer::Timer,
     utils::macros::{device_is_cgb, in_cgb_mode},
     DeviceModel,
 };
@@ -47,7 +47,7 @@ pub struct Memory {
     wram: WorkRam,
     hram: HighRam,
 
-    pub(crate) cartridge: Option<Cartridge>,
+    pub(crate) mbc: Option<Mbc>,
     pub ppu: Ppu,
     pub(crate) apu: Apu,
 
@@ -80,13 +80,13 @@ impl MemoryInterface for Memory {
             }
 
             0x0000..=0x3FFF => self
-                .cartridge
+                .mbc
                 .as_ref()
                 .expect("Cartridge should be loaded")
                 .read_rom_bank_0(address),
 
             0x4000..=0x7FFF => self
-                .cartridge
+                .mbc
                 .as_ref()
                 .expect("Cartridge should be loaded")
                 .read_rom_bank_x(address),
@@ -94,7 +94,7 @@ impl MemoryInterface for Memory {
             0x8000..=0x9FFF => self.ppu.read_vram(address),
 
             0xA000..=0xBFFF => self
-                .cartridge
+                .mbc
                 .as_ref()
                 .expect("Cartridge should be loaded")
                 .read_ram(address),
@@ -186,7 +186,7 @@ impl MemoryInterface for Memory {
             0x0000..=0x00FF if self.bootrom.is_active() => (),
 
             0x0000..=0x7FFF => self
-                .cartridge
+                .mbc
                 .as_mut()
                 .expect("Cartridge should be loaded")
                 .write_rom(address, value),
@@ -194,7 +194,7 @@ impl MemoryInterface for Memory {
             0x8000..=0x9FFF => self.ppu.write_vram(address, value),
 
             0xA000..=0xBFFF => self
-                .cartridge
+                .mbc
                 .as_mut()
                 .expect("Cartridge should be loaded")
                 .write_ram(address, value),
@@ -380,7 +380,7 @@ impl Memory {
     }
 
     pub(crate) fn load_cartridge(&mut self, cartridge_info: &CartridgeInfo, rom: Arc<Box<[u8]>>) {
-        let cartridge = Cartridge::new(cartridge_info, rom);
+        let mbc = Mbc::new(cartridge_info, rom);
 
         if device_is_cgb!(self) {
             if self.bootrom.is_loaded() {
@@ -390,7 +390,7 @@ impl Memory {
             }
         }
 
-        self.cartridge = Some(cartridge);
+        self.mbc = Some(mbc);
     }
 
     pub(crate) fn use_bootrom(&mut self, bootrom: Arc<Box<[u8]>>) {

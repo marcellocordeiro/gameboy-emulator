@@ -1,10 +1,7 @@
 use std::sync::Arc;
 
 use super::MbcInterface;
-use crate::{
-    cartridge::info::{CartridgeInfo, MbcType},
-    constants::ONE_KIB,
-};
+use crate::{cartridge_info::CartridgeInfo, constants::ONE_KIB};
 
 pub struct NoMbc {
     rom: Arc<Box<[u8]>>,
@@ -13,8 +10,6 @@ pub struct NoMbc {
 
 impl NoMbc {
     pub fn new(info: &CartridgeInfo, rom: Arc<Box<[u8]>>) -> Self {
-        assert_eq!(info.mbc_type, MbcType::NoMbc);
-
         let ram_banks = info.ram_banks;
 
         Self {

@@ -1,5 +1,4 @@
-use super::{header::Header, ram_banks};
-use crate::cartridge::error::Error;
+use super::{error::Error, header::Header, ram_banks};
 
 pub const MBC_TYPE_ADDRESS: usize = 0x0147;
 

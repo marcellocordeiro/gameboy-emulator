@@ -3,9 +3,9 @@ use std::{ffi::OsStr, path::PathBuf};
 use itertools::Itertools;
 
 use self::{structs::Test, test_memory::TestMemory};
-use crate::{
+use crate::components::{
     cpu::{tests::gameboy_cpu_tests::structs::State, Cpu},
-    MemoryInterface,
+    memory::MemoryInterface,
 };
 
 mod structs;

@@ -1,13 +1,12 @@
-// TODO: merge this with MBC3.
 use std::sync::Arc;
 
 use super::MbcInterface;
 use crate::{
-    cartridge::info::{CartridgeInfo, MbcType, RAM_BANK_SIZE, ROM_BANK_SIZE},
-    constants::ONE_KIB,
+    cartridge_info::{CartridgeInfo, RAM_BANK_SIZE, ROM_BANK_SIZE},
+    ONE_KIB,
 };
 
-pub struct Mbc30 {
+pub struct Mbc3 {
     rom: Arc<Box<[u8]>>,
     ram: Box<[u8]>,
 
@@ -17,10 +16,8 @@ pub struct Mbc30 {
     ram_rtc_sel: u8,
 }
 
-impl Mbc30 {
+impl Mbc3 {
     pub fn new(info: &CartridgeInfo, rom: Arc<Box<[u8]>>) -> Self {
-        assert_eq!(info.mbc_type, MbcType::Mbc30);
-
         let ram_banks = info.ram_banks;
 
         Self {
@@ -39,11 +36,11 @@ impl Mbc30 {
     }
 
     fn ram_offset(&self) -> usize {
-        RAM_BANK_SIZE * ((self.ram_rtc_sel & 0b111) as usize)
+        RAM_BANK_SIZE * ((self.ram_rtc_sel & 0b11) as usize)
     }
 }
 
-impl MbcInterface for Mbc30 {
+impl MbcInterface for Mbc3 {
     fn get_battery(&self) -> &[u8] {
         &self.ram
     }
@@ -88,7 +85,7 @@ impl MbcInterface for Mbc30 {
             0x0000..=0x1FFF => self.ram_enable = (value & 0b1111) == 0x0A,
 
             0x2000..=0x3FFF => {
-                self.rom_bank = value;
+                self.rom_bank = value & 0b0111_1111;
                 if self.rom_bank == 0 {
                     self.rom_bank = 1;
                 }

@@ -8,7 +8,7 @@ use self::{
     vram_dma::VramDma,
 };
 use crate::{
-    cartridge::info::CartridgeInfo,
+    cartridge_info::CartridgeInfo,
     utils::{
         macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
         screen::Screen,

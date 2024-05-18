@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use serde::Deserialize;
 
-use crate::cpu::registers::{Flags, ImeState, Registers};
+use crate::components::cpu::registers::{Flags, ImeState, Registers};
 
 #[derive(Deserialize)]
 pub struct Test {

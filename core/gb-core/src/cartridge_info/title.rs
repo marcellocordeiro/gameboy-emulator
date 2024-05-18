@@ -1,5 +1,4 @@
-use super::header::Header;
-use crate::cartridge::error::Error;
+use super::{error::Error, header::Header};
 
 pub const TITLE_ADDRESS_BEGIN: usize = 0x0134;
 pub const TITLE_ADDRESS_END: usize = 0x0143;

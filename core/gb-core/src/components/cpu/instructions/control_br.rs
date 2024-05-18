@@ -1,4 +1,4 @@
-use crate::{
+use crate::components::{
     cpu::{registers::Flags, Cpu},
     memory::MemoryInterface,
 };

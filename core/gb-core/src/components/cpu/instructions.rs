@@ -1,5 +1,5 @@
 use super::Cpu;
-use crate::memory::MemoryInterface;
+use crate::components::memory::MemoryInterface;
 
 impl Cpu {
     pub(super) fn run_instruction(&mut self, memory: &mut impl MemoryInterface, opcode: u8) {

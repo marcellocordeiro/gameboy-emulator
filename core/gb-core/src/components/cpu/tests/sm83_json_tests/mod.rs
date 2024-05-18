@@ -3,7 +3,7 @@ use std::{ffi::OsStr, path::PathBuf};
 use itertools::Itertools;
 
 use self::{structs::Test, test_memory::TestMemory};
-use crate::cpu::{tests::sm83_json_tests::structs::State, Cpu};
+use crate::components::cpu::{tests::sm83_json_tests::structs::State, Cpu};
 
 mod structs;
 mod test_memory;

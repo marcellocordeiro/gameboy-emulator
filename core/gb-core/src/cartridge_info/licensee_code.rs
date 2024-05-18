@@ -1,5 +1,4 @@
-use super::header::Header;
-use crate::cartridge::error::Error;
+use super::{error::Error, header::Header};
 
 pub const OLD_LICENSEE_CODE_ADDRESS: usize = 0x014B;
 

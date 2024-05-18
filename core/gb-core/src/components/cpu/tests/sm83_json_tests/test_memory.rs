@@ -1,5 +1,9 @@
 use super::structs::{Cycle, Ram};
-use crate::memory::{interrupts::Interrupts, speed_switch::SpeedSwitch, MemoryInterface};
+use crate::components::memory::{
+    interrupts::Interrupts,
+    speed_switch::SpeedSwitch,
+    MemoryInterface,
+};
 
 #[derive(Default)]
 pub struct TestMemory {

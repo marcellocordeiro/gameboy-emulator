@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use super::MbcInterface;
-use crate::cartridge::info::{CartridgeInfo, MbcType, ROM_BANK_SIZE};
+use crate::cartridge_info::{CartridgeInfo, ROM_BANK_SIZE};
 
 pub struct Mbc2 {
     rom: Arc<Box<[u8]>>,
@@ -16,8 +16,6 @@ pub struct Mbc2 {
 
 impl Mbc2 {
     pub fn new(info: &CartridgeInfo, rom: Arc<Box<[u8]>>) -> Self {
-        assert_eq!(info.mbc_type, MbcType::Mbc2);
-
         let rom_bank_mask = info.rom_banks - 1;
 
         Self {

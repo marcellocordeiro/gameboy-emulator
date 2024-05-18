@@ -1,7 +1,7 @@
 #![allow(dead_code, unused_variables)]
 
 #[derive(Default)]
-/// NR1x
+/// `NR1x`
 pub struct PulseChannel1 {
     pub enabled: bool,
 }

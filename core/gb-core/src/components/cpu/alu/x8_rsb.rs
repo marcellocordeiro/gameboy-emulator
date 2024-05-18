@@ -1,4 +1,4 @@
-use crate::cpu::registers::Flags;
+use crate::components::cpu::registers::Flags;
 
 /// RL / Rotate Left
 #[must_use]
