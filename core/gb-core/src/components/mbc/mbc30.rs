@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use super::MbcInterface;
 use crate::{
-    cartridge_info::{CartridgeInfo, RAM_BANK_SIZE, ROM_BANK_SIZE},
+    cartridge::{Cartridge, RAM_BANK_SIZE, ROM_BANK_SIZE},
     ONE_KIB,
 };
 
@@ -18,11 +18,11 @@ pub struct Mbc30 {
 }
 
 impl Mbc30 {
-    pub fn new(info: &CartridgeInfo, rom: Arc<Box<[u8]>>) -> Self {
-        let ram_banks = info.ram_banks;
+    pub fn new(cartridge: &Cartridge) -> Self {
+        let ram_banks = cartridge.ram_banks;
 
         Self {
-            rom,
+            rom: cartridge.rom.clone(),
             ram: vec![0; ram_banks * (8 * ONE_KIB)].into_boxed_slice(),
 
             ram_enable: false,

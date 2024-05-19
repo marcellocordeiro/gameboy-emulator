@@ -1,6 +1,6 @@
 use std::sync::{mpsc, Arc};
 
-use cartridge_info::{error::Error as CartridgeError, CartridgeInfo};
+use cartridge::{error::Error as CartridgeError, Cartridge};
 pub use components::memory::MemoryInterface;
 use components::{cpu::Cpu, mbc::MbcInterface, memory::Memory};
 pub use constants::*;
@@ -10,7 +10,7 @@ pub struct GameBoy {
     cpu: Cpu,
     memory: Memory,
 
-    cartridge: Option<(CartridgeInfo, Arc<Box<[u8]>>)>,
+    cartridge: Option<Cartridge>,
     bootrom: Option<Arc<Box<[u8]>>>,
 
     pub device_model: DeviceModel,
@@ -49,8 +49,8 @@ impl GameBoy {
             self.memory.skip_bootrom();
         }
 
-        if let Some((cartridge_info, rom)) = &self.cartridge {
-            self.memory.load_cartridge(cartridge_info, rom.clone());
+        if let Some(cartridge) = &self.cartridge {
+            self.memory.load_cartridge(cartridge);
         }
     }
 
@@ -75,14 +75,13 @@ impl GameBoy {
 
     /// Reset before inserting a new cartridge.
     pub fn insert_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
-        let rom = Arc::<Box<[u8]>>::from(rom.into_boxed_slice());
-        let cartridge_info = CartridgeInfo::try_from(rom.as_ref().as_ref())?;
+        let cartridge = Cartridge::new(rom)?;
 
         // Panics if the validation fails.
-        cartridge_info.validate();
+        cartridge.validate();
 
-        self.memory.load_cartridge(&cartridge_info, rom.clone());
-        self.cartridge = Some((cartridge_info, rom));
+        self.memory.load_cartridge(&cartridge);
+        self.cartridge = Some(cartridge);
 
         Ok(())
     }
@@ -142,7 +141,7 @@ impl GameBoy {
     }
 }
 
-pub mod cartridge_info;
+pub mod cartridge;
 pub mod components;
 mod constants;
 mod utils;

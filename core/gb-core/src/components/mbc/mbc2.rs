@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use super::MbcInterface;
-use crate::cartridge_info::{CartridgeInfo, ROM_BANK_SIZE};
+use crate::cartridge::{Cartridge, ROM_BANK_SIZE};
 
 pub struct Mbc2 {
     rom: Arc<Box<[u8]>>,
@@ -15,11 +15,11 @@ pub struct Mbc2 {
 }
 
 impl Mbc2 {
-    pub fn new(info: &CartridgeInfo, rom: Arc<Box<[u8]>>) -> Self {
-        let rom_bank_mask = info.rom_banks - 1;
+    pub fn new(cartridge: &Cartridge) -> Self {
+        let rom_bank_mask = cartridge.rom_banks - 1;
 
         Self {
-            rom,
+            rom: cartridge.rom.clone(),
             ram: Box::new([0; 512]),
 
             rom_bank_mask,

@@ -8,7 +8,7 @@ use self::{
     vram_dma::VramDma,
 };
 use crate::{
-    cartridge_info::CartridgeInfo,
+    cartridge::Cartridge,
     utils::{
         macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
         screen::Screen,
@@ -94,9 +94,9 @@ impl Ppu {
         self.bgp = 0xFC;
     }
 
-    pub(crate) fn handle_post_bootrom_setup(&mut self, info: &CartridgeInfo) {
+    pub(crate) fn handle_post_bootrom_setup(&mut self, cartridge: &Cartridge) {
         if device_is_cgb!(self) {
-            if !info.cgb_flag.has_cgb_support() {
+            if !cartridge.cgb_flag.has_cgb_support() {
                 self.opri = true;
 
                 for palette_number in 0..8 {
@@ -106,7 +106,7 @@ impl Ppu {
                         .set_palette(palette_number, [0x0000, 0x0000, 0x0000, 0x0000]);
                 }
 
-                let palettes = info.dmg_compatibility_palettes();
+                let palettes = cartridge.dmg_compatibility_palettes();
 
                 self.bg_cram.set_palette(0, palettes.bg0);
                 self.obj_cram.set_palette(0, palettes.obj0);

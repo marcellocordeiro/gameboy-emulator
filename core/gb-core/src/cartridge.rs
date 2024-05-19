@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 pub use self::{
     cgb_flag::CgbFlag,
     extra_features::ExtraFeature,
@@ -12,7 +14,9 @@ use self::{
 };
 use crate::constants::ONE_KIB;
 
-pub struct CartridgeInfo {
+pub struct Cartridge {
+    pub rom: Arc<Box<[u8]>>,
+
     // Header info
     pub title: Title,
     pub mbc_type: MbcType,
@@ -21,18 +25,13 @@ pub struct CartridgeInfo {
     pub ram_banks: usize,
     pub cgb_flag: CgbFlag,
     pub sgb_flag: bool,
-
     pub licensee_code: LicenseeCode,
-
-    // File info
-    pub file_size: usize,
 }
 
-impl TryFrom<&[u8]> for CartridgeInfo {
-    type Error = self::error::Error;
-
-    fn try_from(rom: &[u8]) -> Result<Self, Self::Error> {
-        let header = header::try_from(rom)?;
+impl Cartridge {
+    pub fn new(rom: Vec<u8>) -> Result<Self, self::error::Error> {
+        let rom = Arc::<Box<[u8]>>::from(rom.into_boxed_slice());
+        let header = header::from_rom(&rom)?;
 
         let title = Title::from_header(header)?;
 
@@ -45,8 +44,6 @@ impl TryFrom<&[u8]> for CartridgeInfo {
         let mbc_type = MbcType::from_header(header)?;
         let extra_features = ExtraFeature::from_header(header);
         let sgb_flag = sgb_flag::from_header(header);
-
-        let file_size = rom.len();
 
         // Print debug info. Maybe show this elsewhere?
         log::info!("**Cartridge info**");
@@ -68,6 +65,7 @@ impl TryFrom<&[u8]> for CartridgeInfo {
         log::info!("New licensee code: {}", licensee_code.new_as_string());
 
         Ok(Self {
+            rom,
             title,
             mbc_type,
             extra_features,
@@ -76,12 +74,9 @@ impl TryFrom<&[u8]> for CartridgeInfo {
             cgb_flag,
             sgb_flag,
             licensee_code,
-            file_size,
         })
     }
-}
 
-impl CartridgeInfo {
     pub fn validate(&self) {
         // MBC2 always contains RAM, even when `ram_banks == 0`.
         if self.mbc_type != MbcType::Mbc2 {
@@ -93,11 +88,11 @@ impl CartridgeInfo {
         }
 
         assert_eq!(
-            self.file_size,
+            self.rom.len(),
             self.rom_banks * (16 * ONE_KIB),
             "ROM length = {} KiB, with ROM banks = {}. Expected {} KiB.",
-            self.file_size,
-            self.file_size / ONE_KIB,
+            self.rom.len(),
+            self.rom.len() / ONE_KIB,
             self.rom_banks * 16
         );
     }

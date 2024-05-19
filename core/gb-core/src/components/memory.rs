@@ -1,7 +1,5 @@
 use std::sync::Arc;
 
-use log::info;
-
 use self::{
     bootrom::Bootrom,
     high_ram::HighRam,
@@ -11,7 +9,7 @@ use self::{
     work_ram::WorkRam,
 };
 use crate::{
-    cartridge_info::{CartridgeInfo, CgbFlag},
+    cartridge::{Cartridge, CgbFlag},
     components::{
         apu::Apu,
         joypad::Joypad,
@@ -379,14 +377,14 @@ impl Memory {
         }
     }
 
-    pub(crate) fn load_cartridge(&mut self, cartridge_info: &CartridgeInfo, rom: Arc<Box<[u8]>>) {
-        let mbc = Mbc::new(cartridge_info, rom);
+    pub(crate) fn load_cartridge(&mut self, cartridge: &Cartridge) {
+        let mbc = Mbc::new(cartridge);
 
         if device_is_cgb!(self) {
             if self.bootrom.is_loaded() {
                 self.set_cgb_mode(true);
             } else {
-                self.handle_post_bootrom_setup(cartridge_info);
+                self.handle_post_bootrom_setup(cartridge);
             }
         }
 
@@ -395,7 +393,7 @@ impl Memory {
 
     pub(crate) fn use_bootrom(&mut self, bootrom: Arc<Box<[u8]>>) {
         self.bootrom = Bootrom::new(self.device_model, Some(bootrom));
-        info!("Bootrom loaded.");
+        log::info!("Bootrom loaded.");
     }
 
     pub(crate) fn skip_bootrom(&mut self) {
@@ -406,12 +404,12 @@ impl Memory {
         self.interrupts.skip_bootrom();
     }
 
-    pub(crate) fn handle_post_bootrom_setup(&mut self, info: &CartridgeInfo) {
-        if info.cgb_flag.has_cgb_support() {
+    pub(crate) fn handle_post_bootrom_setup(&mut self, cartridge: &Cartridge) {
+        if cartridge.cgb_flag.has_cgb_support() {
             self.set_cgb_mode(true);
         }
 
-        self.ppu.handle_post_bootrom_setup(info);
+        self.ppu.handle_post_bootrom_setup(cartridge);
     }
 
     fn perform_oam_dma(&mut self) {

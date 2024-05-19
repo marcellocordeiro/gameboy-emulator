@@ -9,7 +9,7 @@ pub const HEADER_SIZE: usize = HEADER_START + HEADER_END + 1;
 
 pub type Header = [u8; HEADER_SIZE];
 
-pub fn try_from(rom: &[u8]) -> Result<&Header, Error> {
+pub fn from_rom(rom: &[u8]) -> Result<&Header, Error> {
     rom.get(HEADER_START..=HEADER_END)
         .ok_or(Error::InvalidRom)?
         .try_into()
