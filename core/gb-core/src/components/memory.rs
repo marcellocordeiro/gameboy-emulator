@@ -322,7 +322,7 @@ impl Memory {
             ..Default::default()
         };
 
-        if device_model.is_cgb() {
+        if device_is_cgb!(memory) {
             memory.set_cgb_mode(true);
         }
 

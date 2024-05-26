@@ -14,7 +14,7 @@ public final class GameBoy {
     }
     
     public func load(_ rom: [UInt8]) {
-        gameboy_load_cartridge(gb, rom, UInt(rom.count))
+        gameboy_insert_cartridge(gb, rom, UInt(rom.count))
     }
     
     public func runFrame() {
