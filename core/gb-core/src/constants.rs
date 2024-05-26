@@ -30,3 +30,9 @@ pub enum DeviceModel {
     Dmg,
     Cgb,
 }
+
+impl DeviceModel {
+    pub fn is_cgb(self) -> bool {
+        self == Self::Cgb
+    }
+}

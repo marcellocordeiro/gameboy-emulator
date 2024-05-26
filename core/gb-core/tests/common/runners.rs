@@ -15,7 +15,6 @@ where
     F: FnOnce(&mut GameBoy) -> Result<(), Error>,
 {
     let mut gb = GameBoy::new(device_model);
-    gb.insert_bootrom(None);
     gb.insert_cartridge(rom.to_vec()).unwrap();
 
     runner(&mut gb)?;

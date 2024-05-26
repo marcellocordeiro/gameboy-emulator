@@ -25,9 +25,7 @@ impl App {
 
         if let Some(path) = bootrom_path {
             let bootrom = std::fs::read(path).unwrap();
-            gb.insert_bootrom(Some(bootrom));
-        } else {
-            gb.insert_bootrom(None);
+            gb.insert_bootrom(bootrom);
         }
 
         // Maybe let the UI handle the errors?
@@ -87,7 +85,7 @@ impl eframe::App for App {
         self.gui.render(egui_ctx, &mut self.gb);
     }
 
-    fn on_exit(&mut self) {
+    fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
         save_battery(&self.gb, &self.rom_path);
     }
 }

@@ -11,7 +11,7 @@ bootrom = ["gb-core/bootrom"]
 
 [dependencies]
 clap = { workspace = true }
-eframe = { workspace = true, features = ["wayland", "wgpu", "x11"] }
+eframe = { workspace = true, features = ["glow", "wayland", "x11"] }
 egui = { workspace = true }
 env_logger = { workspace = true }
 gb-core = { workspace = true }

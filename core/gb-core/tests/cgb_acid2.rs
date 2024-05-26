@@ -9,7 +9,6 @@ fn test_cgb_acid2() {
     let rom = include_bytes!("../../../external/gameboy-test-roms/cgb-acid2.gbc");
 
     let mut gb = GameBoy::new(gb_core::DeviceModel::Cgb);
-    gb.insert_bootrom(None);
     gb.insert_cartridge(rom.to_vec()).unwrap();
 
     run_until_break(&mut gb).unwrap();

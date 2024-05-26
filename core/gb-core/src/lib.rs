@@ -43,44 +43,40 @@ impl GameBoy {
         self.memory = Memory::with_device_model(self.device_model);
 
         if let Some(bootrom) = self.bootrom.clone() {
-            self.memory.use_bootrom(bootrom);
-        } else {
-            self.cpu.skip_bootrom();
-            self.memory.skip_bootrom();
+            self.memory.load_bootrom(bootrom);
         }
 
         if let Some(cartridge) = &self.cartridge {
             self.memory.load_cartridge(cartridge);
+
+            if self.bootrom.is_none() {
+                self.cpu.skip_bootrom();
+                self.memory.skip_bootrom(cartridge);
+            }
         }
     }
 
     /// Insert the bootrom before the cartridge (TODO: improve this).
-    pub fn insert_bootrom(&mut self, bootrom: Option<Vec<u8>>) {
+    pub fn insert_bootrom(&mut self, bootrom: Vec<u8>) {
         assert!(!self.cartridge_inserted());
 
-        let bootrom = if let Some(bootrom) = bootrom {
-            let bootrom = Arc::<Box<[u8]>>::from(bootrom.into_boxed_slice());
-            self.memory.use_bootrom(bootrom.clone());
+        let bootrom = Arc::<Box<[u8]>>::from(bootrom.into_boxed_slice());
+        self.memory.load_bootrom(bootrom.clone());
 
-            Some(bootrom)
-        } else {
-            self.cpu.skip_bootrom();
-            self.memory.skip_bootrom();
-
-            None
-        };
-
-        self.bootrom = bootrom;
+        self.bootrom = Some(bootrom);
     }
 
     /// Reset before inserting a new cartridge.
     pub fn insert_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         let cartridge = Cartridge::new(rom)?;
 
-        // Panics if the validation fails.
-        cartridge.validate();
-
         self.memory.load_cartridge(&cartridge);
+
+        if self.bootrom.is_none() {
+            self.cpu.skip_bootrom();
+            self.memory.skip_bootrom(&cartridge);
+        }
+
         self.cartridge = Some(cartridge);
 
         Ok(())

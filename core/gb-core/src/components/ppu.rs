@@ -89,12 +89,11 @@ impl Ppu {
         self.cgb_mode = value;
     }
 
-    pub(crate) fn skip_bootrom(&mut self) {
+    pub(crate) fn skip_bootrom(&mut self, cartridge: &Cartridge) {
         self.lcdc = LcdControl::from_bits_truncate(0x91);
         self.bgp = 0xFC;
-    }
 
-    pub(crate) fn handle_post_bootrom_setup(&mut self, cartridge: &Cartridge) {
+        // Handle DMG palettes.
         if device_is_cgb!(self) {
             if !cartridge.cgb_flag.has_cgb_support() {
                 self.opri = true;

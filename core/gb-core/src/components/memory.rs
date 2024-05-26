@@ -313,19 +313,23 @@ impl Memory {
         let speed_switch = SpeedSwitch::with_device_model(device_model);
         let undocumented_registers = UndocumentedRegisters::with_device_model(device_model);
 
-        Self {
+        let mut memory = Self {
             wram,
             ppu,
             speed_switch,
             undocumented_registers,
             device_model,
             ..Default::default()
+        };
+
+        if device_model.is_cgb() {
+            memory.set_cgb_mode(true);
         }
+
+        memory
     }
 
     pub fn set_cgb_mode(&mut self, value: bool) {
-        log::info!("{} CGB mode.", if value { "Enabling" } else { "Disabling" });
-
         assert!(device_is_cgb!(self));
 
         self.wram.set_cgb_mode(value);
@@ -377,39 +381,24 @@ impl Memory {
         }
     }
 
-    pub(crate) fn load_cartridge(&mut self, cartridge: &Cartridge) {
-        let mbc = Mbc::new(cartridge);
+    pub(crate) fn load_bootrom(&mut self, bootrom: Arc<Box<[u8]>>) {
+        self.bootrom = Bootrom::new(self.device_model, Some(bootrom));
+    }
 
+    pub(crate) fn load_cartridge(&mut self, cartridge: &Cartridge) {
+        self.mbc = Some(Mbc::new(cartridge));
+    }
+
+    pub(crate) fn skip_bootrom(&mut self, cartridge: &Cartridge) {
         if device_is_cgb!(self) {
-            if self.bootrom.is_loaded() {
-                self.set_cgb_mode(true);
-            } else {
-                self.handle_post_bootrom_setup(cartridge);
-            }
+            self.set_cgb_mode(cartridge.cgb_flag.has_cgb_support());
         }
 
-        self.mbc = Some(mbc);
-    }
-
-    pub(crate) fn use_bootrom(&mut self, bootrom: Arc<Box<[u8]>>) {
-        self.bootrom = Bootrom::new(self.device_model, Some(bootrom));
-        log::info!("Bootrom loaded.");
-    }
-
-    pub(crate) fn skip_bootrom(&mut self) {
         self.bootrom.disable();
         self.apu.skip_bootrom();
-        self.ppu.skip_bootrom();
+        self.ppu.skip_bootrom(cartridge);
         self.timer.skip_bootrom();
         self.interrupts.skip_bootrom();
-    }
-
-    pub(crate) fn handle_post_bootrom_setup(&mut self, cartridge: &Cartridge) {
-        if cartridge.cgb_flag.has_cgb_support() {
-            self.set_cgb_mode(true);
-        }
-
-        self.ppu.handle_post_bootrom_setup(cartridge);
     }
 
     fn perform_oam_dma(&mut self) {

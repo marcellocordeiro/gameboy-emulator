@@ -43,9 +43,7 @@ impl App {
 
         if let Some(path) = &self.bootrom_path {
             let bootrom = std::fs::read(path).unwrap();
-            self.gb.insert_bootrom(Some(bootrom));
-        } else {
-            self.gb.insert_bootrom(None);
+            self.gb.insert_bootrom(bootrom);
         }
 
         // Maybe let the UI handle the errors?

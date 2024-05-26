@@ -58,10 +58,6 @@ impl Bootrom {
         }
     }
 
-    pub fn is_loaded(&self) -> bool {
-        self.data.is_some()
-    }
-
     pub fn is_active(&self) -> bool {
         self.is_active
     }

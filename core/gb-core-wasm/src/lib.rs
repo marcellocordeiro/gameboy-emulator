@@ -39,7 +39,6 @@ impl GameBoy {
     }
 
     pub fn insert_cartridge(&mut self, rom: Vec<u8>) {
-        self.gb.insert_bootrom(None);
         self.gb.insert_cartridge(rom).unwrap();
     }
 

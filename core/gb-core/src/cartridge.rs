@@ -75,9 +75,13 @@ impl Cartridge {
             sgb_flag,
             licensee_code,
         })
+        .and_then(|c| {
+            c.validate();
+            Ok(c)
+        })
     }
 
-    pub fn validate(&self) {
+    fn validate(&self) {
         // MBC2 always contains RAM, even when `ram_banks == 0`.
         if self.mbc_type != MbcType::Mbc2 {
             let has_ram = self.extra_features.contains(&ExtraFeature::Ram);

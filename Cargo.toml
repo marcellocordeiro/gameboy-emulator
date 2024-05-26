@@ -7,7 +7,6 @@ members = [
   "core/gb-opcode-info",
   "platform/eframe",
   "platform/libretro",
-  "platform/pixels",
   "platform/sdl2-rust",
 ]
 
@@ -51,11 +50,8 @@ console_error_panic_hook = "0.1.7"
 console_log = "1.0.0"
 eframe = { version = "0.27.2", default-features = false }
 egui = "0.27.2"
-egui-wgpu = "0.27.2"
-egui-winit = { version = "0.27.2", default-features = false }
 enum_dispatch = "0.3.13"
 env_logger = "0.11.3"
-error-iter = "0.4.1"
 gb-core = { path = "./core/gb-core" }
 image = { version = "0.25.1", default-features = false }
 itertools = "0.13.0"
@@ -65,17 +61,8 @@ num = { version = "0.4.3", default-features = false }
 paste = "1.0.15"
 rfd = "0.14.1"
 sdl2 = "0.36.0"
-serde = { version = "1.0.202", features = ["derive"] }
+serde = { version = "1.0.203", features = ["derive"] }
 serde_json = "1.0.117"
 thiserror = "1.0.61"
 wasm-bindgen = "0.2.92"
-winit = "0.29.15"
-winit_input_helper = "0.16.0"
-
-[workspace.dependencies.pixels]
-git = "https://github.com/marcellocordeiro/pixels"
-rev = "56615cb978814d72ee1d71128e1a776d594a8bf4"
-
-[workspace.dependencies.web-sys]
-features = ["CanvasRenderingContext2d", "HtmlCanvasElement", "ImageData"]
-version = "0.3.69"
+web-sys = "0.3.69"

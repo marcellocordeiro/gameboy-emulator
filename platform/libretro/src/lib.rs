@@ -87,7 +87,6 @@ impl RetroCore for Emulator {
             }
         };
 
-        self.gb.insert_bootrom(None);
         let result = self.gb.insert_cartridge(rom);
 
         match result {

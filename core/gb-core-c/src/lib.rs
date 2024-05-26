@@ -50,7 +50,6 @@ pub unsafe extern "C" fn gameboy_insert_cartridge(
 
     let vec = unsafe { std::slice::from_raw_parts(rom, rom_size).to_vec() };
 
-    gb.insert_bootrom(None);
     gb.insert_cartridge(vec).unwrap();
 }
 
