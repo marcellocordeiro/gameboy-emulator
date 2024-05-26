@@ -75,9 +75,9 @@ impl Cartridge {
             sgb_flag,
             licensee_code,
         })
-        .and_then(|c| {
+        .map(|c| {
             c.validate();
-            Ok(c)
+            c
         })
     }
 
