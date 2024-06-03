@@ -11,7 +11,7 @@
 
 | Test                    | State                  | Comment              |
 | ----------------------- | ---------------------- | -------------------- |
-| add_sp_e_timing         | :x:                    |                      |
+| add_sp_e_timing         | :white_check_mark:     |                      |
 | boot_div-S              | :arrow_forward:        | SGB                  |
 | boot_div-dmg0           | :arrow_forward:        | DMG0                 |
 | boot_div-dmgABCmgb      | :x:                    |                      |
@@ -24,10 +24,10 @@
 | boot_regs-mgb           | :arrow_forward:        | MGB                  |
 | boot_regs-sgb           | :arrow_forward:        | SGB                  |
 | boot_regs-sgb2          | :arrow_forward:        | SGB                  |
-| call_cc_timing          | :x:                    |                      |
-| call_cc_timing2         | :x:                    |                      |
-| call_timing             | :x:                    |                      |
-| call_timing2            | :x:                    |                      |
+| call_cc_timing          | :white_check_mark:     |                      |
+| call_cc_timing2         | :white_check_mark:     |                      |
+| call_timing             | :white_check_mark:     |                      |
+| call_timing2            | :white_check_mark:     |                      |
 | di_timing-GS            | :large_orange_diamond: | Passes on CGB.       |
 | div_timing              | :white_check_mark:     |                      |
 | ei_sequence             | :white_check_mark:     |                      |
@@ -38,20 +38,20 @@
 | halt_ime1_timing2-GS    | :x:                    |                      |
 | if_ie_registers         | :white_check_mark:     |                      |
 | intr_timing             | :x:                    |                      |
-| jp_cc_timing            | :x:                    |                      |
-| jp_timing               | :x:                    |                      |
-| ld_hl_sp_e_timing       | :x:                    |                      |
-| oam_dma_restart         | :x:                    |                      |
+| jp_cc_timing            | :white_check_mark:     |                      |
+| jp_timing               | :white_check_mark:     |                      |
+| ld_hl_sp_e_timing       | :white_check_mark:     |                      |
+| oam_dma_restart         | :white_check_mark:     |                      |
 | oam_dma_start           | :x:                    |                      |
-| oam_dma_timing          | :x:                    |                      |
+| oam_dma_timing          | :white_check_mark:     |                      |
 | pop_timing              | :white_check_mark:     |                      |
-| push_timing             | :x:                    |                      |
+| push_timing             | :white_check_mark:     |                      |
 | rapid_di_ei             | :white_check_mark:     |                      |
-| ret_cc_timing           | :x:                    |                      |
-| ret_timing              | :x:                    |                      |
-| reti_intr_timing        | :x:                    |                      |
-| reti_timing             | :x:                    |                      |
-| rst_timing              | :x:                    |                      |
+| ret_cc_timing           | :white_check_mark:     |                      |
+| ret_timing              | :white_check_mark:     |                      |
+| reti_intr_timing        | :white_check_mark:     |                      |
+| reti_timing             | :white_check_mark:     |                      |
+| rst_timing              | :white_check_mark:     |                      |
 
 ## acceptance/bits
 
@@ -69,9 +69,9 @@
 
 ## acceptance/interrupts
 
-| Test    | State | Comment |
-| ------- | ----- | ------- |
-| ie_push | :x:   |         |
+| Test    | State              | Comment |
+| ------- | ------------------ | ------- |
+| ie_push | :white_check_mark: |         |
 
 ## acceptance/oam_dma
 
