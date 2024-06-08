@@ -144,7 +144,7 @@ impl Cpu {
     }
 
     /// LD B,B
-    pub(super) fn opcode_0x40(&mut self) {
+    pub(super) fn opcode_0x40(&self) {
         // Self assignment.
     }
 
@@ -189,7 +189,7 @@ impl Cpu {
     }
 
     /// LD C,C
-    pub(super) fn opcode_0x49(&mut self) {
+    pub(super) fn opcode_0x49(&self) {
         // Self assignment.
     }
 
@@ -234,7 +234,7 @@ impl Cpu {
     }
 
     /// LD D,D
-    pub(super) fn opcode_0x52(&mut self) {
+    pub(super) fn opcode_0x52(&self) {
         // Self assignment.
     }
 
@@ -279,7 +279,7 @@ impl Cpu {
     }
 
     /// LD E,E
-    pub(super) fn opcode_0x5b(&mut self) {
+    pub(super) fn opcode_0x5b(&self) {
         // Self assignment.
     }
 
@@ -324,7 +324,7 @@ impl Cpu {
     }
 
     /// LD H,H
-    pub(super) fn opcode_0x64(&mut self) {
+    pub(super) fn opcode_0x64(&self) {
         // Self assignment.
     }
 
@@ -369,7 +369,7 @@ impl Cpu {
     }
 
     /// LD L,L
-    pub(super) fn opcode_0x6d(&mut self) {
+    pub(super) fn opcode_0x6d(&self) {
         // Self assignment.
     }
 
@@ -475,7 +475,7 @@ impl Cpu {
     }
 
     /// LD A,A
-    pub(super) fn opcode_0x7f(&mut self) {
+    pub(super) fn opcode_0x7f(&self) {
         // Self assignment.
     }
 

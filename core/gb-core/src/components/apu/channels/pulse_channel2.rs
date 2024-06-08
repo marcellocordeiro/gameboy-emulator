@@ -33,21 +33,25 @@ impl PulseChannel2 {
     // Write
 
     /// FF16 — NR21: Channel 2 length timer & duty cycle
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr21(&mut self, value: u8) {
         //
     }
 
     /// FF17 — NR22: Channel 2 volume & envelope
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr22(&mut self, value: u8) {
         //
     }
 
     /// FF18 — NR23: Channel 2 period low [write-only]
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr23(&mut self, value: u8) {
         //
     }
 
     /// FF19 — NR24: Channel 2 period high & control
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr24(&mut self, value: u8) {
         //
     }

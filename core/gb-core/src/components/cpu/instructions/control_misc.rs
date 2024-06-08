@@ -9,7 +9,7 @@ impl Cpu {
     }
 
     /// STOP
-    pub(super) fn opcode_0x10(&mut self, memory: &mut impl MemoryInterface) {
+    pub(super) fn opcode_0x10(&self, memory: &mut impl MemoryInterface) {
         // TODO?
 
         memory.speed_switch_mut().process_speed_switch();

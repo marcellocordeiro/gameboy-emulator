@@ -41,26 +41,31 @@ impl WaveChannel {
     // Registers (write)
 
     /// FF1A — NR30: Channel 3 DAC enable
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr30(&mut self, value: u8) {
         //
     }
 
     /// FF1B — NR31: Channel 3 length timer [write-only]
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr31(&mut self, value: u8) {
         //
     }
 
     /// FF1C — NR32: Channel 3 output level
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr32(&mut self, value: u8) {
         //
     }
 
     /// FF1D — NR33: Channel 3 period low [write-only]
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr33(&mut self, value: u8) {
         //
     }
 
     /// FF1E — NR34: Channel 3 period high & control
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr34(&mut self, value: u8) {
         //
     }
@@ -81,5 +86,6 @@ impl WaveChannel {
         todo!();
     }
 
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write(&mut self, address: u16, value: u8) {}
 }

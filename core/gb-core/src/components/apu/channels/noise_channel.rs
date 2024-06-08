@@ -33,21 +33,25 @@ impl NoiseChannel {
     // Write
 
     /// FF20 — NR41: Channel 4 length timer [write-only]
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr41(&mut self, value: u8) {
         //
     }
 
     /// FF21 — NR42: Channel 4 volume & envelope
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr42(&mut self, value: u8) {
         //
     }
 
     /// FF22 — NR43: Channel 4 frequency & randomness
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr43(&mut self, value: u8) {
         //
     }
 
     /// FF23 — NR44: Channel 4 control
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr44(&mut self, value: u8) {
         //
     }

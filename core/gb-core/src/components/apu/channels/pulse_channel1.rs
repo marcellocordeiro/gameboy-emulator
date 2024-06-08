@@ -34,26 +34,31 @@ impl PulseChannel1 {
     }
 
     /// FF10 — NR10: Channel 1 sweep
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr10(&mut self, value: u8) {
         //
     }
 
     /// FF11 — NR11: Channel 1 length timer & duty cycle
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr11(&mut self, value: u8) {
         //
     }
 
     /// FF12 — NR12: Channel 1 volume & envelope
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr12(&mut self, value: u8) {
         //
     }
 
     /// FF13 — NR13: Channel 1 period low [write-only]
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr13(&mut self, value: u8) {
         //
     }
 
     /// FF14 — NR14: Channel 1 period high & control
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn write_nr14(&mut self, value: u8) {
         //
     }

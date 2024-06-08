@@ -49,6 +49,7 @@ impl Apu {
         self.channel1.enabled = true;
     }
 
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn tick(&mut self, _div: u8) {}
 
     pub fn add_callback(&mut self, callback: Box<Callback>) {
