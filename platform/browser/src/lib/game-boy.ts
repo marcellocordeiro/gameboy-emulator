@@ -10,7 +10,7 @@ export const SCREEN_WIDTH = 160;
 export const SCREEN_HEIGHT = 144;
 
 export function loadCartridge(rom: Uint8Array) {
-  gameBoy.load_cartridge(rom);
+  gameBoy.insert_cartridge(rom);
 }
 
 export function reset() {
