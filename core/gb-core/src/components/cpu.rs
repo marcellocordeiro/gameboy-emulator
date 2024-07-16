@@ -71,7 +71,8 @@ impl Cpu {
     }
 
     fn handle_interrupts(&mut self, memory: &mut impl MemoryInterface) {
-        if !self.registers.ime.is_enabled_mut() {
+        if !self.registers.ime.is_enabled() {
+            self.registers.ime.process_request();
             return;
         }
 

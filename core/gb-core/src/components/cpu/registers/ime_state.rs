@@ -14,7 +14,7 @@ impl ImeState {
         }
     }
 
-    /// Delayed by one instruction.
+    /// Delayed by one cycle.
     pub fn request_enable(&mut self) {
         if *self == Self::Disabled {
             *self = Self::Pending;
@@ -29,16 +29,9 @@ impl ImeState {
         *self = Self::Disabled;
     }
 
-    /// Processes a pending request and returns the status.
-    pub fn is_enabled_mut(&mut self) -> bool {
-        match self {
-            Self::Disabled => false,
-            Self::Enabled => true,
-            Self::Pending => {
-                *self = Self::Enabled;
-
-                false
-            }
+    pub fn process_request(&mut self) {
+        if *self == Self::Pending {
+            *self = Self::Enabled;
         }
     }
 }
@@ -60,26 +53,86 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_delay() {
+    fn test_initial_state() {
         let mut ime_state = ImeState::default();
 
         assert_eq!(ime_state, ImeState::Disabled);
         assert!(!ime_state.is_enabled());
-        assert!(!ime_state.is_enabled_mut());
+
+        // Shouldn't do anything.
+        ime_state.process_request(); 
+
         assert_eq!(ime_state, ImeState::Disabled);
-
-        ime_state.request_enable();
-        assert_eq!(ime_state, ImeState::Pending);
-
         assert!(!ime_state.is_enabled());
-        assert!(!ime_state.is_enabled_mut()); // Mutates the value.
-        assert_eq!(ime_state, ImeState::Enabled);
+    }
+
+    #[test]
+    fn test_request() {
+        let mut ime_state = ImeState::default();
+
+        // Shouldn't do anything.
+        ime_state.process_request();
+
+        assert_eq!(ime_state, ImeState::Disabled);
+        assert!(!ime_state.is_enabled());
+
+        // Requesting (Disabled -> Pending)
+        ime_state.request_enable();
+
+        assert_eq!(ime_state, ImeState::Pending);
+        assert!(!ime_state.is_enabled());
+
+        // Requesting again shouldn't do anything.
+        ime_state.request_enable();
+
+        assert_eq!(ime_state, ImeState::Pending);
+        assert!(!ime_state.is_enabled());
+    }
+
+    #[test]
+    fn test_process() {
+        let mut ime_state = ImeState::default();
 
         ime_state.request_enable();
-        assert_eq!(ime_state, ImeState::Enabled);
+
+        assert_eq!(ime_state, ImeState::Pending);
+        assert!(!ime_state.is_enabled());
+
+        // Processing (Pending -> Enabled)
+        ime_state.process_request();  
 
         assert!(ime_state.is_enabled());
-        assert!(ime_state.is_enabled_mut());
+        assert_eq!(ime_state, ImeState::Enabled);
+
+        // Processing again shouldn't do anything.
+        ime_state.process_request();  
+
+        assert!(ime_state.is_enabled());
+        assert_eq!(ime_state, ImeState::Enabled);
+
+        // Requesting again shouldn't do anything.
+        ime_state.request_enable();  
+
+        assert!(ime_state.is_enabled());
+        assert_eq!(ime_state, ImeState::Enabled);
+    }
+
+    #[test]
+    fn test_e2e() {
+        let mut ime_state = ImeState::default();
+
+        // Cycle 1
+        assert!(!ime_state.is_enabled());
+        assert_eq!(ime_state, ImeState::Disabled);
+        ime_state.request_enable();
+
+        // Cycle 2
+        assert!(!ime_state.is_enabled());
+        assert_eq!(ime_state, ImeState::Pending);
+        ime_state.process_request();
+
+        // Cycle 3
+        assert!(ime_state.is_enabled());
         assert_eq!(ime_state, ImeState::Enabled);
     }
 }
