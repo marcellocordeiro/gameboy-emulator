@@ -34,7 +34,7 @@ mod tests {
                 LineSelection::Both,
                 LineSelection::from_joyp_bits((joyp & !JOYP_SELECTION_MASK) | mask),
                 "with joyp = {:#010b}",
-                (joyp | mask)
+                joyp | mask
             );
         }
     }
@@ -48,7 +48,7 @@ mod tests {
                 LineSelection::Action,
                 LineSelection::from_joyp_bits((joyp & !JOYP_SELECTION_MASK) | mask),
                 "with joyp = {:#010b}",
-                (joyp | mask)
+                joyp | mask
             );
         }
     }
@@ -62,7 +62,7 @@ mod tests {
                 LineSelection::Direction,
                 LineSelection::from_joyp_bits((joyp & !JOYP_SELECTION_MASK) | mask),
                 "with joyp = {:#010b}",
-                (joyp | mask)
+                joyp | mask
             );
         }
     }
@@ -76,7 +76,7 @@ mod tests {
                 LineSelection::None,
                 LineSelection::from_joyp_bits((joyp & !JOYP_SELECTION_MASK) | mask),
                 "with joyp = {:#010b}",
-                (joyp | mask)
+                joyp | mask
             );
         }
     }

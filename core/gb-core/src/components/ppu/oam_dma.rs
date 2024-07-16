@@ -31,7 +31,7 @@ pub struct OamDma {
 }
 
 impl OamDma {
-    /// Used to check whether or not normal R/W to the OAM should be blocked or not.
+    /// Used to check whether normal R/W to the OAM should be blocked or not.
     ///
     /// After a DMA write (when Idle), the first byte transfer is delayed by 1 M-cycle.
     /// However, because the emulator advances the DMA transfer before any reads or writes
@@ -272,7 +272,7 @@ mod tests {
         assert_eq!(
             oam_dma.status,
             Status::ActiveFirstStep {
-                base_source: ((0xFF * 0x100) - 0x2000)
+                base_source: (0xFF * 0x100) - 0x2000
             }
         );
         assert!(!oam_dma.is_active());
@@ -295,7 +295,7 @@ mod tests {
                 assert_eq!(
                     oam_dma.status,
                     Status::Active {
-                        base_source: ((0xFF * 0x100) - 0x2000),
+                        base_source: (0xFF * 0x100) - 0x2000,
                         offset
                     }
                 );
@@ -377,6 +377,6 @@ mod tests {
         // Next cycle
         assert_eq!(oam_dma.perform_dma(), Some((0x03, 0xFE03)));
 
-        assert_eq!(oam_dma.perform_dma(), Some(((0x02 * 0x100), 0xFE00)));
+        assert_eq!(oam_dma.perform_dma(), Some((0x02 * 0x100, 0xFE00)));
     }
 }

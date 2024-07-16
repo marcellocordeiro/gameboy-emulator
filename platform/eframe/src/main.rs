@@ -44,7 +44,7 @@ fn main() -> Result<(), eframe::Error> {
     eframe::run_native(
         "gameboy-emulator",
         native_options,
-        Box::new(move |cc| Box::new(App::new(cc, device_model, bootrom_path, rom_path))),
+        Box::new(move |cc| Ok(Box::new(App::new(cc, device_model, bootrom_path, rom_path)))),
     )
 }
 
