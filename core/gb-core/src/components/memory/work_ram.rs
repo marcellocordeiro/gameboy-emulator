@@ -1,34 +1,23 @@
 use crate::{constants::ONE_KIB, utils::macros::in_cgb_mode, DeviceModel};
 
-// const DMG_WRAM_BANKS: usize = 2;
+const DMG_WRAM_BANKS: usize = 2;
 const CGB_WRAM_BANKS: usize = 8;
 
 /// 4KiB each, 4096 (0x1000)
 const WRAM_BANK_SIZE: usize = 4 * ONE_KIB;
 
 // DMG: 8192 (0x2000)
-// const DMG_WRAM_SIZE: usize = DMG_WRAM_BANKS * WRAM_BANK_SIZE;
+const DMG_WRAM_SIZE: usize = DMG_WRAM_BANKS * WRAM_BANK_SIZE;
 
 /// CGB: 32768 (0x8000)
 const CGB_WRAM_SIZE: usize = CGB_WRAM_BANKS * WRAM_BANK_SIZE;
 
 pub struct WorkRam {
-    data: [u8; CGB_WRAM_SIZE],
+    data: Box<[u8]>,
     svbk: u8, // (CGB) WRAM Bank Select.
 
     cgb_mode: bool,
     device_model: DeviceModel,
-}
-
-impl Default for WorkRam {
-    fn default() -> Self {
-        Self {
-            data: [0; CGB_WRAM_SIZE], // can't default this :(
-            svbk: 0,
-            cgb_mode: false,
-            device_model: DeviceModel::default(),
-        }
-    }
 }
 
 impl WorkRam {
@@ -39,9 +28,16 @@ impl WorkRam {
     // 0xE000 ~ 0xFDFF: ECHO RAM (prohibited area, but mirrors 0xC000 ~ 0xDDFF).
 
     pub fn with_device_model(device_model: DeviceModel) -> Self {
+        let size = match device_model {
+            DeviceModel::Dmg => DMG_WRAM_SIZE,
+            DeviceModel::Cgb => CGB_WRAM_SIZE,
+        };
+
         Self {
+            data: vec![0; size].into_boxed_slice(),
+            svbk: u8::default(),
+            cgb_mode: bool::default(),
             device_model,
-            ..Default::default()
         }
     }
 
@@ -109,7 +105,6 @@ mod tests {
     use super::*;
 
     #[test]
-    #[ignore = "maybe adjust this?"]
     fn test_my_sanity_dmg() {
         let wram = WorkRam::with_device_model(DeviceModel::Dmg);
         assert_eq!(wram.data.len(), 0x2000);

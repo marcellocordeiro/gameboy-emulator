@@ -17,7 +17,6 @@ use crate::{
 };
 
 #[allow(clippy::struct_excessive_bools)]
-#[derive(Default)]
 pub struct Ppu {
     // Registers
     lcdc: LcdControl,
@@ -77,9 +76,35 @@ impl Ppu {
         let vram = VideoRam::with_device_model(device_model);
 
         Self {
+            lcdc: LcdControl::default(),
+            stat: LcdStatus::default(),
+            scy: u8::default(),
+            scx: u8::default(),
+            ly: u8::default(),
+            lyc: u8::default(),
+            bgp: u8::default(),
+            obp0: u8::default(),
+            obp1: u8::default(),
+            wy: u8::default(),
+            wx: u8::default(),
+            window_internal_counter: u8::default(),
+            bcps: u8::default(),
+            bg_cram: ColorRam::default(),
+            ocps: u8::default(),
+            obj_cram: ColorRam::default(),
+            opri: bool::default(),
+            stat_irq: bool::default(),
+            vblank_irq: bool::default(),
             vram,
+            oam: Oam::default(),
+            oam_dma: OamDma::default(),
+            vram_dma: VramDma::default(),
+            mode: StatusMode::default(),
+            cycles: u32::default(),
+            cgb_mode: bool::default(),
             device_model,
-            ..Default::default()
+            screen: Screen::default(),
+            internal_screen: Screen::default(),
         }
     }
 

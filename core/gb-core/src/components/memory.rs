@@ -38,7 +38,6 @@ pub trait MemoryInterface {
     fn interrupts_mut(&mut self) -> &mut Interrupts;
 }
 
-#[derive(Default)]
 pub struct Memory {
     bootrom: Bootrom,
 
@@ -314,12 +313,20 @@ impl Memory {
         let undocumented_registers = UndocumentedRegisters::with_device_model(device_model);
 
         let mut memory = Self {
+            bootrom: Bootrom::default(),
             wram,
+            hram: HighRam::default(),
+            mbc: Option::default(),
             ppu,
+            apu: Apu::default(),
+            joypad: Joypad::default(),
+            serial: Serial::default(),
+            timer: Timer::default(),
             speed_switch,
+            interrupts: Interrupts::default(),
             undocumented_registers,
+            cgb_mode: bool::default(),
             device_model,
-            ..Default::default()
         };
 
         if device_is_cgb!(memory) {

@@ -10,40 +10,37 @@ use crate::{
     DeviceModel,
 };
 
-// const DMG_VRAM_BANKS: usize = 1;
+const DMG_VRAM_BANKS: usize = 1;
 const CGB_VRAM_BANKS: usize = 2;
 
 const VRAM_BANK_SIZE: usize = 0x2000;
 
-// const DMG_VRAM_SIZE: usize = DMG_VRAM_BANKS * VRAM_BANK_SIZE; // DMG: 8192 (0x2000)
+const DMG_VRAM_SIZE: usize = DMG_VRAM_BANKS * VRAM_BANK_SIZE; // DMG: 8192 (0x2000)
 const CGB_VRAM_SIZE: usize = CGB_VRAM_BANKS * VRAM_BANK_SIZE; // CGB: 16384 (0x4000)
 
 pub struct VideoRam {
-    data: [u8; CGB_VRAM_SIZE],
+    // data: [u8; CGB_VRAM_SIZE],
+    data: Box<[u8]>,
     vbk: u8,
 
     cgb_mode: bool,
     device_model: DeviceModel,
 }
 
-impl Default for VideoRam {
-    fn default() -> Self {
-        Self {
-            data: [0; CGB_VRAM_SIZE], // can't default this :(
-            vbk: 0,
-            cgb_mode: false,
-            device_model: DeviceModel::default(),
-        }
-    }
-}
-
 impl VideoRam {
     // 0x8000 ~ 0x9FFF
 
     pub fn with_device_model(device_model: DeviceModel) -> Self {
+        let size = match device_model {
+            DeviceModel::Dmg => DMG_VRAM_SIZE,
+            DeviceModel::Cgb => CGB_VRAM_SIZE,
+        };
+
         Self {
+            data: vec![0; size].into_boxed_slice(),
+            vbk: u8::default(),
+            cgb_mode: bool::default(),
             device_model,
-            ..Default::default()
         }
     }
 
@@ -183,7 +180,6 @@ mod tests {
     use super::*;
 
     #[test]
-    #[ignore = "maybe adjust this?"]
     fn test_my_sanity_dmg() {
         let vram = VideoRam::with_device_model(DeviceModel::Dmg);
         assert_eq!(vram.data.len(), 0x2000);

@@ -60,7 +60,7 @@ mod tests {
         assert!(!ime_state.is_enabled());
 
         // Shouldn't do anything.
-        ime_state.process_request(); 
+        ime_state.process_request();
 
         assert_eq!(ime_state, ImeState::Disabled);
         assert!(!ime_state.is_enabled());
@@ -99,19 +99,19 @@ mod tests {
         assert!(!ime_state.is_enabled());
 
         // Processing (Pending -> Enabled)
-        ime_state.process_request();  
+        ime_state.process_request();
 
         assert!(ime_state.is_enabled());
         assert_eq!(ime_state, ImeState::Enabled);
 
         // Processing again shouldn't do anything.
-        ime_state.process_request();  
+        ime_state.process_request();
 
         assert!(ime_state.is_enabled());
         assert_eq!(ime_state, ImeState::Enabled);
 
         // Requesting again shouldn't do anything.
-        ime_state.request_enable();  
+        ime_state.request_enable();
 
         assert!(ime_state.is_enabled());
         assert_eq!(ime_state, ImeState::Enabled);
