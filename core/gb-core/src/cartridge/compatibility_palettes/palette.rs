@@ -2,7 +2,10 @@
 // 1. https://gbdev.io/pandocs/Power_Up_Sequence.html#compatibility-palettes
 // 2. https://github.com/LIJI32/SameBoy/blob/master/BootROMs/cgb_boot.asm
 
-pub const fn from_index_start(id: usize) -> [u16; 4] {
+/// **Fourth step**
+///
+/// Returns the palette from the id obtained in the previous step.
+pub const fn palette_from_id(id: usize) -> [u16; 4] {
     [
         PALETTE_LOOKUP_TABLE[id],
         PALETTE_LOOKUP_TABLE[id + 1],
@@ -11,7 +14,7 @@ pub const fn from_index_start(id: usize) -> [u16; 4] {
     ]
 }
 
-pub const PALETTE_LOOKUP_TABLE: [u16; 120] = [
+const PALETTE_LOOKUP_TABLE: [u16; 120] = [
     0x7FFF, 0x32BF, 0x00D0, 0x0000, // 0
     0x639F, 0x4279, 0x15B0, 0x04CB, // 1
     0x7FFF, 0x6E31, 0x454A, 0x0000, // 2

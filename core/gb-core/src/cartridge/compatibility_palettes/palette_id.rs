@@ -2,7 +2,15 @@
 // 1. https://gbdev.io/pandocs/Power_Up_Sequence.html#compatibility-palettes
 // 2. https://github.com/LIJI32/SameBoy/blob/master/BootROMs/cgb_boot.asm
 
-pub const PALETTE_ID_LOOKUP_TABLE: [usize; 94] = [
+/// **Second step**
+///
+/// Used to obtain the palette id given its index from the lookup table.
+pub const fn get_palette_id(index: usize) -> usize {
+    PALETTE_ID[index]
+}
+
+/// Indexeded by the index of the title checksum.
+const PALETTE_ID: [usize; 94] = [
     0,  // Default Palette
     4,  // ALLEY WAY
     5,  // YAKUMAN

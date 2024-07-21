@@ -2,8 +2,8 @@ use super::error::Error;
 
 /// Not the actual start, we're starting at 0 for convenience, as 0..0x100 is the bootrom area.
 /// The actual start is at 0x100.
-pub const HEADER_START: usize = 0;
-pub const HEADER_END: usize = 0x014F;
+const HEADER_START: usize = 0;
+const HEADER_END: usize = 0x014F;
 
 pub const HEADER_SIZE: usize = HEADER_START + HEADER_END + 1;
 

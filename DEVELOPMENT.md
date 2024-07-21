@@ -25,9 +25,27 @@ cargo +nightly fmt --all && cargo clippy --all-targets
 https://github.com/flamegraph-rs/flamegraph
 
 ```sh
+# cargo
+cargo install flamegraph
+
 # Arch
 sudo pacman -S cargo-flamegraph
 
 cargo flamegraph --dev -- roms/rom.gb
 CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph -- roms/rom.gb
+```
+
+## Upgrading packages
+
+```sh
+# cargo
+cargo install cargo-edit
+
+# brew
+brew install cargo-edit
+
+# Arch
+sudo pacman -S cargo-edit
+
+cargo upgrade -i && cargo update
 ```

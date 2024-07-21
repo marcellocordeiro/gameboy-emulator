@@ -2,10 +2,36 @@
 // 1. https://gbdev.io/pandocs/Power_Up_Sequence.html#compatibility-palettes
 // 2. https://github.com/LIJI32/SameBoy/blob/master/BootROMs/cgb_boot.asm
 
-use super::palette_lookup_type::PaletteLookupKind::{self, Normal, Raw};
+use super::palette::palette_from_id;
+use crate::cartridge::compatibility_palettes::CompatibilityPalettes;
+
+/// **Third step**
+///
+/// From the palette id, get each palette for BG0, OBJ1 and OBJ2.
+pub const fn get_palettes_from_id(id: usize) -> CompatibilityPalettes {
+    let (obj0, obj1, bg0) = match PALETTE_COMBINATIONS[id] {
+        PaletteLookupKind::Normal(obj0, obj1, bg0) => (obj0 * 4, obj1 * 4, bg0 * 4),
+        PaletteLookupKind::Raw(obj0, obj1, bg0) => (obj0, obj1, bg0),
+    };
+
+    CompatibilityPalettes {
+        bg0: palette_from_id(bg0),
+        obj0: palette_from_id(obj0),
+        obj1: palette_from_id(obj1),
+    }
+}
+
+/// (OBJ0, OBJ1, BG0)
+#[derive(Debug, Clone, Copy)]
+enum PaletteLookupKind {
+    Normal(usize, usize, usize),
+    Raw(usize, usize, usize),
+}
+
+use PaletteLookupKind::{Normal, Raw};
 
 #[allow(clippy::erasing_op)]
-pub const PALETTE_COMBINATIONS: [PaletteLookupKind; 51] = [
+const PALETTE_COMBINATIONS: [PaletteLookupKind; 51] = [
     Normal(4, 4, 29),
     Normal(18, 18, 18),
     Normal(20, 20, 20),

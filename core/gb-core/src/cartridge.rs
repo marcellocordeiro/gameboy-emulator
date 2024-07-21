@@ -61,8 +61,11 @@ impl Cartridge {
         log::info!("RAM banks: {ram_banks}");
         log::info!("CGB flag: {cgb_flag}");
         log::info!("SGB flag: {sgb_flag:?}");
-        log::info!("Old licensee code: {:#04X}", licensee_code.old());
-        log::info!("New licensee code: {}", licensee_code.new_as_string());
+        log::info!("Old licensee code: {:#04X}", licensee_code.old_code());
+        log::info!(
+            "New licensee code: {}",
+            licensee_code.new_code().unwrap_or("--")
+        );
 
         Ok(Self {
             rom,
