@@ -17,6 +17,9 @@ jobs:
         with:
           submodules: "true"
 
+      - name: Update Rust toolchain
+        run: rustup update
+
       - name: Install pnpm
         run: npm install -g pnpm@latest
 

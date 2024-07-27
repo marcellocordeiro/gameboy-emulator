@@ -18,6 +18,9 @@ jobs:
         with:
           submodules: "true"
 
+      - name: Update Rust toolchain
+        run: rustup update
+
       - name: Build
         run: cargo build --verbose
 
