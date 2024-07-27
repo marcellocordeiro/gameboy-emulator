@@ -1,11 +1,11 @@
-use std::sync::OnceLock;
+use std::sync::LazyLock;
 
 use crate::opcodes::{parse_json, OpcodeTable};
 
-static OPCODES: OnceLock<OpcodeTable> = OnceLock::new();
+static OPCODES: LazyLock<OpcodeTable> = LazyLock::new(|| parse_json().unwrap());
 
 pub fn opcodes() -> &'static OpcodeTable {
-    OPCODES.get_or_init(|| parse_json().unwrap())
+    &OPCODES
 }
 
 #[cfg(test)]

@@ -6,8 +6,8 @@ let filePath = CommandLine.arguments[1]
 let url = URL(filePath: filePath)
 let rom = try [UInt8](Data(contentsOf: url))
 
-let gb = GameBoy()
-gb.load(rom)
+let gb = GameBoy(cgb: true)
+gb.load(rom: rom, bootrom: nil)
 
 guard SDL_Init(SDL_INIT_VIDEO) == 0 else {
     fatalError("SDL could not initialize! SDL_Error: \(String(cString: SDL_GetError()))")
@@ -51,7 +51,7 @@ while !quit {
             break
         }
     }
-    
+
     gb.runFrame()
     gb.draw(frame: &frame)
 

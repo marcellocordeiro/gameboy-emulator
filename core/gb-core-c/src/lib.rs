@@ -3,11 +3,15 @@ use gb_core::{DeviceModel, GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH};
 
 #[no_mangle]
 pub extern "C" fn gameboy_new(is_cgb: bool) -> *mut GameBoy {
-    Box::into_raw(Box::new(GameBoy::new(if is_cgb {
+    let device_model = if is_cgb {
         DeviceModel::Cgb
     } else {
         DeviceModel::Dmg
-    })))
+    };
+
+    let gb = GameBoy::new(device_model);
+
+    Box::into_raw(Box::new(gb))
 }
 
 /// # Safety
@@ -40,17 +44,26 @@ pub unsafe extern "C" fn gameboy_reset(gb_ptr: *mut GameBoy) {
 /// 1. The Game Boy core pointer cannot be null.
 /// 2. The ROM array pointer cannot be null.
 /// 3. The allocated size for the ROM has to be equal to `rom_size`.
+/// 4. The bootrom is optional, but if provided its allocated size has to be equal to `bootrom_size`.
 #[no_mangle]
-pub unsafe extern "C" fn gameboy_insert_cartridge(
+pub unsafe extern "C" fn gameboy_load(
     gb_ptr: *mut GameBoy,
     rom: *const u8,
     rom_size: usize,
+    bootrom: *const u8,
+    bootrom_size: usize,
 ) {
     let gb = &mut *gb_ptr;
 
-    let vec = unsafe { std::slice::from_raw_parts(rom, rom_size).to_vec() };
+    let rom = unsafe { std::slice::from_raw_parts(rom, rom_size).to_vec() };
 
-    gb.insert_cartridge(vec).unwrap();
+    let bootrom = if bootrom.is_null() {
+        None
+    } else {
+        Some(unsafe { std::slice::from_raw_parts(bootrom, bootrom_size).to_vec() })
+    };
+
+    gb.load(rom, bootrom).unwrap();
 }
 
 /// # Safety

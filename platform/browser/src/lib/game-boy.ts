@@ -4,13 +4,13 @@ import init, { GameBoy } from "gb-core-wasm";
 
 await init();
 
-const gameBoy = new GameBoy();
+const gameBoy = new GameBoy(false);
 
 export const SCREEN_WIDTH = 160;
 export const SCREEN_HEIGHT = 144;
 
-export function loadCartridge(rom: Uint8Array) {
-  gameBoy.insert_cartridge(rom);
+export function load(rom: Uint8Array) {
+  gameBoy.load(rom, null);
 }
 
 export function reset() {

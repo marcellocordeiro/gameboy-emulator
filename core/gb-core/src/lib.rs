@@ -56,8 +56,18 @@ impl GameBoy {
         }
     }
 
+    pub fn load(&mut self, rom: Vec<u8>, bootrom: Option<Vec<u8>>) -> Result<(), CartridgeError> {
+        if let Some(bootrom) = bootrom {
+            self.insert_bootrom(bootrom);
+        }
+
+        self.insert_cartridge(rom)?;
+
+        Ok(())
+    }
+
     /// Insert the bootrom before the cartridge (TODO: improve this).
-    pub fn insert_bootrom(&mut self, bootrom: Vec<u8>) {
+    fn insert_bootrom(&mut self, bootrom: Vec<u8>) {
         assert!(!self.cartridge_inserted());
 
         let bootrom = Arc::<Box<[u8]>>::from(bootrom.into_boxed_slice());
@@ -67,7 +77,7 @@ impl GameBoy {
     }
 
     /// Reset before inserting a new cartridge.
-    pub fn insert_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
+    fn insert_cartridge(&mut self, rom: Vec<u8>) -> Result<(), CartridgeError> {
         let cartridge = Cartridge::new(rom)?;
 
         self.memory.load_cartridge(&cartridge);

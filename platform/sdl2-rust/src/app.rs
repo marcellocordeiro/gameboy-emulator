@@ -1,6 +1,14 @@
 use std::time::{Duration, Instant};
 
-use gb_core::{GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
+use gb_core::{
+    GameBoy,
+    ScreenPixels,
+    EXTENSIONS,
+    EXTENSIONS_DESCRIPTION,
+    SCREEN_HEIGHT,
+    SCREEN_PIXELS_SIZE,
+    SCREEN_WIDTH,
+};
 use sdl2::{event::Event, keyboard::Keycode, pixels::PixelFormatEnum, render::Texture};
 
 use crate::key_mappings;
@@ -41,24 +49,6 @@ impl App {
             .build()
             .unwrap();
 
-        if let Some(path) = &self.bootrom_path {
-            let bootrom = std::fs::read(path).unwrap();
-            self.gb.insert_bootrom(bootrom);
-        }
-
-        // Maybe let the UI handle the errors?
-        if let Some(path) = &self.rom_path {
-            let rom = std::fs::read(path).unwrap();
-            self.gb.insert_cartridge(rom).unwrap();
-        } else {
-            let builder =
-                rfd::FileDialog::new().add_filter("Game Boy/Game Boy Color ROM", &["gb", "gbc"]);
-            let path = builder.pick_file().unwrap();
-
-            let rom = std::fs::read(path).unwrap();
-            self.gb.insert_cartridge(rom).unwrap();
-        }
-
         let mut canvas = window.into_canvas().present_vsync().build().unwrap();
 
         let texture_creator = canvas.texture_creator();
@@ -67,6 +57,27 @@ impl App {
             .unwrap();
 
         canvas.clear();
+
+        // Maybe let the UI handle the errors?
+        let rom_path = {
+            if let Some(path) = self.rom_path.clone() {
+                path
+            } else {
+                let builder =
+                    rfd::FileDialog::new().add_filter(EXTENSIONS_DESCRIPTION, &EXTENSIONS);
+                let path = builder.pick_file().unwrap().to_str().unwrap().to_owned();
+
+                path
+            }
+        };
+
+        let rom = std::fs::read(rom_path).unwrap();
+        let bootrom = self
+            .bootrom_path
+            .as_ref()
+            .map(|path| std::fs::read(path).unwrap());
+
+        self.gb.load(rom, bootrom).unwrap();
 
         let mut event_pump = sdl_context.event_pump().unwrap();
 

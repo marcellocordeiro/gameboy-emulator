@@ -21,13 +21,6 @@ impl App {
         bootrom_path: Option<String>,
         rom_path: Option<String>,
     ) -> Self {
-        let mut gb = GameBoy::new(device_model);
-
-        if let Some(path) = bootrom_path {
-            let bootrom = std::fs::read(path).unwrap();
-            gb.insert_bootrom(bootrom);
-        }
-
         // Maybe let the UI handle the errors?
         let rom_path = {
             if let Some(path) = rom_path {
@@ -42,8 +35,10 @@ impl App {
         };
 
         let rom = std::fs::read(&rom_path).unwrap();
+        let bootrom = bootrom_path.map(|path| std::fs::read(path).unwrap());
 
-        gb.insert_cartridge(rom).unwrap();
+        let mut gb = GameBoy::new(device_model);
+        gb.load(rom, bootrom).unwrap();
         load_battery(&mut gb, &rom_path);
 
         Self {

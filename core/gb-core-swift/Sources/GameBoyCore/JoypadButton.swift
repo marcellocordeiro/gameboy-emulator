@@ -9,7 +9,7 @@ public enum JoypadButton: Int, CaseIterable {
     case left = 5
     case up = 6
     case down = 7
-    
+
     public var toString: String {
         switch self {
         case .a:
@@ -30,7 +30,7 @@ public enum JoypadButton: Int, CaseIterable {
             "Down"
         }
     }
-    
+
     var toCoreButton: Button {
         switch self {
         case .a:

@@ -87,7 +87,7 @@ impl RetroCore for Emulator {
             }
         };
 
-        let result = self.gb.insert_cartridge(rom);
+        let result = self.gb.load(rom, None);
 
         match result {
             Ok(()) => RetroLoadGameResult::Success {

@@ -24,8 +24,8 @@ int main(int argc, char* argv[]) {
   fread(rom, sizeof(uint8_t), rom_size, file);
   fclose(file);
 
-  struct GameBoy* gb = gameboy_new();
-  gameboy_insert_cartridge(gb, rom, rom_size);
+  struct GameBoy* gb = gameboy_new(true);
+  gameboy_insert_cartridge(gb, rom, rom_size, nullptr, 0);
 
   free(rom);
 

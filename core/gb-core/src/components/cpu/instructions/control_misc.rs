@@ -12,6 +12,7 @@ impl Cpu {
     pub(super) fn opcode_0x10(&self, memory: &mut impl MemoryInterface) {
         // TODO?
 
+        // check for CGB mode?
         memory.speed_switch_mut().process_speed_switch();
     }
 

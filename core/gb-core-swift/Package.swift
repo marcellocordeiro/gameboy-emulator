@@ -9,7 +9,6 @@ let configDir = "debug"
 let configDir = "release"
 #endif
 
-
 let packageDir = Context.packageDirectory
 let rootDir = "\(packageDir)/../.."
 let libsDir = "\(rootDir)/target/\(configDir)"
@@ -21,7 +20,7 @@ let linkerSettings: [PackageDescription.LinkerSetting]
 #if os(macOS)
 linkerSettings = [
     .unsafeFlags(["-L\(libsDir)/"]),
-    .linkedLibrary(libName)
+    .linkedLibrary(libName),
 ]
 #else
 linkerSettings = [.linkedLibrary("\(libsDir)/\(staticLibFile)")]
@@ -30,19 +29,25 @@ linkerSettings = [.linkedLibrary("\(libsDir)/\(staticLibFile)")]
 let package = Package(
     name: "GameBoyCore",
     platforms: [
-        .macOS(.v14)
+        .macOS(.v14),
     ],
     products: [
-        .library(name: "GameBoyCore", targets: ["GameBoyCore"])
+        .library(name: "GameBoyCore", targets: ["GameBoyCore"]),
     ],
     targets: [
         .target(
             name: "CGameBoyCore",
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency"),
+            ],
             linkerSettings: linkerSettings
         ),
         .target(
             name: "GameBoyCore",
-            dependencies: ["CGameBoyCore"]
-        )
+            dependencies: ["CGameBoyCore"],
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency"),
+            ]
+        ),
     ]
 )

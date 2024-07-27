@@ -15,7 +15,7 @@ where
     F: FnOnce(&mut GameBoy) -> Result<(), Error>,
 {
     let mut gb = GameBoy::new(device_model);
-    gb.insert_cartridge(rom.to_vec()).unwrap();
+    gb.load(rom.to_vec(), None)?;
 
     runner(&mut gb)?;
 

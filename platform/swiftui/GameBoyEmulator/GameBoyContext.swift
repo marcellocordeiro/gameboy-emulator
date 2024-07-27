@@ -23,8 +23,8 @@ final class GameBoyContext {
     func load(_ url: URL) throws {
         let rom = try [UInt8](Data(contentsOf: url))
         
-        gb.load(rom)
-        
+        gb.load(rom: rom, bootrom: nil)
+
         timer = Timer.publish(every: 1 / 60, on: .current, in: .default)
             .autoconnect()
             .sink { _ in
