@@ -5,7 +5,7 @@ use itertools::Itertools;
 use self::{structs::Test, test_memory::TestMemory};
 use crate::components::{
     cpu::{tests::gameboy_cpu_tests::structs::State, Cpu},
-    memory::MemoryInterface,
+    memory::MemoryInterface as _,
 };
 
 mod structs;

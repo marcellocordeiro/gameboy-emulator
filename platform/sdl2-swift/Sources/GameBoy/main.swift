@@ -1,13 +1,21 @@
+import ArgumentParser
 import Foundation
 import GameBoyCore
 import SDL
 
-let filePath = CommandLine.arguments[1]
+struct Arguments: ParsableCommand {
+    @Argument(help: "Path to the ROM.")
+    var rom: String
+}
+
+let args = Arguments.parseOrExit()
+
+let filePath = args.rom
 let url = URL(filePath: filePath)
 let rom = try [UInt8](Data(contentsOf: url))
 
 let gb = GameBoy(cgb: true)
-gb.load(rom: rom, bootrom: nil)
+gb.load(bootrom: nil, rom: rom)
 
 guard SDL_Init(SDL_INIT_VIDEO) == 0 else {
     fatalError("SDL could not initialize! SDL_Error: \(String(cString: SDL_GetError()))")

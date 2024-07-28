@@ -6,7 +6,10 @@ use egui::{
     Image,
     TextureOptions,
 };
-use gb_core::{GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
+use gb_core::{
+    constants::{ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
+    GameBoy,
+};
 
 use crate::utils::scaling::integer_scaling_size;
 

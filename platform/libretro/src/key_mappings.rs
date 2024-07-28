@@ -1,4 +1,4 @@
-use gb_core::Button;
+use gb_core::utils::button::Button;
 use libretro_rs::RetroJoypadButton;
 
 pub trait LibretroKeyMappings {

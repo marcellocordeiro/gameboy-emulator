@@ -1,26 +1,30 @@
 use std::sync::Arc;
 
+use thiserror::Error;
+
 use self::{
-    bootrom::Bootrom,
+    bootrom::{Bootrom, BootromError},
     high_ram::HighRam,
     interrupts::Interrupts,
     speed_switch::SpeedSwitch,
     undocumented_registers::UndocumentedRegisters,
     work_ram::WorkRam,
 };
+use super::cartridge::{error::CartridgeError, info::cgb_flag::CgbFlag, Cartridge};
 use crate::{
-    cartridge::{Cartridge, CgbFlag},
-    components::{
-        apu::Apu,
-        joypad::Joypad,
-        mbc::{Mbc, MbcInterface},
-        ppu::Ppu,
-        serial::Serial,
-        timer::Timer,
-    },
+    components::{apu::Apu, joypad::Joypad, ppu::Ppu, serial::Serial, timer::Timer},
     utils::macros::{device_is_cgb, in_cgb_mode},
     DeviceModel,
 };
+
+#[derive(Debug, Error)]
+pub enum Error {
+    #[error("Failed to load the bootrom: {0}.")]
+    BootromError(#[from] BootromError),
+
+    #[error("Failed to load the cartridge: {0}.")]
+    CartridgeError(#[from] CartridgeError),
+}
 
 pub trait MemoryInterface {
     fn force_cycle(&mut self) {}
@@ -39,12 +43,12 @@ pub trait MemoryInterface {
 }
 
 pub struct Memory {
-    bootrom: Bootrom,
+    bootrom: Option<Bootrom>,
 
     wram: WorkRam,
     hram: HighRam,
 
-    pub(crate) mbc: Option<Mbc>,
+    pub(crate) cartridge: Option<Cartridge>,
     pub ppu: Ppu,
     pub(crate) apu: Apu,
 
@@ -70,20 +74,25 @@ impl MemoryInterface for Memory {
 
     fn read(&self, address: u16) -> u8 {
         match address {
-            0x0000..=0x00FF if self.bootrom.is_active() => self.bootrom.read(address),
+            0x0000..=0x00FF if self.bootrom.as_ref().is_some_and(Bootrom::is_active) => {
+                self.bootrom.as_ref().map_or(0xFF, |b| b.read(address))
+            }
 
-            0x0200..=0x08FF if self.bootrom.is_active() && device_is_cgb!(self) => {
-                self.bootrom.read(address)
+            0x0200..=0x08FF
+                if self.bootrom.as_ref().is_some_and(Bootrom::is_active)
+                    && device_is_cgb!(self) =>
+            {
+                self.bootrom.as_ref().map_or(0xFF, |b| b.read(address))
             }
 
             0x0000..=0x3FFF => self
-                .mbc
+                .cartridge
                 .as_ref()
                 .expect("Cartridge should be loaded")
                 .read_rom_bank_0(address),
 
             0x4000..=0x7FFF => self
-                .mbc
+                .cartridge
                 .as_ref()
                 .expect("Cartridge should be loaded")
                 .read_rom_bank_x(address),
@@ -91,7 +100,7 @@ impl MemoryInterface for Memory {
             0x8000..=0x9FFF => self.ppu.read_vram(address),
 
             0xA000..=0xBFFF => self
-                .mbc
+                .cartridge
                 .as_ref()
                 .expect("Cartridge should be loaded")
                 .read_ram(address),
@@ -133,7 +142,7 @@ impl MemoryInterface for Memory {
 
             0xFF4F => self.ppu.vram.read_vbk(), // (CGB) VRAM bank selection.
 
-            0xFF50 => self.bootrom.read_status(),
+            0xFF50 => self.bootrom.as_ref().map_or(0xFF, Bootrom::read_status),
 
             // (CGB) VRAM DMA.
             0xFF51 => self.ppu.vram_dma.read_hdma1(),
@@ -180,10 +189,10 @@ impl MemoryInterface for Memory {
 
     fn write(&mut self, address: u16, value: u8) {
         match address {
-            0x0000..=0x00FF if self.bootrom.is_active() => (),
+            0x0000..=0x00FF if self.bootrom.as_ref().is_some_and(Bootrom::is_active) => {}
 
             0x0000..=0x7FFF => self
-                .mbc
+                .cartridge
                 .as_mut()
                 .expect("Cartridge should be loaded")
                 .write_rom(address, value),
@@ -191,7 +200,7 @@ impl MemoryInterface for Memory {
             0x8000..=0x9FFF => self.ppu.write_vram(address, value),
 
             0xA000..=0xBFFF => self
-                .mbc
+                .cartridge
                 .as_mut()
                 .expect("Cartridge should be loaded")
                 .write_ram(address, value),
@@ -233,7 +242,11 @@ impl MemoryInterface for Memory {
 
             0xFF4F => self.ppu.vram.write_vbk(value), // (CGB) VRAM bank selection.
 
-            0xFF50 => self.bootrom.write_status(value),
+            0xFF50 => {
+                if let Some(bootrom) = &mut self.bootrom {
+                    bootrom.write_status(value);
+                }
+            }
 
             // (CGB) VRAM DMA.
             0xFF51 => self.ppu.vram_dma.write_hdma1(value),
@@ -313,10 +326,10 @@ impl Memory {
         let undocumented_registers = UndocumentedRegisters::with_device_model(device_model);
 
         let mut memory = Self {
-            bootrom: Bootrom::default(),
+            bootrom: Option::default(),
             wram,
             hram: HighRam::default(),
-            mbc: Option::default(),
+            cartridge: Option::default(),
             ppu,
             apu: Apu::default(),
             joypad: Joypad::default(),
@@ -388,20 +401,47 @@ impl Memory {
         }
     }
 
-    pub(crate) fn load_bootrom(&mut self, bootrom: Arc<Box<[u8]>>) {
-        self.bootrom = Bootrom::new(self.device_model, Some(bootrom));
-    }
+    pub(crate) fn load(
+        &mut self,
+        bootrom: Option<Arc<Box<[u8]>>>,
+        rom: Arc<Box<[u8]>>,
+    ) -> Result<(), Error> {
+        let cartridge = Cartridge::new(rom)?;
 
-    pub(crate) fn load_cartridge(&mut self, cartridge: &Cartridge) {
-        self.mbc = Some(Mbc::new(cartridge));
-    }
-
-    pub(crate) fn skip_bootrom(&mut self, cartridge: &Cartridge) {
-        if device_is_cgb!(self) {
-            self.set_cgb_mode(cartridge.cgb_flag.has_cgb_support());
+        if let Some(bootrom) = bootrom {
+            self.bootrom = Some(Bootrom::new(self.device_model, Some(bootrom))?);
+        } else {
+            self.skip_bootrom(&cartridge);
         }
 
-        self.bootrom.disable();
+        self.cartridge = Some(cartridge);
+
+        Ok(())
+    }
+
+    /*
+        pub(crate) fn load_bootrom(
+            &mut self,
+            bootrom: Option<Arc<Box<[u8]>>>,
+        ) -> Result<(), BootromError> {
+            self.bootrom = Bootrom::new(self.device_model, bootrom)?;
+
+            Ok(())
+        }
+
+        pub(crate) fn load_cartridge(&mut self, rom: Arc<Box<[u8]>>) -> Result<(), CartridgeError> {
+            // self.mbc = Some(Mbc::new(cartridge));
+            self.cartridge = Some(Cartridge::new(rom)?);
+
+            Ok(())
+        }
+    */
+    pub(crate) fn skip_bootrom(&mut self, cartridge: &Cartridge) {
+        if device_is_cgb!(self) {
+            self.set_cgb_mode(cartridge.info.cgb_flag.has_cgb_support());
+        }
+
+        self.bootrom.as_mut().map(Bootrom::disable);
         self.apu.skip_bootrom();
         self.ppu.skip_bootrom(cartridge);
         self.timer.skip_bootrom();
@@ -444,9 +484,9 @@ impl Memory {
     }
 }
 
-mod bootrom;
-mod high_ram;
-pub mod interrupts;
-pub mod speed_switch;
-mod undocumented_registers;
-mod work_ram;
+pub(crate) mod bootrom;
+pub(crate) mod high_ram;
+pub(crate) mod interrupts;
+pub(crate) mod speed_switch;
+pub(crate) mod undocumented_registers;
+pub(crate) mod work_ram;

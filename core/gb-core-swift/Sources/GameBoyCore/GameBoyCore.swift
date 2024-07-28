@@ -2,10 +2,10 @@ import CGameBoyCore
 import Foundation
 
 public final class GameBoy {
-    private let gb: OpaquePointer!
+    private let gb: UnsafeMutablePointer<CGameBoyCore.GameBoy>!
 
-    public static let width = Int(SCREEN_WIDTH)
-    public static let height = Int(SCREEN_HEIGHT)
+    public static let width = SCREEN_WIDTH
+    public static let height = SCREEN_HEIGHT
 
     public init(cgb: Bool = false) {
         self.gb = gameboy_new(cgb)
@@ -15,8 +15,14 @@ public final class GameBoy {
         gameboy_destroy(gb)
     }
 
-    public func load(rom: [UInt8], bootrom: [UInt8]?) {
-        gameboy_load(gb, rom, UInt(rom.count), bootrom, UInt(bootrom?.count ?? 0))
+    public func load(bootrom: [UInt8]?, rom: [UInt8]) {
+        let bootromPointer = bootrom?.withUnsafeBufferPointer { $0.baseAddress }
+        let romPointer = rom.withUnsafeBufferPointer { $0.baseAddress }
+
+        let gbBootrom = Bootrom(data: bootromPointer, size: bootrom?.count ?? 0)
+        let gbRom = Rom(data: romPointer, size: rom.count)
+
+        gameboy_load(gb, gbBootrom, gbRom)
     }
 
     public func runFrame() {

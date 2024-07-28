@@ -1,6 +1,6 @@
 use app::App;
 use clap::Parser;
-use gb_core::{DeviceModel, SCREEN_HEIGHT, SCREEN_WIDTH};
+use gb_core::constants::{DeviceModel, SCREEN_HEIGHT, SCREEN_WIDTH};
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]

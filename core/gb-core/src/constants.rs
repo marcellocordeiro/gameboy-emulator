@@ -24,6 +24,9 @@ pub type TileDataFrame = [u8; TILE_DATA_FRAME_SIZE];
 pub const EXTENSIONS_DESCRIPTION: &str = "Game Boy/Game Boy Color ROM";
 pub const EXTENSIONS: [&str; 2] = ["gb", "gbc"];
 
+pub const BATTERY_EXTENSIONS_DESCRIPTION: &str = "Game Boy/Game Boy Color Battery";
+pub const BATTERY_EXTENSIONS: [&str; 1] = ["sav"];
+
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum DeviceModel {
     #[default]

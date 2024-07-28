@@ -3,13 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AD2B832F2B5BD21000D26D7D /* GameBoyCore in Frameworks */ = {isa = PBXBuildFile; productRef = AD2B832E2B5BD21000D26D7D /* GameBoyCore */; };
 		AD38D4452B584949001E4FE7 /* GameBoyContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD38D4442B584949001E4FE7 /* GameBoyContext.swift */; };
 		AD3E588E2B595746001C6CED /* ButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3E588D2B595746001C6CED /* ButtonsView.swift */; };
+		AD7B31DA2C5617AF00F98B07 /* GameBoyCore in Frameworks */ = {isa = PBXBuildFile; productRef = AD7B31D92C5617AF00F98B07 /* GameBoyCore */; };
 		AD7E32E32B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7E32E22B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift */; };
 		AD7E32E52B5DC22D009C7B9A /* KeyboardContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7E32E42B5DC22D009C7B9A /* KeyboardContext.swift */; };
 		AD9D70CF2B583F2B0002119A /* GameBoyEmulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9D70CE2B583F2B0002119A /* GameBoyEmulatorApp.swift */; };
@@ -19,7 +19,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		AD2B832D2B5BD20100D26D7D /* gb-core-swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "gb-core-swift"; path = "../../core/gb-core-swift"; sourceTree = "<group>"; };
 		AD38D4442B584949001E4FE7 /* GameBoyContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoyContext.swift; sourceTree = "<group>"; };
 		AD3E588D2B595746001C6CED /* ButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsView.swift; sourceTree = "<group>"; };
 		AD7E32E22B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JoypadButtons+Extensions.swift"; sourceTree = "<group>"; };
@@ -37,19 +36,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD2B832F2B5BD21000D26D7D /* GameBoyCore in Frameworks */,
+				AD7B31DA2C5617AF00F98B07 /* GameBoyCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AD7B31D82C5617AF00F98B07 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		AD9D70C22B583F2B0002119A = {
 			isa = PBXGroup;
 			children = (
-				AD2B832D2B5BD20100D26D7D /* gb-core-swift */,
 				AD9D70CD2B583F2B0002119A /* GameBoyEmulator */,
 				AD9D70CC2B583F2B0002119A /* Products */,
+				AD7B31D82C5617AF00F98B07 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -102,7 +108,7 @@
 			);
 			name = GameBoyEmulator;
 			packageProductDependencies = (
-				AD2B832E2B5BD21000D26D7D /* GameBoyCore */,
+				AD7B31D92C5617AF00F98B07 /* GameBoyCore */,
 			);
 			productName = GameBoyEmulator;
 			productReference = AD9D70CB2B583F2B0002119A /* GameBoyEmulator.app */;
@@ -132,6 +138,9 @@
 				Base,
 			);
 			mainGroup = AD9D70C22B583F2B0002119A;
+			packageReferences = (
+				AD7B31D52C56179C00F98B07 /* XCLocalSwiftPackageReference "../../core/gb-core-swift" */,
+			);
 			productRefGroup = AD9D70CC2B583F2B0002119A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -224,7 +233,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -282,7 +291,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -367,9 +376,17 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		AD7B31D52C56179C00F98B07 /* XCLocalSwiftPackageReference "../../core/gb-core-swift" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../core/gb-core-swift";
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
-		AD2B832E2B5BD21000D26D7D /* GameBoyCore */ = {
+		AD7B31D92C5617AF00F98B07 /* GameBoyCore */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = AD7B31D52C56179C00F98B07 /* XCLocalSwiftPackageReference "../../core/gb-core-swift" */;
 			productName = GameBoyCore;
 		};
 /* End XCSwiftPackageProductDependency section */

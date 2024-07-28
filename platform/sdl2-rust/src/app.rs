@@ -1,13 +1,15 @@
 use std::time::{Duration, Instant};
 
 use gb_core::{
+    constants::{
+        ScreenPixels,
+        EXTENSIONS,
+        EXTENSIONS_DESCRIPTION,
+        SCREEN_HEIGHT,
+        SCREEN_PIXELS_SIZE,
+        SCREEN_WIDTH,
+    },
     GameBoy,
-    ScreenPixels,
-    EXTENSIONS,
-    EXTENSIONS_DESCRIPTION,
-    SCREEN_HEIGHT,
-    SCREEN_PIXELS_SIZE,
-    SCREEN_WIDTH,
 };
 use sdl2::{event::Event, keyboard::Keycode, pixels::PixelFormatEnum, render::Texture};
 
@@ -77,7 +79,7 @@ impl App {
             .as_ref()
             .map(|path| std::fs::read(path).unwrap());
 
-        self.gb.load(rom, bootrom).unwrap();
+        self.gb.load(bootrom, rom).unwrap();
 
         let mut event_pump = sdl_context.event_pump().unwrap();
 

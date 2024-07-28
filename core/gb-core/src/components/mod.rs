@@ -1,8 +1,8 @@
-pub(crate) mod apu;
-pub(crate) mod cpu;
-pub(crate) mod joypad;
-pub(crate) mod mbc;
-pub(crate) mod memory;
-pub(crate) mod ppu;
-pub(crate) mod serial;
-pub(crate) mod timer;
+pub mod apu;
+pub mod cartridge;
+pub mod cpu;
+pub mod joypad;
+pub mod memory;
+pub mod ppu;
+pub mod serial;
+pub mod timer;

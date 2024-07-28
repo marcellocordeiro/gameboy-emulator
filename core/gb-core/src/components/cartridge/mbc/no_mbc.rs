@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use super::MbcInterface;
-use crate::{cartridge::Cartridge, constants::ONE_KIB};
+use crate::{components::cartridge::info::Info, constants::ONE_KIB};
 
 pub struct NoMbc {
     rom: Arc<Box<[u8]>>,
@@ -9,11 +9,11 @@ pub struct NoMbc {
 }
 
 impl NoMbc {
-    pub fn new(cartridge: &Cartridge) -> Self {
-        let ram_banks = cartridge.ram_banks;
+    pub fn new(cartridge_info: &Info) -> Self {
+        let ram_banks = cartridge_info.ram_banks;
 
         Self {
-            rom: cartridge.rom.clone(),
+            rom: cartridge_info.rom.clone(),
             ram: vec![0; ram_banks * (8 * ONE_KIB)].into_boxed_slice(),
         }
     }

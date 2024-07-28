@@ -3,7 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use gb_core::{DeviceModel, GameBoy, MemoryInterface};
+use gb_core::{components::memory::MemoryInterface as _, constants::DeviceModel, GameBoy};
 
 use super::error::Error;
 
@@ -15,7 +15,7 @@ where
     F: FnOnce(&mut GameBoy) -> Result<(), Error>,
 {
     let mut gb = GameBoy::new(device_model);
-    gb.load(rom.to_vec(), None)?;
+    gb.load(None, rom.to_vec())?;
 
     runner(&mut gb)?;
 

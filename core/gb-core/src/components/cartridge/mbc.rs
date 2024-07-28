@@ -1,7 +1,7 @@
 use enum_dispatch::enum_dispatch;
 
 use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc30::Mbc30, mbc5::Mbc5, no_mbc::NoMbc};
-use crate::cartridge::{Cartridge, MbcType};
+use super::info::{mbc_type::MbcType, Info};
 
 #[enum_dispatch]
 pub(crate) trait MbcInterface {
@@ -28,14 +28,14 @@ pub enum Mbc {
 }
 
 impl Mbc {
-    pub(crate) fn new(cartridge: &Cartridge) -> Self {
-        match cartridge.mbc_type {
-            MbcType::NoMbc => NoMbc::new(cartridge).into(),
-            MbcType::Mbc1 => Mbc1::new(cartridge).into(),
-            MbcType::Mbc2 => Mbc2::new(cartridge).into(),
-            MbcType::Mbc3 => Mbc3::new(cartridge).into(),
-            MbcType::Mbc30 => Mbc30::new(cartridge).into(),
-            MbcType::Mbc5 => Mbc5::new(cartridge).into(),
+    pub(crate) fn new(cartridge_info: &Info) -> Self {
+        match cartridge_info.mbc_type {
+            MbcType::NoMbc => NoMbc::new(cartridge_info).into(),
+            MbcType::Mbc1 => Mbc1::new(cartridge_info).into(),
+            MbcType::Mbc2 => Mbc2::new(cartridge_info).into(),
+            MbcType::Mbc3 => Mbc3::new(cartridge_info).into(),
+            MbcType::Mbc30 => Mbc30::new(cartridge_info).into(),
+            MbcType::Mbc5 => Mbc5::new(cartridge_info).into(),
         }
     }
 }

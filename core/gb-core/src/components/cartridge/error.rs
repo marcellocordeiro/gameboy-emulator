@@ -1,9 +1,9 @@
 use thiserror::Error;
 
-use super::MbcType;
+use super::info::mbc_type::MbcType;
 
 #[derive(Debug, Error)]
-pub enum Error {
+pub enum CartridgeError {
     #[error("Invalid ROM.")]
     InvalidRom,
 
@@ -27,7 +27,7 @@ mod tests {
     #[test]
     #[ignore = "manual only"]
     fn test_format() {
-        let err = Error::UnsupportedRamSize { code: 0xDB };
+        let err = CartridgeError::UnsupportedRamSize { code: 0xDB };
 
         println!("{err}");
     }

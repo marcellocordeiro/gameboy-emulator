@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use thiserror::Error;
+
 use crate::DeviceModel;
 
 /// DMG
@@ -21,6 +23,12 @@ pub struct Bootrom {
     is_active: bool,
 }
 
+#[derive(Debug, Error)]
+pub enum BootromError {
+    #[error("Invalid ROM.")]
+    InvalidBootrom,
+}
+
 // TODO: optional feature to bundle the bootrom
 // #[cfg(feature = "bootrom")]
 /* impl Default for Bootrom {
@@ -39,23 +47,30 @@ pub struct Bootrom {
 } */
 
 impl Bootrom {
-    pub fn new(device_model: DeviceModel, bootrom: Option<Arc<Box<[u8]>>>) -> Self {
-        if let Some(bootrom) = bootrom {
-            match device_model {
-                DeviceModel::Dmg => assert_eq!(bootrom.len(), DMG_BOOTROM_SIZE),
-                DeviceModel::Cgb => assert_eq!(bootrom.len(), CGB_BOOTROM_SIZE),
-            };
-
-            Self {
-                data: Some(bootrom),
-                is_active: true,
-            }
-        } else {
-            Self {
+    pub fn new(
+        device_model: DeviceModel,
+        bootrom: Option<Arc<Box<[u8]>>>,
+    ) -> Result<Self, BootromError> {
+        let Some(bootrom) = bootrom else {
+            return Ok(Self {
                 data: None,
                 is_active: false,
-            }
+            });
+        };
+
+        let is_valid = match device_model {
+            DeviceModel::Dmg => bootrom.len() == DMG_BOOTROM_SIZE,
+            DeviceModel::Cgb => bootrom.len() == CGB_BOOTROM_SIZE,
+        };
+
+        if !is_valid {
+            return Err(BootromError::InvalidBootrom);
         }
+
+        Ok(Self {
+            data: Some(bootrom),
+            is_active: true,
+        })
     }
 
     pub fn is_active(&self) -> bool {

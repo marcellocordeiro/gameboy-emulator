@@ -7,8 +7,8 @@ use self::{
     video_ram::VideoRam,
     vram_dma::VramDma,
 };
+use super::cartridge::Cartridge;
 use crate::{
-    cartridge::Cartridge,
     utils::{
         macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
         screen::Screen,
@@ -120,7 +120,7 @@ impl Ppu {
 
         // Handle DMG palettes.
         if device_is_cgb!(self) {
-            if !cartridge.cgb_flag.has_cgb_support() {
+            if !cartridge.info.cgb_flag.has_cgb_support() {
                 self.opri = true;
 
                 for palette_number in 0..8 {
@@ -130,7 +130,7 @@ impl Ppu {
                         .set_palette(palette_number, [0x0000, 0x0000, 0x0000, 0x0000]);
                 }
 
-                let palettes = cartridge.dmg_compatibility_palettes();
+                let palettes = cartridge.info.dmg_compatibility_palettes();
 
                 self.bg_cram.set_palette(0, palettes.bg0);
                 self.obj_cram.set_palette(0, palettes.obj0);

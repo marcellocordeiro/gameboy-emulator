@@ -8,12 +8,14 @@ use egui::{
     Window,
 };
 use gb_core::{
-    DeviceModel,
+    constants::{
+        DeviceModel,
+        TileDataFrame,
+        TILE_DATA_FRAME_HEIGHT,
+        TILE_DATA_FRAME_SIZE,
+        TILE_DATA_FRAME_WIDTH,
+    },
     GameBoy,
-    TileDataFrame,
-    TILE_DATA_FRAME_HEIGHT,
-    TILE_DATA_FRAME_SIZE,
-    TILE_DATA_FRAME_WIDTH,
 };
 
 use crate::utils::scaling::integer_scaling_size;

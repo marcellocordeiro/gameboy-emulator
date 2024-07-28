@@ -1,9 +1,6 @@
 use gb_core::{
-    DeviceModel,
+    constants::{DeviceModel, ScreenPixels, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
     GameBoy as GameBoyInternal,
-    ScreenPixels,
-    SCREEN_PIXELS_SIZE,
-    SCREEN_WIDTH,
 };
 use wasm_bindgen::{prelude::wasm_bindgen, Clamped};
 use web_sys::{CanvasRenderingContext2d, ImageData};
@@ -39,7 +36,7 @@ impl GameBoy {
     }
 
     pub fn load(&mut self, rom: Vec<u8>) {
-        self.gb.load(rom, None).unwrap();
+        self.gb.load(None, rom).unwrap();
     }
 
     pub fn run_frame(&mut self) {

@@ -1,5 +1,9 @@
 use egui::ViewportCommand;
-use gb_core::{Button, DeviceModel, GameBoy, EXTENSIONS, EXTENSIONS_DESCRIPTION};
+use gb_core::{
+    constants::{DeviceModel, EXTENSIONS, EXTENSIONS_DESCRIPTION},
+    utils::button::Button,
+    GameBoy,
+};
 
 use crate::{
     cartridge::{load_battery, save_battery},
@@ -38,7 +42,7 @@ impl App {
         let bootrom = bootrom_path.map(|path| std::fs::read(path).unwrap());
 
         let mut gb = GameBoy::new(device_model);
-        gb.load(rom, bootrom).unwrap();
+        gb.load(bootrom, rom).unwrap();
         load_battery(&mut gb, &rom_path);
 
         Self {

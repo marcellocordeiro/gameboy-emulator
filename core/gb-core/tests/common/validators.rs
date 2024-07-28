@@ -1,4 +1,7 @@
-use gb_core::{GameBoy, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH};
+use gb_core::{
+    constants::{SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
+    GameBoy,
+};
 
 use super::error::Error;
 

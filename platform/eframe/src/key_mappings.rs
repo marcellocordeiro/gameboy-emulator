@@ -1,5 +1,5 @@
 use egui::Key;
-use gb_core::Button;
+use gb_core::utils::button::Button;
 
 pub trait EguiKeyMappings {
     fn mapped_to(self) -> Key;

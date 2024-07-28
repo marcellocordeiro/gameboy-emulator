@@ -1,4 +1,4 @@
-use gb_core::Button as CoreButton;
+use gb_core::utils::button::Button as CoreButton;
 
 #[repr(C)]
 pub enum Button {

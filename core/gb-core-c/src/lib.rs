@@ -1,5 +1,9 @@
 use button::Button;
-use gb_core::{DeviceModel, GameBoy, ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH};
+use gb_core::{
+    constants::{DeviceModel, ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH},
+    GameBoy,
+};
+use types::{Bootrom, Rom, ToSlice as _};
 
 #[no_mangle]
 pub extern "C" fn gameboy_new(is_cgb: bool) -> *mut GameBoy {
@@ -43,27 +47,22 @@ pub unsafe extern "C" fn gameboy_reset(gb_ptr: *mut GameBoy) {
 ///
 /// 1. The Game Boy core pointer cannot be null.
 /// 2. The ROM array pointer cannot be null.
-/// 3. The allocated size for the ROM has to be equal to `rom_size`.
-/// 4. The bootrom is optional, but if provided its allocated size has to be equal to `bootrom_size`.
+/// 3. The allocated size for the ROM has to be equal to `rom.size`.
+/// 4. The bootrom is optional, but if provided its allocated size has to be equal to `bootrom.size`.
 #[no_mangle]
-pub unsafe extern "C" fn gameboy_load(
-    gb_ptr: *mut GameBoy,
-    rom: *const u8,
-    rom_size: usize,
-    bootrom: *const u8,
-    bootrom_size: usize,
-) {
+pub unsafe extern "C" fn gameboy_load(gb_ptr: *mut GameBoy, bootrom: Bootrom, rom: Rom) -> bool {
     let gb = &mut *gb_ptr;
 
-    let rom = unsafe { std::slice::from_raw_parts(rom, rom_size).to_vec() };
+    let rom = unsafe { rom.to_slice().map(<[u8]>::to_vec) };
+    let bootrom = unsafe { bootrom.to_slice().map(<[u8]>::to_vec) };
 
-    let bootrom = if bootrom.is_null() {
-        None
-    } else {
-        Some(unsafe { std::slice::from_raw_parts(bootrom, bootrom_size).to_vec() })
+    let Some(rom) = rom else {
+        return false;
     };
 
-    gb.load(rom, bootrom).unwrap();
+    gb.load(bootrom, rom).unwrap();
+
+    true
 }
 
 /// # Safety
@@ -113,7 +112,7 @@ pub unsafe extern "C" fn gameboy_joypad_button_down(gb_ptr: *mut GameBoy, button
 /// # Safety
 ///
 /// 1. The Game Boy core pointer cannot be null.
-/// 2. The frame array pointer cannot*be null.
+/// 2. The frame array pointer cannot be null.
 /// 3. The allocated size for the frame has to be equal to `SCREEN_WIDTH * SCREEN_HEIGHT * 4`.
 #[no_mangle]
 pub unsafe extern "C" fn gameboy_draw_into_frame_rgba8888(gb_ptr: *mut GameBoy, frame: *mut u8) {
@@ -129,3 +128,4 @@ pub unsafe extern "C" fn gameboy_draw_into_frame_rgba8888(gb_ptr: *mut GameBoy, 
 }
 
 pub mod button;
+pub mod types;

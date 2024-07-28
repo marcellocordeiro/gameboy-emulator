@@ -1,20 +1,16 @@
 use std::sync::Arc;
 
-pub use self::{
-    cgb_flag::CgbFlag,
-    extra_features::ExtraFeature,
-    mbc_type::MbcType,
-    ram_banks::RAM_BANK_SIZE,
-    rom_banks::ROM_BANK_SIZE,
-};
-use self::{
-    compatibility_palettes::CompatibilityPalettes,
-    licensee_code::LicenseeCode,
-    title::Title,
-};
+use cgb_flag::CgbFlag;
+use compatibility_palettes::CompatibilityPalettes;
+use extra_features::ExtraFeature;
+use licensee_code::LicenseeCode;
+use mbc_type::MbcType;
+use title::Title;
+
+use super::error::CartridgeError;
 use crate::constants::ONE_KIB;
 
-pub struct Cartridge {
+pub struct Info {
     pub rom: Arc<Box<[u8]>>,
 
     // Header info
@@ -28,9 +24,8 @@ pub struct Cartridge {
     pub licensee_code: LicenseeCode,
 }
 
-impl Cartridge {
-    pub fn new(rom: Vec<u8>) -> Result<Self, self::error::Error> {
-        let rom = Arc::<Box<[u8]>>::from(rom.into_boxed_slice());
+impl Info {
+    pub fn new(rom: Arc<Box<[u8]>>) -> Result<Self, CartridgeError> {
         let header = header::from_rom(&rom)?;
 
         let title = Title::from_header(header)?;
@@ -109,14 +104,13 @@ impl Cartridge {
     }
 }
 
-mod cgb_flag;
+pub mod cgb_flag;
 pub mod compatibility_palettes;
-pub mod error;
-mod extra_features;
-mod header;
-mod licensee_code;
-mod mbc_type;
-mod ram_banks;
-mod rom_banks;
-mod sgb_flag;
-mod title;
+pub mod extra_features;
+pub mod header;
+pub mod licensee_code;
+pub mod mbc_type;
+pub mod ram_banks;
+pub mod rom_banks;
+pub mod sgb_flag;
+pub mod title;

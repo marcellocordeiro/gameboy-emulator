@@ -1,4 +1,4 @@
-use gb_core::DeviceModel;
+use gb_core::constants::DeviceModel;
 
 use super::{
     error::Error,

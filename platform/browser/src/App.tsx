@@ -6,7 +6,7 @@ import {
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
   draw,
-  loadCartridge,
+  load,
   reset,
   runFrame,
 } from "@/lib/game-boy";
@@ -29,7 +29,7 @@ export function App() {
     const buffer = await file.arrayBuffer();
     const data = new Uint8Array(buffer);
 
-    loadCartridge(data);
+    load(data);
     setIsLoaded(true);
     setIsRunning(true);
   };

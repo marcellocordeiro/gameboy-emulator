@@ -1,11 +1,7 @@
 use gb_core::{
-    Button,
-    DeviceModel,
+    constants::{DeviceModel, ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
+    utils::button::Button,
     GameBoy,
-    ScreenPixels,
-    SCREEN_HEIGHT,
-    SCREEN_PIXELS_SIZE,
-    SCREEN_WIDTH,
 };
 use key_mappings::LibretroKeyMappings;
 use libretro_rs::{
@@ -87,7 +83,7 @@ impl RetroCore for Emulator {
             }
         };
 
-        let result = self.gb.load(rom, None);
+        let result = self.gb.load(None, rom);
 
         match result {
             Ok(()) => RetroLoadGameResult::Success {

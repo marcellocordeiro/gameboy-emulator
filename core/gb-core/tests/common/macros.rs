@@ -6,13 +6,13 @@ macro_rules! run_for_model {
     };
 
     (dmg, $F:path, $rom:ident) => {
-        if let Err(e) = $F(gb_core::DeviceModel::Dmg, $rom) {
+        if let Err(e) = $F(gb_core::constants::DeviceModel::Dmg, $rom) {
             panic!("DMG failure: {e}");
         }
     };
 
     (cgb, $F:path, $rom:ident) => {
-        if let Err(e) = $F(gb_core::DeviceModel::Cgb, $rom) {
+        if let Err(e) = $F(gb_core::constants::DeviceModel::Cgb, $rom) {
             panic!("CGB failure: {e}");
         }
     };

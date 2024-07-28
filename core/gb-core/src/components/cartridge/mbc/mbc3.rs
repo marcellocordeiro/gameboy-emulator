@@ -2,51 +2,45 @@ use std::sync::Arc;
 
 use super::MbcInterface;
 use crate::{
-    cartridge::{Cartridge, RAM_BANK_SIZE, ROM_BANK_SIZE},
-    ONE_KIB,
+    components::cartridge::info::{ram_banks::RAM_BANK_SIZE, rom_banks::ROM_BANK_SIZE, Info},
+    constants::ONE_KIB,
 };
 
-pub struct Mbc5 {
+pub struct Mbc3 {
     rom: Arc<Box<[u8]>>,
     ram: Box<[u8]>,
 
-    rom_bank_mask: usize,
-
     ram_enable: bool,
 
-    rom_bank: u16,
-    ram_bank: u8,
+    rom_bank: u8,
+    ram_rtc_sel: u8,
 }
 
-impl Mbc5 {
-    pub fn new(cartridge: &Cartridge) -> Self {
-        let ram_banks = cartridge.ram_banks;
-
-        let rom_bank_mask = cartridge.rom_banks - 1;
+impl Mbc3 {
+    pub fn new(cartridge_info: &Info) -> Self {
+        let ram_banks = cartridge_info.ram_banks;
 
         Self {
-            rom: cartridge.rom.clone(),
+            rom: cartridge_info.rom.clone(),
             ram: vec![0; ram_banks * (8 * ONE_KIB)].into_boxed_slice(),
-
-            rom_bank_mask,
 
             ram_enable: false,
 
-            rom_bank: 0x0001,
-            ram_bank: 0x00,
+            rom_bank: 0x01,
+            ram_rtc_sel: 0x00,
         }
     }
 
     fn rom_0x4000_0x7fff_offset(&self) -> usize {
-        ROM_BANK_SIZE * ((self.rom_bank as usize) & self.rom_bank_mask)
+        ROM_BANK_SIZE * (self.rom_bank as usize)
     }
 
     fn ram_offset(&self) -> usize {
-        RAM_BANK_SIZE * (self.ram_bank as usize)
+        RAM_BANK_SIZE * ((self.ram_rtc_sel & 0b11) as usize)
     }
 }
 
-impl MbcInterface for Mbc5 {
+impl MbcInterface for Mbc3 {
     fn get_battery(&self) -> &[u8] {
         &self.ram
     }
@@ -90,25 +84,19 @@ impl MbcInterface for Mbc5 {
         match address {
             0x0000..=0x1FFF => self.ram_enable = (value & 0b1111) == 0x0A,
 
-            0x2000..=0x2FFF => {
-                let lo = value as u16;
-                let hi = self.rom_bank & 0x0100;
-
-                self.rom_bank = hi | lo;
+            0x2000..=0x3FFF => {
+                self.rom_bank = value & 0b0111_1111;
+                if self.rom_bank == 0 {
+                    self.rom_bank = 1;
+                }
             }
 
-            0x3000..=0x3FFF => {
-                let lo = self.rom_bank & 0x00FF;
-                let hi = (value & 0b1) as u16;
+            0x4000..=0x5FFF => self.ram_rtc_sel = value & 0x0F,
 
-                self.rom_bank = (hi << 8) | lo;
-            }
-
-            0x4000..=0x5FFF => self.ram_bank = value & 0b1111,
-            0x6000..=0x7FFF => (),
+            0x6000..=0x7FFF => (), // todo!("[mbc3.rs] RTC not yet supported."),
 
             _ => unreachable!(
-                "[mbc5.rs] Invalid write: ({:#06x}) = {:#04x}",
+                "[mbc3.rs] Invalid write: ({:#06x}) = {:#04x}",
                 address, value
             ),
         }

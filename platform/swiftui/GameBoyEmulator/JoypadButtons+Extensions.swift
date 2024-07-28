@@ -31,7 +31,7 @@ extension JoypadButton {
             .downArrow
         }
     }
-    
+
     var mappedToCGKeyCode: CGKeyCode {
         switch self {
         case .a:
@@ -52,7 +52,7 @@ extension JoypadButton {
             125
         }
     }
-    
+
     var mappedToKeyEquivalent: KeyEquivalent {
         switch self {
         case .a:
