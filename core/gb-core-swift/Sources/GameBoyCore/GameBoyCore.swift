@@ -2,7 +2,7 @@ import CGameBoyCore
 import Foundation
 
 public final class GameBoy {
-    private let gb: UnsafeMutablePointer<CGameBoyCore.GameBoy>!
+    private let gb: OpaquePointer
 
     public static let width = SCREEN_WIDTH
     public static let height = SCREEN_HEIGHT

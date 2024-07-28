@@ -2,15 +2,14 @@
 
 #include <stdio.h>
 
-
 uint64_t get_file_size(FILE* file) {
-  fseek(file, 0, SEEK_END);
+    fseek(file, 0, SEEK_END);
 
-  uint64_t rom_size = ftell(file);
+    uint64_t rom_size = ftell(file);
 
-  fseek(file, 0, SEEK_SET);
+    fseek(file, 0, SEEK_SET);
 
-  return rom_size;
+    return rom_size;
 }
 
 // Dear ImGui: standalone example application for SDL2 + SDL_Renderer
@@ -25,57 +24,48 @@ uint64_t get_file_size(FILE* file) {
 // Important to understand: SDL_Renderer is an _optional_ component of SDL2.
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
+#include <SDL.h>
 #include <imgui.h>
 #include <imgui_impl_sdl2.h>
 #include <imgui_impl_sdlrenderer2.h>
-#include <SDL.h>
 
-#if !SDL_VERSION_ATLEAST(2,0,17)
+#if !SDL_VERSION_ATLEAST(2, 0, 17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
 // Main code
 int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        return 1;
+    }
 
-  if (argc < 2) {
-    return 1;
-  }
+    FILE* file = fopen(argv[1], "rb");
 
-  FILE* file = fopen(argv[1], "rb");
+    uint64_t rom_size = get_file_size(file);
+    uint8_t* rom = (uint8_t*) malloc(rom_size);
 
-  uint64_t rom_size = get_file_size(file);
-  uint8_t* rom = (uint8_t*) malloc(rom_size);
+    fread(rom, sizeof(uint8_t), rom_size, file);
+    fclose(file);
 
-  fread(rom, sizeof(uint8_t), rom_size, file);
-  fclose(file);
+    Bootrom gbBootrom = {.data = nullptr, .size = 0};
 
-  Bootrom gbBootrom = {
-    .data = nullptr,
-    .size = 0
-  };
+    Rom gbRom = {.data = rom, .size = rom_size};
 
-  Rom gbRom = {
-    .data = rom,
-    .size = rom_size
-  };
+    struct GameBoy* gb = gameboy_new(true);
+    gameboy_load(gb, gbBootrom, gbRom);
 
-  struct GameBoy* gb = gameboy_new(true);
-  gameboy_load(gb, gbBootrom, gbRom);
+    free(rom);
 
-  free(rom);
+    uint8_t framebuffer[FRAMEBUFFER_SIZE];
 
-  uint8_t framebuffer[FRAMEBUFFER_SIZE];
+    for (size_t i = 0; i < FRAMEBUFFER_SIZE; ++i) {
+        framebuffer[i] = 0;
+    }
 
-  for (size_t i = 0; i < FRAMEBUFFER_SIZE; ++i) {
-    framebuffer[i] = 0;
-  }
-
-
-  // end gb stuff
+    // end gb stuff
 
     // Setup SDL
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
-    {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
         printf("Error: %s\n", SDL_GetError());
         return -1;
     }
@@ -86,16 +76,23 @@ int main(int argc, char* argv[]) {
 #endif
 
     // Create window with SDL_Renderer graphics context
-    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+SDL_Renderer example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
-    if (window == nullptr)
-    {
+    SDL_WindowFlags window_flags =
+        (SDL_WindowFlags) (SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Window* window = SDL_CreateWindow(
+        "Dear ImGui SDL2+SDL_Renderer example",
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        1280,
+        720,
+        window_flags
+    );
+    if (window == nullptr) {
         printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
         return -1;
     }
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-    if (renderer == nullptr)
-    {
+    SDL_Renderer* renderer =
+        SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    if (renderer == nullptr) {
         SDL_Log("Error creating SDL_Renderer!");
         return 0;
     }
@@ -106,10 +103,11 @@ int main(int argc, char* argv[]) {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGuiIO& io = ImGui::GetIO();
+    (void) io;
     io.IniFilename = nullptr;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -142,26 +140,31 @@ int main(int argc, char* argv[]) {
 
     // GB texture
     SDL_Texture* texture = SDL_CreateTexture(
-        renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH, SCREEN_HEIGHT
+        renderer,
+        SDL_PIXELFORMAT_ABGR8888,
+        SDL_TEXTUREACCESS_STREAMING,
+        SCREEN_WIDTH,
+        SCREEN_HEIGHT
     );
 
     // Main loop
     bool done = false;
-    while (!done)
-    {
+    while (!done) {
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
         // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
+        while (SDL_PollEvent(&event)) {
             ImGui_ImplSDL2_ProcessEvent(&event);
-            if (event.type == SDL_QUIT)
+            if (event.type == SDL_QUIT) {
                 done = true;
-            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
+            }
+            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE
+                && event.window.windowID == SDL_GetWindowID(window)) {
                 done = true;
+            }
         }
 
         // Start the Dear ImGui frame
@@ -170,48 +173,70 @@ int main(int argc, char* argv[]) {
         ImGui::NewFrame();
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (show_demo_window)
+        if (show_demo_window) {
             ImGui::ShowDemoWindow(&show_demo_window);
+        }
 
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
             static float f = 0.0f;
             static int counter = 0;
 
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+            ImGui::Begin("Hello, world!"
+            );  // Create a window called "Hello, world!" and append into it.
 
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+            ImGui::Text("This is some useful text."
+            );  // Display some text (you can use a format strings too)
+            ImGui::Checkbox(
+                "Demo Window",
+                &show_demo_window
+            );  // Edit bools storing our window open/close state
             ImGui::Checkbox("Another Window", &show_another_window);
 
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+            ImGui::SliderFloat(
+                "float",
+                &f,
+                0.0f,
+                1.0f
+            );  // Edit 1 float using a slider from 0.0f to 1.0f
+            ImGui::ColorEdit3(
+                "clear color",
+                (float*) &clear_color
+            );  // Edit 3 floats representing a color
 
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+            if (ImGui::Button("Button"
+                )) {  // Buttons return true when clicked (most widgets return true when edited/activated)
                 counter++;
+            }
             ImGui::SameLine();
             ImGui::Text("counter = %d", counter);
 
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::Text(
+                "Application average %.3f ms/frame (%.1f FPS)",
+                1000.0f / io.Framerate,
+                io.Framerate
+            );
             ImGui::End();
         }
 
         // 3. Show another simple window.
-        if (show_another_window)
-        {
-            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+        if (show_another_window) {
+            ImGui::Begin(
+                "Another Window",
+                &show_another_window
+            );  // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
             ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
+            if (ImGui::Button("Close Me")) {
                 show_another_window = false;
+            }
             ImGui::End();
         }
 
-            gameboy_run_frame(gb);
-    gameboy_draw_into_frame_rgba8888(gb, framebuffer);
+        gameboy_run_frame(gb);
+        gameboy_draw_into_frame_rgba8888(gb, framebuffer);
 
-    SDL_UpdateTexture(texture, nullptr, framebuffer, SCREEN_WIDTH * sizeof(uint32_t));
-    // SDL_RenderCopy(renderer, texture, nullptr, nullptr);
-
+        SDL_UpdateTexture(texture, nullptr, framebuffer, SCREEN_WIDTH * sizeof(uint32_t));
+        // SDL_RenderCopy(renderer, texture, nullptr, nullptr);
 
         // Rendering
         ImGui::Render();
@@ -223,7 +248,7 @@ int main(int argc, char* argv[]) {
         rec.y = 0;
         rec.h = SCREEN_HEIGHT;
         rec.w = SCREEN_WIDTH;
-                SDL_RenderCopy(renderer, texture, nullptr, &rec);
+        SDL_RenderCopy(renderer, texture, nullptr, &rec);
 
         ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
         SDL_RenderPresent(renderer);

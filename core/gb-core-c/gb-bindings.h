@@ -27,7 +27,7 @@ enum Button {
     DOWN = 7,
 };
 
-struct GameBoy {};
+struct GameBoy;
 
 struct Bootrom {
     const uint8_t* data;
