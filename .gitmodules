@@ -7,3 +7,6 @@
 [submodule "external/sm83-json-tests"]
 	path = external/sm83-json-tests
 	url = https://github.com/SingleStepTests/sm83.git
+[submodule "external/imgui-cmake"]
+	path = external/imgui-cmake
+	url = https://github.com/marcellocordeiro/imgui-cmake.git
