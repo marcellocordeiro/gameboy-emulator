@@ -1,12 +1,10 @@
 use gb_core::{
-    constants::{DeviceModel, ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
-    utils::button::Button,
     GameBoy,
+    constants::{DeviceModel, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH, ScreenPixels},
+    utils::button::Button,
 };
 use key_mappings::LibretroKeyMappings;
 use libretro_rs::{
-    libretro_core,
-    sys::RETRO_MEMORY_SAVE_RAM,
     RetroAudioInfo,
     RetroCore,
     RetroEnvironment,
@@ -16,6 +14,8 @@ use libretro_rs::{
     RetroRuntime,
     RetroSystemInfo,
     RetroVideoInfo,
+    libretro_core,
+    sys::RETRO_MEMORY_SAVE_RAM,
 };
 
 struct Emulator {

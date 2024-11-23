@@ -1,21 +1,21 @@
 use egui::{
-    epaint::{ColorImage, TextureHandle, Vec2},
     Color32,
     Context,
     Image,
     TextureOptions,
     Ui,
     Window,
+    epaint::{ColorImage, TextureHandle, Vec2},
 };
 use gb_core::{
+    GameBoy,
     constants::{
         DeviceModel,
-        TileDataFrame,
         TILE_DATA_FRAME_HEIGHT,
         TILE_DATA_FRAME_SIZE,
         TILE_DATA_FRAME_WIDTH,
+        TileDataFrame,
     },
-    GameBoy,
 };
 
 use crate::utils::scaling::integer_scaling_size;

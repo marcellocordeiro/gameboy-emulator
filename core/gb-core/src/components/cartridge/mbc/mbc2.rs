@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use super::MbcInterface;
-use crate::components::cartridge::info::{rom_banks::ROM_BANK_SIZE, Info};
+use crate::components::cartridge::info::{Info, rom_banks::ROM_BANK_SIZE};
 
 pub struct Mbc2 {
     rom: Arc<Box<[u8]>>,

@@ -1,8 +1,8 @@
 use super::structs::{Cycle, Ram};
 use crate::components::memory::{
+    MemoryInterface,
     interrupts::Interrupts,
     speed_switch::SpeedSwitch,
-    MemoryInterface,
 };
 
 #[derive(Default)]

@@ -1,5 +1,5 @@
 use common::{runners::run_until_break, validators::validate_screenshot};
-use gb_core::{constants::DeviceModel, GameBoy};
+use gb_core::{GameBoy, constants::DeviceModel};
 
 mod common;
 

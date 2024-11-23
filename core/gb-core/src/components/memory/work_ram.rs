@@ -1,4 +1,4 @@
-use crate::{constants::ONE_KIB, utils::macros::in_cgb_mode, DeviceModel};
+use crate::{DeviceModel, constants::ONE_KIB, utils::macros::in_cgb_mode};
 
 const DMG_WRAM_BANKS: usize = 2;
 const CGB_WRAM_BANKS: usize = 8;

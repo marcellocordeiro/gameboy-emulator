@@ -1,6 +1,6 @@
 use crate::{
-    utils::macros::{device_is_cgb, in_cgb_mode},
     DeviceModel,
+    utils::macros::{device_is_cgb, in_cgb_mode},
 };
 
 #[derive(Debug, Default)]

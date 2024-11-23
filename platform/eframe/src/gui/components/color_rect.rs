@@ -1,4 +1,4 @@
-use egui::{epaint::Color32, Response, Sense, Ui};
+use egui::{Response, Sense, Ui, epaint::Color32};
 
 pub fn color_rect(ui: &mut Ui, color: Color32) -> Response {
     let size = ui.spacing().interact_size;

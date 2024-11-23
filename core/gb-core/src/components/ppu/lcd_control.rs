@@ -1,6 +1,6 @@
 use bitflags::bitflags;
 
-use super::{lcd_status::StatusMode, Ppu};
+use super::{Ppu, lcd_status::StatusMode};
 use crate::utils::{color::Color, macros::device_is_cgb};
 
 bitflags!(

@@ -3,7 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use gb_core::{components::memory::MemoryInterface as _, constants::DeviceModel, GameBoy};
+use gb_core::{GameBoy, components::memory::MemoryInterface as _, constants::DeviceModel};
 
 use super::error::Error;
 

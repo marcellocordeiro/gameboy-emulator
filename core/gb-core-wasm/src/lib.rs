@@ -1,8 +1,8 @@
 use gb_core::{
-    constants::{DeviceModel, ScreenPixels, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
     GameBoy as GameBoyInternal,
+    constants::{DeviceModel, SCREEN_PIXELS_SIZE, SCREEN_WIDTH, ScreenPixels},
 };
-use wasm_bindgen::{prelude::wasm_bindgen, Clamped};
+use wasm_bindgen::{Clamped, prelude::wasm_bindgen};
 use web_sys::{CanvasRenderingContext2d, ImageData};
 
 fn init_logging() {

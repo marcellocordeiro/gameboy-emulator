@@ -1,4 +1,4 @@
-use crate::{utils::macros::in_cgb_mode, DeviceModel};
+use crate::{DeviceModel, utils::macros::in_cgb_mode};
 
 #[derive(Debug, Default)]
 pub struct SpeedSwitch {

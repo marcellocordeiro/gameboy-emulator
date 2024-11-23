@@ -1,8 +1,8 @@
 use egui::ViewportCommand;
 use gb_core::{
+    GameBoy,
     constants::{DeviceModel, EXTENSIONS, EXTENSIONS_DESCRIPTION},
     utils::button::Button,
-    GameBoy,
 };
 
 use crate::{

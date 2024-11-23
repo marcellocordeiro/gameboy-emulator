@@ -1,4 +1,4 @@
-use egui::{menu, Context, TopBottomPanel, ViewportCommand};
+use egui::{Context, TopBottomPanel, ViewportCommand, menu};
 use gb_core::GameBoy;
 
 use self::{

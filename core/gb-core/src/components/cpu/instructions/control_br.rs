@@ -1,5 +1,5 @@
 use crate::components::{
-    cpu::{registers::Flags, Cpu},
+    cpu::{Cpu, registers::Flags},
     memory::MemoryInterface,
 };
 

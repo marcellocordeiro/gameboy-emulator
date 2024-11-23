@@ -2,7 +2,7 @@
 // 1. https://gbdev.io/pandocs/Power_Up_Sequence.html#compatibility-palettes
 // 2. https://github.com/LIJI32/SameBoy/blob/master/BootROMs/cgb_boot.asm
 
-use super::{palette::palette_from_id, CompatibilityPalettes};
+use super::{CompatibilityPalettes, palette::palette_from_id};
 
 /// **Third step**
 ///

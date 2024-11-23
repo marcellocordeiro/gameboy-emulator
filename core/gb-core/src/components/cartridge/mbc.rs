@@ -1,7 +1,7 @@
 use enum_dispatch::enum_dispatch;
 
-use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc30::Mbc30, mbc5::Mbc5, no_mbc::NoMbc};
-use super::info::{mbc_type::MbcType, Info};
+use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc5::Mbc5, mbc30::Mbc30, no_mbc::NoMbc};
+use super::info::{Info, mbc_type::MbcType};
 
 #[enum_dispatch]
 pub(crate) trait MbcInterface {

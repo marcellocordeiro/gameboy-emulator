@@ -10,11 +10,11 @@ use self::{
     undocumented_registers::UndocumentedRegisters,
     work_ram::WorkRam,
 };
-use super::cartridge::{error::CartridgeError, info::cgb_flag::CgbFlag, Cartridge};
+use super::cartridge::{Cartridge, error::CartridgeError, info::cgb_flag::CgbFlag};
 use crate::{
+    DeviceModel,
     components::{apu::Apu, joypad::Joypad, ppu::Ppu, serial::Serial, timer::Timer},
     utils::macros::{device_is_cgb, in_cgb_mode},
-    DeviceModel,
 };
 
 #[derive(Debug, Error)]

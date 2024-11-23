@@ -1,4 +1,4 @@
-use std::sync::{mpsc, Arc};
+use std::sync::{Arc, mpsc};
 
 use components::{cartridge::error::CartridgeError, cpu::Cpu, memory::Memory};
 use constants::{DeviceModel, ScreenPixels};

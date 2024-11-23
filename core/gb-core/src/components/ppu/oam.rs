@@ -1,6 +1,6 @@
 use arrayvec::ArrayVec;
 
-use super::{lcd_status::StatusMode, sprite::SpriteObject, Ppu};
+use super::{Ppu, lcd_status::StatusMode, sprite::SpriteObject};
 
 const OAM_SIZE: usize = 0xA0;
 

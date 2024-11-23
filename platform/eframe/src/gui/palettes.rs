@@ -1,5 +1,5 @@
-use egui::{epaint::Color32, Context, Ui, Window};
-use gb_core::{utils::color::Color, GameBoy};
+use egui::{Context, Ui, Window, epaint::Color32};
+use gb_core::{GameBoy, utils::color::Color};
 
 use super::components::color_rect::color_rect;
 

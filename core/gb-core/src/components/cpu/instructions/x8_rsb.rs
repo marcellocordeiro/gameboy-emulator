@@ -1,4 +1,4 @@
-use crate::components::cpu::{alu, registers::Flags, Cpu};
+use crate::components::cpu::{Cpu, alu, registers::Flags};
 
 // Completed, may need some refactoring.
 

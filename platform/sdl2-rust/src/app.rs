@@ -1,15 +1,15 @@
 use std::time::{Duration, Instant};
 
 use gb_core::{
+    GameBoy,
     constants::{
-        ScreenPixels,
         EXTENSIONS,
         EXTENSIONS_DESCRIPTION,
         SCREEN_HEIGHT,
         SCREEN_PIXELS_SIZE,
         SCREEN_WIDTH,
+        ScreenPixels,
     },
-    GameBoy,
 };
 use sdl2::{event::Event, keyboard::Keycode, pixels::PixelFormatEnum, render::Texture};
 

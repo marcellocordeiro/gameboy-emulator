@@ -4,7 +4,7 @@ use itertools::Itertools;
 
 use self::{structs::Test, test_memory::TestMemory};
 use crate::components::{
-    cpu::{tests::gameboy_cpu_tests::structs::State, Cpu},
+    cpu::{Cpu, tests::gameboy_cpu_tests::structs::State},
     memory::MemoryInterface as _,
 };
 

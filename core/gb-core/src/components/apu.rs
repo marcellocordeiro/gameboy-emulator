@@ -3,7 +3,7 @@
 #![allow(dead_code, unused_variables)]
 
 use self::channels::{NoiseChannel, PulseChannel1, PulseChannel2, WaveChannel};
-use crate::{utils::macros::device_is_cgb, DeviceModel};
+use crate::{DeviceModel, utils::macros::device_is_cgb};
 
 #[derive(Default)]
 pub struct Apu {

@@ -193,13 +193,10 @@ mod tests {
 
         // Next read is expected to return a (source, destination)
         assert_eq!(oam_dma.perform_dma(), Some((0, 0xFE00)));
-        assert_eq!(
-            oam_dma.status,
-            Status::Active {
-                base_source: 0,
-                offset: 0x01
-            }
-        );
+        assert_eq!(oam_dma.status, Status::Active {
+            base_source: 0,
+            offset: 0x01
+        });
         assert!(oam_dma.is_active());
     }
 
@@ -228,13 +225,10 @@ mod tests {
                 assert_eq!(oam_dma.status, Status::ActiveFirstStep { base_source: 0 });
                 assert!(!oam_dma.is_active());
             } else {
-                assert_eq!(
-                    oam_dma.status,
-                    Status::Active {
-                        base_source: 0,
-                        offset
-                    }
-                );
+                assert_eq!(oam_dma.status, Status::Active {
+                    base_source: 0,
+                    offset
+                });
 
                 assert!(oam_dma.is_active());
             }
@@ -259,22 +253,16 @@ mod tests {
         // Request
         oam_dma.write(0xFF);
         assert_eq!(oam_dma.dma, 0xFF);
-        assert_eq!(
-            oam_dma.status,
-            Status::Requested {
-                base_source: OamDma::base_source_address(0xFF)
-            }
-        );
+        assert_eq!(oam_dma.status, Status::Requested {
+            base_source: OamDma::base_source_address(0xFF)
+        });
         assert!(!oam_dma.is_active());
 
         // First cycle (nothing is transferred)
         assert_eq!(oam_dma.perform_dma(), None);
-        assert_eq!(
-            oam_dma.status,
-            Status::ActiveFirstStep {
-                base_source: (0xFF * 0x100) - 0x2000
-            }
-        );
+        assert_eq!(oam_dma.status, Status::ActiveFirstStep {
+            base_source: (0xFF * 0x100) - 0x2000
+        });
         assert!(!oam_dma.is_active());
 
         // For the next 160 cycles
@@ -284,21 +272,15 @@ mod tests {
             .take(0xA0)
         {
             if offset == 0 {
-                assert_eq!(
-                    oam_dma.status,
-                    Status::ActiveFirstStep {
-                        base_source: (0xFF * 0x100) - 0x2000
-                    }
-                );
+                assert_eq!(oam_dma.status, Status::ActiveFirstStep {
+                    base_source: (0xFF * 0x100) - 0x2000
+                });
                 assert!(!oam_dma.is_active());
             } else {
-                assert_eq!(
-                    oam_dma.status,
-                    Status::Active {
-                        base_source: (0xFF * 0x100) - 0x2000,
-                        offset
-                    }
-                );
+                assert_eq!(oam_dma.status, Status::Active {
+                    base_source: (0xFF * 0x100) - 0x2000,
+                    offset
+                });
                 assert!(oam_dma.is_active());
             }
 
@@ -336,13 +318,10 @@ mod tests {
                 assert_eq!(oam_dma.status, Status::ActiveFirstStep { base_source: 0 });
                 assert!(!oam_dma.is_active());
             } else {
-                assert_eq!(
-                    oam_dma.status,
-                    Status::Active {
-                        base_source: 0,
-                        offset
-                    }
-                );
+                assert_eq!(oam_dma.status, Status::Active {
+                    base_source: 0,
+                    offset
+                });
 
                 assert!(oam_dma.is_active());
             }
@@ -352,26 +331,20 @@ mod tests {
 
         // Verify
         assert_eq!(oam_dma.perform_dma(), Some((0x02, 0xFE02)));
-        assert_eq!(
-            oam_dma.status,
-            Status::Active {
-                base_source: 0,
-                offset: 3
-            }
-        );
+        assert_eq!(oam_dma.status, Status::Active {
+            base_source: 0,
+            offset: 3
+        });
         assert!(oam_dma.is_active());
 
         // Restart at 0x02
         oam_dma.write(0x02);
         assert_eq!(oam_dma.dma, 0x02);
-        assert_eq!(
-            oam_dma.status,
-            Status::Restarting {
-                next_base_source: OamDma::base_source_address(0x02),
-                current_base_source: 0,
-                current_offset: 3
-            }
-        );
+        assert_eq!(oam_dma.status, Status::Restarting {
+            next_base_source: OamDma::base_source_address(0x02),
+            current_base_source: 0,
+            current_offset: 3
+        });
         assert!(oam_dma.is_active());
 
         // Next cycle

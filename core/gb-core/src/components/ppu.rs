@@ -9,11 +9,11 @@ use self::{
 };
 use super::cartridge::Cartridge;
 use crate::{
+    DeviceModel,
     utils::{
         macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
         screen::Screen,
     },
-    DeviceModel,
 };
 
 #[allow(clippy::struct_excessive_bools)]

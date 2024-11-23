@@ -1,4 +1,4 @@
-use self::line_selection::{LineSelection, JOYP_SELECTION_MASK};
+use self::line_selection::{JOYP_SELECTION_MASK, LineSelection};
 use crate::utils::button::Button;
 
 const JOYP_UNUSED_MASK: u8 = 0b1100_0000;

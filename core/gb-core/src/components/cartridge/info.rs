@@ -73,9 +73,8 @@ impl Info {
             sgb_flag,
             licensee_code,
         })
-        .map(|c| {
+        .inspect(|c| {
             c.validate();
-            c
         })
     }
 

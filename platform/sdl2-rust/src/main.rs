@@ -1,6 +1,6 @@
 use app::App;
 use clap::Parser;
-use gb_core::{constants::DeviceModel, GameBoy};
+use gb_core::{GameBoy, constants::DeviceModel};
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]

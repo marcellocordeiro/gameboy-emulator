@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use super::MbcInterface;
 use crate::{
-    components::cartridge::info::{ram_banks::RAM_BANK_SIZE, rom_banks::ROM_BANK_SIZE, Info},
+    components::cartridge::info::{Info, ram_banks::RAM_BANK_SIZE, rom_banks::ROM_BANK_SIZE},
     constants::ONE_KIB,
 };
 

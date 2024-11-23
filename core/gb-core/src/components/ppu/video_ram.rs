@@ -1,13 +1,13 @@
 use std::ops::RangeInclusive;
 
-use super::{lcd_status::StatusMode, Ppu};
+use super::{Ppu, lcd_status::StatusMode};
 use crate::{
-    constants::{TileDataFrame, TILES_PER_LINE, TILE_DATA_FRAME_WIDTH},
+    DeviceModel,
+    constants::{TILE_DATA_FRAME_WIDTH, TILES_PER_LINE, TileDataFrame},
     utils::{
         color::Color,
         macros::{device_is_cgb, in_cgb_mode},
     },
-    DeviceModel,
 };
 
 const DMG_VRAM_BANKS: usize = 1;

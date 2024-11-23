@@ -1,5 +1,5 @@
 use super::color::Color;
-use crate::constants::{ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH};
+use crate::constants::{SCREEN_HEIGHT, SCREEN_WIDTH, ScreenPixels};
 
 pub struct Screen {
     pub screen: Box<[Color; SCREEN_WIDTH * SCREEN_HEIGHT]>,

@@ -1,14 +1,14 @@
 use egui::{
-    epaint::{ColorImage, TextureHandle},
     CentralPanel,
     Color32,
     Context,
     Image,
     TextureOptions,
+    epaint::{ColorImage, TextureHandle},
 };
 use gb_core::{
-    constants::{ScreenPixels, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH},
     GameBoy,
+    constants::{SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH, ScreenPixels},
 };
 
 use crate::utils::scaling::integer_scaling_size;

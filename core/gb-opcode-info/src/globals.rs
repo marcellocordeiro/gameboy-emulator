@@ -1,6 +1,6 @@
 use std::sync::LazyLock;
 
-use crate::opcodes::{parse_json, OpcodeTable};
+use crate::opcodes::{OpcodeTable, parse_json};
 
 static OPCODES: LazyLock<OpcodeTable> = LazyLock::new(|| parse_json().unwrap());
 

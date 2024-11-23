@@ -1,7 +1,7 @@
 use button::Button;
 use gb_core::{
-    constants::{DeviceModel, ScreenPixels, SCREEN_HEIGHT, SCREEN_WIDTH},
     GameBoy,
+    constants::{DeviceModel, SCREEN_HEIGHT, SCREEN_WIDTH, ScreenPixels},
 };
 use types::{Bootrom, Rom, ToSlice as _};
 
