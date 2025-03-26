@@ -24,6 +24,7 @@ pub fn validate_fibonacci(gb: &GameBoy) -> Result<(), Error> {
 }
 
 pub fn validate_screenshot(gb: &GameBoy, name: &'static str) -> Result<(), Error> {
+    #[allow(clippy::large_stack_arrays)]
     let mut frame = [0; SCREEN_PIXELS_SIZE];
 
     gb.draw_into_frame_rgba8888(&mut frame);

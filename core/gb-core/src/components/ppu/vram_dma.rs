@@ -117,7 +117,7 @@ impl VramDma {
         0x8000 | ((self.hdma3 as u16) << 8) | (self.hdma4 as u16)
     }
 
-    pub fn perform_gdma(&mut self) -> Option<impl Iterator<Item = u16> + Clone> {
+    pub fn perform_gdma(&mut self) -> Option<impl Iterator<Item = u16> + Clone + use<>> {
         if self.mode != DmaMode::General {
             return None;
         }
@@ -129,7 +129,7 @@ impl VramDma {
         Some(0..length)
     }
 
-    pub fn perform_hdma(&mut self) -> Option<impl Iterator<Item = u16> + Clone> {
+    pub fn perform_hdma(&mut self) -> Option<impl Iterator<Item = u16> + Clone + use<>> {
         let step = match self.mode {
             DmaMode::Hblank { active: false, .. } => {
                 return None;
@@ -239,10 +239,13 @@ mod tests {
 
         let steps = (vram_dma.hdma5 & 0b0111_1111) + 1;
         assert_eq!(vram_dma.steps, steps);
-        assert_eq!(vram_dma.mode, DmaMode::Hblank {
-            active: false,
-            remaining_steps: steps
-        });
+        assert_eq!(
+            vram_dma.mode,
+            DmaMode::Hblank {
+                active: false,
+                remaining_steps: steps
+            }
+        );
 
         vram_dma.resume_hdma();
 
@@ -262,18 +265,24 @@ mod tests {
 
         let steps = (vram_dma.hdma5 & 0b0111_1111) + 1;
         assert_eq!(vram_dma.steps, steps);
-        assert_eq!(vram_dma.mode, DmaMode::Hblank {
-            active: false,
-            remaining_steps: steps
-        });
+        assert_eq!(
+            vram_dma.mode,
+            DmaMode::Hblank {
+                active: false,
+                remaining_steps: steps
+            }
+        );
 
         vram_dma.resume_hdma();
 
         for step in 0..steps {
-            assert_eq!(vram_dma.mode, DmaMode::Hblank {
-                active: true,
-                remaining_steps: steps - step
-            });
+            assert_eq!(
+                vram_dma.mode,
+                DmaMode::Hblank {
+                    active: true,
+                    remaining_steps: steps - step
+                }
+            );
 
             let offsets = vram_dma.perform_hdma().unwrap();
             assert_eq!(offsets.count(), 0x10);
