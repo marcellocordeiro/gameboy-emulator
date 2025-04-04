@@ -1,16 +1,12 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import init, { GameBoy } from "gb-core-wasm";
+import { GameBoy } from "./gb-core-wasm";
 
-await init();
-
-const gameBoy = new GameBoy(false);
+const gameBoy = new GameBoy();
 
 export const SCREEN_WIDTH = 160;
 export const SCREEN_HEIGHT = 144;
 
 export function load(rom: Uint8Array) {
-  gameBoy.load(rom, null);
+  gameBoy.load(rom);
 }
 
 export function reset() {

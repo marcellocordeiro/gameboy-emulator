@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 
-import { Button } from "@/components/ui/button";
-import { useRenderer } from "@/hooks/use-renderer";
+import { useRenderer } from "./hooks/use-renderer";
 import {
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
@@ -9,7 +8,8 @@ import {
   load,
   reset,
   runFrame,
-} from "@/lib/game-boy";
+} from "./lib/game-boy";
+import { AppShell, Button } from "@mantine/core";
 
 export function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -45,28 +45,23 @@ export function App() {
   };
 
   return (
-    <main className="container flex flex-col items-center justify-center gap-4 pt-4">
-      <canvas
-        ref={canvasRef}
-        className="border"
-        height={SCREEN_HEIGHT}
-        width={SCREEN_WIDTH}
-      />
+    <AppShell>
+      <AppShell.Main>
+        <canvas ref={canvasRef} height={SCREEN_HEIGHT} width={SCREEN_WIDTH} />
 
-      <input
-        type="file"
-        accept=".gb"
-        onChange={async (event) => {
-          const file = event.currentTarget.files?.[0];
+        <input
+          type="file"
+          accept=".gb"
+          onChange={async (event) => {
+            const file = event.currentTarget.files?.[0];
 
-          if (file != null) {
-            setSelectedRom(file);
-            await handleStart(file);
-          }
-        }}
-      />
+            if (file != null) {
+              setSelectedRom(file);
+              await handleStart(file);
+            }
+          }}
+        />
 
-      <div className="flex gap-4">
         <Button
           disabled={
             isRunning || (isLoaded && !isRunning) || selectedRom == null
@@ -87,7 +82,7 @@ export function App() {
         <Button disabled={!isLoaded} onClick={handleToggleExecution}>
           {isRunning ? "Pause" : "Resume"}
         </Button>
-      </div>
-    </main>
+      </AppShell.Main>
+    </AppShell>
   );
 }
