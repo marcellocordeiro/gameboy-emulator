@@ -7,7 +7,7 @@ members = [
   "core/gb-opcode-info",
   "platform/eframe",
   "platform/libretro",
-  "platform/sdl2-rust",
+  #"platform/sdl2-rust",
 ]
 
 [workspace.lints.clippy]
@@ -45,13 +45,13 @@ missing_panics_doc = "allow"
 [workspace.dependencies]
 arrayvec = "0.7.6"
 bitflags = "2.9.0"
-clap = { version = "4.5.33", features = ["derive"] }
+clap = { version = "4.5.35", features = ["derive"] }
 console_error_panic_hook = "0.1.7"
 console_log = "1.0.0"
 eframe = { version = "0.31.1", default-features = false }
 egui = "0.31.1"
 enum_dispatch = "0.3.13"
-env_logger = "0.11.7"
+env_logger = "0.11.8"
 gb-core = { path = "./core/gb-core" }
 image = { version = "0.25.6", default-features = false }
 itertools = "0.14.0"
@@ -60,7 +60,7 @@ log = "0.4.27"
 num = { version = "0.4.3", default-features = false }
 paste = "1.0.15"
 rfd = "0.15.3"
-sdl2 = "0.37.0"
+#sdl2 = "0.37.0"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 thiserror = "2.0.12"
