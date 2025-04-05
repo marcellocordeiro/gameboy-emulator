@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -10,7 +10,7 @@ let coreDir = "\(rootDir)/core/gb-core-swift"
 let package = Package(
     name: "GameBoyEmulator",
     platforms: [
-        .macOS(.v14),
+        .macOS(.v15),
     ],
     dependencies: [
         .package(path: coreDir),
@@ -26,7 +26,9 @@ let package = Package(
                 .product(name: "SDL", package: "SwiftSDL2"),
             ],
             swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency"),
+                .enableUpcomingFeature("InternalImportsByDefault"),
+                .enableUpcomingFeature("MemberImportVisibility"),
+                .enableUpcomingFeature("ExistentialAny"),
             ]
         ),
     ]

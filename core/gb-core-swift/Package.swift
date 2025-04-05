@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -29,7 +29,7 @@ linkerSettings = [.linkedLibrary("\(libsDir)/\(staticLibFile)")]
 let package = Package(
     name: "GameBoyCore",
     platforms: [
-        .macOS(.v14),
+        .macOS(.v15),
     ],
     products: [
         .library(name: "GameBoyCore", targets: ["GameBoyCore"]),
@@ -38,7 +38,9 @@ let package = Package(
         .target(
             name: "CGameBoyCore",
             swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency"),
+                .enableUpcomingFeature("InternalImportsByDefault"),
+                .enableUpcomingFeature("MemberImportVisibility"),
+                .enableUpcomingFeature("ExistentialAny"),
             ],
             linkerSettings: linkerSettings
         ),
@@ -46,7 +48,9 @@ let package = Package(
             name: "GameBoyCore",
             dependencies: ["CGameBoyCore"],
             swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency"),
+                .enableUpcomingFeature("InternalImportsByDefault"),
+                .enableUpcomingFeature("MemberImportVisibility"),
+                .enableUpcomingFeature("ExistentialAny"),
             ]
         ),
     ]

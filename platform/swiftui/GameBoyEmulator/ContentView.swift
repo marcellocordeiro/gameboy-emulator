@@ -7,9 +7,10 @@
 
 import GameBoyCore
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct EmulatorError: LocalizedError {
-    let wrapped: Error
+    let wrapped: any Error
 
     var errorDescription: String? {
         wrapped.localizedDescription

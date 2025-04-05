@@ -3,59 +3,40 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 90;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AD38D4452B584949001E4FE7 /* GameBoyContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD38D4442B584949001E4FE7 /* GameBoyContext.swift */; };
-		AD3E588E2B595746001C6CED /* ButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3E588D2B595746001C6CED /* ButtonsView.swift */; };
 		AD7B31DA2C5617AF00F98B07 /* GameBoyCore in Frameworks */ = {isa = PBXBuildFile; productRef = AD7B31D92C5617AF00F98B07 /* GameBoyCore */; };
-		AD7E32E32B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7E32E22B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift */; };
-		AD7E32E52B5DC22D009C7B9A /* KeyboardContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7E32E42B5DC22D009C7B9A /* KeyboardContext.swift */; };
-		AD9D70CF2B583F2B0002119A /* GameBoyEmulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9D70CE2B583F2B0002119A /* GameBoyEmulatorApp.swift */; };
-		AD9D70D12B583F2B0002119A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9D70D02B583F2B0002119A /* ContentView.swift */; };
-		AD9D70D32B583F2D0002119A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD9D70D22B583F2D0002119A /* Assets.xcassets */; };
-		AD9D70D62B583F2D0002119A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD9D70D52B583F2D0002119A /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		AD38D4442B584949001E4FE7 /* GameBoyContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoyContext.swift; sourceTree = "<group>"; };
-		AD3E588D2B595746001C6CED /* ButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsView.swift; sourceTree = "<group>"; };
-		AD7E32E22B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JoypadButtons+Extensions.swift"; sourceTree = "<group>"; };
-		AD7E32E42B5DC22D009C7B9A /* KeyboardContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardContext.swift; sourceTree = "<group>"; };
 		AD9D70CB2B583F2B0002119A /* GameBoyEmulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameBoyEmulator.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		AD9D70CE2B583F2B0002119A /* GameBoyEmulatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoyEmulatorApp.swift; sourceTree = "<group>"; };
-		AD9D70D02B583F2B0002119A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		AD9D70D22B583F2D0002119A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AD9D70D52B583F2D0002119A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		AD9D70D72B583F2D0002119A /* GameBoyEmulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GameBoyEmulator.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		ADCCF95B2DA1BF62009308CB /* GameBoyEmulator */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GameBoyEmulator;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		AD9D70C82B583F2B0002119A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				AD7B31DA2C5617AF00F98B07 /* GameBoyCore in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		AD7B31D82C5617AF00F98B07 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		AD9D70C22B583F2B0002119A = {
 			isa = PBXGroup;
 			children = (
-				AD9D70CD2B583F2B0002119A /* GameBoyEmulator */,
+				ADCCF95B2DA1BF62009308CB /* GameBoyEmulator */,
 				AD9D70CC2B583F2B0002119A /* Products */,
-				AD7B31D82C5617AF00F98B07 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -65,30 +46,6 @@
 				AD9D70CB2B583F2B0002119A /* GameBoyEmulator.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		AD9D70CD2B583F2B0002119A /* GameBoyEmulator */ = {
-			isa = PBXGroup;
-			children = (
-				AD9D70D72B583F2D0002119A /* GameBoyEmulator.entitlements */,
-				AD3E588D2B595746001C6CED /* ButtonsView.swift */,
-				AD9D70D02B583F2B0002119A /* ContentView.swift */,
-				AD38D4442B584949001E4FE7 /* GameBoyContext.swift */,
-				AD9D70CE2B583F2B0002119A /* GameBoyEmulatorApp.swift */,
-				AD7E32E22B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift */,
-				AD7E32E42B5DC22D009C7B9A /* KeyboardContext.swift */,
-				AD9D70D22B583F2D0002119A /* Assets.xcassets */,
-				AD9D70D42B583F2D0002119A /* Preview Content */,
-			);
-			path = GameBoyEmulator;
-			sourceTree = "<group>";
-		};
-		AD9D70D42B583F2D0002119A /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				AD9D70D52B583F2D0002119A /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -104,7 +61,8 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
+			fileSystemSynchronizedGroups = (
+				ADCCF95B2DA1BF62009308CB /* GameBoyEmulator */,
 			);
 			name = GameBoyEmulator;
 			packageProductDependencies = (
@@ -130,7 +88,6 @@
 				};
 			};
 			buildConfigurationList = AD9D70C62B583F2B0002119A /* Build configuration list for PBXProject "GameBoyEmulator" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -138,9 +95,11 @@
 				Base,
 			);
 			mainGroup = AD9D70C22B583F2B0002119A;
+			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				AD7B31D52C56179C00F98B07 /* XCLocalSwiftPackageReference "../../core/gb-core-swift" */,
 			);
+			preferredProjectObjectVersion = 90;
 			productRefGroup = AD9D70CC2B583F2B0002119A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -153,33 +112,21 @@
 /* Begin PBXResourcesBuildPhase section */
 		AD9D70C92B583F2B0002119A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
-				AD9D70D62B583F2D0002119A /* Preview Assets.xcassets in Resources */,
-				AD9D70D32B583F2D0002119A /* Assets.xcassets in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		AD9D70C72B583F2B0002119A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
-				AD9D70D12B583F2B0002119A /* ContentView.swift in Sources */,
-				AD9D70CF2B583F2B0002119A /* GameBoyEmulatorApp.swift in Sources */,
-				AD7E32E52B5DC22D009C7B9A /* KeyboardContext.swift in Sources */,
-				AD3E588E2B595746001C6CED /* ButtonsView.swift in Sources */,
-				AD38D4452B584949001E4FE7 /* GameBoyContext.swift in Sources */,
-				AD7E32E32B5DA9ED009C7B9A /* JoypadButtons+Extensions.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		AD9D70D82B583F2D0002119A /* Debug */ = {
+		AD9D70D82B583F2D0002119A /* Debug configuration for PBXProject "GameBoyEmulator" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -233,7 +180,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -243,7 +190,7 @@
 			};
 			name = Debug;
 		};
-		AD9D70D92B583F2D0002119A /* Release */ = {
+		AD9D70D92B583F2D0002119A /* Release configuration for PBXProject "GameBoyEmulator" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -291,7 +238,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -299,7 +246,7 @@
 			};
 			name = Release;
 		};
-		AD9D70DB2B583F2D0002119A /* Debug */ = {
+		AD9D70DB2B583F2D0002119A /* Debug configuration for PBXNativeTarget "GameBoyEmulator" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -322,11 +269,14 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		AD9D70DC2B583F2D0002119A /* Release */ = {
+		AD9D70DC2B583F2D0002119A /* Release configuration for PBXNativeTarget "GameBoyEmulator" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -349,6 +299,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -359,19 +312,17 @@
 		AD9D70C62B583F2B0002119A /* Build configuration list for PBXProject "GameBoyEmulator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AD9D70D82B583F2D0002119A /* Debug */,
-				AD9D70D92B583F2D0002119A /* Release */,
+				AD9D70D82B583F2D0002119A /* Debug configuration for PBXProject "GameBoyEmulator" */,
+				AD9D70D92B583F2D0002119A /* Release configuration for PBXProject "GameBoyEmulator" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		AD9D70DA2B583F2D0002119A /* Build configuration list for PBXNativeTarget "GameBoyEmulator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AD9D70DB2B583F2D0002119A /* Debug */,
-				AD9D70DC2B583F2D0002119A /* Release */,
+				AD9D70DB2B583F2D0002119A /* Debug configuration for PBXNativeTarget "GameBoyEmulator" */,
+				AD9D70DC2B583F2D0002119A /* Release configuration for PBXNativeTarget "GameBoyEmulator" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
