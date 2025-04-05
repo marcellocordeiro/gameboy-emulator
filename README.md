@@ -44,12 +44,12 @@ boop
   - **[`gb-core-wasm`](core/gb-core-wasm/)**: `gb-core` wrapper targeting WASM.
   - **[`gb-opcode-info`](core/gb-opcode-info/)**: Contains opcode info for use in other modules.
 - **[`platform`](platform/)**: Language/framework specific frontends.
-  - **[`browser`](platform/browser/)**: Browser app written in TypeScript using Vite and React.
   - **[`eframe`](platform/eframe/)**: Native app written in Rust using eframe.
   - **[`sdl2-c`](platform/sdl2-c/)**: Native app written in C using SDL2.
   - **[`sdl2-rust`](platform/sdl2-rust/)**: Native app written in Rust using SDL2.
   - **[`sdl2-swift`](platform/sdl2-swift/)**: Native app written in Swift using SDL2. Likely unsupported on Windows and Linux, but was briefly tested on the latter.
   - **[`swiftui`](platform/swiftui/)**: Native app written in Swift using SwiftUI.
+  - **[`web`](platform/web/)**: Web app written in TypeScript using Vite and React.
 
 ## Setup
 
@@ -66,7 +66,7 @@ sudo pacman -S rust rust-src rust-wasm
 
 ### wasm-pack
 
-Required to build the browser app.
+Required to build the web app.
 
 ```sh
 # Install wasm-pack from source
@@ -100,7 +100,7 @@ brew install sdl2
 # Native
 cargo build
 
-# Browser app
+# Web app
 pnpm build # Will build the Rust dependencies as well
 
 # Swift
@@ -119,7 +119,7 @@ cargo run -- roms/rom.gb
 # Native with info logs
 RUST_LOG=info cargo run -- roms/rom.gb
 
-# Browser app
+# Web app
 pnpm i
 pnpm dev
 
