@@ -1,5 +1,6 @@
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <gb-bindings.h>
+#include <stdlib.h>
 
 #if defined(__clang__)
 #define nullptr NULL
@@ -47,21 +48,42 @@ int main(int argc, char* argv[]) {
         framebuffer[i] = 0;
     }
 
-    SDL_Init(SDL_INIT_VIDEO);
+    //SDL_SetAppMetadata("gb", "1.0.0", "com.emulator.gb");
 
-    SDL_Window* window = SDL_CreateWindow(
-        "gameboy-emulator",
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        SCREEN_WIDTH * 3,
-        SCREEN_HEIGHT * 3,
-        0
-    );
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("SDL_Init: %s", SDL_GetError());
+        return -1;
+    }
 
-    SDL_Renderer* renderer =
-        SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    SDL_Window* window = nullptr;
+    SDL_Renderer* renderer = nullptr;
 
-    SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+    if (!SDL_CreateWindowAndRenderer(
+            "gameboy-emulator",
+            SCREEN_WIDTH * 3,
+            SCREEN_HEIGHT * 3,
+            0,
+            &window,
+            &renderer
+        )) {
+        SDL_Log("SDL_CreateWindowAndRenderer: %s", SDL_GetError());
+        return -1;
+    }
+
+    if (!SDL_SetRenderVSync(renderer, 1)) {
+        SDL_Log("SDL_SetRenderVSync: %s", SDL_GetError());
+        return -1;
+    }
+
+    if (!SDL_SetRenderLogicalPresentation(
+            renderer,
+            SCREEN_WIDTH,
+            SCREEN_HEIGHT,
+            SDL_LOGICAL_PRESENTATION_INTEGER_SCALE
+        )) {
+        SDL_Log("SDL_SetRenderLogicalPresentation: %s", SDL_GetError());
+        return -1;
+    }
 
     SDL_Texture* texture = SDL_CreateTexture(
         renderer,
@@ -78,7 +100,7 @@ int main(int argc, char* argv[]) {
 
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
-            case SDL_QUIT: quit = true; break;
+            case SDL_EVENT_QUIT: quit = true; break;
 
             default: break;
             }
@@ -88,7 +110,7 @@ int main(int argc, char* argv[]) {
         gameboy_draw_into_frame_rgba8888(gb, framebuffer);
 
         SDL_UpdateTexture(texture, nullptr, framebuffer, SCREEN_WIDTH * sizeof(uint32_t));
-        SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+        SDL_RenderTexture(renderer, texture, nullptr, nullptr);
         SDL_RenderPresent(renderer);
     }
 

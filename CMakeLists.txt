@@ -5,7 +5,7 @@ project("gameboy-emulator")
 include("cmake/SetupRustCore.cmake")
 
 add_subdirectory("external/imgui-cmake/imgui")
-add_subdirectory("external/imgui-cmake/imgui-backend-sdl2")
+add_subdirectory("external/imgui-cmake/imgui-backend-sdl3")
 
-add_subdirectory("platform/sdl2-c")
-add_subdirectory("platform/sdl2-imgui-cpp")
+add_subdirectory("platform/sdl3-c")
+add_subdirectory("platform/sdl3-imgui-cpp")
