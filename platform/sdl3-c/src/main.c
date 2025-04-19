@@ -2,14 +2,6 @@
 #include <gb-bindings.h>
 #include <stdlib.h>
 
-#if defined(__clang__)
-#define nullptr NULL
-#elif defined(__GNUC__) || defined(__GNUG__)
-//
-#elif defined(_MSC_VER)
-//
-#endif
-
 uint64_t get_file_size(FILE* file) {
   fseek(file, 0, SEEK_END);
 
@@ -58,7 +50,15 @@ int main(int argc, char* argv[]) {
   SDL_Window* window = nullptr;
   SDL_Renderer* renderer = nullptr;
 
-  if (!SDL_CreateWindowAndRenderer("gameboy-emulator", SCREEN_WIDTH * 3, SCREEN_HEIGHT * 3, 0, &window, &renderer)) {
+  if (!SDL_CreateWindowAndRenderer(
+        "gameboy-emulator",
+        SCREEN_WIDTH * 3,
+        SCREEN_HEIGHT * 3,
+        0,
+        &window,
+        &renderer
+      ))
+  {
     SDL_Log("SDL_CreateWindowAndRenderer: %s", SDL_GetError());
     return -1;
   }
@@ -73,13 +73,19 @@ int main(int argc, char* argv[]) {
         SCREEN_WIDTH,
         SCREEN_HEIGHT,
         SDL_LOGICAL_PRESENTATION_INTEGER_SCALE
-      )) {
+      ))
+  {
     SDL_Log("SDL_SetRenderLogicalPresentation: %s", SDL_GetError());
     return -1;
   }
 
-  SDL_Texture* texture =
-    SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH, SCREEN_HEIGHT);
+  SDL_Texture* texture = SDL_CreateTexture(
+    renderer,
+    SDL_PIXELFORMAT_ABGR8888,
+    SDL_TEXTUREACCESS_STREAMING,
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT
+  );
 
   bool quit = false;
 

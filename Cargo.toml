@@ -45,7 +45,7 @@ missing_panics_doc = "allow"
 [workspace.dependencies]
 arrayvec = "0.7.6"
 bitflags = "2.9.0"
-clap = { version = "4.5.35", features = ["derive"] }
+clap = { version = "4.5.37", features = ["derive"] }
 console_error_panic_hook = "0.1.7"
 console_log = "1.0.0"
 eframe = { version = "0.31.1", default-features = false }

@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.30.1)
+cmake_minimum_required(VERSION 3.30.5)
 
-project("gameboy-emulator")
+project(gameboy-emulator)
 
 include("cmake/SetupRustCore.cmake")
 

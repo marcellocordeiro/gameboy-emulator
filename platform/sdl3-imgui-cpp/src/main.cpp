@@ -10,7 +10,7 @@
 // Important to understand: SDL_Renderer is an _optional_ component of SDL3.
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <SDL3/SDL.h>
 #include <imgui.h>

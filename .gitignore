@@ -1,5 +1,6 @@
 /build
 /target
+out/
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,xcode
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,xcode
