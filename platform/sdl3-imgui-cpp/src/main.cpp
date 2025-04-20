@@ -11,6 +11,9 @@
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
 #include <cstdio>
+#include <filesystem>
+#include <fstream>
+#include <vector>
 
 #include <SDL3/SDL.h>
 #include <imgui.h>
@@ -19,14 +22,13 @@
 
 #include <gb/gb.h>
 
-uint64_t get_file_size(FILE* file) {
-  fseek(file, 0, SEEK_END);
+auto get_file(const std::filesystem::path& path) -> std::vector<uint8_t> {
+  std::ifstream stream(path, std::ios::binary);
 
-  uint64_t rom_size = ftell(file);
+  std::vector file(std::filesystem::file_size(path), uint8_t{});
+  stream.read(reinterpret_cast<char*>(file.data()), file.size());
 
-  fseek(file, 0, SEEK_SET);
-
-  return rom_size;
+  return file;
 }
 
 int main(int argc, char* argv[]) {
@@ -34,22 +36,13 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  FILE* file = fopen(argv[1], "rb");
-
-  uint64_t rom_size = get_file_size(file);
-  uint8_t* rom = (uint8_t*)malloc(rom_size);
-
-  fread(rom, sizeof(uint8_t), rom_size, file);
-  fclose(file);
+  auto rom = get_file(argv[1]);
 
   Bootrom gbBootrom = {.data = nullptr, .size = 0};
-
-  Rom gbRom = {.data = rom, .size = rom_size};
+  Rom gbRom = {.data = rom.data(), .size = rom.size()};
 
   struct GameBoy* gb = gameboy_new(true);
   gameboy_load(gb, gbBootrom, gbRom);
-
-  free(rom);
 
   uint8_t framebuffer[FRAMEBUFFER_SIZE];
 
