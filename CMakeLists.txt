@@ -14,7 +14,12 @@ add_subdirectory("core/gb-core-c/cmake")
 add_subdirectory("external/imgui-cmake/imgui")
 add_subdirectory("external/imgui-cmake/imgui-backend-sdl3")
 
-add_subdirectory("platform/sdl3-c")
+# We're using C23 for the C app, but MSVC doesn't support it yet.
+# Let's skip this on Windows for now.
+if(NOT WIN32)
+  add_subdirectory("platform/sdl3-c")
+endif()
+
 add_subdirectory("platform/sdl3-imgui-cpp")
 
 # Workaround to make clangd find `compile_commands.json`
