@@ -1,5 +1,5 @@
 #include <SDL3/SDL.h>
-#include <gb-bindings.h>
+#include <gb/gb.h>
 #include <stdlib.h>
 
 uint64_t get_file_size(FILE* file) {

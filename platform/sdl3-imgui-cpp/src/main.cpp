@@ -17,7 +17,7 @@
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
 
-#include <gb-bindings.h>
+#include <gb/gb.h>
 
 uint64_t get_file_size(FILE* file) {
   fseek(file, 0, SEEK_END);
@@ -68,7 +68,8 @@ int main(int argc, char* argv[]) {
 
   // Create window with SDL_Renderer graphics context
   Uint32 window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
-  SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL3+SDL_Renderer example", 1280, 720, window_flags);
+  SDL_Window* window =
+    SDL_CreateWindow("Dear ImGui SDL3+SDL_Renderer example", 1280, 720, window_flags);
   if (window == nullptr) {
     printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
     return -1;
@@ -87,8 +88,8 @@ int main(int argc, char* argv[]) {
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
   (void)io;
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
 
   // Setup Dear ImGui style
   ImGui::StyleColorsDark();
@@ -121,8 +122,13 @@ int main(int argc, char* argv[]) {
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
   // GB texture
-  SDL_Texture* texture =
-    SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH, SCREEN_HEIGHT);
+  SDL_Texture* texture = SDL_CreateTexture(
+    renderer,
+    SDL_PIXELFORMAT_ABGR8888,
+    SDL_TEXTUREACCESS_STREAMING,
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT
+  );
 
   // Main loop
   bool done = false;
@@ -139,7 +145,9 @@ int main(int argc, char* argv[]) {
       if (event.type == SDL_EVENT_QUIT) {
         done = true;
       }
-      if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(window)) {
+      if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED
+          && event.window.windowID == SDL_GetWindowID(window))
+      {
         done = true;
       }
     }
@@ -165,24 +173,29 @@ int main(int argc, char* argv[]) {
       static float f = 0.0f;
       static int counter = 0;
 
-      ImGui::Begin("Hello, world!");  // Create a window called "Hello, world!" and append into it.
+      ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and append into it.
 
-      ImGui::Text("This is some useful text.");           // Display some text (you can use a format strings too)
-      ImGui::Checkbox("Demo Window", &show_demo_window);  // Edit bools storing our window open/close state
+      ImGui::Text(
+        "This is some useful text."
+      ); // Display some text (you can use a format strings too)
+      ImGui::Checkbox(
+        "Demo Window",
+        &show_demo_window
+      ); // Edit bools storing our window open/close state
       ImGui::Checkbox("Another Window", &show_another_window);
 
-      ImGui::SliderFloat("float", &f, 0.0f, 1.0f);             // Edit 1 float using a slider from 0.0f to 1.0f
-      ImGui::ColorEdit3("clear color", (float*)&clear_color);  // Edit 3 floats representing a color
+      ImGui::SliderFloat("float", &f, 0.0f, 1.0f); // Edit 1 float using a slider from 0.0f to 1.0f
+      ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
-      if (ImGui::Button(
-            "Button"
-          )) {  // Buttons return true when clicked (most widgets return true when edited/activated)
+      if (ImGui::Button("Button"))
+      { // Buttons return true when clicked (most widgets return true when edited/activated)
         counter++;
       }
       ImGui::SameLine();
       ImGui::Text("counter = %d", counter);
 
-      ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+      auto framerate = static_cast<double>(io.Framerate);
+      ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0 / framerate, framerate);
       ImGui::End();
     }
 
@@ -191,7 +204,7 @@ int main(int argc, char* argv[]) {
       ImGui::Begin(
         "Another Window",
         &show_another_window
-      );  // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+      ); // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
       ImGui::Text("Hello from another window!");
       if (ImGui::Button("Close Me")) {
         show_another_window = false;
@@ -205,7 +218,13 @@ int main(int argc, char* argv[]) {
 
     // Rendering
     ImGui::Render();
-    SDL_SetRenderDrawColorFloat(renderer, clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+    SDL_SetRenderDrawColorFloat(
+      renderer,
+      clear_color.x,
+      clear_color.y,
+      clear_color.z,
+      clear_color.w
+    );
     SDL_RenderClear(renderer);
 
     SDL_FRect rec;

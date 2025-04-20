@@ -1,1 +1,1 @@
-#include "../../../../../core/gb-core-c/gb-bindings.h"
+#include "../../../../../core/gb-core-c/cmake/include/gb/gb.h"
