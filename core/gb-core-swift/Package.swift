@@ -1,6 +1,9 @@
 // swift-tools-version: 6.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
+// `cmake --install ./out/build/macos-appleclang --prefix ./core/gb-core-swift/Sources/CGameBoyCore`
+// xcodebuild -create-xcframework -library ./lib/libgb_core_c.a -headers ./include -output CGameBoyCore.xcframework
+
 import PackageDescription
 
 #if DEBUG
@@ -37,12 +40,7 @@ let package = Package(
     targets: [
         .target(
             name: "CGameBoyCore",
-            swiftSettings: [
-                .enableUpcomingFeature("InternalImportsByDefault"),
-                .enableUpcomingFeature("MemberImportVisibility"),
-                .enableUpcomingFeature("ExistentialAny"),
-            ],
-            linkerSettings: linkerSettings
+            linkerSettings: linkerSettings,
         ),
         .target(
             name: "GameBoyCore",
@@ -51,7 +49,11 @@ let package = Package(
                 .enableUpcomingFeature("InternalImportsByDefault"),
                 .enableUpcomingFeature("MemberImportVisibility"),
                 .enableUpcomingFeature("ExistentialAny"),
-            ]
+            ],
         ),
-    ]
+        .testTarget(
+            name: "CGameBoyCoreTests",
+            dependencies: ["CGameBoyCore"],
+        ),
+    ],
 )

@@ -45,8 +45,8 @@ boop
   - **[`gb-opcode-info`](core/gb-opcode-info/)**: Contains opcode info for use in other modules.
 - **[`platform`](platform/)**: Language/framework specific frontends.
   - **[`eframe`](platform/eframe/)**: Native app written in Rust using eframe.
-  - **[`sdl2-c`](platform/sdl2-c/)**: Native app written in C using SDL2.
-  - **[`sdl2-rust`](platform/sdl2-rust/)**: Native app written in Rust using SDL2.
+  - **[`sdl3-c`](platform/sdl3-c/)**: Native app written in C using SDL3.
+  - **[`sdl3-rust`](platform/sdl3-rust/)**: Native app written in Rust using SDL3.
   - **[`sdl2-swift`](platform/sdl2-swift/)**: Native app written in Swift using SDL2. Likely unsupported on Windows and Linux, but was briefly tested on the latter.
   - **[`swiftui`](platform/swiftui/)**: Native app written in Swift using SwiftUI.
   - **[`web`](platform/web/)**: Web app written in TypeScript using Vite and React.
@@ -82,16 +82,16 @@ brew install wasm-pack
 npm install -g wasm-pack
 ```
 
-### SDL2
+### SDL2/SDL3
 
 Required to build the C and Swift apps.
 
 ```sh
 # Arch
-sudo pacman -S sdl2
+sudo pacman -S sdl2-compat sdl3
 
 # macOS
-brew install sdl2
+brew install sdl2 sdl3
 ```
 
 ## Building

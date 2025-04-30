@@ -29,7 +29,7 @@ let package = Package(
                 .enableUpcomingFeature("InternalImportsByDefault"),
                 .enableUpcomingFeature("MemberImportVisibility"),
                 .enableUpcomingFeature("ExistentialAny"),
-            ]
+            ],
         ),
-    ]
+    ],
 )

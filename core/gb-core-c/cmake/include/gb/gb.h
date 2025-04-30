@@ -6,6 +6,7 @@
 #else
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h> // while apple clang doesn't support it
 #endif
 
 #define SCREEN_WIDTH ((size_t)160)
