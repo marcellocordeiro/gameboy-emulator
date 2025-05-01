@@ -23,7 +23,6 @@ let linkerSettings: [PackageDescription.LinkerSetting]
 #if os(macOS)
 linkerSettings = [
     .unsafeFlags(["-L\(libsDir)/"]),
-    .linkedLibrary(libName),
 ]
 #else
 linkerSettings = [.linkedLibrary("\(libsDir)/\(staticLibFile)")]
@@ -52,8 +51,8 @@ let package = Package(
             ],
         ),
         .testTarget(
-            name: "CGameBoyCoreTests",
-            dependencies: ["CGameBoyCore"],
+            name: "GameBoyCoreTests",
+            dependencies: ["GameBoyCore"],
         ),
     ],
 )
