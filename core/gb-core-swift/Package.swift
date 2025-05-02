@@ -1,6 +1,7 @@
 // swift-tools-version: 6.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
+// TODO: automation
 // `cmake --install ./out/build/macos-appleclang --prefix ./core/gb-core-swift/Sources/CGameBoyCore`
 // xcodebuild -create-xcframework -library ./lib/libgb_core_c.a -headers ./include -output CGameBoyCore.xcframework
 
@@ -16,18 +17,6 @@ let packageDir = Context.packageDirectory
 let rootDir = "\(packageDir)/../.."
 let libsDir = "\(rootDir)/target/\(configDir)"
 
-let libName = "gb_core_c"
-let staticLibFile = "lib\(libName).a"
-
-let linkerSettings: [PackageDescription.LinkerSetting]
-#if os(macOS)
-linkerSettings = [
-    .unsafeFlags(["-L\(libsDir)/"]),
-]
-#else
-linkerSettings = [.linkedLibrary("\(libsDir)/\(staticLibFile)")]
-#endif
-
 let package = Package(
     name: "GameBoyCore",
     platforms: [
@@ -39,7 +28,9 @@ let package = Package(
     targets: [
         .target(
             name: "CGameBoyCore",
-            linkerSettings: linkerSettings,
+            linkerSettings: [
+                .unsafeFlags(["-L\(libsDir)/"]),
+            ],
         ),
         .target(
             name: "GameBoyCore",

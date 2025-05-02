@@ -7,7 +7,7 @@ edition = "2024"
 workspace = true
 
 [lib]
-crate-type = ["dylib", "staticlib"]
+crate-type = ["staticlib"]
 
 [features]
 bootrom = ["gb-core/bootrom"]

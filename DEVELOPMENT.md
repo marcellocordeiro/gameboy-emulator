@@ -49,3 +49,9 @@ sudo pacman -S cargo-edit
 
 cargo upgrade -i && cargo update
 ```
+
+## Useful commands
+
+```sh
+cargo build --all-targets && cargo build --release --all-targets
+```
