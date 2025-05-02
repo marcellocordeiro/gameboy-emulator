@@ -6,10 +6,17 @@ mod common;
 #[test]
 fn test_cgb_acid2() {
     let name = "cgb-acid2";
-    let rom = include_bytes!("../../../external/gameboy-test-roms/cgb-acid2.gbc");
+
+    let path = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../",
+        "external/gameboy-test-roms/",
+        "cgb-acid2.gbc"
+    );
+    let rom = std::fs::read(path).unwrap();
 
     let mut gb = GameBoy::new(DeviceModel::Cgb);
-    gb.load(None, rom.to_vec()).unwrap();
+    gb.load(None, rom).unwrap();
 
     run_until_break(&mut gb).unwrap();
     validate_screenshot(&gb, name).unwrap();

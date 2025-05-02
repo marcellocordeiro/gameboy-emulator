@@ -6,13 +6,13 @@ macro_rules! run_for_model {
     };
 
     (dmg, $F:path, $rom:ident) => {
-        if let Err(e) = $F(gb_core::constants::DeviceModel::Dmg, $rom) {
+        if let Err(e) = $F(gb_core::constants::DeviceModel::Dmg, &$rom) {
             panic!("DMG failure: {e}");
         }
     };
 
     (cgb, $F:path, $rom:ident) => {
-        if let Err(e) = $F(gb_core::constants::DeviceModel::Cgb, $rom) {
+        if let Err(e) = $F(gb_core::constants::DeviceModel::Cgb, &$rom) {
             panic!("CGB failure: {e}");
         }
     };
@@ -23,7 +23,15 @@ macro_rules! testcases_mooneye {
     ($name:ident($path:literal $(, $model:ident)?);) => {
         #[test]
         fn $name() {
-            let rom = include_bytes!(concat!("../../../external/gameboy-test-roms/", "mooneye-test-suite/", $path));
+            let path = concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/../../",
+                "external/gameboy-test-roms/",
+                "mooneye-test-suite/",
+                $path
+            );
+            let rom = std::fs::read(path).unwrap();
+
             run_for_model!($($model, )? common::mooneye::run, rom);
         }
     };
@@ -42,7 +50,15 @@ macro_rules! testcases_blargg_serial {
     ($name:ident($path:literal $(, $model:ident)?);) => {
         #[test]
         fn $name() {
-            let rom = include_bytes!(concat!("../../../external/gameboy-test-roms/", "blargg/", $path));
+            let path = concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/../../",
+                "external/gameboy-test-roms/",
+                "blargg/",
+                $path
+            );
+            let rom = std::fs::read(path).unwrap();
+
             run_for_model!($($model, )? common::blargg::run_serial, rom);
         }
     };
@@ -61,7 +77,15 @@ macro_rules! testcases_blargg_memory {
     ($name:ident($path:literal $(, $model:ident)?);) => {
         #[test]
         fn $name() {
-            let rom = include_bytes!(concat!("../../../external/gameboy-test-roms/", "blargg/", $path));
+            let path = concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/../../",
+                "external/gameboy-test-roms/",
+                "blargg/",
+                $path
+            );
+            let rom = std::fs::read(path).unwrap();
+
             run_for_model!($($model, )? common::blargg::run_memory, rom);
         }
     };

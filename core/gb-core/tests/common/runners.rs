@@ -10,7 +10,7 @@ use super::error::Error;
 const TIMEOUT: Duration = Duration::from_secs(20);
 const BREAK_OPCODE: u8 = 0x40; // LD B,B
 
-pub fn run_test<F>(device_model: DeviceModel, rom: &'static [u8], runner: F) -> Result<(), Error>
+pub fn run_test<F>(device_model: DeviceModel, rom: &[u8], runner: F) -> Result<(), Error>
 where
     F: FnOnce(&mut GameBoy) -> Result<(), Error>,
 {
