@@ -229,9 +229,8 @@ mod tests {
         assert_eq!(timer.read_tac(), 0xF8);
     }
 
-    // TODO: rewrite this.
     #[test]
-    #[ignore]
+    #[ignore = "TODO: rewrite this"]
     #[allow(clippy::cognitive_complexity)]
     fn test_overflow() {
         let mut timer = Timer::default();

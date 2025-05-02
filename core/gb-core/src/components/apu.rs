@@ -161,7 +161,7 @@ impl Apu {
             0xFF77 => if !device_is_cgb!(self) {},
 
             _ => unreachable!("[apu.rs] Invalid write: ({address:#06x}) = {value:#04x}"),
-        };
+        }
     }
 
     fn read_nr50(&self) -> u8 {

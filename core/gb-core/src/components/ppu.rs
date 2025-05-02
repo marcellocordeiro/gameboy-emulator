@@ -355,7 +355,7 @@ impl Ppu {
                     self.vram_dma.resume_hdma();
                 }
             }
-        };
+        }
     }
 
     fn check_irq(&mut self) {

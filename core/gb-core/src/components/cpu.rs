@@ -78,7 +78,7 @@ impl Cpu {
 
         if !memory.interrupts().has_queued_irq() {
             return;
-        };
+        }
 
         self.registers.ime = ImeState::Disabled;
         self.force_cycle_memory(memory);
