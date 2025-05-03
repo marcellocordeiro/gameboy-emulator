@@ -14,7 +14,7 @@ add_subdirectory("core/gb-core-c/cmake")
 add_subdirectory("external/imgui-cmake/imgui")
 add_subdirectory("external/imgui-cmake/imgui-backend-sdl3")
 
-add_subdirectory("platform/sdl3-cpp")
+add_subdirectory("platform/sdl3")
 
 # Workaround to make clangd find `compile_commands.json`
 if(CLANGD_CONFIG_WORKAROUND)
