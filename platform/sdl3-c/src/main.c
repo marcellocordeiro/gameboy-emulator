@@ -1,6 +1,9 @@
-#include <SDL3/SDL.h>
-#include <gb/gb.h>
+#include <stdio.h>
 #include <stdlib.h>
+
+#include <SDL3/SDL.h>
+
+#include <gb/gb.h>
 
 uint64_t get_file_size(FILE* file) {
   fseek(file, 0, SEEK_END);
