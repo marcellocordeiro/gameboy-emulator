@@ -45,9 +45,8 @@ boop
   - **[`gb-opcode-info`](core/gb-opcode-info/)**: Contains opcode info for use in other modules.
 - **[`platform`](platform/)**: Language/framework specific frontends.
   - **[`eframe`](platform/eframe/)**: Native app written in Rust using eframe.
-  - **[`sdl3-c`](platform/sdl3-c/)**: Native app written in C using SDL3.
-  - **[`sdl3-rust`](platform/sdl3-rust/)**: Native app written in Rust using SDL3.
-  - **[`sdl2-swift`](platform/sdl2-swift/)**: Native app written in Swift using SDL2. Likely unsupported on Windows and Linux, but was briefly tested on the latter.
+  - **[`sdl3-imgui-cpp`](platform/sdl3-imgui-cpp/)**: Native app written in C++ using SDL3 and Dear ImGui.
+  - **[`sdl2-rust`](platform/sdl2-rust/)**: Native app written in Rust using SDL2. (unsupported)
   - **[`swiftui`](platform/swiftui/)**: Native app written in Swift using SwiftUI.
   - **[`web`](platform/web/)**: Web app written in TypeScript using Vite and React.
 

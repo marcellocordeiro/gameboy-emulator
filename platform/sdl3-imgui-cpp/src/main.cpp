@@ -10,6 +10,7 @@
 // Important to understand: SDL_Renderer is an _optional_ component of SDL3.
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
+#include <array>
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
@@ -44,13 +45,7 @@ int main(int argc, char* argv[]) {
   struct GameBoy* gb = gameboy_new(true);
   gameboy_load(gb, gbBootrom, gbRom);
 
-  uint8_t framebuffer[FRAMEBUFFER_SIZE];
-
-  for (size_t i = 0; i < FRAMEBUFFER_SIZE; ++i) {
-    framebuffer[i] = 0;
-  }
-
-  // end gb stuff
+  std::array<uint8_t, FRAMEBUFFER_SIZE> framebuffer = {};
 
   // Setup SDL
   // [If using SDL_MAIN_USE_CALLBACKS: all code below until the main loop starts would likely be your SDL_AppInit() function]
@@ -207,8 +202,8 @@ int main(int argc, char* argv[]) {
     }
 
     gameboy_run_frame(gb);
-    gameboy_draw_into_frame_rgba8888(gb, framebuffer);
-    SDL_UpdateTexture(texture, nullptr, framebuffer, SCREEN_WIDTH * sizeof(uint32_t));
+    gameboy_draw_into_frame_rgba8888(gb, framebuffer.data());
+    SDL_UpdateTexture(texture, nullptr, framebuffer.data(), SCREEN_WIDTH * sizeof(uint32_t));
 
     // Rendering
     ImGui::Render();

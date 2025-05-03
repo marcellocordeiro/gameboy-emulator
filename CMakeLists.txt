@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30.5)
+cmake_minimum_required(VERSION 3.30.5...4.0.1)
 
 project(gameboy-emulator)
 
@@ -13,12 +13,6 @@ add_subdirectory("core/gb-core-c/cmake")
 
 add_subdirectory("external/imgui-cmake/imgui")
 add_subdirectory("external/imgui-cmake/imgui-backend-sdl3")
-
-# We're using C23 for the C app, but MSVC doesn't support it yet.
-# Let's skip this on Windows for now.
-if(NOT WIN32)
-  add_subdirectory("platform/sdl3-c")
-endif()
 
 add_subdirectory("platform/sdl3-imgui-cpp")
 
