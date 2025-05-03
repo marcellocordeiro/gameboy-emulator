@@ -83,6 +83,7 @@ int main(int argc, char* argv[]) {
   (void)io;
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+  io.IniFilename = nullptr;
 
   // Setup Dear ImGui style
   ImGui::StyleColorsDark();
@@ -211,21 +212,8 @@ int main(int argc, char* argv[]) {
 
     // Rendering
     ImGui::Render();
-    SDL_SetRenderDrawColorFloat(
-      renderer,
-      clear_color.x,
-      clear_color.y,
-      clear_color.z,
-      clear_color.w
-    );
     SDL_RenderClear(renderer);
-
-    SDL_FRect rec;
-    rec.x = 0;
-    rec.y = 0;
-    rec.h = SCREEN_HEIGHT;
-    rec.w = SCREEN_WIDTH;
-    SDL_RenderTexture(renderer, texture, nullptr, &rec);
+    SDL_RenderTexture(renderer, texture, nullptr, nullptr);
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
     SDL_RenderPresent(renderer);
   }
