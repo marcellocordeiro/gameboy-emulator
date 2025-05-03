@@ -50,10 +50,6 @@ int main(int argc, char* argv[]) {
   // Setup SDL
   // [If using SDL_MAIN_USE_CALLBACKS: all code below until the main loop starts would likely be your SDL_AppInit() function]
   SDL::Context context{SDL_INIT_VIDEO | SDL_INIT_GAMEPAD};
-  /*if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
-    printf("Error: SDL_Init(): %s\n", SDL_GetError());
-    return -1;
-  }*/
 
   // Create window with SDL_Renderer graphics context
   SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
@@ -65,6 +61,16 @@ int main(int argc, char* argv[]) {
 
   window.setWindowPosition(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
   window.showWindow();
+
+  auto texture = SDL::Texture(
+    renderer,
+    SDL_PIXELFORMAT_ABGR8888,
+    SDL_TEXTUREACCESS_STREAMING,
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT
+  );
+
+  texture.setScaleMode(SDL_SCALEMODE_NEAREST);
 
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();
@@ -104,15 +110,6 @@ int main(int argc, char* argv[]) {
   bool show_demo_window = true;
   bool show_another_window = false;
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-  // GB texture
-  auto texture = SDL::Texture(
-    renderer,
-    SDL_PIXELFORMAT_ABGR8888,
-    SDL_TEXTUREACCESS_STREAMING,
-    SCREEN_WIDTH,
-    SCREEN_HEIGHT
-  );
 
   // Main loop
   bool done = false;
