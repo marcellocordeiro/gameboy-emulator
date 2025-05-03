@@ -1,6 +1,14 @@
-add_executable(gb-sdl3-cpp
-  "src/main.cpp"
+file(
+  GLOB_RECURSE
+  SOURCES
+  CONFIGURE_DEPENDS
+  "src/*.cpp"
+  "src/*.hpp"
+  "src/*.h"
 )
+
+add_executable(gb-sdl3-cpp)
+target_sources(gb-sdl3-cpp PRIVATE ${SOURCES})
 
 target_link_libraries(gb-sdl3-cpp PRIVATE gb_core_c)
 

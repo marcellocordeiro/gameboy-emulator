@@ -1,0 +1,60 @@
+#pragma once
+
+#include <cstdint>
+#include <memory>
+
+#include "sdl_error.hpp"
+#include "sdl_include.hpp"
+
+namespace SDL {
+class Window {
+public:
+  [[nodiscard]]
+  Window() = default;
+
+  [[nodiscard]]
+  Window(const std::string& title, std::int32_t width, std::int32_t height, SDL_WindowFlags flags) {
+    auto* raw = SDL_CreateWindow(title.c_str(), width, height, flags);
+
+    if (raw == nullptr) {
+      throw Error::fromContextWithSource("SDL_CreateWindow");
+    }
+
+    pointer.reset(raw);
+  }
+
+  [[nodiscard]]
+  auto get() const -> SDL_Window* {
+    return pointer.get();
+  }
+
+  void setWindowPosition(std::int32_t x, std::int32_t y) {
+    auto result = SDL_SetWindowPosition(pointer.get(), x, y);
+
+    if (!result) {
+      throw Error::fromContextWithSource("SDL_SetWindowPosition");
+    }
+  }
+
+  void showWindow() {
+    auto result = SDL_ShowWindow(pointer.get());
+
+    if (!result) {
+      throw Error::fromContextWithSource("SDL_ShowWindow");
+    }
+  }
+
+private:
+  struct Deleter {
+    void operator()(SDL_Window* ptr) {
+      if (ptr) {
+        SDL_DestroyWindow(ptr);
+      }
+    }
+  };
+
+  using Pointer = std::unique_ptr<SDL_Window, Deleter>;
+
+  Pointer pointer;
+};
+} // namespace SDL

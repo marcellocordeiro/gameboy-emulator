@@ -16,12 +16,12 @@
 #include <fstream>
 #include <vector>
 
-#include <SDL3/SDL.h>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
 
 #include <gb/gb.h>
+#include "sdl/sdl.hpp"
 
 auto get_file(const std::filesystem::path& path) -> std::vector<uint8_t> {
   std::ifstream stream(path, std::ios::binary);
@@ -42,34 +42,29 @@ int main(int argc, char* argv[]) {
   Bootrom gbBootrom = {.data = nullptr, .size = 0};
   Rom gbRom = {.data = rom.data(), .size = rom.size()};
 
-  struct GameBoy* gb = gameboy_new(true);
+  auto* gb = gameboy_new(true);
   gameboy_load(gb, gbBootrom, gbRom);
 
   std::array<uint8_t, FRAMEBUFFER_SIZE> framebuffer = {};
 
   // Setup SDL
   // [If using SDL_MAIN_USE_CALLBACKS: all code below until the main loop starts would likely be your SDL_AppInit() function]
-  if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
+  SDL::Context context{SDL_INIT_VIDEO | SDL_INIT_GAMEPAD};
+  /*if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
     printf("Error: SDL_Init(): %s\n", SDL_GetError());
     return -1;
-  }
+  }*/
 
   // Create window with SDL_Renderer graphics context
-  Uint32 window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
-  SDL_Window* window =
-    SDL_CreateWindow("Dear ImGui SDL3+SDL_Renderer example", 1280, 720, window_flags);
-  if (window == nullptr) {
-    printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
-    return -1;
-  }
-  SDL_Renderer* renderer = SDL_CreateRenderer(window, nullptr);
-  SDL_SetRenderVSync(renderer, 1);
-  if (renderer == nullptr) {
-    SDL_Log("Error: SDL_CreateRenderer(): %s\n", SDL_GetError());
-    return -1;
-  }
-  SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-  SDL_ShowWindow(window);
+  SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
+  auto window = SDL::Window("Dear ImGui SDL3+SDL_Renderer example", 1280, 720, window_flags);
+
+  auto renderer = SDL::Renderer(window);
+
+  renderer.enableVsync();
+
+  window.setWindowPosition(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+  window.showWindow();
 
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();
@@ -85,8 +80,8 @@ int main(int argc, char* argv[]) {
   //ImGui::StyleColorsLight();
 
   // Setup Platform/Renderer backends
-  ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
-  ImGui_ImplSDLRenderer3_Init(renderer);
+  ImGui_ImplSDL3_InitForSDLRenderer(window.get(), renderer.get());
+  ImGui_ImplSDLRenderer3_Init(renderer.get());
 
   // Load Fonts
   // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
@@ -111,7 +106,7 @@ int main(int argc, char* argv[]) {
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
   // GB texture
-  SDL_Texture* texture = SDL_CreateTexture(
+  auto texture = SDL::Texture(
     renderer,
     SDL_PIXELFORMAT_ABGR8888,
     SDL_TEXTUREACCESS_STREAMING,
@@ -135,14 +130,14 @@ int main(int argc, char* argv[]) {
         done = true;
       }
       if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED
-          && event.window.windowID == SDL_GetWindowID(window))
+          && event.window.windowID == SDL_GetWindowID(window.get()))
       {
         done = true;
       }
     }
 
     // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppIterate() function]
-    if (SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED) {
+    if (SDL_GetWindowFlags(window.get()) & SDL_WINDOW_MINIMIZED) {
       SDL_Delay(10);
       continue;
     }
@@ -203,14 +198,14 @@ int main(int argc, char* argv[]) {
 
     gameboy_run_frame(gb);
     gameboy_draw_into_frame_rgba8888(gb, framebuffer.data());
-    SDL_UpdateTexture(texture, nullptr, framebuffer.data(), SCREEN_WIDTH * sizeof(uint32_t));
+    SDL_UpdateTexture(texture.get(), nullptr, framebuffer.data(), SCREEN_WIDTH * sizeof(uint32_t));
 
     // Rendering
     ImGui::Render();
-    SDL_RenderClear(renderer);
-    SDL_RenderTexture(renderer, texture, nullptr, nullptr);
-    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
-    SDL_RenderPresent(renderer);
+    SDL_RenderClear(renderer.get());
+    SDL_RenderTexture(renderer.get(), texture.get(), nullptr, nullptr);
+    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer.get());
+    SDL_RenderPresent(renderer.get());
   }
 
   // Cleanup
@@ -219,8 +214,8 @@ int main(int argc, char* argv[]) {
   ImGui_ImplSDL3_Shutdown();
   ImGui::DestroyContext();
 
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window);
+  SDL_DestroyRenderer(renderer.get());
+  SDL_DestroyWindow(window.get());
   SDL_Quit();
 
   return 0;

@@ -45,7 +45,7 @@ boop
   - **[`gb-opcode-info`](core/gb-opcode-info/)**: Contains opcode info for use in other modules.
 - **[`platform`](platform/)**: Language/framework specific frontends.
   - **[`eframe`](platform/eframe/)**: Native app written in Rust using eframe.
-  - **[`sdl3-imgui-cpp`](platform/sdl3-imgui-cpp/)**: Native app written in C++ using SDL3 and Dear ImGui.
+  - **[`sdl3-cpp`](platform/sdl3-cpp/)**: Native app written in C++ using SDL3 and Dear ImGui.
   - **[`sdl2-rust`](platform/sdl2-rust/)**: Native app written in Rust using SDL2. (unsupported)
   - **[`swiftui`](platform/swiftui/)**: Native app written in Swift using SwiftUI.
   - **[`web`](platform/web/)**: Web app written in TypeScript using Vite and React.
@@ -56,11 +56,10 @@ boop
 
 ```sh
 # Install rustup: https://www.rust-lang.org/
+# Can also install rustup from the package manager
 
 rustup default stable
-
-# Arch
-sudo pacman -S rust rust-src rust-wasm
+rustup toolchain install nightly # For rustfmt
 ```
 
 ### wasm-pack
@@ -87,10 +86,13 @@ Required to build the C and Swift apps.
 
 ```sh
 # Arch
-sudo pacman -S sdl2-compat sdl3
+sudo pacman -S sdl3
+
+# Fedora
+sudo dnf install SDL3-devel
 
 # macOS
-brew install sdl2 sdl3
+brew install sdl3
 ```
 
 ## Building
@@ -100,12 +102,7 @@ brew install sdl2 sdl3
 cargo build
 
 # Web app
-pnpm build # Will build the Rust dependencies as well
-
-# Swift
-cargo build --release
-cd platform/sdl2-swift
-swift build
+pnpm build # Implicitly builds the Rust dependencies
 ```
 
 ## Running
@@ -119,12 +116,8 @@ cargo run -- roms/rom.gb
 RUST_LOG=info cargo run -- roms/rom.gb
 
 # Web app
-pnpm i
+pnpm install
 pnpm dev
-
-# Swift
-cd platform/sdl2-swift
-swift run GameBoy ../../roms/rom.gb
 ```
 
 ## Tests
