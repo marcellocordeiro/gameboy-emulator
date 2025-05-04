@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "../utils/vec2.hpp"
 #include "sdl_error.hpp"
 #include "sdl_include.hpp"
 #include "sdl_window.hpp"
@@ -34,6 +35,19 @@ public:
     if (!result) {
       throw Error::fromContextWithSource("SDL_SetRenderVSync");
     }
+  }
+
+  auto getCurrentRenderOutputSize() -> Vec2 {
+    int w = 0;
+    int h = 0;
+
+    auto result = SDL_GetCurrentRenderOutputSize(pointer.get(), &w, &h);
+
+    if (!result) {
+      throw Error::fromContextWithSource("SDL_GetCurrentRenderOutputSize");
+    }
+
+    return {.width = w, .height = h};
   }
 
 private:
