@@ -4,7 +4,6 @@ use components::{cartridge::error::CartridgeError, cpu::Cpu, memory::Memory};
 use constants::{DeviceModel, ScreenPixels};
 use utils::button::Button;
 
-#[repr(C)]
 pub struct GameBoy {
     cpu: Cpu,
     memory: Memory,
