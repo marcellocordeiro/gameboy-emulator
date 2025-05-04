@@ -16,11 +16,9 @@
 #include <fstream>
 #include <vector>
 
-#include <imgui.h>
-#include <imgui_impl_sdl3.h>
-#include <imgui_impl_sdlrenderer3.h>
-
 #include <gb/gb.h>
+
+#include "imgui/imgui.hpp"
 #include "sdl/sdl.hpp"
 
 auto get_file(const std::filesystem::path& path) -> std::vector<uint8_t> {
