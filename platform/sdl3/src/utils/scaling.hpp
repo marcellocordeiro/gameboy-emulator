@@ -25,8 +25,8 @@ static auto integerScale(Vec2 availableSize, Vec2 textureSize) -> int {
 static auto integerScaleCenteredSdlRect(Vec2 availableSize, Vec2 textureSize) -> SDL_FRect {
   auto scale = integerScale(availableSize, textureSize);
 
-  float w = textureSize.height * scale;
-  float h = textureSize.width * scale;
+  auto w = static_cast<float>(textureSize.height * scale);
+  auto h = static_cast<float>(textureSize.width * scale);
 
   float x = (availableSize.width / 2) - (w / 2);
   float y = (availableSize.height / 2) - (h / 2);
