@@ -7,20 +7,21 @@
 #include <fstream>
 #include <vector>
 
-#include <gb/gb.h>
-
+#include "gb/gb.h"
 #include "imgui/imgui.hpp"
 #include "sdl/sdl.hpp"
 #include "utils/files.hpp"
 #include "utils/scaling.hpp"
 
-static void renderDisplay(SDL::Renderer& renderer, SDL::Texture& texture) {
+namespace {
+void renderDisplay(SDL::Renderer& renderer, SDL::Texture& texture) {
   auto availableSize = renderer.getCurrentRenderOutputSize();
   auto rect =
     integerScaleCenteredSdlRect(availableSize, {.width = SCREEN_WIDTH, .height = SCREEN_HEIGHT});
 
   SDL_RenderTexture(renderer.get(), texture.get(), nullptr, &rect);
 }
+} // namespace
 
 App::App(std::span<std::string_view> args) : args(args) {
   if (args.size() == 1) {
