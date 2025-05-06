@@ -10,7 +10,7 @@ file(
 add_executable(gameboy-emulator-sdl3)
 target_sources(gameboy-emulator-sdl3 PRIVATE ${SOURCES})
 
-target_link_libraries(gameboy-emulator-sdl3 PRIVATE gb_core_c)
+target_link_libraries(gameboy-emulator-sdl3 PRIVATE gb::core)
 
 find_package(SDL3 CONFIG REQUIRED COMPONENTS SDL3-shared)
 target_link_libraries(gameboy-emulator-sdl3 PRIVATE SDL3::SDL3)

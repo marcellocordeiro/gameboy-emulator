@@ -11,3 +11,5 @@ target_sources(gb_core_c INTERFACE
   FILES
   "include/gb/gb.h"
 )
+
+add_library(gb::core ALIAS gb_core_c)
