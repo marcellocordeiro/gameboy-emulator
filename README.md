@@ -2,7 +2,7 @@
 
 Experimental Game Boy emulator written in Rust.
 
-There are several frontends available for no reason but to experiment with different languages and frameworks consuming the main core written in Rust. The [`eframe`](platform/eframe/) frontend provides some debugging tools.
+There are several frontends available for no reason but to experiment with different languages and frameworks consuming the main core written in Rust. The [`eframe`](apps/eframe/) frontend provides some debugging tools.
 
 **_Disclaimer_**: this emulator is an experimental project for educational purposes. The development and use of emulators is legal, as long as no copyrighted content is illegally obtained. This means you are responsible for dumping your own boot ROMs and games. However, there exists free and open-source content in case you'd like to test this project and/or contribute :blush:
 
@@ -36,18 +36,19 @@ boop
 ## Repository structure
 
 - **[`.`](/)**: Package/configuration files for all modules.
-- **[`external`](external/)**: External dependencies.
+- **[`apps`](apps/)**: Language/framework specific frontends.
+  - **[`eframe`](apps/eframe/)**: App written in Rust using eframe.
+  - **[`libretro`](apps/libretro/)**: Libretro core written in Rust.
+  - **[`sdl3`](apps/sdl3/)**: App written in C++ using SDL3 and Dear ImGui.
+  - **[`swiftui`](apps/swiftui/)**: App written in Swift using SwiftUI.
+  - **[`web`](apps/web/)**: Web app written in TypeScript using Vite and React.
 - **[`core`](core/)**: Core modules.
   - **[`gb-core`](core/gb-core/)**: Main core written in Rust.
   - **[`gb-core-c`](core/gb-core-c/)**: `gb-core` shims for use in other languages. Contains a C/C++ header file with the function declarations.
   - **[`gb-core-swift`](core/gb-core-swift/)**: Contains a Swift package that wraps `gb-core-c` in a Swift class.
   - **[`gb-core-wasm`](core/gb-core-wasm/)**: `gb-core` wrapper targeting WASM.
   - **[`gb-opcode-info`](core/gb-opcode-info/)**: Contains opcode info for use in other modules.
-- **[`platform`](platform/)**: Language/framework specific frontends.
-  - **[`eframe`](platform/eframe/)**: Native app written in Rust using eframe.
-  - **[`sdl3`](platform/sdl3/)**: Native app written in C++ using SDL3 and Dear ImGui.
-  - **[`swiftui`](platform/swiftui/)**: Native app written in Swift using SwiftUI.
-  - **[`web`](platform/web/)**: Web app written in TypeScript using Vite and React.
+- **[`external`](external/)**: External dependencies.
 
 ## Setup
 

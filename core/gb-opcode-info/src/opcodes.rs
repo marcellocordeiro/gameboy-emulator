@@ -25,7 +25,7 @@ pub struct Opcode {
 }
 
 pub fn parse_json() -> Result<OpcodeTable, serde_json::Error> {
-    let data = include_str!("../../../doc/generate_opcode_strings_rust/dmgops.json");
+    let data = include_str!("../../../docs/generate_opcode_strings_rust/dmgops.json");
     let opcode_table: OpcodeTable = serde_json::from_str(data)?;
 
     Ok(opcode_table)

@@ -9,6 +9,6 @@ include("cmake/StandardProjectSettings.cmake")
 add_library(project-warnings INTERFACE)
 set_project_warnings(project-warnings)
 
+add_subdirectory("apps/sdl3")
 add_subdirectory("core/gb-core-c/cmake")
 add_subdirectory("external/imgui-cmake")
-add_subdirectory("platform/sdl3")

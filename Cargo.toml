@@ -1,12 +1,12 @@
 [workspace]
 resolver = "2"
 members = [
+  "apps/eframe",
+  "apps/libretro",
   "core/gb-core",
   "core/gb-core-c",
   "core/gb-core-wasm",
   "core/gb-opcode-info",
-  "platform/eframe",
-  "platform/libretro",
 ]
 
 [workspace.lints.clippy]
