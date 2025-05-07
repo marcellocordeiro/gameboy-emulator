@@ -86,11 +86,13 @@ impl RetroCore for Emulator {
         let result = self.gb.load(None, rom);
 
         match result {
-            Ok(()) => RetroLoadGameResult::Success {
-                audio: RetroAudioInfo::new(44100.0),
-                video: RetroVideoInfo::new(4_194_304.0 / 70224.0, 160, 144)
-                    .with_pixel_format(RetroPixelFormat::XRGB8888),
-            },
+            Ok(()) => {
+                RetroLoadGameResult::Success {
+                    audio: RetroAudioInfo::new(44100.0),
+                    video: RetroVideoInfo::new(4_194_304.0 / 70224.0, 160, 144)
+                        .with_pixel_format(RetroPixelFormat::XRGB8888),
+                }
+            }
             Err(_) => RetroLoadGameResult::Failure,
         }
     }
@@ -99,10 +101,11 @@ impl RetroCore for Emulator {
     fn get_memory_data(&mut self, _env: &RetroEnvironment, id: u32) -> *mut () {
         match id {
             // This is horrible. Maybe try to find a better way.
-            RETRO_MEMORY_SAVE_RAM => self
-                .gb
-                .get_battery()
-                .map_or(std::ptr::null_mut(), |ram| ram.as_ptr() as *mut ()),
+            RETRO_MEMORY_SAVE_RAM => {
+                self.gb
+                    .get_battery()
+                    .map_or(std::ptr::null_mut(), |ram| ram.as_ptr() as *mut ())
+            }
 
             _ => std::ptr::null_mut(),
         }

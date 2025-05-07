@@ -85,25 +85,28 @@ impl MemoryInterface for Memory {
                 self.bootrom.as_ref().map_or(0xFF, |b| b.read(address))
             }
 
-            0x0000..=0x3FFF => self
-                .cartridge
-                .as_ref()
-                .expect("Cartridge should be loaded")
-                .read_rom_bank_0(address),
+            0x0000..=0x3FFF => {
+                self.cartridge
+                    .as_ref()
+                    .expect("Cartridge should be loaded")
+                    .read_rom_bank_0(address)
+            }
 
-            0x4000..=0x7FFF => self
-                .cartridge
-                .as_ref()
-                .expect("Cartridge should be loaded")
-                .read_rom_bank_x(address),
+            0x4000..=0x7FFF => {
+                self.cartridge
+                    .as_ref()
+                    .expect("Cartridge should be loaded")
+                    .read_rom_bank_x(address)
+            }
 
             0x8000..=0x9FFF => self.ppu.read_vram(address),
 
-            0xA000..=0xBFFF => self
-                .cartridge
-                .as_ref()
-                .expect("Cartridge should be loaded")
-                .read_ram(address),
+            0xA000..=0xBFFF => {
+                self.cartridge
+                    .as_ref()
+                    .expect("Cartridge should be loaded")
+                    .read_ram(address)
+            }
 
             0xC000..=0xFDFF => self.wram.read(address),
             0xFE00..=0xFE9F => self.ppu.read_oam(address),
@@ -191,19 +194,21 @@ impl MemoryInterface for Memory {
         match address {
             0x0000..=0x00FF if self.bootrom.as_ref().is_some_and(Bootrom::is_active) => {}
 
-            0x0000..=0x7FFF => self
-                .cartridge
-                .as_mut()
-                .expect("Cartridge should be loaded")
-                .write_rom(address, value),
+            0x0000..=0x7FFF => {
+                self.cartridge
+                    .as_mut()
+                    .expect("Cartridge should be loaded")
+                    .write_rom(address, value)
+            }
 
             0x8000..=0x9FFF => self.ppu.write_vram(address, value),
 
-            0xA000..=0xBFFF => self
-                .cartridge
-                .as_mut()
-                .expect("Cartridge should be loaded")
-                .write_ram(address, value),
+            0xA000..=0xBFFF => {
+                self.cartridge
+                    .as_mut()
+                    .expect("Cartridge should be loaded")
+                    .write_ram(address, value)
+            }
 
             0xC000..=0xFDFF => self.wram.write(address, value),
             0xFE00..=0xFE9F => self.ppu.write_oam(address, value),

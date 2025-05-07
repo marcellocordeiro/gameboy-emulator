@@ -153,25 +153,29 @@ impl Timer {
             TimaState::Running => {}
 
             // IRQ is delayed by 4 cycles.
-            TimaState::Overflow(count) => match count {
-                0 => {
-                    self.irq = true;
-                    self.tima_state = TimaState::Loading(3);
-                }
+            TimaState::Overflow(count) => {
+                match count {
+                    0 => {
+                        self.irq = true;
+                        self.tima_state = TimaState::Loading(3);
+                    }
 
-                value => self.tima_state = TimaState::Overflow(value - 1),
-            },
+                    value => self.tima_state = TimaState::Overflow(value - 1),
+                }
+            }
 
             // After an overflow and requesting an interruption,
             // the `tima = tma` load is delayed by 4 cycles.
-            TimaState::Loading(count) => match count {
-                0 => {
-                    self.tima = self.tma;
-                    self.tima_state = TimaState::Running;
-                }
+            TimaState::Loading(count) => {
+                match count {
+                    0 => {
+                        self.tima = self.tma;
+                        self.tima_state = TimaState::Running;
+                    }
 
-                value => self.tima_state = TimaState::Loading(value - 1),
-            },
+                    value => self.tima_state = TimaState::Loading(value - 1),
+                }
+            }
         }
     }
 

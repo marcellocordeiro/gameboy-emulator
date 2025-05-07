@@ -96,10 +96,12 @@ impl MbcInterface for Mbc30 {
 
             0x6000..=0x7FFF => (), // todo!("[mbc3.rs] RTC not yet supported."),
 
-            _ => unreachable!(
-                "[mbc3.rs] Invalid write: ({:#06x}) = {:#04x}",
-                address, value
-            ),
+            _ => {
+                unreachable!(
+                    "[mbc3.rs] Invalid write: ({:#06x}) = {:#04x}",
+                    address, value
+                )
+            }
         }
     }
 
