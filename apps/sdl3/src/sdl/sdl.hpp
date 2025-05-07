@@ -1,12 +1,8 @@
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <string>
-
-#include "sdl_context.hpp"
-#include "sdl_error.hpp"
-#include "sdl_include.hpp"
-#include "sdl_renderer.hpp"
-#include "sdl_texture.hpp"
-#include "sdl_window.hpp"
+#include "sdl_context.hpp"  // IWYU pragma: export
+#include "sdl_error.hpp"    // IWYU pragma: export
+#include "sdl_include.hpp"  // IWYU pragma: export
+#include "sdl_renderer.hpp" // IWYU pragma: export
+#include "sdl_texture.hpp"  // IWYU pragma: export
+#include "sdl_window.hpp"   // IWYU pragma: export

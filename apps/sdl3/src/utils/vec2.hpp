@@ -1,6 +1,8 @@
 #pragma once
 
+#include "common.hpp"
+
 struct Vec2 {
-  int width;
-  int height;
+  i32 width;
+  i32 height;
 };

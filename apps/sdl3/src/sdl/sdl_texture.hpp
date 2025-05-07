@@ -1,8 +1,8 @@
 #pragma once
 
-#include <cstdint>
 #include <memory>
 
+#include "../utils/common.hpp"
 #include "sdl_error.hpp"
 #include "sdl_include.hpp"
 #include "sdl_renderer.hpp"
@@ -18,8 +18,8 @@ public:
     const Renderer& renderer,
     SDL_PixelFormat format,
     SDL_TextureAccess access,
-    std::int32_t width,
-    std::int32_t height
+    i32 width,
+    i32 height
   ) {
     auto* raw = SDL_CreateTexture(renderer.get(), format, access, width, height);
 

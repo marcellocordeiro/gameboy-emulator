@@ -1,15 +1,15 @@
 #include "app.hpp"
 
-#include <algorithm>
 #include <array>
-#include <cstdio>
-#include <filesystem>
-#include <fstream>
+#include <span>
+#include <stdexcept>
+#include <string_view>
 #include <vector>
 
 #include "gb/gb.h"
 #include "imgui/imgui.hpp"
 #include "sdl/sdl.hpp"
+#include "utils/common.hpp"
 #include "utils/files.hpp"
 #include "utils/scaling.hpp"
 
@@ -38,11 +38,11 @@ auto App::run() -> void {
   auto* gb = gameboy_new(true);
   gameboy_load(gb, gbBootrom, gbRom);
 
-  std::array<uint8_t, FRAMEBUFFER_SIZE> framebuffer = {};
+  std::array<u8, FRAMEBUFFER_SIZE> framebuffer = {};
 
-  SDL::Context context{SDL_INIT_VIDEO | SDL_INIT_GAMEPAD};
+  auto context = SDL::Context{SDL_INIT_VIDEO | SDL_INIT_GAMEPAD};
 
-  SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
+  auto window_flags = SDL_WindowFlags{SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN};
   auto window = SDL::Window("gameboy-emulator", 1280, 720, window_flags);
   auto renderer = SDL::Renderer(window);
 
@@ -164,7 +164,7 @@ auto App::run() -> void {
 
     gameboy_run_frame(gb);
     gameboy_draw_into_frame_rgba8888(gb, framebuffer.data());
-    SDL_UpdateTexture(texture.get(), nullptr, framebuffer.data(), SCREEN_WIDTH * sizeof(uint32_t));
+    SDL_UpdateTexture(texture.get(), nullptr, framebuffer.data(), SCREEN_WIDTH * sizeof(u32));
 
     // Rendering
     ImGui::Render();

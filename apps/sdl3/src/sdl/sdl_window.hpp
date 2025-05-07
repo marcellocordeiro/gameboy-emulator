@@ -1,8 +1,8 @@
 #pragma once
 
-#include <cstdint>
 #include <memory>
 
+#include "../utils/common.hpp"
 #include "sdl_error.hpp"
 #include "sdl_include.hpp"
 
@@ -13,7 +13,7 @@ public:
   Window() = default;
 
   [[nodiscard]]
-  Window(const std::string& title, std::int32_t width, std::int32_t height, SDL_WindowFlags flags) {
+  Window(const std::string& title, i32 width, i32 height, SDL_WindowFlags flags) {
     auto* raw = SDL_CreateWindow(title.c_str(), width, height, flags);
 
     if (raw == nullptr) {
@@ -28,7 +28,7 @@ public:
     return pointer.get();
   }
 
-  void setWindowPosition(std::int32_t x, std::int32_t y) {
+  void setWindowPosition(i32 x, i32 y) {
     auto result = SDL_SetWindowPosition(pointer.get(), x, y);
 
     if (!result) {

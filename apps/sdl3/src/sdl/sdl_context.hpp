@@ -1,7 +1,8 @@
 #pragma once
 
+#include "../utils/common.hpp"
 #include "sdl_error.hpp"
-#include "sdl_include.hpp"
+#include "sdl_include.hpp" // IWYU pragma: keep
 
 namespace SDL {
 class Context {
@@ -30,6 +31,6 @@ public:
   Context& operator=(Context&&) = delete;
 
 private:
-  static inline std::int32_t counter = 0;
+  static inline i32 counter = 0;
 };
 } // namespace SDL

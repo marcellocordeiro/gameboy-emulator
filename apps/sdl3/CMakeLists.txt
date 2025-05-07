@@ -21,7 +21,7 @@ target_link_libraries(gameboy-emulator-sdl3 PRIVATE fmt::fmt)
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(gameboy-emulator-sdl3 PRIVATE spdlog::spdlog)
 
-target_link_libraries(gameboy-emulator-sdl3 PRIVATE imgui imgui-backend-sdl3)
+target_link_libraries(gameboy-emulator-sdl3 PRIVATE imgui::imgui imgui::imgui-sdl3)
 
 set_target_properties(gameboy-emulator-sdl3
   PROPERTIES

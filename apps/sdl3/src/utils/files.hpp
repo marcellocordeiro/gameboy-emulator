@@ -1,11 +1,15 @@
+#pragma once
+
 #include <filesystem>
 #include <fstream>
 #include <vector>
 
-static auto readBinaryFile(const std::filesystem::path& path) -> std::vector<std::uint8_t> {
+#include "common.hpp"
+
+static auto readBinaryFile(const std::filesystem::path& path) -> std::vector<u8> {
   std::ifstream stream(path, std::ios::binary);
 
-  std::vector file(std::filesystem::file_size(path), uint8_t{});
+  std::vector file(std::filesystem::file_size(path), u8{});
   stream.read(reinterpret_cast<char*>(file.data()), file.size());
 
   return file;
