@@ -4,10 +4,10 @@
 #include <cmath>
 
 #include "../sdl/sdl.hpp"
-#include "vec2.hpp"
 #include "common.hpp"
+#include "vec2.hpp"
 
-static auto integerScale(Vec2 availableSize, Vec2 textureSize) -> i32 {
+static auto integer_scale(Vec2 availableSize, Vec2 textureSize) -> i32 {
   auto widthRatio = std::max(
     static_cast<double>(availableSize.width) / static_cast<double>(textureSize.width),
     1.0
@@ -22,8 +22,8 @@ static auto integerScale(Vec2 availableSize, Vec2 textureSize) -> i32 {
   return static_cast<i32>(scale);
 }
 
-static auto integerScaleCenteredSdlRect(Vec2 availableSize, Vec2 textureSize) -> SDL_FRect {
-  auto scale = integerScale(availableSize, textureSize);
+static auto integer_scale_centered_rect(Vec2 availableSize, Vec2 textureSize) -> SDL_FRect {
+  auto scale = integer_scale(availableSize, textureSize);
 
   auto w = static_cast<float>(textureSize.height * scale);
   auto h = static_cast<float>(textureSize.width * scale);

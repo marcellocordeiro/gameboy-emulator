@@ -11,14 +11,11 @@ namespace SDL {
 class Renderer {
 public:
   [[nodiscard]]
-  Renderer() = default;
-
-  [[nodiscard]]
   explicit Renderer(const Window& window) {
     auto* raw = SDL_CreateRenderer(window.get(), nullptr);
 
     if (raw == nullptr) {
-      throw Error::fromContextWithSource("SDL_CreateRenderer");
+      throw Error::from_context_with_source("SDL_CreateRenderer");
     }
 
     pointer.reset(raw);
@@ -29,22 +26,23 @@ public:
     return pointer.get();
   }
 
-  void enableVsync() const {
-    auto result = SDL_SetRenderVSync(pointer.get(), 1);
+  void enable_vsync() const {
+    const auto result = SDL_SetRenderVSync(pointer.get(), 1);
 
     if (!result) {
-      throw Error::fromContextWithSource("SDL_SetRenderVSync");
+      throw Error::from_context_with_source("SDL_SetRenderVSync");
     }
   }
 
-  auto getCurrentRenderOutputSize() -> Vec2 {
+  [[nodiscard]]
+  auto get_current_render_output_size() const -> Vec2 {
     int w = 0;
     int h = 0;
 
-    auto result = SDL_GetCurrentRenderOutputSize(pointer.get(), &w, &h);
+    const auto result = SDL_GetCurrentRenderOutputSize(pointer.get(), &w, &h);
 
     if (!result) {
-      throw Error::fromContextWithSource("SDL_GetCurrentRenderOutputSize");
+      throw Error::from_context_with_source("SDL_GetCurrentRenderOutputSize");
     }
 
     return {.width = w, .height = h};
@@ -52,8 +50,8 @@ public:
 
 private:
   struct Deleter {
-    void operator()(SDL_Renderer* ptr) {
-      if (ptr) {
+    void operator()(SDL_Renderer* ptr) const {
+      if (ptr != nullptr) {
         SDL_DestroyRenderer(ptr);
       }
     }

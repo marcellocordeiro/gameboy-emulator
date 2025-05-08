@@ -11,9 +11,6 @@ namespace SDL {
 class Texture {
 public:
   [[nodiscard]]
-  Texture() = default;
-
-  [[nodiscard]]
   Texture(
     const Renderer& renderer,
     SDL_PixelFormat format,
@@ -24,7 +21,7 @@ public:
     auto* raw = SDL_CreateTexture(renderer.get(), format, access, width, height);
 
     if (raw == nullptr) {
-      throw Error::fromContextWithSource("SDL_CreateTexture");
+      throw Error::from_context_with_source("SDL_CreateTexture");
     }
 
     pointer.reset(raw);
@@ -35,18 +32,18 @@ public:
     return pointer.get();
   }
 
-  void setScaleMode(SDL_ScaleMode mode) const {
+  void set_scale_mode(SDL_ScaleMode mode) const {
     auto result = SDL_SetTextureScaleMode(pointer.get(), mode);
 
     if (!result) {
-      throw Error::fromContextWithSource("SDL_SetTextureScaleMode");
+      throw Error::from_context_with_source("SDL_SetTextureScaleMode");
     }
   }
 
 private:
   struct Deleter {
     void operator()(SDL_Texture* ptr) {
-      if (ptr) {
+      if (ptr != nullptr) {
         SDL_DestroyTexture(ptr);
       }
     }

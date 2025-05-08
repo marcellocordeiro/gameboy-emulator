@@ -14,10 +14,10 @@
 #include "utils/scaling.hpp"
 
 namespace {
-void renderDisplay(SDL::Renderer& renderer, SDL::Texture& texture) {
-  auto availableSize = renderer.getCurrentRenderOutputSize();
-  auto rect =
-    integerScaleCenteredSdlRect(availableSize, {.width = SCREEN_WIDTH, .height = SCREEN_HEIGHT});
+void render_display(const SDL::Renderer& renderer, const SDL::Texture& texture) {
+  const auto availableSize = renderer.get_current_render_output_size();
+  const auto rect =
+    integer_scale_centered_rect(availableSize, {.width = SCREEN_WIDTH, .height = SCREEN_HEIGHT});
 
   SDL_RenderTexture(renderer.get(), texture.get(), nullptr, &rect);
 }
@@ -30,27 +30,24 @@ App::App(std::span<std::string_view> args) : args(args) {
 }
 
 auto App::run() -> void {
-  auto rom = readBinaryFile(args[1]);
-
-  Bootrom gbBootrom = {.data = nullptr, .size = 0};
-  Rom gbRom = {.data = rom.data(), .size = rom.size()};
+  auto rom = read_binary_file(args[1]);
 
   auto* gb = gameboy_new(true);
-  gameboy_load(gb, gbBootrom, gbRom);
+  gameboy_load(gb, {.data = nullptr, .size = 0}, {.data = rom.data(), .size = rom.size()});
 
   std::array<u8, FRAMEBUFFER_SIZE> framebuffer = {};
 
   auto context = SDL::Context{SDL_INIT_VIDEO | SDL_INIT_GAMEPAD};
 
-  auto window_flags = SDL_WindowFlags{SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN};
-  auto window = SDL::Window("gameboy-emulator", 1280, 720, window_flags);
-  auto renderer = SDL::Renderer(window);
+  const auto window_flags = SDL_WindowFlags{SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN};
+  const auto window = SDL::Window("gameboy-emulator", 1280, 720, window_flags);
+  const auto renderer = SDL::Renderer(window);
 
-  renderer.enableVsync();
-  window.setWindowPosition(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-  window.showWindow();
+  renderer.enable_vsync();
+  window.set_window_position(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+  window.show_window();
 
-  auto texture = SDL::Texture(
+  const auto texture = SDL::Texture(
     renderer,
     SDL_PIXELFORMAT_ABGR8888,
     SDL_TEXTUREACCESS_STREAMING,
@@ -58,7 +55,7 @@ auto App::run() -> void {
     SCREEN_HEIGHT
   );
 
-  texture.setScaleMode(SDL_SCALEMODE_NEAREST);
+  texture.set_scale_mode(SDL_SCALEMODE_NEAREST);
 
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();
@@ -170,7 +167,7 @@ auto App::run() -> void {
     ImGui::Render();
     SDL_RenderClear(renderer.get());
 
-    renderDisplay(renderer, texture);
+    render_display(renderer, texture);
 
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer.get());
 

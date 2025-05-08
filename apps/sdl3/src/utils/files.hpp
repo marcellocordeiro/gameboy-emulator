@@ -6,7 +6,7 @@
 
 #include "common.hpp"
 
-static auto readBinaryFile(const std::filesystem::path& path) -> std::vector<u8> {
+static auto read_binary_file(const std::filesystem::path& path) -> std::vector<u8> {
   std::ifstream stream(path, std::ios::binary);
 
   std::vector file(std::filesystem::file_size(path), u8{});

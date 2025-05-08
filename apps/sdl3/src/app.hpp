@@ -10,8 +10,8 @@ public:
 
   App(const App&) = delete;
   App(App&&) = delete;
-  App& operator=(const App&) = delete;
-  App& operator=(App&&) = delete;
+  auto operator=(const App&) -> App& = delete;
+  auto operator=(App&&) -> App& = delete;
 
   auto run() -> void;
 
