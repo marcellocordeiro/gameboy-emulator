@@ -2,26 +2,14 @@ file(
   GLOB_RECURSE
   SOURCES
   CONFIGURE_DEPENDS
+  "include/*.hpp"
+  "include/*.h"
   "src/*.cpp"
   "src/*.hpp"
   "src/*.h"
 )
 
-add_executable(gameboy-emulator-sdl3)
-target_sources(gameboy-emulator-sdl3 PRIVATE ${SOURCES})
-
-target_link_libraries(gameboy-emulator-sdl3 PRIVATE gb::core)
-
-find_package(SDL3 CONFIG REQUIRED COMPONENTS SDL3-shared)
-target_link_libraries(gameboy-emulator-sdl3 PRIVATE SDL3::SDL3)
-
-find_package(fmt CONFIG REQUIRED)
-target_link_libraries(gameboy-emulator-sdl3 PRIVATE fmt::fmt)
-
-find_package(spdlog CONFIG REQUIRED)
-target_link_libraries(gameboy-emulator-sdl3 PRIVATE spdlog::spdlog)
-
-target_link_libraries(gameboy-emulator-sdl3 PRIVATE imgui::imgui imgui::imgui-sdl3)
+add_executable(gameboy-emulator-sdl3 ${SOURCES})
 
 set_target_properties(gameboy-emulator-sdl3
   PROPERTIES
@@ -30,4 +18,14 @@ set_target_properties(gameboy-emulator-sdl3
     CXX_EXTENSIONS NO
 )
 
-target_link_libraries(gameboy-emulator-sdl3 PRIVATE project-warnings)
+target_link_libraries(
+  gameboy-emulator-sdl3
+  PRIVATE
+    gb::warnings
+    gb::core
+    fmt::fmt
+    spdlog::spdlog
+    SDL3::SDL3
+    imgui::imgui
+    imgui::imgui-sdl3
+)

@@ -40,12 +40,13 @@ boop
   - **[`eframe`](apps/eframe/)**: App written in Rust using eframe.
   - **[`libretro`](apps/libretro/)**: Libretro core written in Rust.
   - **[`sdl3`](apps/sdl3/)**: App written in C++ using SDL3 and Dear ImGui.
-  - **[`swiftui`](apps/swiftui/)**: App written in Swift using SwiftUI.
+  - **[`swift`](apps/swift/)**: Swift package wrapping `gb-core-c` and SwiftUI app.
+    - **[`GameBoy`](apps/swift/GameBoy)**: App written in Swift using SwiftUI.
+    - **[`GameBoyCore`](apps/swift/GameBoyCore)**: Swift package wrapping `gb-core-c`.
   - **[`web`](apps/web/)**: Web app written in TypeScript using Vite and React.
 - **[`core`](core/)**: Core modules.
   - **[`gb-core`](core/gb-core/)**: Main core written in Rust.
   - **[`gb-core-c`](core/gb-core-c/)**: `gb-core` shims for use in other languages. Contains a C/C++ header file with the function declarations.
-  - **[`gb-core-swift`](core/gb-core-swift/)**: Contains a Swift package that wraps `gb-core-c` in a Swift class.
   - **[`gb-core-wasm`](core/gb-core-wasm/)**: `gb-core` wrapper targeting WASM.
   - **[`gb-opcode-info`](core/gb-opcode-info/)**: Contains opcode info for use in other modules.
 - **[`external`](external/)**: External dependencies.
@@ -80,9 +81,9 @@ brew install wasm-pack
 npm install -g wasm-pack
 ```
 
-### SDL2/SDL3
+### SDL3
 
-Required to build the C and Swift apps.
+Required to build the C++ app.
 
 ```sh
 # Arch

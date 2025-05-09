@@ -1,10 +1,3 @@
-//
-//  ButtonsView.swift
-//  GameBoyEmulator
-//
-//  Created by Marcello Cordeiro on 18/01/2024.
-//
-
 import GameBoyCore
 import SwiftUI
 

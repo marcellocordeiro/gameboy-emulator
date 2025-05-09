@@ -7,7 +7,7 @@ public final class GameBoy {
     public static let width = SCREEN_WIDTH
     public static let height = SCREEN_HEIGHT
 
-    public init(cgb: Bool = false) {
+    public init(cgb: Bool = true) {
         self.gb = gameboy_new(cgb)
     }
 

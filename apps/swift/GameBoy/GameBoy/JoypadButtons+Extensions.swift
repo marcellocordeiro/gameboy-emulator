@@ -1,10 +1,3 @@
-//
-//  JoypadButtons+Extensions.swift
-//  GameBoyEmulator
-//
-//  Created by Marcello Cordeiro on 21/01/2024.
-//
-
 import Foundation
 import GameBoyCore
 import GameController

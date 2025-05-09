@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  GameBoyEmulator
-//
-//  Created by Marcello Cordeiro on 17/01/2024.
-//
-
 import GameBoyCore
 import SwiftUI
 import UniformTypeIdentifiers

@@ -1,10 +1,3 @@
-//
-//  GameBoyContext.swift
-//  GameBoyEmulator
-//
-//  Created by Marcello Cordeiro on 17/01/2024.
-//
-
 import Combine
 import CoreGraphics
 import Foundation

@@ -14,7 +14,7 @@ let configDir = "release"
 #endif
 
 let packageDir = Context.packageDirectory
-let rootDir = "\(packageDir)/../.."
+let rootDir = "\(packageDir)/../../.."
 let libsDir = "\(rootDir)/target/\(configDir)"
 
 let package = Package(
