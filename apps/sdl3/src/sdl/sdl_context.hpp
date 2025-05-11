@@ -2,7 +2,7 @@
 
 #include "../utils/common.hpp"
 #include "sdl_error.hpp"
-#include "sdl_include.hpp" // IWYU pragma: keep
+#include "sdl_include.hpp"
 
 namespace SDL {
 class Context {

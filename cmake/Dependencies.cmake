@@ -11,6 +11,7 @@ CPMAddPackage(
     "SPDLOG_BUILD_SHARED OFF"
 )
 
+# Not needed
 find_package(fmt CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 

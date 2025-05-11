@@ -3,15 +3,19 @@
 #ifdef __cplusplus
 #include <cstddef>
 #include <cstdint>
+
+constexpr auto SCREEN_WIDTH = std::size_t{160};
+constexpr auto SCREEN_HEIGHT = std::size_t{144};
+constexpr auto FRAMEBUFFER_SIZE = (SCREEN_WIDTH * SCREEN_HEIGHT) * sizeof(std::uint32_t);
 #else
 #include <stdbool.h> // while apple clang doesn't support it
 #include <stddef.h>
 #include <stdint.h>
-#endif
 
 #define SCREEN_WIDTH ((size_t)160)
 #define SCREEN_HEIGHT ((size_t)144)
 #define FRAMEBUFFER_SIZE ((SCREEN_WIDTH * SCREEN_HEIGHT) * sizeof(uint32_t))
+#endif
 
 #ifdef __cplusplus
 extern "C" {
