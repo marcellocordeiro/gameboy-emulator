@@ -1,6 +1,8 @@
+"use client";
+
 import { useRef, useState } from "react";
 
-import { useRenderer } from "./hooks/use-renderer";
+import { useRenderer } from "@/hooks/use-renderer";
 import {
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
@@ -8,10 +10,9 @@ import {
   load,
   reset,
   runFrame,
-} from "./lib/game-boy";
-import { AppShell, Button } from "@mantine/core";
+} from "@/lib/game-boy";
 
-export function App() {
+export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedRom, setSelectedRom] = useState<File | null>(null);
 
@@ -45,8 +46,8 @@ export function App() {
   };
 
   return (
-    <AppShell>
-      <AppShell.Main>
+    <div>
+      <main>
         <canvas ref={canvasRef} height={SCREEN_HEIGHT} width={SCREEN_WIDTH} />
 
         <input
@@ -62,7 +63,7 @@ export function App() {
           }}
         />
 
-        <Button
+        <button
           disabled={
             isRunning || (isLoaded && !isRunning) || selectedRom == null
           }
@@ -73,16 +74,16 @@ export function App() {
           }}
         >
           Start
-        </Button>
+        </button>
 
-        <Button disabled={!isLoaded} onClick={handleStop}>
+        <button disabled={!isLoaded} onClick={handleStop}>
           Stop
-        </Button>
+        </button>
 
-        <Button disabled={!isLoaded} onClick={handleToggleExecution}>
+        <button disabled={!isLoaded} onClick={handleToggleExecution}>
           {isRunning ? "Pause" : "Resume"}
-        </Button>
-      </AppShell.Main>
-    </AppShell>
+        </button>
+      </main>
+    </div>
   );
 }

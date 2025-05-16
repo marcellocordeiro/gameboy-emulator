@@ -9,7 +9,7 @@ pub enum Error {
     MemoryOutputFailure(String),
     #[error("The test reported an error {0}.")]
     SerialOutputFailure(String),
-    #[error("Assertion failed. The Fibonacci valitation failed.")]
+    #[error("Assertion failed. The Fibonacci validation failed.")]
     FibonacciValidationFailure,
     #[error("Assertion failed. The snapshot does not match the expected one.")]
     SnapshotMismatch,

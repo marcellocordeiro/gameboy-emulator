@@ -1,4 +1,4 @@
-import { GameBoy } from "./gb-core-wasm";
+import { GameBoy } from "gb-core-wasm";
 
 const gameBoy = new GameBoy();
 
