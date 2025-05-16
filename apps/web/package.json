@@ -7,7 +7,7 @@
     "pnpm:devPreinstall": "pnpm build:wasm",
     "dev": "pnpm build:wasm && next dev --turbopack",
     "build:wasm": "wasm-pack build ../../core/gb-core-wasm ",
-    "build": "pnpm build:wasm && next build",
+    "build": "pnpm build:wasm && next build --turbopack",
     "start": "next start",
     "lint": "next lint"
   },
