@@ -1,5 +1,6 @@
 {
   "dependencies": [
+    "corrosion",
     "fmt",
     "spdlog",
     "sdl3"

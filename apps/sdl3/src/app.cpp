@@ -119,7 +119,7 @@ auto App::run() -> void {
     }
 
     // [If using SDL_MAIN_USE_CALLBACKS: all code below would likely be your SDL_AppIterate() function]
-    if (SDL_GetWindowFlags(window.get()) & SDL_WINDOW_MINIMIZED) {
+    if ((SDL_GetWindowFlags(window.get()) & SDL_WINDOW_MINIMIZED) != 0) {
       SDL_Delay(10);
       continue;
     }

@@ -1,0 +1,3 @@
+The package corrosion provides CMake targets:
+
+    find_package(Corrosion CONFIG REQUIRED)

@@ -1,4 +1,10 @@
 set(CMAKE_COLOR_DIAGNOSTICS ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Support for C++20 modules is still poor.
+# This causes issues with clang-tidy and MSVC.
+message(NOTICE "C++20 modules support is disabled")
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # WIP
 function(get_compiler_friendly_name result)

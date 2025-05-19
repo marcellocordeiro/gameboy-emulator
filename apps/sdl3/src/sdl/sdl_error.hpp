@@ -8,7 +8,7 @@
 #include "sdl_include.hpp"
 
 namespace SDL {
-class Error final : public std::exception {
+class Error final: public std::exception {
 public:
   [[nodiscard]]
   auto what() const noexcept -> const char* override {

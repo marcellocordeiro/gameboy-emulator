@@ -1,0 +1,17 @@
+{
+  "name": "corrosion",
+  "version": "0.5.2",
+  "description": "Corrosion, formerly known as cmake-cargo, is a tool for integrating Rust into an existing CMake project. ",
+  "homepage": "https://github.com/corrosion-rs/corrosion",
+  "license": "MIT",
+    "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
