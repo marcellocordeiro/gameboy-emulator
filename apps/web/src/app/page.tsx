@@ -17,7 +17,7 @@ export default function Home() {
   const [selectedRom, setSelectedRom] = useState<File | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ctx = canvasRef?.current?.getContext("2d");
+  const ctx = canvasRef.current?.getContext("2d");
 
   const { isRunning, setIsRunning } = useRenderer({
     isLoaded,
@@ -49,10 +49,10 @@ export default function Home() {
     <main>
       <canvas ref={canvasRef} height={SCREEN_HEIGHT} width={SCREEN_WIDTH} />
 
-      <div className="flex-row justify-center align-center">
+      <div>
         <input
           type="file"
-          accept=".gb"
+          accept=".gb,.gbc"
           onChange={async (event) => {
             const file = event.currentTarget.files?.[0];
 
@@ -63,11 +63,9 @@ export default function Home() {
           }}
         />
 
-        <div className="flex flex-grow gap-5">
+        <div>
           <button
-            disabled={
-              isRunning || (isLoaded && !isRunning) || selectedRom == null
-            }
+            disabled={isRunning || isLoaded || selectedRom == null}
             onClick={async () => {
               if (selectedRom != null) {
                 await handleStart(selectedRom);

@@ -30,13 +30,13 @@ pub fn validate_screenshot(gb: &GameBoy, name: &'static str) -> Result<(), Error
     gb.draw_into_frame_rgba8888(&mut frame);
 
     let expected_image = image::open(format!("./tests/expected/{name}.png")).inspect_err(|_| {
-        dump_image(format!("./tests/actual/{name}.png"), frame.as_slice()).unwrap();
+        dump_image(format!("./tests/actual/{name}.png"), &frame).unwrap();
     })?;
 
     if frame == expected_image.as_bytes() {
         Ok(())
     } else {
-        dump_image(format!("./tests/actual/{name}.png"), frame.as_slice())?;
+        dump_image(format!("./tests/actual/{name}.png"), &frame)?;
         Err(Error::SnapshotMismatch)
     }
 }

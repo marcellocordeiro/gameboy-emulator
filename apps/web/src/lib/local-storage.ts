@@ -12,7 +12,7 @@ export function getLocalStorageItem(key: string): unknown {
   return JSON.parse(rawValue);
 }
 
-export function setLocalStorageItem<T extends object>(key: string, value: T) {
+export function setLocalStorageItem(key: string, value: object) {
   if (typeof window === "undefined" || key.length === 0) {
     return;
   }

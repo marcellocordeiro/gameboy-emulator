@@ -23,7 +23,7 @@ impl GameBoy {
         init_logging();
 
         Self {
-            gb: GameBoyInternal::new(DeviceModel::Dmg),
+            gb: GameBoyInternal::new(DeviceModel::Cgb),
             frame: vec![0; SCREEN_PIXELS_SIZE]
                 .into_boxed_slice()
                 .try_into()
