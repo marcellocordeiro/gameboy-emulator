@@ -1,11 +1,12 @@
 use gb_core::{
     GameBoy as GameBoyInternal,
-    constants::{DeviceModel, SCREEN_PIXELS_SIZE, SCREEN_WIDTH, ScreenPixels},
+    constants::{DeviceModel, SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH, ScreenPixels},
 };
 use wasm_bindgen::{Clamped, prelude::wasm_bindgen};
 use web_sys::{CanvasRenderingContext2d, ImageData};
 
-fn init_logging() {
+#[wasm_bindgen]
+pub fn init_logging() {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     console_log::init_with_level(log::Level::Info).unwrap();
 }
@@ -20,8 +21,6 @@ pub struct GameBoy {
 impl GameBoy {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
-        init_logging();
-
         Self {
             gb: GameBoyInternal::new(DeviceModel::Cgb),
             frame: vec![0; SCREEN_PIXELS_SIZE]
@@ -29,6 +28,16 @@ impl GameBoy {
                 .try_into()
                 .unwrap(),
         }
+    }
+
+    #[wasm_bindgen(js_name = "screenWidth")]
+    pub fn screen_width() -> usize {
+        SCREEN_WIDTH
+    }
+
+    #[wasm_bindgen(js_name = "screenHeight")]
+    pub fn screen_height() -> usize {
+        SCREEN_HEIGHT
     }
 
     pub fn reset(&mut self) {
@@ -39,6 +48,7 @@ impl GameBoy {
         self.gb.load(None, rom).unwrap();
     }
 
+    #[wasm_bindgen(js_name = "runFrame")]
     pub fn run_frame(&mut self) {
         self.gb.run_frame();
     }

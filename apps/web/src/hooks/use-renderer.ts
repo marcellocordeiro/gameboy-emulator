@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { gameBoy } from "@/lib/game-boy";
 
 interface Props {
   isLoaded: boolean;
-  ctx: CanvasRenderingContext2D | undefined | null;
-  runFrame: () => void;
-  draw: (ctx: CanvasRenderingContext2D) => void;
+  ctx: CanvasRenderingContext2D | null | undefined;
 }
 
-export function useRenderer({ isLoaded, ctx, runFrame, draw }: Props) {
+export function useRenderer({ isLoaded, ctx }: Props) {
   const [isRunning, setIsRunning] = useState(false);
   const loopId = useRef(0);
 
@@ -18,8 +17,8 @@ export function useRenderer({ isLoaded, ctx, runFrame, draw }: Props) {
     }
 
     const loop = () => {
-      runFrame();
-      draw(ctx);
+      gameBoy.runFrame();
+      gameBoy.draw(ctx);
 
       loopId.current = window.requestAnimationFrame(loop);
     };
@@ -30,10 +29,7 @@ export function useRenderer({ isLoaded, ctx, runFrame, draw }: Props) {
       setIsRunning(false);
       window.cancelAnimationFrame(loopId.current);
     };
-  }, [ctx, draw, isLoaded, runFrame, isRunning]);
+  }, [ctx, isLoaded, isRunning]);
 
-  return {
-    isRunning,
-    setIsRunning,
-  };
+  return { isRunning, setIsRunning };
 }

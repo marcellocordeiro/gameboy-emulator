@@ -198,7 +198,7 @@ impl MemoryInterface for Memory {
                 self.cartridge
                     .as_mut()
                     .expect("Cartridge should be loaded")
-                    .write_rom(address, value)
+                    .write_rom(address, value);
             }
 
             0x8000..=0x9FFF => self.ppu.write_vram(address, value),
@@ -207,7 +207,7 @@ impl MemoryInterface for Memory {
                 self.cartridge
                     .as_mut()
                     .expect("Cartridge should be loaded")
-                    .write_ram(address, value)
+                    .write_ram(address, value);
             }
 
             0xC000..=0xFDFF => self.wram.write(address, value),
