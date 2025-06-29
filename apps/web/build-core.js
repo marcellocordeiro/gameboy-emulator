@@ -12,5 +12,6 @@ const crateDir = path.resolve(rootDir, "core", "gb-core-wasm");
 const outDir = path.resolve(currentDir, `.gb-core`);
 
 spawnSync("wasm-pack", ["build", crateDir, "--out-dir", outDir], {
+  shell: true,
   stdio: "inherit",
 });
