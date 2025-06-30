@@ -7,9 +7,10 @@ import { fileURLToPath } from "node:url";
 const filename = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(filename);
 
-const rootDir = path.resolve(currentDir, "..", "..");
+const projectDir = path.resolve(currentDir, "..");
+const rootDir = path.resolve(projectDir, "..", "..");
 const crateDir = path.resolve(rootDir, "core", "gb-core-wasm");
-const outDir = path.resolve(currentDir, `.gb-core`);
+const outDir = path.resolve(projectDir, `.gb-core`);
 
 spawnSync("wasm-pack", ["build", crateDir, "--out-dir", outDir], {
   shell: true,
