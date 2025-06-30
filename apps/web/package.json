@@ -4,10 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm build:wasm && next dev --turbopack",
     "build:wasm": "node tools/build-core.js",
-    "build": "pnpm build:wasm && next build --turbopack",
-    "build:vercel": ". ./tools/build-core-vercel.sh && next build --turbopack",
+    "predev": "pnpm build:wasm",
+    "dev": "next dev --turbopack",
+    "prebuild": "pnpm build:wasm",
+    "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
     "lint:biome": "biome check --write"
