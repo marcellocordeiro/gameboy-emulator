@@ -329,6 +329,7 @@ impl Memory {
         let ppu = Ppu::with_device_model(device_model);
         let speed_switch = SpeedSwitch::with_device_model(device_model);
         let undocumented_registers = UndocumentedRegisters::with_device_model(device_model);
+        let apu = Apu::with_device_model(device_model);
 
         let mut memory = Self {
             bootrom: Option::default(),
@@ -336,7 +337,7 @@ impl Memory {
             hram: HighRam::default(),
             cartridge: Option::default(),
             ppu,
-            apu: Apu::default(),
+            apu,
             joypad: Joypad::default(),
             serial: Serial::default(),
             timer: Timer::default(),
@@ -361,6 +362,7 @@ impl Memory {
         self.ppu.set_cgb_mode(value);
         self.speed_switch.set_cgb_mode(value);
         self.undocumented_registers.set_cgb_mode(value);
+        self.apu.set_cgb_mode(value);
 
         self.cgb_mode = value;
     }
@@ -376,6 +378,7 @@ impl Memory {
         self.perform_vram_dma();
 
         for _ in 0..4 {
+            self.apu.tick(self.timer.read_div());
             self.timer.tick();
             self.ppu.tick();
         }

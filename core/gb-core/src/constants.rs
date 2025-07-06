@@ -1,6 +1,7 @@
 pub const ONE_KIB: usize = 0x400;
-
 pub const ONE_MIB_TO_KIB: usize = 1024;
+
+pub const CPU_CLOCK_RATE: usize = 4194304;
 
 pub const SCREEN_WIDTH: usize = 160;
 pub const SCREEN_HEIGHT: usize = 144;

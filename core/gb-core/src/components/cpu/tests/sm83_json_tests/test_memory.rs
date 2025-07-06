@@ -23,9 +23,7 @@ impl MemoryInterface for TestMemory {
     }
 
     fn read(&self, address: u16) -> u8 {
-        let value = *self.data.get(&address).unwrap();
-
-        value
+        *self.data.get(&address).unwrap()
     }
 
     fn write(&mut self, address: u16, value: u8) {

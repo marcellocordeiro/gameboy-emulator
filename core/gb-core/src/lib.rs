@@ -29,6 +29,8 @@ impl GameBoy {
     }
 
     pub fn reset(&mut self) {
+        let audio_callback = self.memory.apu.take_callback();
+
         self.cpu = Cpu::with_device_model(self.device_model);
         self.memory = Memory::with_device_model(self.device_model);
 
@@ -40,6 +42,10 @@ impl GameBoy {
 
         if self.bootrom.is_none() {
             self.cpu.skip_bootrom();
+        }
+
+        if let Some(callback) = audio_callback {
+            self.add_audio_callback(callback);
         }
     }
 

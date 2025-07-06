@@ -49,6 +49,7 @@ fn main() -> Result<(), eframe::Error> {
 }
 
 mod app;
+mod audio;
 mod cartridge;
 mod gui;
 mod key_mappings;

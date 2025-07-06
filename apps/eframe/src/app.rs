@@ -6,6 +6,7 @@ use gb_core::{
 };
 
 use crate::{
+    audio::Audio,
     cartridge::{load_battery, save_battery},
     gui::Gui,
     key_mappings::EguiKeyMappings,
@@ -15,6 +16,7 @@ pub struct App {
     gb: GameBoy,
     rom_path: String,
 
+    _audio: Audio,
     gui: Gui,
 }
 
@@ -32,11 +34,12 @@ impl App {
             } else {
                 let builder =
                     rfd::FileDialog::new().add_filter(EXTENSIONS_DESCRIPTION, &EXTENSIONS);
-                let path = builder.pick_file().unwrap().to_str().unwrap().to_owned();
 
-                path
+                builder.pick_file().unwrap().to_str().unwrap().to_owned()
             }
         };
+
+        let audio = Audio::new();
 
         let rom = std::fs::read(&rom_path).unwrap();
         let bootrom = bootrom_path.map(|path| std::fs::read(path).unwrap());
@@ -45,9 +48,12 @@ impl App {
         gb.load(bootrom, rom).unwrap();
         load_battery(&mut gb, &rom_path);
 
+        gb.add_audio_callback(audio.get_callback());
+
         Self {
             gb,
             rom_path,
+            _audio: audio,
             gui: Gui::new(&cc.egui_ctx),
         }
     }

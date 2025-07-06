@@ -11,7 +11,7 @@ const DMG_BOOTROM_SIZE: usize = 0x100;
 
 /// CGB
 ///
-/// Size: 256 + 256 + 1792  = 2304 (0x900)
+/// Size: 256 + 256 + 1792 = 2304 (0x900)
 ///
 /// Note: the extra 256 bytes in the middle is mapped to the cartridge header until 0x200.
 const CGB_BOOTROM_SIZE: usize = 0x100 + 0x100 + 0x700;

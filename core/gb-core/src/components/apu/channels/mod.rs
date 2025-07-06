@@ -1,9 +1,9 @@
-pub use noise_channel::*;
-pub use pulse_channel1::*;
-pub use pulse_channel2::*;
-pub use wave_channel::*;
+pub use channel1::*;
+pub use channel2::*;
+pub use channel3::*;
+pub use channel4::*;
 
-mod noise_channel;
-mod pulse_channel1;
-mod pulse_channel2;
-mod wave_channel;
+mod channel1;
+mod channel2;
+mod channel3;
+mod channel4;

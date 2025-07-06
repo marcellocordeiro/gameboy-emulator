@@ -20,7 +20,7 @@ pub extern "C" fn gameboy_new(is_cgb: bool) -> *mut GameBoy {
 
 /// # Safety
 ///
-/// The memory for the Game Boy core has be allocated and valid
+/// The memory for the Game Boy core has to be allocated and valid
 /// to avoid double-free errors.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn gameboy_destroy(gb_ptr: *mut GameBoy) {
@@ -48,7 +48,7 @@ pub unsafe extern "C" fn gameboy_reset(gb_ptr: *mut GameBoy) {
 /// 1. The Game Boy core pointer cannot be null.
 /// 2. The ROM array pointer cannot be null.
 /// 3. The allocated size for the ROM has to be equal to `rom.size`.
-/// 4. The bootrom is optional, but if provided its allocated size has to be equal to `bootrom.size`.
+/// 4. The bootrom is optional, but if provided, its allocated size has to be equal to `bootrom.size`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn gameboy_load(gb_ptr: *mut GameBoy, bootrom: Bootrom, rom: Rom) -> bool {
     let gb = unsafe { &mut *gb_ptr };
