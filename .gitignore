@@ -31,8 +31,11 @@ xcuserdata/
 
 .cache
 .next
+.vercel
 dist
 node_modules
+*.tsbuildinfo
+next-env.d.ts
 
 __pycache__/
 

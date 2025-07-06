@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31.6...4.0.2)
+cmake_minimum_required(VERSION 3.31.6...4.0.3)
 
 project(gameboy-emulator
   LANGUAGES CXX C
