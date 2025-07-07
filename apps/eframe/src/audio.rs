@@ -8,7 +8,7 @@ use cpal::{
     SizedSample,
     traits::{DeviceTrait, HostTrait, StreamTrait},
 };
-use gb_core::components::apu::{AUDIO_BUFFER_SIZE, Callback, StereoSample};
+use gb_core::components::apu::{AUDIO_BUFFER_SIZE, AUDIO_SAMPLE_RATE, Callback, StereoSample};
 use log::{error, info};
 
 type Sender<T> = mpsc::SyncSender<T>;
@@ -69,7 +69,10 @@ fn host_device_setup() -> (cpal::Host, cpal::Device, cpal::SupportedStreamConfig
     info!("Output device : {}", device.name().unwrap());
 
     let mut configs = device.supported_output_configs().unwrap();
-    let config = configs.next().unwrap().with_sample_rate(SampleRate(44100));
+    let config = configs
+        .next()
+        .unwrap()
+        .with_sample_rate(SampleRate(AUDIO_SAMPLE_RATE as u32));
 
     info!("Output config : {config:?}");
 

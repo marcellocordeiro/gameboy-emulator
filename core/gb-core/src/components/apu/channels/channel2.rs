@@ -61,9 +61,7 @@ impl Channel2 {
     }
 
     pub fn disable(&mut self) {
-        self.enabled = false;
-        self.envelope.clear();
-        self.wave_duty.clear();
+        *self = Self::default();
     }
 
     pub fn digital_output(&self) -> Option<u8> {
@@ -77,23 +75,24 @@ impl Channel2 {
     }
 
     fn trigger(&mut self) {
-        self.enabled = true;
+        if self.dac_enabled {
+            self.enabled = true;
+        }
 
         if self.length_timer.expired() {
             self.length_timer.reload();
         }
 
         self.frequency_timer.reload();
-        self.envelope.reset();
+        self.envelope.reload();
     }
 
     // Read
 
     /// FF16 — NR21: Channel 2 length timer & duty cycle
     pub fn read_nr21(&self) -> u8 {
-        let wave_duty_bits = self.wave_duty.read();
-
-        (wave_duty_bits << 6) | 0b0011_1111
+        let wave_duty_bits = self.wave_duty.read() << 6;
+        wave_duty_bits | 0b0011_1111
     }
 
     /// FF17 — NR22: Channel 2 volume & envelope
@@ -108,7 +107,8 @@ impl Channel2 {
 
     /// FF19 — NR24: Channel 2 period high & control
     pub fn read_nr24(&self) -> u8 {
-        ((self.length_timer.enabled as u8) << 6) | 0b1011_1111
+        let length_enable_bits = (self.length_timer.enabled as u8) << 6;
+        length_enable_bits | 0b1011_1111
     }
 
     // Write

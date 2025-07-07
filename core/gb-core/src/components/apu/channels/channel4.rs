@@ -77,7 +77,7 @@ impl Channel4 {
     }
 
     pub fn disable(&mut self) {
-        self.enabled = false;
+        *self = Self::default();
     }
 
     pub fn digital_output(&self) -> Option<u8> {
@@ -91,13 +91,15 @@ impl Channel4 {
     }
 
     fn trigger(&mut self) {
-        self.enabled = true;
+        if self.dac_enabled {
+            self.enabled = true;
+        }
 
         if self.length_timer.expired() {
             self.length_timer.reload();
         }
 
-        self.envelope.reset();
+        self.envelope.reload();
 
         let new_frequency = self.clock_divider() << self.clock_shift;
         self.frequency_timer.set_frequency(new_frequency);
@@ -127,7 +129,8 @@ impl Channel4 {
 
     /// FF23 — NR44: Channel 4 control
     pub fn read_nr44(&self) -> u8 {
-        ((self.length_timer.enabled as u8) << 6) | 0b1011_1111
+        let length_enable_bits = (self.length_timer.enabled as u8) << 6;
+        length_enable_bits | 0b1011_1111
     }
 
     // Write

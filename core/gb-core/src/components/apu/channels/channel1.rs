@@ -87,16 +87,11 @@ impl Channel1 {
     }
 
     pub fn disable(&mut self) {
-        self.enabled = false;
-        self.dac_enabled = false;
-        self.envelope.reset();
-        self.length_timer.reload();
-        self.frequency_timer.reload();
-        self.sweep.reload();
+        *self = Self::default();
     }
 
     pub fn digital_output(&self) -> Option<u8> {
-        if !self.enabled {
+        if !self.dac_enabled {
             return None;
         }
 
@@ -106,27 +101,28 @@ impl Channel1 {
     }
 
     fn trigger(&mut self) {
-        self.enabled = true;
+        if self.dac_enabled {
+            self.enabled = true;
+        }
 
         if self.length_timer.expired() {
             self.length_timer.reload();
         }
 
         self.frequency_timer.reload();
-        self.envelope.reset();
+        self.envelope.reload();
         self.sweep.reload();
     }
 
     /// FF10 — NR10: Channel 1 sweep
     pub fn read_nr10(&self) -> u8 {
-        self.sweep.read()
+        self.sweep.read() | 0b1000_0000
     }
 
     /// FF11 — NR11: Channel 1 length timer & duty cycle
     pub fn read_nr11(&self) -> u8 {
-        let wave_duty_bits = self.wave_duty.read();
-
-        (wave_duty_bits << 6) | 0b0011_1111
+        let wave_duty_bits = self.wave_duty.read() << 6;
+        wave_duty_bits | 0b0011_1111
     }
 
     /// FF12 — NR12: Channel 1 volume & envelope
@@ -141,7 +137,8 @@ impl Channel1 {
 
     /// FF14 — NR14: Channel 1 period high & control
     pub fn read_nr14(&self) -> u8 {
-        ((self.length_timer.enabled as u8) << 6) | 0b1011_1111
+        let length_enable_bits = (self.length_timer.enabled as u8) << 6;
+        length_enable_bits | 0b1011_1111
     }
 
     /// FF10 — NR10: Channel 1 sweep

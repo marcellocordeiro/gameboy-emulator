@@ -6,7 +6,7 @@ use crate::{
 };
 
 pub const AUDIO_SAMPLE_RATE: usize = 44100;
-pub const AUDIO_BUFFER_SIZE: usize = 1024;
+pub const AUDIO_BUFFER_SIZE: usize = 512;
 const AUDIO_CYCLES_PER_SAMPLE: usize = CPU_CLOCK_RATE / AUDIO_SAMPLE_RATE; // 95
 
 pub type StereoSample = [f32; 2];
@@ -89,8 +89,31 @@ impl Apu {
     }
 
     pub fn skip_bootrom(&mut self) {
-        //self.audio_on = true;
-        //self.channel1.enabled = true;
+        self.write_nr50(0x77);
+        self.write_nr51(0xF3);
+        self.write_nr52(0xF1);
+
+        self.channel1.write_nr10(0x80);
+        self.channel1.write_nr11(0xBF);
+        self.channel1.write_nr12(0xF3);
+        self.channel1.write_nr13(0xFF);
+        self.channel1.write_nr14(0xBF);
+
+        self.channel2.write_nr21(0x3F);
+        self.channel2.write_nr22(0x00);
+        self.channel2.write_nr23(0xFF);
+        self.channel2.write_nr24(0xBF);
+
+        self.channel3.write_nr30(0x7F);
+        self.channel3.write_nr31(0xFF);
+        self.channel3.write_nr32(0x9F);
+        self.channel3.write_nr33(0xFF);
+        self.channel3.write_nr34(0xBF);
+
+        self.channel4.write_nr41(0xFF);
+        self.channel4.write_nr42(0x00);
+        self.channel4.write_nr43(0x00);
+        self.channel4.write_nr44(0xBF);
     }
 
     pub fn tick(&mut self, div: u8) {
@@ -204,7 +227,7 @@ impl Apu {
             0xFF26 => self.read_nr52(),
 
             // Channel 4's wave pattern RAM
-            0xFF30..=0xFF3F => self.channel3.read_wave_pattern_ram(address),
+            0xFF30..=0xFF3F => self.channel3.read_wave_ram(address),
 
             // PCM12 (CGB Mode only): Digital outputs 1 & 2 (read-only)
             0xFF76 => {
@@ -283,7 +306,7 @@ impl Apu {
             0xFF26 => self.write_nr52(value),
 
             // Channel 4's wave pattern RAM
-            0xFF30..=0xFF3F => self.channel3.write_wave_pattern_ram(address, value),
+            0xFF30..=0xFF3F => self.channel3.write_wave_ram(address, value),
 
             0xFF76 => (),
             0xFF77 => (),
@@ -363,7 +386,7 @@ impl Apu {
         self.buffer_position += 1;
 
         if self.buffer_position >= AUDIO_BUFFER_SIZE {
-            (callback)(self.buffer.as_ref());
+            callback(self.buffer.as_ref());
             self.buffer_position = 0;
         }
     }

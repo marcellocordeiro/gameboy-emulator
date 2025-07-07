@@ -5,10 +5,6 @@ pub struct WaveDuty {
 }
 
 impl WaveDuty {
-    pub fn clear(&mut self) {
-        *self = Self::default();
-    }
-
     pub fn tick(&mut self) {
         self.position = (self.position + 1) & 0b111;
     }

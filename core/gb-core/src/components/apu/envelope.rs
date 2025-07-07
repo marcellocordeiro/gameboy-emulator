@@ -9,11 +9,7 @@ pub struct Envelope {
 }
 
 impl Envelope {
-    pub fn clear(&mut self) {
-        *self = Self::default();
-    }
-
-    pub fn reset(&mut self) {
+    pub fn reload(&mut self) {
         self.current_volume = self.initial_volume;
         self.counter = self.sweep_pace;
     }
@@ -50,12 +46,12 @@ impl Envelope {
     pub fn read(&self) -> u8 {
         let increasing_bit = self.increasing as u8;
 
-        (self.initial_volume << 4) | (increasing_bit << 3) & self.sweep_pace
+        (self.initial_volume << 4) | (increasing_bit << 3) | self.sweep_pace
     }
 
     pub fn write(&mut self, value: u8) {
         // TODO: only set after the next trigger?
-        self.initial_volume = (value >> 4) & 0b1111;
+        self.initial_volume = (value & 0b1111_0000) >> 4;
         self.increasing = (value & 0b1000) != 0;
         self.sweep_pace = value & 0b0111;
     }

@@ -55,7 +55,7 @@ impl Sweep {
     pub fn read(&self) -> u8 {
         let increasing_bit = self.increasing as u8;
 
-        (self.pace << 4) | (increasing_bit << 3) & self.individual_step
+        (self.pace << 4) | (increasing_bit << 3) | self.individual_step
     }
 
     pub fn write(&mut self, value: u8) {
