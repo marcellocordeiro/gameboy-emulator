@@ -71,7 +71,7 @@ impl App {
 
                 if i.key_pressed(key) {
                     self.gb.joypad_button_down(button);
-                } else if i.key_released(key) {
+                } else if i.key_released(key) || !i.key_down(key) {
                     self.gb.joypad_button_up(button);
                 }
             }
@@ -90,7 +90,7 @@ impl eframe::App for App {
         self.gui.render(egui_ctx, &mut self.gb);
     }
 
-    fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
+    fn on_exit(&mut self) {
         save_battery(&self.gb, &self.rom_path);
     }
 }
