@@ -110,9 +110,15 @@ impl Ppu {
         let lcd_enable = self.lcdc.get_lcd_enable();
         let new_lcd_enable = new_lcdc.get_lcd_enable();
 
+        // Off -> On
+        if !lcd_enable && new_lcd_enable {
+            self.mode = StatusMode::OamScan;
+            self.mode_remaining_dots = StatusMode::OamScan.dots();
+        }
+
+        // On -> Off
         if lcd_enable && !new_lcd_enable {
             self.mode = StatusMode::Hblank;
-            self.cycles = 0;
             self.ly = 0;
 
             if device_is_cgb!(self) {

@@ -7,7 +7,7 @@ testcases_mooneye! {
     // boot_div_s("acceptance/boot_div-S.gb"); // SGB is unsupported.
     // boot_div_dmg0("acceptance/boot_div-dmg0.gb"); // DMG0 is unsupported.
 
-    // boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb.gb");
+    boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb.gb");
 
     // boot_div2_s("acceptance/boot_div2-S.gb"); // SGB is unsupported.
     // boot_hwio_s("acceptance/boot_hwio-S.gb"); // SGB is unsupported.
@@ -31,12 +31,12 @@ testcases_mooneye! {
     div_timing("acceptance/div_timing.gb");
     ei_sequence("acceptance/ei_sequence.gb");
     ei_timing("acceptance/ei_timing.gb");
-    // halt_ime0_ei("acceptance/halt_ime0_ei.gb");
+    halt_ime0_ei("acceptance/halt_ime0_ei.gb");
     halt_ime0_nointr_timing("acceptance/halt_ime0_nointr_timing.gb");
-    // halt_ime1_timing("acceptance/halt_ime1_timing.gb");
-    // halt_ime1_timing2_gs("acceptance/halt_ime1_timing2-GS.gb");
+    halt_ime1_timing("acceptance/halt_ime1_timing.gb");
+    halt_ime1_timing2_gs("acceptance/halt_ime1_timing2-GS.gb");
     if_ie_registers("acceptance/if_ie_registers.gb");
-    // intr_timing("acceptance/intr_timing.gb");
+    intr_timing("acceptance/intr_timing.gb");
     jp_cc_timing("acceptance/jp_cc_timing.gb");
     jp_timing("acceptance/jp_timing.gb");
     ld_hl_sp_e_timing("acceptance/ld_hl_sp_e_timing.gb");
@@ -62,10 +62,10 @@ testcases_mooneye! {
     // ppu_hblank_ly_scx_timing_gs("acceptance/ppu/hblank_ly_scx_timing-GS.gb");
     ppu_intr_1_2_timing_gs("acceptance/ppu/intr_1_2_timing-GS.gb"); // ! This should fail on CGB.
     ppu_intr_2_0_timing("acceptance/ppu/intr_2_0_timing.gb");
-    // ppu_intr_2_mode0_timing("acceptance/ppu/intr_2_mode0_timing.gb");
+    ppu_intr_2_mode0_timing("acceptance/ppu/intr_2_mode0_timing.gb");
     // ppu_intr_2_mode0_timing_sprites("acceptance/ppu/intr_2_mode0_timing_sprites.gb");
-    // ppu_intr_2_mode3_timing("acceptance/ppu/intr_2_mode3_timing.gb");
-    // ppu_intr_2_oam_ok_timing("acceptance/ppu/intr_2_oam_ok_timing.gb");
+    ppu_intr_2_mode3_timing("acceptance/ppu/intr_2_mode3_timing.gb");
+    ppu_intr_2_oam_ok_timing("acceptance/ppu/intr_2_oam_ok_timing.gb");
     // ppu_lcdon_timing_gs("acceptance/ppu/lcdon_timing-GS.gb");
     // ppu_lcdon_write_timing_gs("acceptance/ppu/lcdon_write_timing-GS.gb");
     // ppu_stat_irq_blocking("acceptance/ppu/stat_irq_blocking.gb");
@@ -73,7 +73,7 @@ testcases_mooneye! {
     ppu_vblank_stat_intr_gs("acceptance/ppu/vblank_stat_intr-GS.gb"); // ! This should fail on CGB.
     // serial_boot_sclk_align_dmg_abc_mgb("acceptance/serial/boot_sclk_align-dmgABCmgb.gb");
     timer_div_write("acceptance/timer/div_write.gb");
-    // timer_rapid_toggle("acceptance/timer/rapid_toggle.gb");
+    timer_rapid_toggle("acceptance/timer/rapid_toggle.gb");
     timer_tim00("acceptance/timer/tim00.gb");
     timer_tim00_div_trigger("acceptance/timer/tim00_div_trigger.gb");
     timer_tim01("acceptance/timer/tim01.gb");

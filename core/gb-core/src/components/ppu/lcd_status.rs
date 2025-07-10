@@ -4,11 +4,24 @@ use super::Ppu;
 
 #[derive(Default, Clone, Copy, PartialEq, Eq)]
 pub enum StatusMode {
-    #[default]
     Hblank = 0b00,
     Vblank = 0b01,
+    #[default]
     OamScan = 0b10,
     Drawing = 0b11,
+}
+
+impl StatusMode {
+    /// Warning: using min length Drawing mode and max length H-Blank mode.
+    /// Mode length extensions are not supported yet.
+    pub const fn dots(self) -> usize {
+        match self {
+            Self::OamScan => 80,
+            Self::Drawing => 172,
+            Self::Hblank => 204,
+            Self::Vblank => 456,
+        }
+    }
 }
 
 bitflags!(

@@ -46,20 +46,29 @@ impl Cpu {
     }
 
     pub(crate) fn step(&mut self, memory: &mut impl MemoryInterface) {
-        self.handle_interrupts(memory);
+        // Cache the value in case there's a change
+        // TODO: can we do this better?
+        let interrupts_are_enabled = self.registers.ime.is_enabled();
+
+        if !interrupts_are_enabled {
+            // Takes effect in the next step
+            self.registers.ime.process_request();
+        }
 
         if self.halt {
             self.force_cycle_memory(memory);
 
-            if !memory.interrupts().has_queued_irq() {
-                return;
+            if memory.interrupts().has_queued_irq() {
+                self.halt = false;
             }
 
-            self.halt = false;
+            return;
+        } else if interrupts_are_enabled && memory.interrupts().has_queued_irq() {
+            self.handle_interrupts(memory);
+            return;
         }
 
         let opcode = self.read_byte_operand(memory);
-
         self.run_instruction(memory, opcode);
     }
 
@@ -71,16 +80,11 @@ impl Cpu {
     }
 
     fn handle_interrupts(&mut self, memory: &mut impl MemoryInterface) {
-        if !self.registers.ime.is_enabled() {
-            self.registers.ime.process_request();
-            return;
-        }
-
-        if !memory.interrupts().has_queued_irq() {
-            return;
-        }
-
+        self.halt = false;
         self.registers.ime = ImeState::Disabled;
+
+        self.force_cycle_memory(memory);
+        self.force_cycle_memory(memory);
         self.force_cycle_memory(memory);
 
         let address = {
@@ -100,9 +104,6 @@ impl Cpu {
         };
 
         self.registers.pc = address;
-        self.force_cycle_memory(memory);
-
-        self.halt = false;
     }
 
     fn notify_cycle(&mut self) {

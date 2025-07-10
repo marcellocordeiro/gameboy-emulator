@@ -159,7 +159,7 @@ impl VideoRam {
 
 impl Ppu {
     pub fn read_vram(&self, address: u16) -> u8 {
-        if self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing {
+        if self.mode == StatusMode::Drawing {
             return 0xFF;
         }
 
@@ -167,7 +167,7 @@ impl Ppu {
     }
 
     pub fn write_vram(&mut self, address: u16, value: u8) {
-        if self.lcdc.get_lcd_enable() && self.mode == StatusMode::Drawing {
+        if self.mode == StatusMode::Drawing {
             return;
         }
 

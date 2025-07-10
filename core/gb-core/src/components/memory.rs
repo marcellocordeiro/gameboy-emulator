@@ -27,7 +27,7 @@ pub enum Error {
 }
 
 pub trait MemoryInterface {
-    fn force_cycle(&mut self) {}
+    fn force_cycle(&mut self);
 
     fn read(&self, address: u16) -> u8;
     fn write(&mut self, address: u16, value: u8);
@@ -297,13 +297,16 @@ impl MemoryInterface for Memory {
     }
 
     fn read_cycle(&mut self, address: u16) -> u8 {
+        // Reading/writing before cycling fixes `timer/rapid_toggle`
+        let value = self.read(address);
         self.cycle();
-        self.read(address)
+        value
     }
 
     fn write_cycle(&mut self, address: u16, value: u8) {
-        self.cycle();
+        // Reading/writing before cycling fixes `timer/rapid_toggle`
         self.write(address, value);
+        self.cycle();
     }
 
     fn speed_switch(&self) -> &SpeedSwitch {

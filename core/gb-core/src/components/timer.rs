@@ -88,7 +88,7 @@ impl Timer {
     }
 
     fn read_tac(&self) -> u8 {
-        0b1111_1000 | self.tac
+        self.tac | 0b1111_1000
     }
 
     fn write_div(&mut self) {
@@ -123,7 +123,7 @@ impl Timer {
         let old_clock = self.input_clock();
         let old_enable = self.timer_enable();
 
-        self.tac = value;
+        self.tac = value & 0b0000_0111;
 
         let new_clock = self.input_clock();
         let new_enable = self.timer_enable();
@@ -180,7 +180,7 @@ impl Timer {
     }
 
     fn timer_enable(&self) -> bool {
-        (self.tac & 0b100) != 0
+        (self.tac & 0b0100) != 0
     }
 
     fn input_clock(&self) -> u16 {

@@ -89,10 +89,6 @@ impl Apu {
     }
 
     pub fn skip_bootrom(&mut self) {
-        self.write_nr50(0x77);
-        self.write_nr51(0xF3);
-        self.write_nr52(0xF1);
-
         self.channel1.write_nr10(0x80);
         self.channel1.write_nr11(0xBF);
         self.channel1.write_nr12(0xF3);
@@ -114,6 +110,10 @@ impl Apu {
         self.channel4.write_nr42(0x00);
         self.channel4.write_nr43(0x00);
         self.channel4.write_nr44(0xBF);
+
+        self.write_nr50(0x77);
+        self.write_nr51(0xF3);
+        self.write_nr52(0xF1);
     }
 
     pub fn tick(&mut self, div: u8) {

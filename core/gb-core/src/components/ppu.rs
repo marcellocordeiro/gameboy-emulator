@@ -50,7 +50,7 @@ pub struct Ppu {
     pub(crate) vram_dma: VramDma,
 
     mode: StatusMode,
-    cycles: u32,
+    mode_remaining_dots: usize,
 
     cgb_mode: bool,
     device_model: DeviceModel,
@@ -100,7 +100,7 @@ impl Ppu {
             oam_dma: OamDma::default(),
             vram_dma: VramDma::default(),
             mode: StatusMode::default(),
-            cycles: u32::default(),
+            mode_remaining_dots: StatusMode::default().dots(),
             cgb_mode: bool::default(),
             device_model,
             screen: Screen::default(),
@@ -275,22 +275,41 @@ impl Ppu {
             return;
         }
 
-        self.cycles += 1;
+        self.mode_remaining_dots -= 1;
 
         // Quirk.
         // One cycle before the mode switch (Drawing -> Hblank).
-        if self.cycles == 251 && self.mode == StatusMode::Drawing {
+        if self.mode_remaining_dots == 1 && self.mode == StatusMode::Drawing {
             if self.stat.get_hblank_irq() {
                 self.stat_irq = true;
             }
         }
 
+        if self.mode_remaining_dots > 0 {
+            return;
+        }
+
         match self.mode {
-            StatusMode::Hblank => {
-                if self.cycles != 456 {
-                    return;
+            StatusMode::OamScan => {
+                self.switch_mode(StatusMode::Drawing);
+            }
+
+            StatusMode::Drawing => {
+                if device_is_cgb!(self) {
+                    self.draw_line_cgb();
+                } else {
+                    self.draw_line_dmg();
                 }
 
+                self.switch_mode(StatusMode::Hblank);
+                //self.mode_remaining_dots = HBLANK_DOTS;
+
+                if in_cgb_mode!(self) {
+                    self.vram_dma.resume_hdma();
+                }
+            }
+
+            StatusMode::Hblank => {
                 if self.lcdc.get_win_enable()
                     && self.wx < 166
                     && self.wy < 143
@@ -307,53 +326,21 @@ impl Ppu {
                     self.switch_mode(StatusMode::OamScan);
                 }
 
-                self.cycles = 0;
-
                 self.check_irq();
             }
 
             StatusMode::Vblank => {
-                if self.cycles != 456 {
-                    return;
-                }
-
                 self.ly += 1;
 
                 if self.ly == 154 {
                     self.ly = 0;
                     self.window_internal_counter = 0;
                     self.switch_mode(StatusMode::OamScan);
+                } else {
+                    self.mode_remaining_dots = StatusMode::Vblank.dots();
                 }
-
-                self.cycles = 0;
 
                 self.check_irq();
-            }
-
-            StatusMode::OamScan => {
-                if self.cycles != 80 {
-                    return;
-                }
-
-                self.switch_mode(StatusMode::Drawing);
-            }
-
-            StatusMode::Drawing => {
-                if self.cycles != 252 {
-                    return;
-                }
-
-                if device_is_cgb!(self) {
-                    self.draw_line_cgb();
-                } else {
-                    self.draw_line_dmg();
-                }
-
-                self.switch_mode(StatusMode::Hblank);
-
-                if in_cgb_mode!(self) {
-                    self.vram_dma.resume_hdma();
-                }
             }
         }
     }
@@ -371,9 +358,18 @@ impl Ppu {
     }
 
     fn switch_mode(&mut self, value: StatusMode) {
+        self.mode_remaining_dots = value.dots();
         self.mode = value;
 
         match self.mode {
+            StatusMode::OamScan => {
+                if self.stat.get_oam_irq() {
+                    self.stat_irq = true;
+                }
+            }
+
+            StatusMode::Drawing => {}
+
             StatusMode::Hblank => {
                 // Handled elsewhere due to different timings.
             }
@@ -386,14 +382,6 @@ impl Ppu {
                     self.stat_irq = true;
                 }
             }
-
-            StatusMode::OamScan => {
-                if self.stat.get_oam_irq() {
-                    self.stat_irq = true;
-                }
-            }
-
-            StatusMode::Drawing => {}
         }
     }
 }
