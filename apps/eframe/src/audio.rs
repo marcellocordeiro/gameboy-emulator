@@ -123,6 +123,8 @@ fn process_frame<SampleType>(
             {
                 frame[i] = SampleType::from_sample(sample);
             }
+        } else {
+            frame.fill(SampleType::from_sample(0.0));
         }
     }
 }
