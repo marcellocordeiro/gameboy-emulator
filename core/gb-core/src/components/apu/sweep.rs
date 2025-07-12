@@ -4,6 +4,7 @@ pub struct Sweep {
     direction: Direction,
     individual_step: u8,
 
+    shadow_frequency: u16,
     counter: u8,
 }
 
@@ -29,23 +30,24 @@ impl Sweep {
     }
 
     pub fn reload(&mut self) {
-        if self.pace > 0 {
-            self.counter = self.pace;
-        } else {
-            self.counter = 8;
-        }
+        self.counter = if self.pace > 0 { self.pace } else { 8 };
     }
 
-    pub fn get_new_period(&self, current_period: u16) -> (u16, bool) {
+    pub fn set_shadow_frequency(&mut self, frequency: u16) {
+        self.shadow_frequency = frequency;
+    }
+
+    pub fn get_new_period(&self) -> (u16, bool) {
+        let delta = self.shadow_frequency >> self.individual_step;
         let new_period = match self.direction {
-            Direction::Increasing => current_period + (current_period >> self.individual_step),
-            Direction::Decreasing => current_period - (current_period >> self.individual_step),
+            Direction::Increasing => self.shadow_frequency + delta,
+            Direction::Decreasing => self.shadow_frequency - delta,
         };
 
         let should_disable_channel = self.direction == Direction::Increasing && new_period > 0x07FF;
 
         if should_disable_channel {
-            (current_period, true)
+            (self.shadow_frequency, true)
         } else {
             (new_period, false)
         }
@@ -58,11 +60,11 @@ impl Sweep {
     }
 
     pub fn write(&mut self, value: u8) {
-        let sweep_pace = (value & 0b0111_0000) >> 4;
+        let pace = (value & 0b0111_0000) >> 4;
         let direction = Direction::from((value & 0b1000) != 0);
         let individual_step = value & 0b0111;
 
-        self.pace = sweep_pace;
+        self.pace = pace;
         self.direction = direction;
         self.individual_step = individual_step;
     }

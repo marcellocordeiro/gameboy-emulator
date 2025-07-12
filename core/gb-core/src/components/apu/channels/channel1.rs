@@ -62,23 +62,19 @@ impl Channel1 {
     }
 
     pub fn tick_sweep(&mut self) {
-        if self.sweep.enabled() {
-            self.sweep.tick();
+        self.sweep.tick();
 
-            if self.sweep.expired() {
-                self.sweep.reload();
+        if self.sweep.enabled() && self.sweep.expired() {
+            self.sweep.reload();
 
-                let current_frequency = self.period_divider.period();
+            let (new_frequency, should_disable_channel) = self.sweep.get_new_period();
 
-                let (new_frequency, should_disable_channel) =
-                    self.sweep.get_new_period(current_frequency);
-
-                if should_disable_channel {
-                    self.enabled = false;
-                }
-
-                self.period_divider.set_period(new_frequency);
+            if should_disable_channel {
+                self.enabled = false;
             }
+
+            self.period_divider.set_period(new_frequency);
+            self.sweep.set_shadow_frequency(new_frequency);
         }
     }
 
@@ -111,6 +107,8 @@ impl Channel1 {
 
         self.period_divider.reload();
         self.envelope.reload();
+        self.sweep
+            .set_shadow_frequency(self.period_divider.period());
         self.sweep.reload();
     }
 
@@ -119,13 +117,13 @@ impl Channel1 {
         self.sweep.read() | 0b1000_0000
     }
 
-    /// FF11 — NR11: Channel 1 length timer & duty cycle
+    /// FF11 — NR11: Channel 1 length timer and duty cycle
     pub fn read_nr11(&self) -> u8 {
         let wave_duty_bits = self.wave_duty.read() << 6;
         wave_duty_bits | 0b0011_1111
     }
 
-    /// FF12 — NR12: Channel 1 volume & envelope
+    /// FF12 — NR12: Channel 1 volume and envelope
     pub fn read_nr12(&self) -> u8 {
         self.envelope.read()
     }
@@ -135,7 +133,7 @@ impl Channel1 {
         0xFF
     }
 
-    /// FF14 — NR14: Channel 1 period high & control
+    /// FF14 — NR14: Channel 1 period high and control
     pub fn read_nr14(&self) -> u8 {
         let length_enable_bits = (self.length_timer.enabled as u8) << 6;
         length_enable_bits | 0b1011_1111

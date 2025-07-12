@@ -1,15 +1,16 @@
 pub struct LengthTimer {
-    pub enabled: bool,
     length: usize,
+
+    pub enabled: bool,
     counter: usize,
 }
 
 impl LengthTimer {
     pub fn new(length: usize) -> Self {
         Self {
+            length,
             enabled: false,
             counter: 0,
-            length,
         }
     }
 
