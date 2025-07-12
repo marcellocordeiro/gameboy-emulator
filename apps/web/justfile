@@ -1,0 +1,13 @@
+#!/usr/bin/env just --justfile
+
+format:
+    pnpm biome:lint
+
+lint:
+    pnpm biome:lint
+
+update-deps:
+    pnpm upgrade
+
+dev:
+    pnpm dev
