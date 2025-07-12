@@ -8,8 +8,10 @@ use self::{
     state::State,
     tiles::Tiles,
 };
+use crate::gui::audio::Audio;
 
 pub struct Gui {
+    pub audio: Audio,
     pub control: Control,
     pub palettes: Palettes,
     pub state: State,
@@ -20,6 +22,7 @@ pub struct Gui {
 impl Gui {
     pub fn new(egui_ctx: &Context) -> Self {
         Self {
+            audio: Audio::default(),
             control: Control::default(),
             palettes: Palettes::default(),
             state: State::default(),
@@ -51,6 +54,7 @@ impl Gui {
                 self.state.draw_widget_toggle_button(ui);
                 self.tiles.draw_widget_toggle_button(ui);
                 self.palettes.draw_widget_toggle_button(ui);
+                self.audio.draw_widget_toggle_button(ui);
             });
         });
 
@@ -58,6 +62,7 @@ impl Gui {
         self.state.draw(egui_ctx, gb_ctx);
         self.tiles.draw(egui_ctx, gb_ctx);
         self.palettes.draw(egui_ctx, gb_ctx);
+        self.audio.draw(egui_ctx, gb_ctx);
     }
 
     fn render_screen_area(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
@@ -65,6 +70,7 @@ impl Gui {
     }
 }
 
+mod audio;
 mod components;
 mod control;
 mod palettes;
