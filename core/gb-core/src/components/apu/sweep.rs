@@ -36,19 +36,19 @@ impl Sweep {
         }
     }
 
-    pub fn get_new_frequency(&self, current_frequency: u16) -> (u16, bool) {
-        let new_frequency = if self.increasing {
-            current_frequency + (current_frequency >> self.individual_step)
+    pub fn get_new_period(&self, current_period: u16) -> (u16, bool) {
+        let new_period = if self.increasing {
+            current_period + (current_period >> self.individual_step)
         } else {
-            current_frequency - (current_frequency >> self.individual_step)
+            current_period - (current_period >> self.individual_step)
         };
 
-        let should_disable_channel = self.increasing && new_frequency > 0x07FF;
+        let should_disable_channel = self.increasing && new_period > 0x07FF;
 
         if should_disable_channel {
-            (current_frequency, true)
+            (current_period, true)
         } else {
-            (new_frequency, false)
+            (new_period, false)
         }
     }
 

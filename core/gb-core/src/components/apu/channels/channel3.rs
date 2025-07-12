@@ -1,4 +1,4 @@
-use crate::components::apu::{frequency_timer::FrequencyTimer, length_timer::LengthTimer};
+use crate::components::apu::{length_timer::LengthTimer, period_divider::PeriodDivider};
 
 /// Wave channel (`NR3x`)
 pub struct Channel3 {
@@ -12,7 +12,7 @@ pub struct Channel3 {
 
     // Period high and control
     length_timer: LengthTimer,
-    frequency_timer: FrequencyTimer<fn(u16) -> u16>,
+    period_divider: PeriodDivider<fn(u16) -> u16>,
 
     wave_ram: [u8; 16],
     wave_position: usize,
@@ -25,7 +25,7 @@ impl Default for Channel3 {
             dac_enabled: false,
             output_level: 0,
             length_timer: LengthTimer::new(256),
-            frequency_timer: FrequencyTimer::new(|x| (2048 - x) * 2),
+            period_divider: PeriodDivider::new(|x| (2048 - x) * 2),
             wave_ram: Default::default(),
             wave_position: 0,
         }
@@ -34,10 +34,10 @@ impl Default for Channel3 {
 
 impl Channel3 {
     pub fn tick(&mut self) {
-        self.frequency_timer.tick();
+        self.period_divider.tick();
 
-        if self.frequency_timer.expired() {
-            self.frequency_timer.reload();
+        if self.period_divider.expired() {
+            self.period_divider.reload();
 
             self.wave_position = (self.wave_position + 1) % 32;
         }
@@ -97,7 +97,7 @@ impl Channel3 {
 
         self.wave_position = 0;
 
-        self.frequency_timer.reload();
+        self.period_divider.reload();
     }
 
     // Registers (read)
@@ -155,7 +155,7 @@ impl Channel3 {
 
     /// FF1D — NR33: Channel 3 period low (write-only)
     pub fn write_nr33(&mut self, value: u8) {
-        self.frequency_timer.set_frequency_low(value);
+        self.period_divider.set_period_low(value);
     }
 
     /// FF1E — NR34: Channel 3 period high and control
@@ -164,7 +164,7 @@ impl Channel3 {
         let length_enable = (value & 0b0100_0000) != 0;
         let trigger = (value & 0b1000_0000) != 0;
 
-        self.frequency_timer.set_frequency_high(frequency_high);
+        self.period_divider.set_period_high(frequency_high);
         self.length_timer.enabled = length_enable;
 
         if trigger {

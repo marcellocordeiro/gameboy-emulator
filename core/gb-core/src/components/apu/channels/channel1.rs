@@ -1,7 +1,7 @@
 use crate::components::apu::{
     envelope::Envelope,
-    frequency_timer::FrequencyTimer,
     length_timer::LengthTimer,
+    period_divider::PeriodDivider,
     sweep::Sweep,
     wave_duty::WaveDuty,
 };
@@ -22,7 +22,7 @@ pub struct Channel1 {
 
     // Period and control
     length_timer: LengthTimer,
-    frequency_timer: FrequencyTimer<fn(u16) -> u16>,
+    period_divider: PeriodDivider<fn(u16) -> u16>,
 }
 
 impl Default for Channel1 {
@@ -34,17 +34,17 @@ impl Default for Channel1 {
             wave_duty: WaveDuty::default(),
             envelope: Envelope::default(),
             length_timer: LengthTimer::new(64),
-            frequency_timer: FrequencyTimer::new(|x| (2048 - x) * 4),
+            period_divider: PeriodDivider::new(|x| (2048 - x) * 4),
         }
     }
 }
 
 impl Channel1 {
     pub fn tick(&mut self) {
-        self.frequency_timer.tick();
+        self.period_divider.tick();
 
-        if self.frequency_timer.expired() {
-            self.frequency_timer.reload();
+        if self.period_divider.expired() {
+            self.period_divider.reload();
 
             self.wave_duty.tick();
         }
@@ -68,16 +68,16 @@ impl Channel1 {
             if self.sweep.expired() {
                 self.sweep.reload();
 
-                let current_frequency = self.frequency_timer.frequency();
+                let current_frequency = self.period_divider.period();
 
                 let (new_frequency, should_disable_channel) =
-                    self.sweep.get_new_frequency(current_frequency);
+                    self.sweep.get_new_period(current_frequency);
 
                 if should_disable_channel {
                     self.enabled = false;
                 }
 
-                self.frequency_timer.set_frequency(new_frequency);
+                self.period_divider.set_period(new_frequency);
             }
         }
     }
@@ -109,7 +109,7 @@ impl Channel1 {
             self.length_timer.reload();
         }
 
-        self.frequency_timer.reload();
+        self.period_divider.reload();
         self.envelope.reload();
         self.sweep.reload();
     }
@@ -169,7 +169,7 @@ impl Channel1 {
 
     /// FF13 — NR13: Channel 1 period low (write-only)
     pub fn write_nr13(&mut self, value: u8) {
-        self.frequency_timer.set_frequency_low(value);
+        self.period_divider.set_period_low(value);
     }
 
     /// FF14 — NR14: Channel 1 period high & control
@@ -178,7 +178,7 @@ impl Channel1 {
         let length_enable = (value & 0b0100_0000) != 0;
         let trigger = (value & 0b1000_0000) != 0;
 
-        self.frequency_timer.set_frequency_high(frequency_high);
+        self.period_divider.set_period_high(frequency_high);
         self.length_timer.enabled = length_enable;
 
         if trigger {

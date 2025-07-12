@@ -35,6 +35,9 @@ pub trait MemoryInterface {
     fn read_cycle(&mut self, address: u16) -> u8;
     fn write_cycle(&mut self, address: u16, value: u8);
 
+    fn apu(&self) -> &Apu;
+    fn apu_mut(&mut self) -> &mut Apu;
+
     fn speed_switch(&self) -> &SpeedSwitch;
     fn speed_switch_mut(&mut self) -> &mut SpeedSwitch;
 
@@ -307,6 +310,14 @@ impl MemoryInterface for Memory {
         // Reading/writing before cycling fixes `timer/rapid_toggle`
         self.write(address, value);
         self.cycle();
+    }
+
+    fn apu(&self) -> &Apu {
+        &self.apu
+    }
+
+    fn apu_mut(&mut self) -> &mut Apu {
+        &mut self.apu
     }
 
     fn speed_switch(&self) -> &SpeedSwitch {

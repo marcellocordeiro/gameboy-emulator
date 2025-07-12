@@ -1,7 +1,7 @@
 pub struct LengthTimer {
     pub enabled: bool,
-    pub counter: usize,
-    pub length: usize,
+    length: usize,
+    counter: usize,
 }
 
 impl LengthTimer {
@@ -11,6 +11,10 @@ impl LengthTimer {
             counter: 0,
             length,
         }
+    }
+
+    pub fn expired(&self) -> bool {
+        self.counter == 0
     }
 
     pub fn tick(&mut self) {
@@ -27,9 +31,5 @@ impl LengthTimer {
 
     pub fn set_counter(&mut self, counter: u8) {
         self.counter = self.length - (counter as usize);
-    }
-
-    pub fn expired(&self) -> bool {
-        self.counter == 0
     }
 }

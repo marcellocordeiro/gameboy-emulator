@@ -1,8 +1,7 @@
 use super::structs::{Cycle, Ram};
-use crate::components::memory::{
-    MemoryInterface,
-    interrupts::Interrupts,
-    speed_switch::SpeedSwitch,
+use crate::components::{
+    apu::Apu,
+    memory::{MemoryInterface, interrupts::Interrupts, speed_switch::SpeedSwitch},
 };
 
 #[derive(Default)]
@@ -41,6 +40,14 @@ impl MemoryInterface for TestMemory {
 
         self.logs
             .push(Some((address, Some(value), "write".to_string())));
+    }
+
+    fn apu(&self) -> &Apu {
+        unimplemented!()
+    }
+
+    fn apu_mut(&mut self) -> &mut Apu {
+        unimplemented!()
     }
 
     fn speed_switch(&self) -> &SpeedSwitch {

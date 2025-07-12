@@ -1,7 +1,7 @@
 use crate::components::apu::{
     envelope::Envelope,
-    frequency_timer::FrequencyTimer,
     length_timer::LengthTimer,
+    period_divider::PeriodDivider,
     wave_duty::WaveDuty,
 };
 
@@ -18,7 +18,7 @@ pub struct Channel2 {
 
     // Period and control
     length_timer: LengthTimer,
-    frequency_timer: FrequencyTimer<fn(u16) -> u16>,
+    period_divider: PeriodDivider<fn(u16) -> u16>,
 }
 
 impl Default for Channel2 {
@@ -29,17 +29,17 @@ impl Default for Channel2 {
             wave_duty: WaveDuty::default(),
             envelope: Envelope::default(),
             length_timer: LengthTimer::new(64),
-            frequency_timer: FrequencyTimer::new(|x| (2048 - x) * 4),
+            period_divider: PeriodDivider::new(|x| (2048 - x) * 4),
         }
     }
 }
 
 impl Channel2 {
     pub fn tick(&mut self) {
-        self.frequency_timer.tick();
+        self.period_divider.tick();
 
-        if self.frequency_timer.expired() {
-            self.frequency_timer.reload();
+        if self.period_divider.expired() {
+            self.period_divider.reload();
 
             self.wave_duty.tick();
         }
@@ -83,7 +83,7 @@ impl Channel2 {
             self.length_timer.reload();
         }
 
-        self.frequency_timer.reload();
+        self.period_divider.reload();
         self.envelope.reload();
     }
 
@@ -136,7 +136,7 @@ impl Channel2 {
 
     /// FF18 — NR23: Channel 2 period low (write-only)
     pub fn write_nr23(&mut self, value: u8) {
-        self.frequency_timer.set_frequency_low(value);
+        self.period_divider.set_period_low(value);
     }
 
     /// FF19 — NR24: Channel 2 period high & control
@@ -145,7 +145,7 @@ impl Channel2 {
         let length_enable = (value & 0b0100_0000) != 0;
         let trigger = (value & 0b1000_0000) != 0;
 
-        self.frequency_timer.set_frequency_high(frequency_high);
+        self.period_divider.set_period_high(frequency_high);
         self.length_timer.enabled = length_enable;
 
         if trigger {

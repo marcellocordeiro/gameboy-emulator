@@ -1,7 +1,7 @@
 use crate::components::apu::{
     envelope::Envelope,
-    frequency_timer::FrequencyTimer,
     length_timer::LengthTimer,
+    period_divider::PeriodDivider,
 };
 
 /// Noise channel (`NR4x`)
@@ -21,7 +21,7 @@ pub struct Channel4 {
 
     // Period and control
     length_timer: LengthTimer,
-    frequency_timer: FrequencyTimer<fn(u16) -> u16>,
+    period_divider: PeriodDivider<fn(u16) -> u16>,
 }
 
 impl Default for Channel4 {
@@ -35,19 +35,19 @@ impl Default for Channel4 {
             envelope: Envelope::default(),
             dac_enabled: false,
             length_timer: LengthTimer::new(64),
-            frequency_timer: FrequencyTimer::new(|x| x),
+            period_divider: PeriodDivider::new(|x| x),
         }
     }
 }
 
 impl Channel4 {
     pub fn tick(&mut self) {
-        self.frequency_timer.tick();
+        self.period_divider.tick();
 
-        if self.frequency_timer.expired() {
+        if self.period_divider.expired() {
             let new_frequency = self.clock_divider() << self.clock_shift;
-            self.frequency_timer.set_frequency(new_frequency);
-            self.frequency_timer.reload();
+            self.period_divider.set_period(new_frequency);
+            self.period_divider.reload();
 
             let shifted_lfsr = self.lfsr >> 1;
             let xor_result = (self.lfsr & 0b1) ^ (shifted_lfsr & 0b1);
@@ -102,8 +102,8 @@ impl Channel4 {
         self.envelope.reload();
 
         let new_frequency = self.clock_divider() << self.clock_shift;
-        self.frequency_timer.set_frequency(new_frequency);
-        self.frequency_timer.reload();
+        self.period_divider.set_period(new_frequency);
+        self.period_divider.reload();
 
         self.lfsr = u16::MAX;
     }

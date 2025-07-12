@@ -1,3 +1,5 @@
+use bitflags::bitflags;
+
 use self::channels::{Channel1, Channel2, Channel3, Channel4};
 use crate::{
     components::apu::frame_sequencer::FrameSequencer,
@@ -11,6 +13,24 @@ const AUDIO_CYCLES_PER_SAMPLE: usize = CPU_CLOCK_RATE / AUDIO_SAMPLE_RATE; // 95
 
 pub type StereoSample = [f32; 2];
 pub type Callback = dyn Fn(&[StereoSample]);
+
+bitflags! {
+    #[derive(Debug, Copy, Clone)]
+    pub struct Channels: u8 {
+        const CH1 = 0b0001; // 0
+        const CH2 = 0b0010; // 1
+        const CH3 = 0b0100; // 2
+        const CH4 = 0b1000; // 3
+
+        const ALL = 0b1111;
+    }
+}
+
+impl Default for Channels {
+    fn default() -> Self {
+        Self::ALL
+    }
+}
 
 pub struct Apu {
     prev_system_div: u8,
@@ -41,6 +61,8 @@ pub struct Apu {
     buffer: [StereoSample; AUDIO_BUFFER_SIZE],
     buffer_position: usize,
     callback: Option<Box<Callback>>,
+
+    pub ui_channel_overrides: Channels,
 }
 
 impl Default for Apu {
@@ -63,6 +85,7 @@ impl Default for Apu {
             buffer: [[0.0, 0.0]; AUDIO_BUFFER_SIZE],
             buffer_position: 0,
             callback: None,
+            ui_channel_overrides: Channels::all(),
         }
     }
 }
@@ -134,12 +157,12 @@ impl Apu {
                 1 => {}
 
                 2 => {
+                    self.channel1.tick_sweep();
+
                     self.channel1.tick_length_timer();
                     self.channel2.tick_length_timer();
                     self.channel3.tick_length_timer();
                     self.channel4.tick_length_timer();
-
-                    self.channel1.tick_sweep();
                 }
 
                 3 => {}
@@ -154,12 +177,12 @@ impl Apu {
                 5 => {}
 
                 6 => {
+                    self.channel1.tick_sweep();
+
                     self.channel1.tick_length_timer();
                     self.channel2.tick_length_timer();
                     self.channel3.tick_length_timer();
                     self.channel4.tick_length_timer();
-
-                    self.channel1.tick_sweep();
                 }
 
                 7 => {
@@ -358,10 +381,29 @@ impl Apu {
     }
 
     fn mix(&mut self) {
-        let channel1_sample = self.channel1.digital_output();
-        let channel2_sample = self.channel2.digital_output();
-        let channel3_sample = self.channel3.digital_output();
-        let channel4_sample = self.channel4.digital_output();
+        let channel1_sample = if self.ui_channel_overrides.contains(Channels::CH1) {
+            self.channel1.digital_output()
+        } else {
+            None
+        };
+
+        let channel2_sample = if self.ui_channel_overrides.contains(Channels::CH2) {
+            self.channel2.digital_output()
+        } else {
+            None
+        };
+
+        let channel3_sample = if self.ui_channel_overrides.contains(Channels::CH3) {
+            self.channel3.digital_output()
+        } else {
+            None
+        };
+
+        let channel4_sample = if self.ui_channel_overrides.contains(Channels::CH4) {
+            self.channel4.digital_output()
+        } else {
+            None
+        };
 
         let mixed_sample = [
             channel1_sample,
@@ -416,7 +458,7 @@ impl Apu {
 mod channels;
 mod envelope;
 mod frame_sequencer;
-mod frequency_timer;
 mod length_timer;
+mod period_divider;
 mod sweep;
 mod wave_duty;

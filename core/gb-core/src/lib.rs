@@ -66,6 +66,10 @@ impl GameBoy {
         &self.memory
     }
 
+    pub fn memory_mut(&mut self) -> &mut Memory {
+        &mut self.memory
+    }
+
     pub fn cartridge_inserted(&self) -> bool {
         self.memory.cartridge.is_some()
     }
