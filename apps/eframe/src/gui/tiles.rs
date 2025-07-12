@@ -12,9 +12,9 @@ use gb_core::{
     constants::{
         DeviceModel,
         TILE_DATA_FRAME_HEIGHT,
-        TILE_DATA_FRAME_SIZE,
-        TILE_DATA_FRAME_WIDTH,
-        TileDataFrame,
+        TILE_DATA_FRAME_SIZE_CGB,
+        TILE_DATA_FRAME_WIDTH_CGB,
+        TileDataFrameCgb,
     },
 };
 
@@ -23,23 +23,24 @@ use crate::utils::scaling::integer_scaling_size;
 pub struct Tiles {
     opened: bool,
 
-    pixels: Box<TileDataFrame>,
+    pixels: Box<TileDataFrameCgb>,
     texture: TextureHandle,
 }
 
 impl Tiles {
     #[allow(clippy::cast_precision_loss)]
     const DEFAULT_SIZE: Vec2 = Vec2 {
-        x: (TILE_DATA_FRAME_WIDTH * 2) as f32,
+        x: (TILE_DATA_FRAME_WIDTH_CGB * 2) as f32,
         y: (TILE_DATA_FRAME_HEIGHT * 2 + 6) as f32, // TODO: don't rely on this.
     };
     const FILTER: TextureOptions = TextureOptions::NEAREST;
 
     pub fn new(egui_ctx: &Context) -> Self {
+        let pixels = vec![0; TILE_DATA_FRAME_SIZE_CGB].into_boxed_slice();
         let texture = {
             let image = ColorImage::new(
-                [TILE_DATA_FRAME_WIDTH, TILE_DATA_FRAME_HEIGHT],
-                Color32::WHITE,
+                [TILE_DATA_FRAME_WIDTH_CGB, TILE_DATA_FRAME_HEIGHT],
+                vec![Color32::BLACK; pixels.len() / 4],
             );
 
             egui_ctx.load_texture("tiles", image, Self::FILTER)
@@ -47,10 +48,7 @@ impl Tiles {
 
         Self {
             opened: false,
-            pixels: vec![0; TILE_DATA_FRAME_SIZE]
-                .into_boxed_slice()
-                .try_into()
-                .unwrap(),
+            pixels: pixels.try_into().unwrap(),
             texture,
         }
     }
@@ -60,7 +58,7 @@ impl Tiles {
     }
 
     pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
-        if ui.button("Toggle tiles").clicked() {
+        if ui.button("Tiles").clicked() {
             self.toggle();
         }
     }
@@ -102,7 +100,7 @@ impl Tiles {
         }
 
         let image = ColorImage::from_rgba_unmultiplied(
-            [TILE_DATA_FRAME_WIDTH, TILE_DATA_FRAME_HEIGHT],
+            [TILE_DATA_FRAME_WIDTH_CGB, TILE_DATA_FRAME_HEIGHT],
             self.pixels.as_ref(),
         );
 

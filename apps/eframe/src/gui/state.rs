@@ -12,7 +12,7 @@ impl State {
     }
 
     pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
-        if ui.button("Toggle state").clicked() {
+        if ui.button("State").clicked() {
             self.toggle();
         }
     }

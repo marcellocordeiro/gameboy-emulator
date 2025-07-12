@@ -22,17 +22,19 @@ impl ScreenArea {
     const FILTER: TextureOptions = TextureOptions::NEAREST;
 
     pub fn new(egui_ctx: &Context) -> Self {
+        let pixels = vec![0; SCREEN_PIXELS_SIZE].into_boxed_slice();
+
         let texture = {
-            let image = ColorImage::new([SCREEN_WIDTH, SCREEN_HEIGHT], Color32::WHITE);
+            let image = ColorImage::new(
+                [SCREEN_WIDTH, SCREEN_HEIGHT],
+                vec![Color32::BLACK; pixels.len() / 4],
+            );
 
             egui_ctx.load_texture("main", image, Self::FILTER)
         };
 
         Self {
-            pixels: vec![0; SCREEN_PIXELS_SIZE]
-                .into_boxed_slice()
-                .try_into()
-                .unwrap(),
+            pixels: pixels.try_into().unwrap(),
             texture,
         }
     }

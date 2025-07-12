@@ -3,7 +3,7 @@ use std::ops::RangeInclusive;
 use super::{Ppu, lcd_status::StatusMode};
 use crate::{
     DeviceModel,
-    constants::{TILE_DATA_FRAME_WIDTH, TILES_PER_LINE, TileDataFrame},
+    constants::{TILE_DATA_FRAME_WIDTH_CGB, TILES_PER_LINE, TileDataFrameCgb},
     utils::{
         color::Color,
         macros::{device_is_cgb, in_cgb_mode},
@@ -48,7 +48,7 @@ impl VideoRam {
         self.cgb_mode = cgb_mode;
     }
 
-    pub fn draw_tile_data_0_into_frame(&self, frame: &mut TileDataFrame) {
+    pub fn draw_tile_data_0_into_frame(&self, frame: &mut TileDataFrameCgb) {
         const TILE_DATA_0_START: usize = 0;
         const TILE_DATA_0_END: usize = 0x97FF - 0x8000;
 
@@ -58,13 +58,13 @@ impl VideoRam {
     }
 
     /// Warning: CGB model only.
-    pub fn draw_tile_data_1_into_frame(&self, frame: &mut TileDataFrame) {
+    pub fn draw_tile_data_1_into_frame(&self, frame: &mut TileDataFrameCgb) {
         const TILE_DATA_1_START: usize = VRAM_BANK_SIZE;
         const TILE_DATA_1_END: usize = (0x97FF - 0x8000) + VRAM_BANK_SIZE;
 
         let range = TILE_DATA_1_START..=TILE_DATA_1_END;
 
-        self.draw_tile_data_range_into_frame(range, frame, TILE_DATA_FRAME_WIDTH / 2);
+        self.draw_tile_data_range_into_frame(range, frame, TILE_DATA_FRAME_WIDTH_CGB / 2);
     }
 
     pub fn read(&self, address: u16) -> u8 {
@@ -113,7 +113,7 @@ impl VideoRam {
     fn draw_tile_data_range_into_frame(
         &self,
         range: RangeInclusive<usize>,
-        frame: &mut TileDataFrame,
+        frame: &mut TileDataFrameCgb,
         frame_column_offset: usize,
     ) {
         const TILE_SIZE: usize = 16;
@@ -144,7 +144,7 @@ impl VideoRam {
                         let mapped_x = tile_base_x + bit;
                         let mapped_y = tile_base_y + byte_line;
 
-                        (mapped_y * TILE_DATA_FRAME_WIDTH) + mapped_x + frame_column_offset
+                        (mapped_y * TILE_DATA_FRAME_WIDTH_CGB) + mapped_x + frame_column_offset
                     };
 
                     frame[mapped_address * 4] = pixel.red;

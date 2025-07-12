@@ -14,7 +14,7 @@ impl Palettes {
     }
 
     pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
-        if ui.button("Toggle palettes").clicked() {
+        if ui.button("Palettes").clicked() {
             self.toggle();
         }
     }

@@ -26,7 +26,7 @@ impl Control {
     }
 
     pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
-        if ui.button("Toggle control").clicked() {
+        if ui.button("Control").clicked() {
             self.toggle();
         }
     }

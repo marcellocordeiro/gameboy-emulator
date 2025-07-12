@@ -1,4 +1,4 @@
-use egui::{Context, TopBottomPanel, ViewportCommand, menu};
+use egui::{Context, MenuBar, TopBottomPanel, ViewportCommand};
 use gb_core::GameBoy;
 
 use self::{
@@ -38,7 +38,7 @@ impl Gui {
 
     fn render_ui(&mut self, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
         TopBottomPanel::top("top_panel").show(egui_ctx, |ui| {
-            menu::bar(ui, |ui| {
+            MenuBar::new().ui(ui, |ui| {
                 ui.menu_button("File", |ui| {
                     if ui.button("Reset").clicked() {
                         gb_ctx.reset();
