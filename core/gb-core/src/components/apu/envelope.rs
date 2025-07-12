@@ -88,6 +88,8 @@ enum Direction {
 }
 
 impl From<bool> for Direction {
+    /// Unlike the sweep direction,
+    /// the envelope direction is `Increasing` when the bit is set.
     fn from(value: bool) -> Self {
         if value {
             Self::Increasing

@@ -1,7 +1,7 @@
 #[derive(Debug, Default)]
 pub struct Sweep {
     pace: u8,
-    increasing: bool,
+    direction: Direction,
     individual_step: u8,
 
     counter: u8,
@@ -37,13 +37,12 @@ impl Sweep {
     }
 
     pub fn get_new_period(&self, current_period: u16) -> (u16, bool) {
-        let new_period = if self.increasing {
-            current_period + (current_period >> self.individual_step)
-        } else {
-            current_period - (current_period >> self.individual_step)
+        let new_period = match self.direction {
+            Direction::Increasing => current_period + (current_period >> self.individual_step),
+            Direction::Decreasing => current_period - (current_period >> self.individual_step),
         };
 
-        let should_disable_channel = self.increasing && new_period > 0x07FF;
+        let should_disable_channel = self.direction == Direction::Increasing && new_period > 0x07FF;
 
         if should_disable_channel {
             (current_period, true)
@@ -53,18 +52,37 @@ impl Sweep {
     }
 
     pub fn read(&self) -> u8 {
-        let increasing_bit = self.increasing as u8;
+        let direction_bit = self.direction as u8;
 
-        (self.pace << 4) | (increasing_bit << 3) | self.individual_step
+        (self.pace << 4) | (direction_bit << 3) | self.individual_step
     }
 
     pub fn write(&mut self, value: u8) {
         let sweep_pace = (value & 0b0111_0000) >> 4;
-        let increasing = (value & 0b1000) != 0;
+        let direction = Direction::from((value & 0b1000) != 0);
         let individual_step = value & 0b0111;
 
         self.pace = sweep_pace;
-        self.increasing = increasing;
+        self.direction = direction;
         self.individual_step = individual_step;
+    }
+}
+
+#[derive(Debug, Default, Copy, Clone, Eq, PartialEq)]
+enum Direction {
+    #[default]
+    Increasing = 0,
+    Decreasing = 1,
+}
+
+impl From<bool> for Direction {
+    /// Unlike the envelope direction,
+    /// the sweep direction is `Decreasing` when the bit is set.
+    fn from(value: bool) -> Self {
+        if value {
+            Self::Decreasing
+        } else {
+            Self::Increasing
+        }
     }
 }
