@@ -85,7 +85,7 @@ impl Channel4 {
             return None;
         }
 
-        let sample = (((self.lfsr & 1) ^ 1) as u8) * self.envelope.current_volume();
+        let sample = (((self.lfsr & 1) ^ 1) as u8) * self.envelope.volume();
 
         Some(sample)
     }
@@ -99,7 +99,7 @@ impl Channel4 {
             self.length_timer.reload();
         }
 
-        self.envelope.reload();
+        self.envelope.trigger();
 
         let new_frequency = self.clock_divider() << self.clock_shift;
         self.period_divider.set_period(new_frequency);

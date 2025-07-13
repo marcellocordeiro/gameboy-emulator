@@ -74,7 +74,7 @@ impl Channel1 {
             }
 
             self.period_divider.set_period(new_frequency);
-            self.sweep.set_shadow_frequency(new_frequency);
+            self.sweep.set_shadow_period(new_frequency);
         }
     }
 
@@ -91,7 +91,7 @@ impl Channel1 {
             return None;
         }
 
-        let sample = self.wave_duty.wave_data() * self.envelope.current_volume();
+        let sample = self.wave_duty.wave_data() * self.envelope.volume();
 
         Some(sample)
     }
@@ -106,9 +106,8 @@ impl Channel1 {
         }
 
         self.period_divider.reload();
-        self.envelope.reload();
-        self.sweep
-            .set_shadow_frequency(self.period_divider.period());
+        self.envelope.trigger();
+        self.sweep.set_shadow_period(self.period_divider.period());
         self.sweep.reload();
     }
 

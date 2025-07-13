@@ -10,5 +10,8 @@ update-deps:
     cargo upgrade -i
     cargo update
 
+test:
+    cargo test
+
 run ROM:
     cargo run -p gb-eframe -- --cgb "{{ROM}}"

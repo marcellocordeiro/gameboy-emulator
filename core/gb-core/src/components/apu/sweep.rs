@@ -4,7 +4,7 @@ pub struct Sweep {
     direction: Direction,
     individual_step: u8,
 
-    shadow_frequency: u16,
+    shadow_period: u16,
     counter: u8,
 }
 
@@ -33,21 +33,21 @@ impl Sweep {
         self.counter = if self.pace > 0 { self.pace } else { 8 };
     }
 
-    pub fn set_shadow_frequency(&mut self, frequency: u16) {
-        self.shadow_frequency = frequency;
+    pub fn set_shadow_period(&mut self, period: u16) {
+        self.shadow_period = period;
     }
 
     pub fn get_new_period(&self) -> (u16, bool) {
-        let delta = self.shadow_frequency >> self.individual_step;
+        let delta = self.shadow_period >> self.individual_step;
         let new_period = match self.direction {
-            Direction::Increasing => self.shadow_frequency + delta,
-            Direction::Decreasing => self.shadow_frequency - delta,
+            Direction::Increasing => self.shadow_period + delta,
+            Direction::Decreasing => self.shadow_period - delta,
         };
 
         let should_disable_channel = self.direction == Direction::Increasing && new_period > 0x07FF;
 
         if should_disable_channel {
-            (self.shadow_frequency, true)
+            (self.shadow_period, true)
         } else {
             (new_period, false)
         }

@@ -69,7 +69,7 @@ impl Channel2 {
             return None;
         }
 
-        let sample = self.wave_duty.wave_data() * self.envelope.current_volume();
+        let sample = self.wave_duty.wave_data() * self.envelope.volume();
 
         Some(sample)
     }
@@ -84,7 +84,7 @@ impl Channel2 {
         }
 
         self.period_divider.reload();
-        self.envelope.reload();
+        self.envelope.trigger();
     }
 
     // Read
