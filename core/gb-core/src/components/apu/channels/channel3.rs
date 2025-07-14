@@ -1,4 +1,4 @@
-use crate::components::apu::{length_timer::LengthTimer, period_divider::PeriodDivider};
+use crate::components::apu::channels::units::{LengthTimer, PeriodDivider};
 
 /// Wave channel (`NR3x`)
 pub struct Channel3 {
@@ -62,7 +62,7 @@ impl Channel3 {
     }
 
     pub fn digital_output(&self) -> Option<u8> {
-        if !self.dac_enabled {
+        if !self.dac_enabled || !self.enabled {
             return None;
         }
 
@@ -92,7 +92,7 @@ impl Channel3 {
         }
 
         if self.length_timer.expired() {
-            self.length_timer.reload();
+            self.length_timer.trigger();
         }
 
         self.wave_position = 0;
@@ -126,7 +126,7 @@ impl Channel3 {
 
     /// FF1E — NR34: Channel 3 period high and control
     pub fn read_nr34(&self) -> u8 {
-        let length_enable_bits = (self.length_timer.enabled as u8) << 6;
+        let length_enable_bits = (self.length_timer.enabled() as u8) << 6;
         length_enable_bits | 0b1011_1111
     }
 
@@ -165,9 +165,9 @@ impl Channel3 {
         let trigger = (value & 0b1000_0000) != 0;
 
         self.period_divider.set_period_high(frequency_high);
-        self.length_timer.enabled = length_enable;
+        self.length_timer.write(length_enable);
 
-        if trigger {
+        if trigger && self.dac_enabled {
             self.trigger();
         }
     }

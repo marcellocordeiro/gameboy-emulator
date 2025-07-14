@@ -37,19 +37,14 @@ impl<T: Fn(u16) -> u16> PeriodDivider<T> {
     }
 
     pub fn set_period_low(&mut self, value: u8) {
-        const MASK: u16 = 0xFF;
-        let value = value as u16;
-
-        self.period &= !MASK;
-        self.period |= value;
+        self.period = (self.period & 0xFF00) | (value as u16);
     }
 
     pub fn set_period_high(&mut self, value: u8) {
         const MASK: u16 = 0b111;
         let value = ((value as u16) & MASK) << 8;
 
-        self.period &= !(MASK << 8);
-        self.period |= value;
+        self.period = (self.period & !(MASK << 8)) | value;
     }
 
     pub fn expired(&self) -> bool {

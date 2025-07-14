@@ -2,7 +2,7 @@ use bitflags::bitflags;
 
 use self::channels::{Channel1, Channel2, Channel3, Channel4};
 use crate::{
-    components::apu::frame_sequencer::FrameSequencer,
+    components::apu::{frame_sequencer::FrameSequencer, high_pass_filter::HighPassFilter},
     constants::{CPU_CLOCK_RATE, DeviceModel},
     utils::macros::device_is_cgb,
 };
@@ -21,14 +21,6 @@ bitflags! {
         const CH2 = 0b0010; // 1
         const CH3 = 0b0100; // 2
         const CH4 = 0b1000; // 3
-
-        const ALL = 0b1111;
-    }
-}
-
-impl Default for Channels {
-    fn default() -> Self {
-        Self::ALL
     }
 }
 
@@ -47,7 +39,9 @@ pub struct Apu {
     nr50: u8,
 
     /// NR51: Sound panning
-    nr51: u8,
+    // nr51: u8,
+    left_panning: Channels,
+    right_panning: Channels,
 
     /// From NR52: Audio master control
     audio_on: bool,
@@ -56,7 +50,8 @@ pub struct Apu {
     cgb_mode: bool,
     double_speed: bool,
 
-    capacitor: f32,
+    hpf_left: HighPassFilter,
+    hpf_right: HighPassFilter,
 
     buffer: [StereoSample; AUDIO_BUFFER_SIZE],
     buffer_position: usize,
@@ -76,12 +71,15 @@ impl Default for Apu {
             channel3: Channel3::default(),
             channel4: Channel4::default(),
             nr50: 0,
-            nr51: 0,
+            //nr51: 0,
+            left_panning: Channels::empty(),
+            right_panning: Channels::empty(),
             audio_on: false,
             device_model: DeviceModel::default(),
             cgb_mode: false,
             double_speed: false,
-            capacitor: 0.0,
+            hpf_left: HighPassFilter::default(),
+            hpf_right: HighPassFilter::default(),
             buffer: [[0.0, 0.0]; AUDIO_BUFFER_SIZE],
             buffer_position: 0,
             callback: None,
@@ -145,6 +143,7 @@ impl Apu {
         self.channel3.tick();
         self.channel4.tick();
 
+        // DIV-APU
         if self.audio_on && self.falling_edge(self.prev_system_div, div) {
             match self.frame_sequencer.next_step() {
                 0 => {
@@ -199,7 +198,7 @@ impl Apu {
 
         if self.internal_cycles >= AUDIO_CYCLES_PER_SAMPLE {
             self.internal_cycles = 0;
-            self.mix();
+            self.push_sample();
         }
         self.internal_cycles += 1;
     }
@@ -347,11 +346,18 @@ impl Apu {
     }
 
     fn read_nr51(&self) -> u8 {
-        self.nr51
+        let left_bits = self.left_panning.bits();
+        let right_bits = self.right_panning.bits();
+
+        (left_bits << 4) | right_bits
     }
 
     fn write_nr51(&mut self, value: u8) {
-        self.nr51 = value;
+        let left_bits = (value & 0b1111_0000) >> 4;
+        let right_bits = value & 0b0000_1111;
+
+        self.left_panning = Channels::from_bits_truncate(left_bits);
+        self.right_panning = Channels::from_bits_truncate(right_bits);
     }
 
     /// FF26 — NR52: Audio master control
@@ -376,55 +382,19 @@ impl Apu {
             self.channel3.disable();
             self.channel4.disable();
             self.nr50 = 0;
-            self.nr51 = 0;
+            self.write_nr51(0);
         }
     }
 
-    fn mix(&mut self) {
-        let channel1_sample = if self.ui_channel_overrides.contains(Channels::CH1) {
-            self.channel1.digital_output()
-        } else {
-            None
-        };
-
-        let channel2_sample = if self.ui_channel_overrides.contains(Channels::CH2) {
-            self.channel2.digital_output()
-        } else {
-            None
-        };
-
-        let channel3_sample = if self.ui_channel_overrides.contains(Channels::CH3) {
-            self.channel3.digital_output()
-        } else {
-            None
-        };
-
-        let channel4_sample = if self.ui_channel_overrides.contains(Channels::CH4) {
-            self.channel4.digital_output()
-        } else {
-            None
-        };
-
-        let mixed_sample = [
-            channel1_sample,
-            channel2_sample,
-            channel3_sample,
-            channel4_sample,
-        ]
-        .into_iter()
-        .flatten()
-        .map(|sample| ((sample as f32) / 7.5) - 1.0)
-        .sum::<f32>()
-            / 4.0;
-
-        let mixed_sample = self.with_high_pass_filter(mixed_sample);
+    fn push_sample(&mut self) {
+        let mixed = self.mix();
 
         // Implies audio is enabled. Otherwise, skip adding samples to the buffer.
         let Some(callback) = &self.callback else {
             return;
         };
 
-        self.buffer[self.buffer_position] = [mixed_sample, mixed_sample];
+        self.buffer[self.buffer_position] = mixed;
         self.buffer_position += 1;
 
         if self.buffer_position >= AUDIO_BUFFER_SIZE {
@@ -439,26 +409,52 @@ impl Apu {
         ((prev & mask) != 0) && ((next & mask) == 0)
     }
 
-    // https://gbdev.io/pandocs/Audio_details.html#obscure-behavior
-    fn with_high_pass_filter(&mut self, in_sample: f32) -> f32 {
-        // 0.999958 ^ (4194304 / AUDIO_SAMPLE_RATE)
-        const FACTOR: f32 = 0.996; // At 44.1kHz
-
+    // TODO: refactor this :')
+    fn mix(&mut self) -> [f32; 2] {
         if !self.audio_on {
-            return 0.0;
+            return [0.0, 0.0];
         }
 
-        let out = in_sample - self.capacitor;
-        self.capacitor = out.mul_add(-FACTOR, in_sample); // in_sample - (out * FACTOR)
+        let [left, right] = [
+            (Channels::CH1, self.channel1.digital_output()),
+            (Channels::CH2, self.channel2.digital_output()),
+            (Channels::CH3, self.channel3.digital_output()),
+            (Channels::CH4, self.channel4.digital_output()),
+        ]
+        .into_iter()
+        // Remove channels disabled by the UI
+        .filter(|(channel, _)| self.ui_channel_overrides.contains(*channel))
+        // Remove disabled channels
+        .filter_map(|(ch, sample)| sample.map(|sample| (ch, sample)))
+        // Normalize
+        .map(|(ch, sample)| (ch, ((sample as f32) / 7.5) - 1.0))
+        // Stereo panning
+        .map(|(channel, sample)| {
+            let left = if self.left_panning.contains(channel) {
+                sample
+            } else {
+                0.0
+            };
 
-        out
+            let right = if self.right_panning.contains(channel) {
+                sample
+            } else {
+                0.0
+            };
+
+            [left, right]
+        })
+        // Accumulate
+        .fold([0.0, 0.0], |acc, sample| {
+            [acc[0] + sample[0], acc[1] + sample[1]]
+        })
+        // Average
+        .map(|sample| sample / 4.0);
+
+        [self.hpf_left.apply(left), self.hpf_right.apply(right)]
     }
 }
 
 mod channels;
-mod envelope;
 mod frame_sequencer;
-mod length_timer;
-mod period_divider;
-mod sweep;
-mod wave_duty;
+mod high_pass_filter;

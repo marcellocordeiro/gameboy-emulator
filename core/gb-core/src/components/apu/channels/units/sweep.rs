@@ -1,28 +1,61 @@
+use crate::components::apu::channels::units::period_divider::PeriodDivider;
+
 #[derive(Debug, Default)]
 pub struct Sweep {
     pace: u8,
     direction: Direction,
     individual_step: u8,
 
+    enabled: bool,
     shadow_period: u16,
     counter: u8,
 }
 
 impl Sweep {
-    pub fn tick(&mut self) {
-        if !self.enabled() {
+    pub fn tick(
+        &mut self,
+        channel_enabled: &mut bool,
+        period_divider: &mut PeriodDivider<fn(u16) -> u16>,
+    ) {
+        if !self.enabled {
             return;
+            //return (false, None);
         }
 
         if self.counter == 0 {
-            return;
+            return; // (false, None);
         }
 
         self.counter -= 1;
-    }
 
-    pub fn enabled(&self) -> bool {
-        self.pace != 0
+        if self.expired() {
+            self.reload();
+
+            if self.pace == 0 {
+                return; // (false, None);
+            }
+
+            let period = self.period();
+
+            if period >= 0x7FF {
+                *channel_enabled = false;
+                //return (true, None);
+            } else if self.individual_step > 0 {
+                // Set the period divider as well!
+                period_divider.set_period(period);
+                self.set_shadow_period(period);
+
+                if self.period() > 0x7FF {
+                    *channel_enabled = false;
+                    return;
+                    //return (true, None);
+                }
+
+                //return (false, Some(period));
+            }
+        }
+
+        //(false, None)
     }
 
     pub fn expired(&self) -> bool {
@@ -33,23 +66,29 @@ impl Sweep {
         self.counter = if self.pace > 0 { self.pace } else { 8 };
     }
 
+    pub fn trigger(
+        &mut self,
+        channel_enabled: &mut bool,
+        period_divider: &PeriodDivider<fn(u16) -> u16>,
+    ) {
+        self.shadow_period = period_divider.period();
+        self.enabled = self.pace > 0 || self.individual_step > 0;
+        self.reload();
+
+        // Should disable the channel
+        *channel_enabled = !(self.individual_step > 0 && self.period() > 0x7FF);
+    }
+
     pub fn set_shadow_period(&mut self, period: u16) {
         self.shadow_period = period;
     }
 
-    pub fn get_new_period(&self) -> (u16, bool) {
+    pub fn period(&self) -> u16 {
         let delta = self.shadow_period >> self.individual_step;
-        let new_period = match self.direction {
+
+        match self.direction {
             Direction::Increasing => self.shadow_period + delta,
             Direction::Decreasing => self.shadow_period - delta,
-        };
-
-        let should_disable_channel = self.direction == Direction::Increasing && new_period > 0x07FF;
-
-        if should_disable_channel {
-            (self.shadow_period, true)
-        } else {
-            (new_period, false)
         }
     }
 

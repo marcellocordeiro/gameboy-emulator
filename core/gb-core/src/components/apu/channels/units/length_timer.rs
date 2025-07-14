@@ -1,7 +1,7 @@
 pub struct LengthTimer {
     length: usize,
 
-    pub enabled: bool,
+    enabled: bool,
     counter: usize,
 }
 
@@ -12,6 +12,10 @@ impl LengthTimer {
             enabled: false,
             counter: 0,
         }
+    }
+
+    pub fn enabled(&self) -> bool {
+        self.enabled
     }
 
     pub fn expired(&self) -> bool {
@@ -26,11 +30,15 @@ impl LengthTimer {
         self.counter -= 1;
     }
 
-    pub fn reload(&mut self) {
+    pub fn trigger(&mut self) {
         self.counter = self.length;
     }
 
     pub fn set_counter(&mut self, counter: u8) {
         self.counter = self.length - (counter as usize);
+    }
+
+    pub fn write(&mut self, enabled: bool) {
+        self.enabled = enabled;
     }
 }

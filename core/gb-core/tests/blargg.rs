@@ -29,7 +29,7 @@ testcases_blargg_memory! {
     dmg_sound_01_registers("dmg_sound/rom_singles/01-registers.gb");
     dmg_sound_02_len_ctr("dmg_sound/rom_singles/02-len ctr.gb");
     // dmg_sound_03_trigger("dmg_sound/rom_singles/03-trigger.gb");
-    // dmg_sound_04_sweep("dmg_sound/rom_singles/04-sweep.gb");
+    dmg_sound_04_sweep("dmg_sound/rom_singles/04-sweep.gb");
     // dmg_sound_05_sweep_details("dmg_sound/rom_singles/05-sweep details.gb");
     // dmg_sound_06_overflow_on_trigger("dmg_sound/rom_singles/06-overflow on trigger.gb");
     // dmg_sound_07_len_sweep_period_sync("dmg_sound/rom_singles/07-len sweep period sync.gb");
@@ -42,7 +42,7 @@ testcases_blargg_memory! {
     cgb_sound_01_registers("cgb_sound/rom_singles/01-registers.gb");
     cgb_sound_02_len_ctr("cgb_sound/rom_singles/02-len ctr.gb");
     // cgb_sound_03_trigger("cgb_sound/rom_singles/03-trigger.gb");
-    // cgb_sound_04_sweep("cgb_sound/rom_singles/04-sweep.gb");
+    cgb_sound_04_sweep("cgb_sound/rom_singles/04-sweep.gb");
     // cgb_sound_05_sweep_details("cgb_sound/rom_singles/05-sweep details.gb");
     // cgb_sound_06_overflow_on_trigger("cgb_sound/rom_singles/06-overflow on trigger.gb");
     // cgb_sound_07_len_sweep_period_sync("cgb_sound/rom_singles/07-len sweep period sync.gb");

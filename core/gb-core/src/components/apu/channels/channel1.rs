@@ -1,9 +1,9 @@
-use crate::components::apu::{
-    envelope::Envelope,
-    length_timer::LengthTimer,
-    period_divider::PeriodDivider,
-    sweep::Sweep,
-    wave_duty::WaveDuty,
+use crate::components::apu::channels::units::{
+    Envelope,
+    LengthTimer,
+    PeriodDivider,
+    Sweep,
+    WaveDuty,
 };
 
 /// Pulse channel 1 (`NR1x`)
@@ -62,20 +62,7 @@ impl Channel1 {
     }
 
     pub fn tick_sweep(&mut self) {
-        self.sweep.tick();
-
-        if self.sweep.enabled() && self.sweep.expired() {
-            self.sweep.reload();
-
-            let (new_frequency, should_disable_channel) = self.sweep.get_new_period();
-
-            if should_disable_channel {
-                self.enabled = false;
-            }
-
-            self.period_divider.set_period(new_frequency);
-            self.sweep.set_shadow_period(new_frequency);
-        }
+        self.sweep.tick(&mut self.enabled, &mut self.period_divider);
     }
 
     pub fn enabled(&self) -> bool {
@@ -87,7 +74,7 @@ impl Channel1 {
     }
 
     pub fn digital_output(&self) -> Option<u8> {
-        if !self.dac_enabled {
+        if !self.dac_enabled || !self.enabled {
             return None;
         }
 
@@ -102,13 +89,14 @@ impl Channel1 {
         }
 
         if self.length_timer.expired() {
-            self.length_timer.reload();
+            self.length_timer.trigger();
         }
 
         self.period_divider.reload();
         self.envelope.trigger();
-        self.sweep.set_shadow_period(self.period_divider.period());
-        self.sweep.reload();
+        self.wave_duty.reset_position();
+
+        self.sweep.trigger(&mut self.enabled, &self.period_divider);
     }
 
     /// FF10 — NR10: Channel 1 sweep
@@ -134,7 +122,7 @@ impl Channel1 {
 
     /// FF14 — NR14: Channel 1 period high and control
     pub fn read_nr14(&self) -> u8 {
-        let length_enable_bits = (self.length_timer.enabled as u8) << 6;
+        let length_enable_bits = (self.length_timer.enabled() as u8) << 6;
         length_enable_bits | 0b1011_1111
     }
 
@@ -176,9 +164,9 @@ impl Channel1 {
         let trigger = (value & 0b1000_0000) != 0;
 
         self.period_divider.set_period_high(frequency_high);
-        self.length_timer.enabled = length_enable;
+        self.length_timer.write(length_enable);
 
-        if trigger {
+        if trigger && self.dac_enabled {
             self.trigger();
         }
     }

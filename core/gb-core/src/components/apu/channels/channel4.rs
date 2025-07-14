@@ -1,8 +1,4 @@
-use crate::components::apu::{
-    envelope::Envelope,
-    length_timer::LengthTimer,
-    period_divider::PeriodDivider,
-};
+use crate::components::apu::channels::units::{Envelope, LengthTimer, PeriodDivider};
 
 /// Noise channel (`NR4x`)
 pub struct Channel4 {
@@ -81,7 +77,7 @@ impl Channel4 {
     }
 
     pub fn digital_output(&self) -> Option<u8> {
-        if !self.dac_enabled {
+        if !self.dac_enabled || !self.enabled {
             return None;
         }
 
@@ -96,7 +92,7 @@ impl Channel4 {
         }
 
         if self.length_timer.expired() {
-            self.length_timer.reload();
+            self.length_timer.trigger();
         }
 
         self.envelope.trigger();
@@ -129,7 +125,7 @@ impl Channel4 {
 
     /// FF23 — NR44: Channel 4 control
     pub fn read_nr44(&self) -> u8 {
-        let length_enable_bits = (self.length_timer.enabled as u8) << 6;
+        let length_enable_bits = (self.length_timer.enabled() as u8) << 6;
         length_enable_bits | 0b1011_1111
     }
 
@@ -169,9 +165,9 @@ impl Channel4 {
         let length_enable = (value & 0b0100_0000) != 0;
         let trigger = (value & 0b1000_0000) != 0;
 
-        self.length_timer.enabled = length_enable;
+        self.length_timer.write(length_enable);
 
-        if trigger {
+        if trigger && self.dac_enabled {
             self.trigger();
         }
     }

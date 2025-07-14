@@ -1,9 +1,4 @@
-use crate::components::apu::{
-    envelope::Envelope,
-    length_timer::LengthTimer,
-    period_divider::PeriodDivider,
-    wave_duty::WaveDuty,
-};
+use crate::components::apu::channels::units::{Envelope, LengthTimer, PeriodDivider, WaveDuty};
 
 /// Pulse channel 2 (`NR2x`)
 pub struct Channel2 {
@@ -65,7 +60,7 @@ impl Channel2 {
     }
 
     pub fn digital_output(&self) -> Option<u8> {
-        if !self.enabled {
+        if !self.dac_enabled || !self.enabled {
             return None;
         }
 
@@ -80,11 +75,12 @@ impl Channel2 {
         }
 
         if self.length_timer.expired() {
-            self.length_timer.reload();
+            self.length_timer.trigger();
         }
 
         self.period_divider.reload();
         self.envelope.trigger();
+        self.wave_duty.reset_position();
     }
 
     // Read
@@ -107,7 +103,7 @@ impl Channel2 {
 
     /// FF19 — NR24: Channel 2 period high & control
     pub fn read_nr24(&self) -> u8 {
-        let length_enable_bits = (self.length_timer.enabled as u8) << 6;
+        let length_enable_bits = (self.length_timer.enabled() as u8) << 6;
         length_enable_bits | 0b1011_1111
     }
 
@@ -146,9 +142,9 @@ impl Channel2 {
         let trigger = (value & 0b1000_0000) != 0;
 
         self.period_divider.set_period_high(frequency_high);
-        self.length_timer.enabled = length_enable;
+        self.length_timer.write(length_enable);
 
-        if trigger {
+        if trigger && self.dac_enabled {
             self.trigger();
         }
     }

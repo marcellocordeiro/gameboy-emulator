@@ -4,7 +4,7 @@ format:
 lint:
     cargo clippy --all-targets
 
-format-and-lint: format && lint
+format-and-lint: format lint
 
 update-deps:
     cargo upgrade -i

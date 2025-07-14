@@ -9,6 +9,10 @@ impl WaveDuty {
         self.position = (self.position + 1) & 0b111;
     }
 
+    pub fn reset_position(&mut self) {
+        self.position = 0;
+    }
+
     pub fn wave_data(&self) -> u8 {
         self.duty_cycle.pattern()[self.position as usize]
     }
