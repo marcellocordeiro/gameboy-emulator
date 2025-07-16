@@ -1,3 +1,7 @@
+use gb_core::{GameBoy, constants::DeviceModel};
+
+use crate::common::validators::validate_screenshot;
+
 mod common;
 
 testcases_blargg_serial! {
@@ -15,7 +19,6 @@ testcases_blargg_serial! {
     // cpu_instrs_all("cpu_instrs/cpu_instrs.gb"); // Very slow.
 
     instr_timing("instr_timing/instr_timing.gb");
-    // interrupt_time("interrupt_time/interrupt_time.gb"); // CGB only.
 
     // mem_timing("mem_timing/mem_timing.gb"); // TODO: no programmatic way of stopping.
 }
@@ -51,4 +54,27 @@ testcases_blargg_memory! {
     // cgb_sound_10_wave_trigger_while_on("cgb_sound/rom_singles/10-wave trigger while on.gb");
     cgb_sound_11_regs_after_power("cgb_sound/rom_singles/11-regs after power.gb");
     // cgb_sound_12_wave("cgb_sound/rom_singles/12-wave.gb");
+}
+
+#[test]
+fn test_interrupt_time() {
+    let name = "blargg_interrupt_time";
+
+    let path = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../",
+        "external/gameboy-test-roms/blargg/",
+        "interrupt_time/interrupt_time.gb"
+    );
+
+    let rom = std::fs::read(path).unwrap();
+
+    let mut gb = GameBoy::new(DeviceModel::Cgb);
+    gb.load(None, rom).unwrap();
+
+    for _ in 0..1000 {
+        gb.run_frame();
+    }
+
+    validate_screenshot(&gb, name).unwrap();
 }

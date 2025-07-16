@@ -1,7 +1,10 @@
 use super::structs::{Cycle, Ram};
-use crate::components::{
-    apu::Apu,
-    memory::{MemoryInterface, interrupts::Interrupts, speed_switch::SpeedSwitch},
+use crate::{
+    components::{
+        apu::Apu,
+        memory::{MemoryInterface, interrupts::Interrupts, speed_switch::SpeedSwitch},
+    },
+    utils::events::Events,
 };
 
 #[derive(Default)]
@@ -12,11 +15,12 @@ pub struct TestMemory {
     pub bus_address: u16,
     pub bus_data: Option<u8>,
 
-    pub interrupts: Interrupts,
+    speed_switch: SpeedSwitch,
+    interrupts: Interrupts,
 }
 
 impl MemoryInterface for TestMemory {
-    fn force_cycle(&mut self) {
+    fn cycle(&mut self) {
         self.logs
             .push((self.bus_address, self.bus_data, "---".to_string()));
     }
@@ -52,6 +56,18 @@ impl MemoryInterface for TestMemory {
         self.bus_data = Some(value);
     }
 
+    fn events(&self) -> &Events {
+        unimplemented!()
+    }
+
+    fn events_mut(&mut self) -> &mut Events {
+        unimplemented!()
+    }
+
+    fn process_speed_switch(&mut self) {
+        unimplemented!()
+    }
+
     fn apu(&self) -> &Apu {
         unimplemented!()
     }
@@ -61,7 +77,7 @@ impl MemoryInterface for TestMemory {
     }
 
     fn speed_switch(&self) -> &SpeedSwitch {
-        unimplemented!()
+        &self.speed_switch
     }
 
     fn speed_switch_mut(&mut self) -> &mut SpeedSwitch {

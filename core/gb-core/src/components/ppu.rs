@@ -11,6 +11,7 @@ use super::cartridge::Cartridge;
 use crate::{
     DeviceModel,
     utils::{
+        events::Events,
         macros::{device_is_cgb, in_cgb_mode, pure_read_write_methods_u8},
         screen::Screen,
     },
@@ -270,7 +271,7 @@ impl Ppu {
         self.opri = (value & 0b1) != 0;
     }
 
-    pub(crate) fn tick(&mut self) {
+    pub(crate) fn tick(&mut self, events: &mut Events) {
         if !self.lcdc.get_lcd_enable() {
             return;
         }
@@ -302,7 +303,6 @@ impl Ppu {
                 }
 
                 self.switch_mode(StatusMode::Hblank);
-                //self.mode_remaining_dots = HBLANK_DOTS;
 
                 if in_cgb_mode!(self) {
                     self.vram_dma.resume_hdma();
@@ -321,6 +321,7 @@ impl Ppu {
                 self.ly += 1;
 
                 if self.ly == 144 {
+                    events.insert(Events::VBLANK);
                     self.switch_mode(StatusMode::Vblank);
                 } else {
                     self.switch_mode(StatusMode::OamScan);

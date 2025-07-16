@@ -75,21 +75,31 @@ pub fn run_until_memory_status(gb: &mut GameBoy) -> Result<(), Error> {
             gb.run_frame();
         }
 
-        let output = (0xA004..(0xA004 + 100))
-            .take_while(|value| *value != 0)
-            .map(|address| gb.memory().read(address) as char)
-            .collect::<String>();
+        let valid = [(0xA001, 0xDE), (0xA002, 0xB0), (0xA003, 0x61)]
+            .into_iter()
+            .all(|(address, value)| gb.memory().read(address) == value);
 
-        if output.contains("Passed") {
-            return Ok(());
-        }
-
-        if output.contains("Failed") {
-            return Err(Error::MemoryOutputFailure(output));
+        if valid && gb.memory().read(0xA000) != 0x80 {
+            break;
         }
 
         if start_time.elapsed() > TIMEOUT {
             return Err(Error::Timeout);
         }
     }
+
+    let output = (0xA004..=0xBFFF)
+        .take_while(|value| *value != 0)
+        .map(|address| gb.memory().read(address) as char)
+        .collect::<String>();
+
+    if output.contains("Passed") {
+        return Ok(());
+    }
+
+    if output.contains("Failed") {
+        return Err(Error::MemoryOutputFailure(output));
+    }
+
+    Ok(())
 }

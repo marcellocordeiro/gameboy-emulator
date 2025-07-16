@@ -1,5 +1,11 @@
+use bitflags::Flags;
+
 use self::registers::{ImeState, Registers};
-use crate::{DeviceModel, components::memory::MemoryInterface, utils::macros::device_is_cgb};
+use crate::{
+    DeviceModel,
+    components::memory::MemoryInterface,
+    utils::{events::Events, macros::device_is_cgb},
+};
 
 #[derive(Default)]
 pub struct Cpu {
@@ -56,7 +62,7 @@ impl Cpu {
         }
 
         if self.halt {
-            self.force_cycle_memory(memory);
+            self.cycle_memory(memory);
 
             if memory.interrupts().has_queued_irq() {
                 self.halt = false;
@@ -73,19 +79,20 @@ impl Cpu {
     }
 
     pub(crate) fn run_frame(&mut self, memory: &mut impl MemoryInterface) {
-        self.cycles = 0;
-        while self.cycles < 70224 {
+        while !memory.events().contains(Events::VBLANK) {
             self.step(memory);
         }
+
+        memory.events_mut().clear();
     }
 
     fn handle_interrupts(&mut self, memory: &mut impl MemoryInterface) {
         self.halt = false;
         self.registers.ime = ImeState::Disabled;
 
-        self.force_cycle_memory(memory);
-        self.force_cycle_memory(memory);
-        self.force_cycle_memory(memory);
+        self.cycle_memory(memory);
+        self.cycle_memory(memory);
+        self.cycle_memory(memory);
 
         let address = {
             let low = self.registers.pc as u8;
@@ -106,22 +113,26 @@ impl Cpu {
         self.registers.pc = address;
     }
 
-    fn notify_cycle(&mut self) {
-        self.cycles += 4;
+    fn notify_cycle(&mut self, memory: &impl MemoryInterface) {
+        self.cycles += if memory.speed_switch().double_speed() {
+            2
+        } else {
+            4
+        };
     }
 
-    fn force_cycle_memory(&mut self, memory: &mut impl MemoryInterface) {
-        memory.force_cycle();
-        self.notify_cycle();
+    fn cycle_memory(&mut self, memory: &mut impl MemoryInterface) {
+        self.notify_cycle(memory);
+        memory.cycle();
     }
 
     fn read_byte(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u8 {
-        self.notify_cycle();
+        self.notify_cycle(memory);
         memory.read_cycle(address)
     }
 
     fn write_byte(&mut self, memory: &mut impl MemoryInterface, address: u16, value: u8) {
-        self.notify_cycle();
+        self.notify_cycle(memory);
         memory.write_cycle(address, value);
     }
 
@@ -156,7 +167,7 @@ impl Cpu {
         let low = value as u8;
         let high = (value >> 8) as u8;
 
-        self.force_cycle_memory(memory);
+        self.cycle_memory(memory);
 
         self.push_byte_stack(memory, high);
         self.push_byte_stack(memory, low);

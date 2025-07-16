@@ -1,4 +1,4 @@
-use crate::components::apu::channels::units::{Envelope, LengthTimer, PeriodDivider};
+use super::units::{Envelope, LengthTimer, PeriodDivider};
 
 /// Noise channel (`NR4x`)
 pub struct Channel4 {

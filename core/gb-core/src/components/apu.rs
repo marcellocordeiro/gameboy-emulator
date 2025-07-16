@@ -24,6 +24,7 @@ bitflags! {
     }
 }
 
+#[allow(clippy::struct_excessive_bools)]
 pub struct Apu {
     prev_system_div: u8,
     internal_cycles: usize,
@@ -36,10 +37,12 @@ pub struct Apu {
     channel4: Channel4,
 
     /// NR50: Master volume & VIN panning
-    nr50: u8,
+    vin_left: bool,
+    left_volume: u8,
+    vin_right: bool,
+    right_volume: u8,
 
     /// NR51: Sound panning
-    // nr51: u8,
     left_panning: Channels,
     right_panning: Channels,
 
@@ -70,8 +73,10 @@ impl Default for Apu {
             channel2: Channel2::default(),
             channel3: Channel3::default(),
             channel4: Channel4::default(),
-            nr50: 0,
-            //nr51: 0,
+            vin_left: false,
+            left_volume: 0,
+            vin_right: false,
+            right_volume: 0,
             left_panning: Channels::empty(),
             right_panning: Channels::empty(),
             audio_on: false,
@@ -107,6 +112,10 @@ impl Apu {
 
     pub fn set_cgb_mode(&mut self, value: bool) {
         self.cgb_mode = value;
+    }
+
+    pub fn set_double_speed(&mut self, value: bool) {
+        self.double_speed = value;
     }
 
     pub fn skip_bootrom(&mut self) {
@@ -338,11 +347,22 @@ impl Apu {
     }
 
     fn read_nr50(&self) -> u8 {
-        self.nr50
+        ((self.vin_left as u8) << 7)
+            | (self.left_volume << 4)
+            | ((self.vin_right as u8) << 3)
+            | self.right_volume
     }
 
     fn write_nr50(&mut self, value: u8) {
-        self.nr50 = value;
+        let vin_left = (value & 0b1000_0000) != 0;
+        let left_volume = (value & 0b0111_0000) >> 4;
+        let vin_right = (value & 0b0000_1000) != 0;
+        let right_volume = value & 0b0000_0111;
+
+        self.vin_left = vin_left;
+        self.left_volume = left_volume;
+        self.vin_right = vin_right;
+        self.right_volume = right_volume;
     }
 
     fn read_nr51(&self) -> u8 {
@@ -381,7 +401,7 @@ impl Apu {
             self.channel2.disable();
             self.channel3.disable();
             self.channel4.disable();
-            self.nr50 = 0;
+            self.write_nr50(0);
             self.write_nr51(0);
         }
     }
@@ -451,7 +471,14 @@ impl Apu {
         // Average
         .map(|sample| sample / 4.0);
 
-        [self.hpf_left.apply(left), self.hpf_right.apply(right)]
+        // These registers should never completely mute the channel.
+        let left_volume = (self.left_volume as f32 + 1.0) / 8.0;
+        let right_volume = (self.right_volume as f32 + 1.0) / 8.0;
+
+        [
+            self.hpf_left.apply(left * left_volume),
+            self.hpf_right.apply(right * right_volume),
+        ]
     }
 }
 

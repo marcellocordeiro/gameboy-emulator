@@ -84,7 +84,10 @@ impl Info {
             let has_ram = self.extra_features.contains(&ExtraFeature::Ram);
             let has_battery = self.extra_features.contains(&ExtraFeature::Battery);
 
-            assert_eq!(self.ram_banks > 0, has_ram);
+            if (self.ram_banks > 0) != has_ram {
+                log::warn!("RAM banks = {} but has_ram = {}", self.ram_banks, has_ram);
+            }
+
             assert!(has_ram || !has_battery);
         }
 

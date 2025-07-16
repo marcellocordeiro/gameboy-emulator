@@ -1,4 +1,7 @@
-use crate::components::{cpu::Cpu, memory::MemoryInterface};
+use crate::{
+    components::{cpu::Cpu, memory::MemoryInterface},
+    utils::macros::device_is_cgb,
+};
 
 impl Cpu {
     pub(super) fn opcode_unused(&self) {}
@@ -10,10 +13,9 @@ impl Cpu {
 
     /// STOP
     pub(super) fn opcode_0x10(&self, memory: &mut impl MemoryInterface) {
-        // TODO?
-
-        // check for CGB mode?
-        memory.speed_switch_mut().process_speed_switch();
+        if device_is_cgb!(self) {
+            memory.process_speed_switch();
+        }
     }
 
     /// HALT

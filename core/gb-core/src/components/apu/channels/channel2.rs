@@ -1,4 +1,4 @@
-use crate::components::apu::channels::units::{Envelope, LengthTimer, PeriodDivider, WaveDuty};
+use super::units::{Envelope, LengthTimer, PeriodDivider, WaveDuty};
 
 /// Pulse channel 2 (`NR2x`)
 pub struct Channel2 {

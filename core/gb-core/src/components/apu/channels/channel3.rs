@@ -1,4 +1,4 @@
-use crate::components::apu::channels::units::{LengthTimer, PeriodDivider};
+use super::units::{LengthTimer, PeriodDivider};
 
 /// Wave channel (`NR3x`)
 pub struct Channel3 {

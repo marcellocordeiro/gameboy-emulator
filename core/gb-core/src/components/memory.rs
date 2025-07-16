@@ -14,7 +14,10 @@ use super::cartridge::{Cartridge, error::CartridgeError, info::cgb_flag::CgbFlag
 use crate::{
     DeviceModel,
     components::{apu::Apu, joypad::Joypad, ppu::Ppu, serial::Serial, timer::Timer},
-    utils::macros::{device_is_cgb, in_cgb_mode},
+    utils::{
+        events::Events,
+        macros::{device_is_cgb, in_cgb_mode},
+    },
 };
 
 #[derive(Debug, Error)]
@@ -27,13 +30,18 @@ pub enum Error {
 }
 
 pub trait MemoryInterface {
-    fn force_cycle(&mut self);
+    fn cycle(&mut self);
 
     fn read(&self, address: u16) -> u8;
     fn write(&mut self, address: u16, value: u8);
 
     fn read_cycle(&mut self, address: u16) -> u8;
     fn write_cycle(&mut self, address: u16, value: u8);
+
+    fn events(&self) -> &Events;
+    fn events_mut(&mut self) -> &mut Events;
+
+    fn process_speed_switch(&mut self);
 
     fn apu(&self) -> &Apu;
     fn apu_mut(&mut self) -> &mut Apu;
@@ -46,6 +54,8 @@ pub trait MemoryInterface {
 }
 
 pub struct Memory {
+    events: Events,
+
     bootrom: Option<Bootrom>,
 
     wram: WorkRam,
@@ -66,12 +76,11 @@ pub struct Memory {
     undocumented_registers: UndocumentedRegisters,
 
     cgb_mode: bool,
-
     device_model: DeviceModel,
 }
 
 impl MemoryInterface for Memory {
-    fn force_cycle(&mut self) {
+    fn cycle(&mut self) {
         self.cycle();
     }
 
@@ -312,6 +321,19 @@ impl MemoryInterface for Memory {
         self.cycle();
     }
 
+    fn events(&self) -> &Events {
+        &self.events
+    }
+
+    fn events_mut(&mut self) -> &mut Events {
+        &mut self.events
+    }
+
+    fn process_speed_switch(&mut self) {
+        self.speed_switch.process();
+        self.apu.set_double_speed(self.speed_switch.double_speed());
+    }
+
     fn apu(&self) -> &Apu {
         &self.apu
     }
@@ -346,6 +368,7 @@ impl Memory {
         let apu = Apu::with_device_model(device_model);
 
         let mut memory = Self {
+            events: Events::default(),
             bootrom: Option::default(),
             wram,
             hram: HighRam::default(),
@@ -382,21 +405,22 @@ impl Memory {
     }
 
     fn cycle(&mut self) {
-        // TODO: properly implement double speed.
-        /*assert!(
-            !self.speed_switch.in_double_speed(),
-            "CGB double speed not yet supported."
-        );*/
-
         self.perform_oam_dma();
         self.perform_vram_dma();
 
-        for _ in 0..4 {
-            self.apu.tick(self.timer.read_div());
+        for i in 0..4 {
             self.timer.tick();
-            self.ppu.tick();
+
+            if !self.speed_switch.double_speed() || i & 0b1 == 0 {
+                self.apu.tick(self.timer.read_div());
+                self.ppu.tick(&mut self.events);
+            }
         }
 
+        self.check_interrupts();
+    }
+
+    fn check_interrupts(&mut self) {
         if self.ppu.vblank_irq {
             self.interrupts.request_vblank();
             self.ppu.vblank_irq = false;
