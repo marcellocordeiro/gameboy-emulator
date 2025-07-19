@@ -1,3 +1,6 @@
+default:
+    @just --list
+
 format:
     cargo +nightly fmt --all
 
@@ -9,6 +12,8 @@ format-and-lint: format lint
 update-deps:
     cargo upgrade -i
     cargo update
+    vcpkg x-update-baseline
+    just ./apps/web/ update-deps
 
 test:
     cargo test

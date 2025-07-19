@@ -15,9 +15,9 @@
 
 namespace {
 void render_display(const SDL::Renderer& renderer, const SDL::Texture& texture) {
-  const auto availableSize = renderer.get_current_render_output_size();
+  const auto available_size = renderer.get_current_render_output_size();
   const auto rect =
-    integer_scale_centered_rect(availableSize, {.width = SCREEN_WIDTH, .height = SCREEN_HEIGHT});
+    integer_scale_centered_rect(available_size, {.width = SCREEN_WIDTH, .height = SCREEN_HEIGHT});
 
   SDL_RenderTexture(renderer.get(), texture.get(), nullptr, &rect);
 }
