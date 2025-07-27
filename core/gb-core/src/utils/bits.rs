@@ -1,3 +1,4 @@
+#[must_use]
 pub fn isolate_rightmost_bit(bits: u8) -> u8 {
     // Two's complement negation (-bits)
     let negated_bits = (!bits).wrapping_add(1);

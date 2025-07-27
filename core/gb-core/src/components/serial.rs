@@ -17,6 +17,7 @@ impl Serial {
         self.sender = Some(sender);
     }
 
+    #[must_use]
     pub fn read(&self, address: u16) -> u8 {
         match address {
             0xFF01 => self.sb,

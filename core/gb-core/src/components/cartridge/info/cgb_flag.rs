@@ -10,12 +10,14 @@ pub enum CgbFlag {
 }
 
 impl CgbFlag {
+    #[must_use]
     pub fn from_header(header: &Header) -> Self {
         let code = header[CGB_FLAG_ADDRESS];
 
         Self::from_code(code)
     }
 
+    #[must_use]
     pub fn from_code(code: u8) -> Self {
         match code {
             0x80 => Self::CgbEnhanced,
@@ -25,6 +27,7 @@ impl CgbFlag {
         }
     }
 
+    #[must_use]
     pub fn has_cgb_support(&self) -> bool {
         *self != Self::DmgMode
     }

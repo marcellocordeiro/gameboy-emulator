@@ -15,6 +15,7 @@ pub struct GameBoy {
 }
 
 impl GameBoy {
+    #[must_use]
     pub fn new(device_model: DeviceModel) -> Self {
         let cpu = Cpu::with_device_model(device_model);
         let memory = Memory::with_device_model(device_model);
@@ -58,10 +59,12 @@ impl GameBoy {
         Ok(())
     }
 
+    #[must_use]
     pub fn cpu(&self) -> &Cpu {
         &self.cpu
     }
 
+    #[must_use]
     pub fn memory(&self) -> &Memory {
         &self.memory
     }
@@ -70,10 +73,12 @@ impl GameBoy {
         &mut self.memory
     }
 
+    #[must_use]
     pub fn cartridge_inserted(&self) -> bool {
         self.memory.cartridge.is_some()
     }
 
+    #[must_use]
     pub fn get_battery(&self) -> Option<&[u8]> {
         if let Some(cartridge) = self.memory.cartridge.as_ref() {
             return Some(cartridge.get_battery());

@@ -158,6 +158,7 @@ impl VideoRam {
 }
 
 impl Ppu {
+    #[must_use]
     pub fn read_vram(&self, address: u16) -> u8 {
         if self.mode == StatusMode::Drawing {
             return 0xFF;

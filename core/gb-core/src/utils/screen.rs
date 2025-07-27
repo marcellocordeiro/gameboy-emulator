@@ -12,6 +12,7 @@ impl Default for Screen {
 }
 
 impl Screen {
+    #[must_use]
     pub fn new() -> Self {
         Self {
             screen: vec![Color::default(); SCREEN_WIDTH * SCREEN_HEIGHT]

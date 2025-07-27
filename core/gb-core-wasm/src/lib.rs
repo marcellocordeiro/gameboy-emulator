@@ -20,6 +20,7 @@ pub struct GameBoy {
 #[wasm_bindgen]
 impl GameBoy {
     #[wasm_bindgen(constructor)]
+    #[must_use]
     pub fn new() -> Self {
         Self {
             gb: GameBoyInternal::new(DeviceModel::Cgb),
@@ -31,11 +32,13 @@ impl GameBoy {
     }
 
     #[wasm_bindgen(js_name = "screenWidth")]
+    #[must_use]
     pub fn screen_width() -> usize {
         SCREEN_WIDTH
     }
 
     #[wasm_bindgen(js_name = "screenHeight")]
+    #[must_use]
     pub fn screen_height() -> usize {
         SCREEN_HEIGHT
     }

@@ -83,6 +83,7 @@ impl LcdStatus {
 }
 
 impl Ppu {
+    #[must_use]
     pub fn read_stat(&self) -> u8 {
         if !self.lcdc.get_lcd_enable() {
             return 0b1000_0000;

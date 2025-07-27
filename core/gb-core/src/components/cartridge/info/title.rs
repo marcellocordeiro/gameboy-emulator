@@ -26,14 +26,17 @@ impl Title {
         Ok(Self { bytes, string })
     }
 
+    #[must_use]
     pub fn as_bytes(&self) -> &[u8; 16] {
         &self.bytes
     }
 
+    #[must_use]
     pub fn as_string(&self) -> &String {
         &self.string
     }
 
+    #[must_use]
     pub fn checksum(&self) -> u8 {
         self.as_bytes()
             .iter()

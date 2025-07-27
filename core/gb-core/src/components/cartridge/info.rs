@@ -101,6 +101,7 @@ impl Info {
         );
     }
 
+    #[must_use]
     pub fn dmg_compatibility_palettes(&self) -> CompatibilityPalettes {
         CompatibilityPalettes::from_header_info(&self.licensee_code, &self.title)
     }

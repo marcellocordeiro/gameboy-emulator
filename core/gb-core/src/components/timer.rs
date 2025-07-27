@@ -50,6 +50,7 @@ impl Timer {
         }
     }
 
+    #[must_use]
     pub fn read(&self, address: u16) -> u8 {
         match address {
             0xFF04 => self.read_div(),
@@ -72,6 +73,7 @@ impl Timer {
         }
     }
 
+    #[must_use]
     pub fn read_div(&self) -> u8 {
         (self.system_counter >> 8) as u8
     }

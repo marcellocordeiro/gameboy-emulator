@@ -360,6 +360,7 @@ impl MemoryInterface for Memory {
 }
 
 impl Memory {
+    #[must_use]
     pub fn with_device_model(device_model: DeviceModel) -> Self {
         let wram = WorkRam::with_device_model(device_model);
         let ppu = Ppu::with_device_model(device_model);

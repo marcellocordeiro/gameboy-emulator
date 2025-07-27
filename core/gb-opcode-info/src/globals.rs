@@ -4,6 +4,7 @@ use crate::opcodes::{OpcodeTable, parse_json};
 
 static OPCODES: LazyLock<OpcodeTable> = LazyLock::new(|| parse_json().unwrap());
 
+#[must_use]
 pub fn opcodes() -> &'static OpcodeTable {
     &OPCODES
 }

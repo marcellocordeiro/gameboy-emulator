@@ -17,6 +17,7 @@ pub struct CompatibilityPalettes {
 impl CompatibilityPalettes {
     pub const DEFAULT: Self = get_palettes_from_id(0);
 
+    #[must_use]
     pub fn from_header_info(licensee_code: &LicenseeCode, title: &Title) -> Self {
         if !licensee_code.is_nintendo() {
             return Self::DEFAULT;

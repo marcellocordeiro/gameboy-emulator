@@ -73,6 +73,7 @@ impl Ppu {
         wx
     }
 
+    #[must_use]
     pub fn with_device_model(device_model: DeviceModel) -> Self {
         let vram = VideoRam::with_device_model(device_model);
 

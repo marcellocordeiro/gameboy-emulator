@@ -10,6 +10,7 @@ pub enum ExtraFeature {
 }
 
 impl ExtraFeature {
+    #[must_use]
     pub fn from_header(header: &Header) -> Box<[Self]> {
         let code = header[MBC_TYPE_ADDRESS];
 

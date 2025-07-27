@@ -17,5 +17,3 @@ env_logger = { workspace = true }
 gb-core = { workspace = true }
 libretro-rs = { workspace = true }
 log = { workspace = true }
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

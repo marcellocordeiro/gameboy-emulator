@@ -29,14 +29,17 @@ impl LicenseeCode {
         Ok(Self { old_code, new_code })
     }
 
+    #[must_use]
     pub fn old_code(&self) -> u8 {
         self.old_code
     }
 
+    #[must_use]
     pub fn new_code(&self) -> Option<&str> {
         self.new_code.as_deref()
     }
 
+    #[must_use]
     pub fn is_nintendo(&self) -> bool {
         (self.old_code() == 0x01) || (self.old_code() == 0x33 && self.new_code() == Some("01"))
     }

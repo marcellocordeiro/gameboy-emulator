@@ -14,5 +14,3 @@ bootrom = ["gb-core/bootrom"]
 
 [dependencies.gb-core]
 path = "../gb-core"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

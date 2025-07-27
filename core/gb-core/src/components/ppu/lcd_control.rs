@@ -100,6 +100,7 @@ impl LcdControl {
 }
 
 impl Ppu {
+    #[must_use]
     pub fn read_lcdc(&self) -> u8 {
         self.lcdc.bits()
     }

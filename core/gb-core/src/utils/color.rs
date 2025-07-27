@@ -13,14 +13,17 @@ impl Color {
     pub const WHITE_RGB555: Self =
         Self::from_rgb555_u16_to_rgba8888((0x7F << 10) | (0x7F << 5) | 0x7F);
 
+    #[must_use]
     pub const fn new(red: u8, green: u8, blue: u8) -> Self {
         Self { red, green, blue }
     }
 
+    #[must_use]
     pub const fn to_rgb555(&self) -> u16 {
         ((self.red as u16) << 10) | ((self.green as u16) << 5) | (self.blue as u16)
     }
 
+    #[must_use]
     pub const fn from_dmg_color_id(color_id: u8) -> Self {
         let color = Self::DMG_PALETTE[(color_id & 0b11) as usize];
 
@@ -31,12 +34,14 @@ impl Color {
         Self::new(red, green, blue)
     }
 
+    #[must_use]
     pub const fn from_dmg_color_id_with_palette(color_id: u8, dmg_palette: u8) -> Self {
         let resolved_color_id = Self::apply_dmg_palette(color_id, dmg_palette);
 
         Self::from_dmg_color_id(resolved_color_id)
     }
 
+    #[must_use]
     pub const fn from_rgb555_u16_raw(value: u16) -> Self {
         let red = value & 0b1_1111;
         let green = (value >> 5) & 0b1_1111;
@@ -45,6 +50,7 @@ impl Color {
         Self::new(red as u8, green as u8, blue as u8)
     }
 
+    #[must_use]
     pub const fn from_rgb555_u16_to_rgba8888(value: u16) -> Self {
         let raw_red = value & 0b1_1111;
         let raw_green = (value >> 5) & 0b1_1111;
@@ -65,6 +71,7 @@ impl Color {
         )
     }
 
+    #[must_use]
     pub const fn apply_dmg_palette(color_id: u8, palette: u8) -> u8 {
         match color_id & 0b11 {
             0 => palette & 0b11,

@@ -19,6 +19,7 @@ pub struct Cpu {
 }
 
 impl Cpu {
+    #[must_use]
     pub fn with_device_model(device_model: DeviceModel) -> Self {
         Self {
             device_model,
@@ -30,6 +31,7 @@ impl Cpu {
         self.cgb_mode = value;
     }
 
+    #[must_use]
     pub fn registers(&self) -> &Registers {
         &self.registers
     }

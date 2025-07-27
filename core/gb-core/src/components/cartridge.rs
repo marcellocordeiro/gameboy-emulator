@@ -18,6 +18,7 @@ impl Cartridge {
         Ok(Self { rom, info, mbc })
     }
 
+    #[must_use]
     pub fn get_battery(&self) -> &[u8] {
         self.mbc.get_battery()
     }
@@ -26,14 +27,17 @@ impl Cartridge {
         self.mbc.load_battery(file);
     }
 
+    #[must_use]
     pub fn read_rom_bank_0(&self, address: u16) -> u8 {
         self.mbc.read_rom_bank_0(address)
     }
 
+    #[must_use]
     pub fn read_rom_bank_x(&self, address: u16) -> u8 {
         self.mbc.read_rom_bank_x(address)
     }
 
+    #[must_use]
     pub fn read_ram(&self, address: u16) -> u8 {
         self.mbc.read_ram(address)
     }

@@ -103,6 +103,7 @@ impl Apu {
     // 0xFF76: PCM12
     // 0xFF77: PCM34
 
+    #[must_use]
     pub fn with_device_model(device_model: DeviceModel) -> Self {
         Self {
             device_model,
@@ -220,6 +221,7 @@ impl Apu {
         self.callback.take()
     }
 
+    #[must_use]
     pub fn read(&self, address: u16) -> u8 {
         match address {
             // Channel 1

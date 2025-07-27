@@ -1,8 +1,5 @@
 [package]
 name = "gb-core-wasm"
-description = ""
-repository.workspace = true
-license.workspace = true
 version.workspace = true
 edition.workspace = true
 
@@ -25,5 +22,3 @@ wasm-bindgen = { workspace = true }
 [dependencies.web-sys]
 workspace = true
 features = ["CanvasRenderingContext2d", "HtmlCanvasElement", "ImageData"]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

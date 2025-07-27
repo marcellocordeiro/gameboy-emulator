@@ -1,8 +1,8 @@
 default:
   @just --list
 
-format:
-  cargo +nightly fmt --all
+format *ARGS:
+  cargo +nightly fmt --all {{ARGS}}
 
 [unix]
 format-cpp:
@@ -10,10 +10,10 @@ format-cpp:
   clang-format -i ./apps/**/**.{cpp,hpp}
   clang-format -i ./core/**/**.h
 
-lint:
-  cargo clippy --all-targets
+lint *ARGS:
+  cargo clippy --all-targets {{ARGS}}
 
-format-and-lint: format lint
+fix *ARGS: (lint "--fix" ARGS) format
 
 update:
   cargo upgrade -i

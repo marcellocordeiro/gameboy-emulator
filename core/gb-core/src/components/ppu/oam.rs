@@ -77,6 +77,7 @@ impl Oam {
 }
 
 impl Ppu {
+    #[must_use]
     pub fn read_oam(&self, address: u16) -> u8 {
         if self.oam_dma.is_active() {
             return 0xFF;
