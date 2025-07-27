@@ -3,7 +3,7 @@ use std::{ffi::OsStr, path::PathBuf};
 use itertools::Itertools;
 
 use self::{structs::Test, test_memory::TestMemory};
-use crate::components::cpu::{Cpu, tests::sm83_json_tests::structs::State};
+use crate::components::cpu::{Cpu, tests::single_step_tests::structs::State};
 
 mod structs;
 mod test_memory;
@@ -33,7 +33,7 @@ fn test_cpu(file_name: &str, test: &Test) {
 
 fn get_test_files() -> Vec<std::fs::DirEntry> {
     let manifest = env!("CARGO_MANIFEST_DIR");
-    let path = format!("{manifest}/../../external/sm83-json-tests/v1");
+    let path = format!("{manifest}/../../external/SingleStepTests-sm83/v1");
 
     std::fs::read_dir(path)
         .unwrap()
@@ -53,7 +53,7 @@ fn parse_test(path: &PathBuf) -> Vec<Test> {
 }
 
 #[test]
-fn sm83_cpu_tests() {
+fn single_step_tests() {
     let files = get_test_files();
     let ignore = [
         "10", // STOP

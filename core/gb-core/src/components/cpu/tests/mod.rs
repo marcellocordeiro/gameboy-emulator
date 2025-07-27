@@ -1,2 +1,1 @@
-mod gameboy_cpu_tests;
-mod sm83_json_tests;
+mod single_step_tests;

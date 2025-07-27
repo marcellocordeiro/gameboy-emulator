@@ -1,11 +1,8 @@
 [submodule "external/gameboy-test-roms"]
 	path = external/gameboy-test-roms
 	url = https://github.com/marcellocordeiro/gameboy-test-roms.git
-[submodule "external/GameboyCPUTests"]
-	path = external/GameboyCPUTests
-	url = https://github.com/adtennant/GameboyCPUTests.git
-[submodule "external/sm83-json-tests"]
-	path = external/sm83-json-tests
+[submodule "external/SingleStepTests-sm83"]
+	path = external/SingleStepTests-sm83
 	url = https://github.com/SingleStepTests/sm83.git
 [submodule "external/imgui-cmake"]
 	path = external/imgui-cmake
