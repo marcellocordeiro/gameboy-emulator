@@ -2,16 +2,35 @@
 
 Experimental Game Boy emulator written in Rust.
 
-There are several frontends available for no reason but to experiment with different languages and frameworks consuming the main core written in Rust. The [`eframe`](apps/eframe/) frontend provides some debugging tools.
+There are several frontends available, based on the same core written in Rust. Why? Because why not!
+The main frontend uses [eframe/egui](https://github.com/emilk/egui) and [cpal](https://github.com/RustAudio/cpal),
+and provides some simple debugging tools.
 
-**_Disclaimer_**: this emulator is an experimental project for educational purposes. The development and use of emulators is legal, as long as no copyrighted content is illegally obtained. This means you are responsible for dumping your own boot ROMs and games. However, there exists free and open-source content in case you'd like to test this project and/or contribute :blush:
+**Disclaimer**: this emulator is an experimental project for educational purposes,
+and no copyrighted ROMs or boot ROMs are being included in this repository.
+You're responsible for dumping your own binaries.
+
+- [gameboy-emulator](#gameboy-emulator)
+  - [Features](#features)
+  - [Screenshots](#screenshots)
+  - [Repository structure](#repository-structure)
+  - [Setup](#setup)
+    - [TL;DR](#tldr)
+    - [Rust](#rust)
+    - [wasm-pack](#wasm-pack)
+    - [SDL3](#sdl3)
+  - [Building](#building)
+  - [Running](#running)
+  - [Tests](#tests)
+  - [todo](#todo)
+  - [References](#references)
 
 ## Features
 
 - [x] CPU
 - [x] PPU
-- [ ] APU
-- [x] Input (native only)
+- [x] APU
+- [x] Input
 - [x] Cartridge
   - [x] No MBC
   - [x] MBC1
@@ -20,10 +39,11 @@ There are several frontends available for no reason but to experiment with diffe
     - [x] MBC30
     - [ ] RTC
   - [x] MBC5
-- [ ] Saving
+- [x] Saving
+- [ ] Save states
 - [x] Debugging UI
 - [ ] More debugging UI
-- [x] Automated ROM tests (failing tests are disabled, typically with a reason)
+- [x] Automated ROM tests (failing tests are disabled)
   - [x] blargg
   - [x] mooneye-test-suite
   - [x] dmg-acid2 (DMG and CGB)
@@ -35,27 +55,39 @@ boop
 
 ## Repository structure
 
-- **[`.`](/)**: Package/configuration files for all modules.
-- **[`apps`](apps/)**: Language/framework specific frontends.
-  - **[`eframe`](apps/eframe/)**: App written in Rust using eframe.
-  - **[`libretro`](apps/libretro/)**: Libretro core written in Rust.
-  - **[`sdl3`](apps/sdl3/)**: App written in C++ using SDL3 and Dear ImGui.
-  - **[`swift`](apps/swift/)**: Swift package wrapping `gb-core-c` and SwiftUI app.
-    - **[`GameBoy`](apps/swift/GameBoy)**: App written in Swift using SwiftUI.
-    - **[`GameBoyCore`](apps/swift/GameBoyCore)**: Swift package wrapping `gb-core-c`.
-  - **[`web`](apps/web/)**: Web app written in TypeScript using Vite and React.
-- **[`core`](core/)**: Core modules.
-  - **[`gb-core`](core/gb-core/)**: Main core written in Rust.
-  - **[`gb-core-c`](core/gb-core-c/)**: `gb-core` shims for use in other languages. Contains a C/C++ header file with the function declarations.
-  - **[`gb-core-wasm`](core/gb-core-wasm/)**: `gb-core` wrapper targeting WASM.
-  - **[`gb-opcode-info`](core/gb-opcode-info/)**: Contains opcode info for use in other modules.
-- **[`external`](external/)**: External dependencies.
+- [`apps`](apps): Frontends in different languages and frameworks
+  - [`eframe`](apps/eframe): App written in Rust using eframe
+  - [`libretro`](apps/libretro): libretro core written in Rust
+  - [`sdl3`](apps/sdl3): App written in C++ using SDL3 and Dear ImGui
+  - [`swift`](apps/swift)
+    - [`GameBoy`](apps/swift/GameBoy): App written in Swift using SwiftUI
+    - [`GameBoyCore`](apps/swift/GameBoyCore): Swift package wrapping `gb-core-c`
+  - [`web`](apps/web): Web app written in TypeScript using React
+- [`core`](core): Core modules
+  - [`gb-core`](core/gb-core): Main core written in Rust
+  - [`gb-core-c`](core/gb-core-c): Generates a C static library. Contains a C/C++ header file with
+    the function declarations
+  - [`gb-core-wasm`](core/gb-core-wasm): Generates a WebAssembly module
+  - [`gb-opcode-info`](core/gb-opcode-info): Contains opcode info for use in other modules
+- [`external`](external): External dependencies
 
 ## Setup
 
+### TL;DR
+
+```shell
+cargo run -- ./path/to/rom
+```
+
+Or, with [just](https://github.com/casey/just)
+
+```shell
+just run ./path/to/rom
+```
+
 ### Rust
 
-```sh
+```shell
 # Install rustup: https://www.rust-lang.org/
 # Can also install rustup from the package manager
 
@@ -67,7 +99,7 @@ rustup toolchain install nightly # For rustfmt
 
 Required to build the web app.
 
-```sh
+```shell
 # Install wasm-pack from source
 cargo install wasm-pack
 
@@ -85,7 +117,7 @@ npm install -g wasm-pack
 
 Required to build the C++ app.
 
-```sh
+```shell
 # Arch
 sudo pacman -S sdl3
 
@@ -98,7 +130,7 @@ brew install sdl3
 
 ## Building
 
-```sh
+```shell
 # Native
 cargo build
 
@@ -108,7 +140,7 @@ pnpm build # Implicitly builds the Rust dependencies
 
 ## Running
 
-```sh
+```shell
 # Native
 # Add --release after `run` if debug mode is too slow.
 cargo run -- roms/rom.gb
@@ -123,28 +155,29 @@ pnpm dev
 
 ## Tests
 
-Check [`gb-core/tests`](core/gb-core/tests) for all the supported integration tests. Any failing test is commented out, typically with a reason. Unit tests are also included for some modules. Both the ALU and the instructions are being tested using `sm83-test-data`, so it may take a while for the tests to finish.
+Check [`gb-core/tests`](core/gb-core/tests) for all the supported integration tests.
+Failing tests are disabled. Unit tests are also included for some modules.
+Both the ALU and the instructions are being tested using `sm83-test-data`, so it may take a while for the tests to
+finish.
 
-```sh
+```shell
 cargo test
 ```
 
 ## todo
 
 - Improve code and repo quality
-- APU
 - Input (implemented for some frontends. Needs to be improved)
-- Saving
+- Save states
 - Improve accuracy
   - Implement FIFO fetcher instead of a scanline renderer
 - Better debugging UI
 - More automated ROM tests
 - Pass more tests
-- Game Boy Color support (done? ish.)
 
 ## References
 
-- [Pan Docs](https://gbdev.io/pandocs/)
+- [gbdev.io's Pan Docs](https://gbdev.io/pandocs/)
 - [Game Boy: Complete Technical Reference](https://github.com/Gekkio/gb-ctr)
 - [mooneye-gb](https://github.com/Gekkio/mooneye-gb)
 - [SameBoy](https://github.com/LIJI32/SameBoy)
