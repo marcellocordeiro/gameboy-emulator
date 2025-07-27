@@ -1,12 +1,18 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
     "useIgnoreFile": false
   },
   "files": {
-    "includes": ["./src/**"],
+    "includes": [
+      "biome.json",
+      "next.config.ts",
+      "postcss.config.js",
+      "./tools/**",
+      "./src/**"
+    ],
     "ignoreUnknown": false
   },
   "formatter": {
@@ -15,8 +21,17 @@
   },
   "linter": {
     "enabled": true,
+    "domains": {
+      "project": "recommended"
+    },
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "correctness": {
+        "useExhaustiveDependencies": {
+          "level": "warn",
+          "fix": "safe"
+        }
+      }
     }
   },
   "javascript": {

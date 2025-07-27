@@ -1,22 +1,28 @@
 default:
-    @just --list
+  @just --list
 
 format:
-    cargo +nightly fmt --all
+  cargo +nightly fmt --all
+
+[unix]
+format-cpp:
+  #!/usr/bin/env zsh
+  clang-format -i ./apps/**/**.{cpp,hpp}
+  clang-format -i ./core/**/**.h
 
 lint:
-    cargo clippy --all-targets
+  cargo clippy --all-targets
 
 format-and-lint: format lint
 
-update-deps:
-    cargo upgrade -i
-    cargo update
-    vcpkg x-update-baseline
-    just ./apps/web/ update-deps
+update:
+  cargo upgrade -i
+  cargo update
+  vcpkg x-update-baseline
+  just ./apps/web/ update
 
 test:
-    cargo test
+  cargo test
 
-run ROM:
-    cargo run -p gb-eframe -- --cgb "{{ROM}}"
+run ROM *ARGS:
+  cargo run -p gb-eframe -- {{ARGS}} "{{ROM}}"

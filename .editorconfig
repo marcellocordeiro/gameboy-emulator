@@ -12,3 +12,19 @@ indent_style = tab
 
 [*.{bat,cmd}]
 end_of_line = crlf
+
+[justfile]
+indent_style = space
+indent_size = 2
+
+[*.rs]
+indent_style = space
+indent_size = 4
+
+[*.{c,cpp,h,hpp}]
+indent_style = space
+indent_size = 2
+
+[*.{js,jsx,ts,tsx}]
+indent_style = space
+indent_size = 2
