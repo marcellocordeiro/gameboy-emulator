@@ -4,9 +4,9 @@ pub struct SpriteObjectFlags {
     pub bg_priority: bool,
     pub y_flip: bool,
     pub x_flip: bool,
-    pub obp1_selected: bool, // DMG and DMG compat only.
-    pub in_bank_1: bool,     // CGB only.
-    pub palette_number: u8,  // CGB only.
+    pub obp1_selected: bool, // DMG and DMG compat only
+    pub in_bank_1: bool,     // CGB only
+    pub palette_number: u8,  // CGB only
 }
 
 impl SpriteObjectFlags {
@@ -31,8 +31,8 @@ impl SpriteObjectFlags {
 
 #[derive(Debug, Default)]
 pub struct SpriteObject {
-    pub y: u8, // Vertical position + 16 (already adjusted).
-    pub x: u8, // Horizontal position + 8 (already adjusted).
+    pub y: u8, // Vertical position + 16 (already adjusted)
+    pub x: u8, // Horizontal position + 8 (already adjusted)
     pub tile_index: u8,
 
     pub flags: SpriteObjectFlags,

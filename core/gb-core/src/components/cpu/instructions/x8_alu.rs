@@ -3,8 +3,6 @@ use crate::components::{
     memory::MemoryInterface,
 };
 
-// Completed, may need some refactoring.
-
 macro_rules! alu_reg8 {
     ($self:ident, $memory:ident, $F:path,[hl]) => {
         let address = $self.registers.get_hl();

@@ -88,16 +88,13 @@ where
 {
     let num_channels = config.channels as usize;
 
-    let (sender, receiver): (Sender<StereoSample>, Receiver<StereoSample>) =
-        mpsc::sync_channel(AUDIO_BUFFER_SIZE);
-
-    let err_fn = |err| error!("Error building output sound stream: {err}");
+    let (sender, receiver) = mpsc::sync_channel::<StereoSample>(AUDIO_BUFFER_SIZE);
 
     let stream = device
         .build_output_stream(
             config,
             move |output: &mut [T], _| process_frame(output, num_channels, &receiver),
-            err_fn,
+            |err| error!("Unable to build output sound stream: {err}"),
             None,
         )
         .unwrap();

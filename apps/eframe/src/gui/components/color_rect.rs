@@ -7,7 +7,7 @@ pub fn color_rect(ui: &mut Ui, color: Color32) -> Response {
     if ui.is_rect_visible(rect) {
         let visuals = ui.style().interact(&response);
 
-        let rect = rect.expand(visuals.expansion + if response.hovered() { 1.5 } else { 0.0 });
+        let rect = rect.expand(visuals.expansion + if response.hovered() { 2.0 } else { 0.0 });
 
         let rounding = visuals.corner_radius.at_most(2);
 

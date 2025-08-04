@@ -8,10 +8,10 @@ enum TimaState {
 
 #[derive(Default)]
 pub struct Timer {
-    system_counter: u16, // [15-8] Divider (R/W).
-    tima: u8,            // Timer counter (R/W).
-    tma: u8,             // Timer modulo (R/W).
-    tac: u8,             // Timer Control (R/W).
+    system_counter: u16, // [15-8] Divider (R/W)
+    tima: u8,            // Timer counter (R/W)
+    tma: u8,             // Timer modulo (R/W)
+    tac: u8,             // Timer Control (R/W)
     tima_state: TimaState,
 
     pub(crate) irq: bool,
@@ -58,7 +58,7 @@ impl Timer {
             0xFF06 => self.read_tma(),
             0xFF07 => self.read_tac(),
 
-            _ => unreachable!("[timer.rs] Invalid read: {address:#06x}"),
+            _ => unreachable!("Invalid read: {address:#06x}"),
         }
     }
 
@@ -69,7 +69,7 @@ impl Timer {
             0xFF06 => self.write_tma(value),
             0xFF07 => self.write_tac(value),
 
-            _ => unreachable!("[timer.rs] Invalid write: ({address:#06x}) = {value:#04x}"),
+            _ => unreachable!("Invalid write: ({address:#06x}) = {value:#04x}"),
         }
     }
 

@@ -7,7 +7,7 @@ pub struct ColorRam {
 impl Default for ColorRam {
     fn default() -> Self {
         Self {
-            data: [0; CRAM_SIZE], // can't default this :(
+            data: [0; CRAM_SIZE],
         }
     }
 }

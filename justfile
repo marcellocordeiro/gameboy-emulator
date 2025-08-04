@@ -21,8 +21,11 @@ update:
   vcpkg x-update-baseline
   just ./apps/web/ update
 
-test:
-  cargo test
+test *ARGS:
+  cargo test {{ARGS}}
 
 run ROM *ARGS:
   cargo run -p gb-eframe -- {{ARGS}} "{{ROM}}"
+
+run-with-bootrom ROM *ARGS:
+  cargo run -p gb-eframe --features bootrom -- {{ARGS}} "{{ROM}}"

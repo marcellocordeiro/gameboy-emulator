@@ -1,7 +1,5 @@
 use crate::components::{cpu::Cpu, memory::MemoryInterface};
 
-// Completed.
-
 impl Cpu {
     /// LD BC,u16
     pub(super) fn opcode_0x01(&mut self, memory: &mut impl MemoryInterface) {

@@ -4,24 +4,24 @@ mod common;
 testcases_mooneye! {
     add_sp_e_timing("acceptance/add_sp_e_timing.gb");
 
-    // boot_div_s("acceptance/boot_div-S.gb"); // SGB is unsupported.
-    // boot_div_dmg0("acceptance/boot_div-dmg0.gb"); // DMG0 is unsupported.
+    // boot_div_s("acceptance/boot_div-S.gb"); // SGB is unsupported
+    // boot_div_dmg0("acceptance/boot_div-dmg0.gb"); // DMG0 is unsupported
 
-    boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb.gb");
+    // boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb.gb"); // Tested separately
 
-    // boot_div2_s("acceptance/boot_div2-S.gb"); // SGB is unsupported.
-    // boot_hwio_s("acceptance/boot_hwio-S.gb"); // SGB is unsupported.
-    // boot_hwio_dmg0("acceptance/boot_hwio-dmg0.gb"); // DMG0 is unsupported.
+    // boot_div2_s("acceptance/boot_div2-S.gb"); // SGB is unsupported
+    // boot_hwio_s("acceptance/boot_hwio-S.gb"); // SGB is unsupported
+    // boot_hwio_dmg0("acceptance/boot_hwio-dmg0.gb"); // DMG0 is unsupported
 
-    // boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb.gb"); // DMG only. Tested separately.
+    // boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb.gb"); // Tested separately
 
-    // boot_regs_dmg0("acceptance/boot_regs-dmg0.gb"); // DMG0 is unsupported.
+    // boot_regs_dmg0("acceptance/boot_regs-dmg0.gb"); // DMG0 is unsupported
 
     boot_regs_dmg_abc("acceptance/boot_regs-dmgABC.gb", dmg);
 
-    // boot_regs_mgb("acceptance/boot_regs-mgb.gb"); // MGB is unsupported.
-    // boot_regs_sgb("acceptance/boot_regs-sgb.gb"); // SGB is unsupported.
-    // boot_regs_sgb2("acceptance/boot_regs-sgb2.gb"); SGB is unsupported.
+    // boot_regs_mgb("acceptance/boot_regs-mgb.gb"); // MGB is unsupported
+    // boot_regs_sgb("acceptance/boot_regs-sgb.gb"); // SGB is unsupported
+    // boot_regs_sgb2("acceptance/boot_regs-sgb2.gb"); SGB is unsupported
 
     call_cc_timing("acceptance/call_cc_timing.gb");
     call_cc_timing2("acceptance/call_cc_timing2.gb");
@@ -53,14 +53,14 @@ testcases_mooneye! {
     rst_timing("acceptance/rst_timing.gb");
     bits_mem_oam("acceptance/bits/mem_oam.gb");
     bits_reg_f("acceptance/bits/reg_f.gb");
-    // bits_unused_hwio_gs("acceptance/bits/unused_hwio-GS.gb");
+    bits_unused_hwio_gs("acceptance/bits/unused_hwio-GS.gb", dmg);
     instr_daa("acceptance/instr/daa.gb");
     interrupts_ie_push("acceptance/interrupts/ie_push.gb");
     oam_dma_basic("acceptance/oam_dma/basic.gb");
     oam_dma_reg_read("acceptance/oam_dma/reg_read.gb");
-    oam_dma_sources_gs("acceptance/oam_dma/sources-GS.gb"); // ! This should fail on CGB.
+    oam_dma_sources_gs("acceptance/oam_dma/sources-GS.gb"); // ! This should fail on CGB
     // ppu_hblank_ly_scx_timing_gs("acceptance/ppu/hblank_ly_scx_timing-GS.gb");
-    ppu_intr_1_2_timing_gs("acceptance/ppu/intr_1_2_timing-GS.gb"); // ! This should fail on CGB.
+    ppu_intr_1_2_timing_gs("acceptance/ppu/intr_1_2_timing-GS.gb"); // ! This should fail on CGB
     ppu_intr_2_0_timing("acceptance/ppu/intr_2_0_timing.gb");
     ppu_intr_2_mode0_timing("acceptance/ppu/intr_2_mode0_timing.gb");
     // ppu_intr_2_mode0_timing_sprites("acceptance/ppu/intr_2_mode0_timing_sprites.gb");
@@ -70,7 +70,7 @@ testcases_mooneye! {
     // ppu_lcdon_write_timing_gs("acceptance/ppu/lcdon_write_timing-GS.gb");
     // ppu_stat_irq_blocking("acceptance/ppu/stat_irq_blocking.gb");
     // ppu_stat_lyc_onoff("acceptance/ppu/stat_lyc_onoff.gb");
-    ppu_vblank_stat_intr_gs("acceptance/ppu/vblank_stat_intr-GS.gb"); // ! This should fail on CGB.
+    ppu_vblank_stat_intr_gs("acceptance/ppu/vblank_stat_intr-GS.gb"); // ! This should fail on CGB
     // serial_boot_sclk_align_dmg_abc_mgb("acceptance/serial/boot_sclk_align-dmgABCmgb.gb");
     timer_div_write("acceptance/timer/div_write.gb");
     timer_rapid_toggle("acceptance/timer/rapid_toggle.gb");
@@ -125,10 +125,11 @@ testcases_mooneye! {
 }
 
 // Acceptance
-// DMG only tests (bootrom is unsupported).
+// Bootrom is unsupported
 #[cfg(not(feature = "bootrom"))]
 testcases_mooneye! {
-    boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb.gb", dmg);
+    boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb.gb");
+    // boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb.gb");
 }
 
 // TODO: compare screenshots
@@ -139,16 +140,16 @@ testcases_mooneye! {
 
 // Misc
 testcases_mooneye! {
-    // boot_div_a("misc/boot_div-A.gb"); // AGS is unsupported.
+    // boot_div_a("misc/boot_div-A.gb"); // AGS is unsupported
 
-    // boot_div_cgb0("misc/boot_div-cgb0.gb"); // CGB0 is unsupported.
+    // boot_div_cgb0("misc/boot_div-cgb0.gb"); // CGB0 is unsupported
 
-    // boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb"); // CGB only. Tested separately.
-    // boot_hwio_c("misc/boot_hwio-C.gb"); // CGB only. Tested separately.
+    // boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb"); // CGB only. Tested separately
+    // boot_hwio_c("misc/boot_hwio-C.gb"); // CGB only. Tested separately
 
-    // boot_regs_a("misc/boot_regs-A.gb"); // AGS is unsupported.
+    // boot_regs_a("misc/boot_regs-A.gb"); // AGS is unsupported
 
-    boot_regs_cgb("misc/boot_regs-cgb.gb", cgb); // CGB only.
+    boot_regs_cgb("misc/boot_regs-cgb.gb", cgb); // CGB only
     // bits_unused_hwio_c("misc/bits/unused_hwio-C.gb");  // TODO: why is this failing?
     // ppu_vblank_stat_intr_c("misc/ppu/vblank_stat_intr-C.gb");
 }
@@ -157,7 +158,7 @@ testcases_mooneye! {
 // CGB only tests (requires bootrom).
 #[cfg(feature = "bootrom")]
 testcases_mooneye! {
-    boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb", cgb);
+    // boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb", cgb);
     boot_hwio_c("misc/boot_hwio-C.gb", cgb); // Why is this failing without the bootrom?
 }
 

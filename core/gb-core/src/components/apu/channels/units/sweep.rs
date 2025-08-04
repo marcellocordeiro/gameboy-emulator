@@ -19,11 +19,10 @@ impl Sweep {
     ) {
         if !self.enabled {
             return;
-            //return (false, None);
         }
 
         if self.counter == 0 {
-            return; // (false, None);
+            return;
         }
 
         self.counter -= 1;
@@ -32,14 +31,13 @@ impl Sweep {
             self.reload();
 
             if self.pace == 0 {
-                return; // (false, None);
+                return;
             }
 
             let period = self.period();
 
             if period >= 0x7FF {
                 *channel_enabled = false;
-                //return (true, None);
             } else if self.individual_step > 0 {
                 // Set the period divider as well!
                 period_divider.set_period(period);
@@ -47,15 +45,9 @@ impl Sweep {
 
                 if self.period() > 0x7FF {
                     *channel_enabled = false;
-                    return;
-                    //return (true, None);
                 }
-
-                //return (false, Some(period));
             }
         }
-
-        //(false, None)
     }
 
     pub fn expired(&self) -> bool {

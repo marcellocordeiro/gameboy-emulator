@@ -14,7 +14,7 @@ pub struct Oam {
 impl Default for Oam {
     fn default() -> Self {
         Self {
-            data: [0; OAM_SIZE], // can't default this :(
+            data: [0; OAM_SIZE],
             sprite_buffer: ArrayVec::default(),
         }
     }
@@ -33,7 +33,7 @@ impl Oam {
 
     /// Returns the sprite buffer sorted by the X coordinate.
     ///
-    /// This is the default behaviour in the DMG.
+    /// This is the default behavior in the DMG.
     pub fn get_sprites_in_line_by_coordinate(&mut self, ly: u8, obj_height: u8) -> &[SpriteObject] {
         self.update_sprite_buffer(ly, obj_height);
 
@@ -45,7 +45,7 @@ impl Oam {
 
     /// Returns the sprite buffer sorted by the OAM order.
     ///
-    /// This is the default behaviour in the CGB, but the bootrom can change this
+    /// This is the default behavior in the CGB, but the bootrom can change this
     /// by modifying the OPRI (0xFF6C) register.
     ///
     /// Warning: CGB model only.

@@ -26,7 +26,7 @@ impl Joypad {
     // 0xFF00
 
     pub(crate) fn read(&self) -> u8 {
-        JOYP_UNUSED_MASK | self.joyp
+        self.joyp | JOYP_UNUSED_MASK
     }
 
     pub(crate) fn write(&mut self, value: u8) {

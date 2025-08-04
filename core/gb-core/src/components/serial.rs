@@ -4,8 +4,8 @@ use std::sync::mpsc;
 
 #[derive(Default)]
 pub struct Serial {
-    sb: u8, // Serial transfer data (R/W).
-    sc: u8, // Serial transfer control (R/W).
+    sb: u8, // Serial transfer data (R/W)
+    sc: u8, // Serial transfer control (R/W)
 
     pub irq: bool,
 
@@ -23,7 +23,7 @@ impl Serial {
             0xFF01 => self.sb,
             0xFF02 => self.sc | 0x7E,
 
-            _ => unreachable!("[serial.rs] Invalid read: {:#06x}", address),
+            _ => unreachable!("Invalid read: {:#06x}", address),
         }
     }
 
@@ -43,7 +43,7 @@ impl Serial {
                 }
             }
 
-            _ => unreachable!("[serial.rs] Invalid write: ({address:#06x}) = {value:#04x}"),
+            _ => unreachable!("Invalid write: ({address:#06x}) = {value:#04x}"),
         }
     }
 }

@@ -6,14 +6,21 @@ use self::{
     bootrom::{Bootrom, BootromError},
     high_ram::HighRam,
     interrupts::Interrupts,
-    speed_switch::SpeedSwitch,
+    key1::Key1,
     undocumented_registers::UndocumentedRegisters,
     work_ram::WorkRam,
 };
-use super::cartridge::{Cartridge, error::CartridgeError, info::cgb_flag::CgbFlag};
+use super::cartridge::{Cartridge, error::CartridgeError};
 use crate::{
     DeviceModel,
-    components::{apu::Apu, joypad::Joypad, ppu::Ppu, serial::Serial, timer::Timer},
+    components::{
+        apu::Apu,
+        joypad::Joypad,
+        memory::key0::Key0,
+        ppu::Ppu,
+        serial::Serial,
+        timer::Timer,
+    },
     utils::{
         events::Events,
         macros::{device_is_cgb, in_cgb_mode},
@@ -46,8 +53,8 @@ pub trait MemoryInterface {
     fn apu(&self) -> &Apu;
     fn apu_mut(&mut self) -> &mut Apu;
 
-    fn speed_switch(&self) -> &SpeedSwitch;
-    fn speed_switch_mut(&mut self) -> &mut SpeedSwitch;
+    fn key1(&self) -> &Key1;
+    fn key1_mut(&mut self) -> &mut Key1;
 
     fn interrupts(&self) -> &Interrupts;
     fn interrupts_mut(&mut self) -> &mut Interrupts;
@@ -56,7 +63,7 @@ pub trait MemoryInterface {
 pub struct Memory {
     events: Events,
 
-    bootrom: Option<Bootrom>,
+    bootrom: Bootrom,
 
     wram: WorkRam,
     hram: HighRam,
@@ -69,11 +76,11 @@ pub struct Memory {
     pub serial: Serial,
     timer: Timer,
 
-    speed_switch: SpeedSwitch,
+    key0: Key0,
+    key1: Key1,
+    undocumented_registers: UndocumentedRegisters,
 
     pub interrupts: Interrupts,
-
-    undocumented_registers: UndocumentedRegisters,
 
     cgb_mode: bool,
     device_model: DeviceModel,
@@ -86,15 +93,10 @@ impl MemoryInterface for Memory {
 
     fn read(&self, address: u16) -> u8 {
         match address {
-            0x0000..=0x00FF if self.bootrom.as_ref().is_some_and(Bootrom::is_active) => {
-                self.bootrom.as_ref().map_or(0xFF, |b| b.read(address))
-            }
+            0x0000..=0x00FF if self.bootrom.mapped() => self.bootrom.read(address),
 
-            0x0200..=0x08FF
-                if self.bootrom.as_ref().is_some_and(Bootrom::is_active)
-                    && device_is_cgb!(self) =>
-            {
-                self.bootrom.as_ref().map_or(0xFF, |b| b.read(address))
+            0x0200..=0x08FF if self.bootrom.mapped() && device_is_cgb!(self) => {
+                self.bootrom.read(address)
             }
 
             0x0000..=0x3FFF => {
@@ -151,24 +153,24 @@ impl MemoryInterface for Memory {
             0xFF4A => self.ppu.read_wy(),
             0xFF4B => self.ppu.read_wx(),
 
-            0xFF4C => 0xFF, // (CGB) KEY0: CGB mode.
+            0xFF4C => self.key0.read(), // (CGB) KEY0: CGB mode
 
-            0xFF4D => self.speed_switch.read(), // (CGB) KEY1: Prepare speed switch.
+            0xFF4D => self.key1.read(), // (CGB) KEY1: Prepare speed switch
 
-            0xFF4F => self.ppu.vram.read_vbk(), // (CGB) VRAM bank selection.
+            0xFF4F => self.ppu.vram.read_vbk(), // (CGB) VRAM bank selection
 
-            0xFF50 => self.bootrom.as_ref().map_or(0xFF, Bootrom::read_status),
+            0xFF50 => self.bootrom.read_status(),
 
-            // (CGB) VRAM DMA.
+            // (CGB) VRAM DMA
             0xFF51 => self.ppu.vram_dma.read_hdma1(),
             0xFF52 => self.ppu.vram_dma.read_hdma2(),
             0xFF53 => self.ppu.vram_dma.read_hdma3(),
             0xFF54 => self.ppu.vram_dma.read_hdma4(),
             0xFF55 => self.ppu.vram_dma.read_hdma5(),
 
-            0xFF56 => 0xFF, // (CGB) RP: Infrared.
+            0xFF56 => 0xFF, // (CGB) RP: Infrared
 
-            // (CGB) BG / OBJ Palettes.
+            // (CGB) BG / OBJ Palettes
             0xFF68 => self.ppu.read_bcps(),
             0xFF69 => self.ppu.read_bcpd(),
             0xFF6A => self.ppu.read_ocps(),
@@ -176,7 +178,7 @@ impl MemoryInterface for Memory {
 
             0xFF6C => self.ppu.read_opri(),
 
-            0xFF70 => self.wram.read_svbk(), // (CGB) WRAM bank selection.
+            0xFF70 => self.wram.read_svbk(), // (CGB) WRAM bank selection
 
             0xFF72 => self.undocumented_registers.read_0xff72(),
             0xFF73 => self.undocumented_registers.read_0xff73(),
@@ -189,22 +191,22 @@ impl MemoryInterface for Memory {
 
             0xFFFF => self.interrupts.read_enable(),
 
-            0xFF03 => 0xFF,          // Unused.
-            0xFF08..=0xFF0E => 0xFF, // Unused.
-            0xFF15 => 0xFF,          // Unused.
-            0xFF1F => 0xFF,          // Unused.
-            0xFF27..=0xFF2F => 0xFF, // Unused.
-            0xFF4E => 0xFF,          // Unused.
-            0xFF57..=0xFF67 => 0xFF, // Unused.
-            0xFF6D..=0xFF6F => 0xFF, // Unused.
-            0xFF71 => 0xFF,          // Unused.
-            0xFF78..=0xFF7F => 0xFF, // Unused.
+            0xFF03 => 0xFF,          // Unused
+            0xFF08..=0xFF0E => 0xFF, // Unused
+            0xFF15 => 0xFF,          // Unused
+            0xFF1F => 0xFF,          // Unused
+            0xFF27..=0xFF2F => 0xFF, // Unused
+            0xFF4E => 0xFF,          // Unused
+            0xFF57..=0xFF67 => 0xFF, // Unused
+            0xFF6D..=0xFF6F => 0xFF, // Unused
+            0xFF71 => 0xFF,          // Unused
+            0xFF78..=0xFF7F => 0xFF, // Unused
         }
     }
 
     fn write(&mut self, address: u16, value: u8) {
         match address {
-            0x0000..=0x00FF if self.bootrom.as_ref().is_some_and(Bootrom::is_active) => {}
+            0x0000..=0x00FF if self.bootrom.mapped() => {}
 
             0x0000..=0x7FFF => {
                 self.cartridge
@@ -225,9 +227,9 @@ impl MemoryInterface for Memory {
             0xC000..=0xFDFF => self.wram.write(address, value),
             0xFE00..=0xFE9F => self.ppu.write_oam(address, value),
 
-            0xFEA0..=0xFEFF => (), // Prohibited area, but some games will attempt to write here.
+            0xFEA0..=0xFEFF => (), // Prohibited area, but some games will attempt to write here
 
-            // I/O registers.
+            // I/O registers
             0xFF00 => self.joypad.write(value),
 
             0xFF01 | 0xFF02 => self.serial.write(address, value),
@@ -253,17 +255,13 @@ impl MemoryInterface for Memory {
             0xFF4A => self.ppu.write_wy(value),
             0xFF4B => self.ppu.write_wx(value),
 
-            0xFF4C => self.set_cgb_mode(CgbFlag::from_code(value).has_cgb_support()), // (CGB) KEY0: CGB mode.
+            0xFF4C => self.key0.write(value), // (CGB) KEY0: CGB mode
 
-            0xFF4D => self.speed_switch.write(value), // (CGB) KEY1: Prepare speed switch.
+            0xFF4D => self.key1.write(value), // (CGB) KEY1: Prepare speed switch
 
-            0xFF4F => self.ppu.vram.write_vbk(value), // (CGB) VRAM bank selection.
+            0xFF4F => self.ppu.vram.write_vbk(value), // (CGB) VRAM bank selection
 
-            0xFF50 => {
-                if let Some(bootrom) = &mut self.bootrom {
-                    bootrom.write_status(value);
-                }
-            }
+            0xFF50 => self.write_bootrom_bank(value),
 
             // (CGB) VRAM DMA.
             0xFF51 => self.ppu.vram_dma.write_hdma1(value),
@@ -272,9 +270,9 @@ impl MemoryInterface for Memory {
             0xFF54 => self.ppu.vram_dma.write_hdma4(value),
             0xFF55 => self.ppu.vram_dma.write_hdma5(value),
 
-            0xFF56 => (), // (CGB) RP: Infrared.
+            0xFF56 => (), // (CGB) RP: Infrared
 
-            // (CGB) BG / OBJ Palettes.
+            // (CGB) BG / OBJ Palettes
             0xFF68 => self.ppu.write_bcps(value),
             0xFF69 => self.ppu.write_bcpd(value),
             0xFF6A => self.ppu.write_ocps(value),
@@ -282,7 +280,7 @@ impl MemoryInterface for Memory {
 
             0xFF6C => self.ppu.write_opri(value),
 
-            0xFF70 => self.wram.write_svbk(value), // (CGB) WRAM bank selection.
+            0xFF70 => self.wram.write_svbk(value), // (CGB) WRAM bank selection
 
             0xFF72 => self.undocumented_registers.write_0xff72(value),
             0xFF73 => self.undocumented_registers.write_0xff73(value),
@@ -295,16 +293,16 @@ impl MemoryInterface for Memory {
 
             0xFFFF => self.interrupts.write_enable(value),
 
-            0xFF03 => (),          // Unused.
-            0xFF08..=0xFF0E => (), // Unused.
-            0xFF15 => (),          // Unused.
-            0xFF1F => (),          // Unused.
-            0xFF27..=0xFF2F => (), // Unused.
-            0xFF4E => (),          // Unused.
-            0xFF57..=0xFF67 => (), // Unused.
-            0xFF6D..=0xFF6F => (), // Unused.
-            0xFF71 => (),          // Unused.
-            0xFF78..=0xFF7F => (), // Unused.
+            0xFF03 => (),          // Unused
+            0xFF08..=0xFF0E => (), // Unused
+            0xFF15 => (),          // Unused
+            0xFF1F => (),          // Unused
+            0xFF27..=0xFF2F => (), // Unused
+            0xFF4E => (),          // Unused
+            0xFF57..=0xFF67 => (), // Unused
+            0xFF6D..=0xFF6F => (), // Unused
+            0xFF71 => (),          // Unused
+            0xFF78..=0xFF7F => (), // Unused
         }
     }
 
@@ -330,8 +328,8 @@ impl MemoryInterface for Memory {
     }
 
     fn process_speed_switch(&mut self) {
-        self.speed_switch.process();
-        self.apu.set_double_speed(self.speed_switch.double_speed());
+        self.key1.process();
+        self.apu.set_double_speed(self.key1.double_speed());
     }
 
     fn apu(&self) -> &Apu {
@@ -342,12 +340,12 @@ impl MemoryInterface for Memory {
         &mut self.apu
     }
 
-    fn speed_switch(&self) -> &SpeedSwitch {
-        &self.speed_switch
+    fn key1(&self) -> &Key1 {
+        &self.key1
     }
 
-    fn speed_switch_mut(&mut self) -> &mut SpeedSwitch {
-        &mut self.speed_switch
+    fn key1_mut(&mut self) -> &mut Key1 {
+        &mut self.key1
     }
 
     fn interrupts(&self) -> &Interrupts {
@@ -362,35 +360,24 @@ impl MemoryInterface for Memory {
 impl Memory {
     #[must_use]
     pub fn with_device_model(device_model: DeviceModel) -> Self {
-        let wram = WorkRam::with_device_model(device_model);
-        let ppu = Ppu::with_device_model(device_model);
-        let speed_switch = SpeedSwitch::with_device_model(device_model);
-        let undocumented_registers = UndocumentedRegisters::with_device_model(device_model);
-        let apu = Apu::with_device_model(device_model);
-
-        let mut memory = Self {
+        Self {
             events: Events::default(),
-            bootrom: Option::default(),
-            wram,
+            bootrom: Bootrom::default(),
+            wram: WorkRam::with_device_model(device_model),
             hram: HighRam::default(),
             cartridge: Option::default(),
-            ppu,
-            apu,
+            ppu: Ppu::with_device_model(device_model),
+            apu: Apu::with_device_model(device_model),
             joypad: Joypad::default(),
             serial: Serial::default(),
             timer: Timer::default(),
-            speed_switch,
+            key1: Key1::with_device_model(device_model),
             interrupts: Interrupts::default(),
-            undocumented_registers,
-            cgb_mode: bool::default(),
+            undocumented_registers: UndocumentedRegisters::with_device_model(device_model),
+            key0: Key0::with_device_model(device_model),
+            cgb_mode: device_model.is_cgb(),
             device_model,
-        };
-
-        if device_is_cgb!(memory) {
-            memory.set_cgb_mode(true);
         }
-
-        memory
     }
 
     pub fn set_cgb_mode(&mut self, value: bool) {
@@ -398,11 +385,29 @@ impl Memory {
 
         self.wram.set_cgb_mode(value);
         self.ppu.set_cgb_mode(value);
-        self.speed_switch.set_cgb_mode(value);
+        self.key1.set_cgb_mode(value);
         self.undocumented_registers.set_cgb_mode(value);
         self.apu.set_cgb_mode(value);
 
         self.cgb_mode = value;
+    }
+
+    pub fn write_bootrom_bank(&mut self, value: u8) {
+        if !self.bootrom.mapped() {
+            return;
+        }
+
+        let lock = (value & 0b1) != 0;
+        // Unclear whether it's possible to lock with any value besides the first bit being 1
+        assert!(lock, "Writing to BANK register with value {value}");
+
+        if lock {
+            self.bootrom.unmap();
+
+            if device_is_cgb!(self) {
+                self.set_cgb_mode(self.key0.cgb_mode);
+            }
+        }
     }
 
     fn cycle(&mut self) {
@@ -412,7 +417,7 @@ impl Memory {
         for i in 0..4 {
             self.timer.tick();
 
-            if !self.speed_switch.double_speed() || i & 0b1 == 0 {
+            if !self.key1.double_speed() || i & 0b1 == 0 {
                 self.apu.tick(self.timer.read_div());
                 self.ppu.tick(&mut self.events);
             }
@@ -456,7 +461,7 @@ impl Memory {
         let cartridge = Cartridge::new(rom)?;
 
         if let Some(bootrom) = bootrom {
-            self.bootrom = Some(Bootrom::new(self.device_model, Some(bootrom))?);
+            self.bootrom = Bootrom::try_new(self.device_model, bootrom)?;
         } else {
             self.skip_bootrom(&cartridge);
         }
@@ -466,29 +471,14 @@ impl Memory {
         Ok(())
     }
 
-    /*
-        pub(crate) fn load_bootrom(
-            &mut self,
-            bootrom: Option<Arc<Box<[u8]>>>,
-        ) -> Result<(), BootromError> {
-            self.bootrom = Bootrom::new(self.device_model, bootrom)?;
-
-            Ok(())
-        }
-
-        pub(crate) fn load_cartridge(&mut self, rom: Arc<Box<[u8]>>) -> Result<(), CartridgeError> {
-            // self.mbc = Some(Mbc::new(cartridge));
-            self.cartridge = Some(Cartridge::new(rom)?);
-
-            Ok(())
-        }
-    */
     pub(crate) fn skip_bootrom(&mut self, cartridge: &Cartridge) {
         if device_is_cgb!(self) {
-            self.set_cgb_mode(cartridge.info.cgb_flag.has_cgb_support());
+            self.key0
+                .set_cgb_mode(cartridge.info.cgb_flag.has_cgb_support());
+            self.set_cgb_mode(self.key0.cgb_mode);
         }
 
-        self.bootrom.as_mut().map(Bootrom::disable);
+        self.bootrom.unmap();
         self.apu.skip_bootrom();
         self.ppu.skip_bootrom(cartridge);
         self.timer.skip_bootrom();
@@ -534,6 +524,7 @@ impl Memory {
 pub(crate) mod bootrom;
 pub(crate) mod high_ram;
 pub(crate) mod interrupts;
-pub(crate) mod speed_switch;
+pub(crate) mod key0;
+pub(crate) mod key1;
 pub(crate) mod undocumented_registers;
 pub(crate) mod work_ram;

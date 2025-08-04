@@ -1,6 +1,6 @@
 use crate::components::cpu::registers::Flags;
 
-/// RL / Rotate Left
+/// RL (rotate left)
 #[must_use]
 pub fn rl(f: &mut Flags, value: u8) -> u8 {
     let carry = f.contains(Flags::CARRY) as u8;
@@ -16,7 +16,7 @@ pub fn rl(f: &mut Flags, value: u8) -> u8 {
     result
 }
 
-/// RR / Rotate Right
+/// RR (rotate right)
 #[must_use]
 pub fn rr(f: &mut Flags, value: u8) -> u8 {
     let carry = f.contains(Flags::CARRY) as u8;
@@ -32,7 +32,7 @@ pub fn rr(f: &mut Flags, value: u8) -> u8 {
     result
 }
 
-/// RLC / Rotate Left through Carry
+/// RLC (rotate left through carry)
 #[must_use]
 pub fn rlc(f: &mut Flags, value: u8) -> u8 {
     let will_carry = (value & (1 << 7)) != 0;
@@ -47,7 +47,7 @@ pub fn rlc(f: &mut Flags, value: u8) -> u8 {
     result
 }
 
-/// RRC / Rotate Right through Carry
+/// RRC (rotate right through carry)
 #[must_use]
 pub fn rrc(f: &mut Flags, value: u8) -> u8 {
     let will_carry = (value & (1 << 0)) != 0;
@@ -62,7 +62,7 @@ pub fn rrc(f: &mut Flags, value: u8) -> u8 {
     result
 }
 
-/// SRL / Shift Right Logical
+/// SRL (shift right logical)
 #[must_use]
 pub fn srl(f: &mut Flags, value: u8) -> u8 {
     let will_carry = (value & (1 << 0)) != 0;
@@ -77,7 +77,7 @@ pub fn srl(f: &mut Flags, value: u8) -> u8 {
     result
 }
 
-/// SRA / Shift Right Arithmetic
+/// SRA (shift right arithmetic)
 ///
 /// Bit 7 is unchanged.
 #[must_use]
@@ -95,7 +95,7 @@ pub fn sra(f: &mut Flags, value: u8) -> u8 {
     result
 }
 
-/// SLA / Shift Left Arithmetic
+/// SLA (shift left arithmetic)
 #[must_use]
 pub fn sla(f: &mut Flags, value: u8) -> u8 {
     let will_carry = (value & (1 << 7)) != 0;
@@ -110,7 +110,7 @@ pub fn sla(f: &mut Flags, value: u8) -> u8 {
     result
 }
 
-/// BIT / Test bit
+/// BIT (test bit)
 pub fn bit(f: &mut Flags, bit: usize, value: u8) {
     let result = value & (1 << bit);
 
@@ -119,19 +119,19 @@ pub fn bit(f: &mut Flags, bit: usize, value: u8) {
     f.set(Flags::HALF_CARRY, true);
 }
 
-/// RES / Reset bit
+/// RES (reset bit)
 #[must_use]
 pub fn res(_f: &mut Flags, bit: usize, value: u8) -> u8 {
     value & !(1 << bit)
 }
 
-/// SET / Set bit
+/// SET (set bit)
 #[must_use]
 pub fn set(_f: &mut Flags, bit: usize, value: u8) -> u8 {
     value | (1 << bit)
 }
 
-/// SWAP / Swap nibbles
+/// SWAP (swap nibbles)
 #[must_use]
 pub fn swap(f: &mut Flags, value: u8) -> u8 {
     let low = value & 0x0F;

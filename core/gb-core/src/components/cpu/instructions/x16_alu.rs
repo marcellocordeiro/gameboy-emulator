@@ -3,8 +3,6 @@ use crate::components::{
     memory::MemoryInterface,
 };
 
-// Completed, may need some refactoring.
-
 impl Cpu {
     /// INC BC
     pub(super) fn opcode_0x03(&mut self, memory: &mut impl MemoryInterface) {

@@ -20,7 +20,7 @@ fn test_cpu(file_name: &str, test: &Test) {
     assert_eq!(
         State::from((cpu.registers, memory.data)),
         test.r#final,
-        "Test `{}` from `{file_name}` failed. The final state do not match the expected result.",
+        "Test `{}` from `{file_name}` failed. The final state does not match the expected result.",
         test.name
     );
 

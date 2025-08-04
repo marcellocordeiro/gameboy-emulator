@@ -52,7 +52,19 @@ impl GameBoy {
 
     pub fn load(&mut self, bootrom: Option<Vec<u8>>, rom: Vec<u8>) -> Result<(), CartridgeError> {
         self.rom = Some(Arc::<Box<[u8]>>::from(rom.into_boxed_slice()));
-        self.bootrom = bootrom.map(|vec| Arc::<Box<[u8]>>::from(vec.into_boxed_slice()));
+
+        if let Some(bootrom) = bootrom {
+            self.bootrom = Some(Arc::<Box<[u8]>>::from(bootrom.into_boxed_slice()));
+        } else if cfg!(feature = "bootrom") {
+            let bootrom = match self.device_model {
+                DeviceModel::Dmg => include_bytes!("../../../roms/bootrom/dmg_boot.bin").to_vec(),
+                DeviceModel::Cgb => include_bytes!("../../../roms/bootrom/cgb_boot.bin").to_vec(),
+            };
+
+            self.bootrom = Some(Arc::<Box<[u8]>>::from(bootrom.into_boxed_slice()));
+        } else {
+            self.bootrom = None;
+        }
 
         self.reset();
 
@@ -81,7 +93,11 @@ impl GameBoy {
     #[must_use]
     pub fn get_battery(&self) -> Option<&[u8]> {
         if let Some(cartridge) = self.memory.cartridge.as_ref() {
-            return Some(cartridge.get_battery());
+            let battery = cartridge.get_battery();
+
+            if !battery.is_empty() {
+                return Some(battery);
+            }
         }
 
         None

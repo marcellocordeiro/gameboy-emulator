@@ -10,13 +10,15 @@ bitflags! {
         const TIMER = 1 << 2;
         const LCD_STAT = 1 << 1;
         const VBLANK = 1 << 0;
+
+        const UNUSED = 0b1110_0000;
     }
 }
 
 #[derive(Default)]
 pub struct Interrupts {
-    pub flags: InterruptBits,  // IF.
-    pub enable: InterruptBits, // IE.
+    pub flags: InterruptBits,  // IF
+    pub enable: InterruptBits, // IE
 }
 
 impl Interrupts {
@@ -68,19 +70,19 @@ impl Interrupts {
     }
 
     pub fn read_enable(&self) -> u8 {
-        // Adding the mask here causes tests to fail
         self.enable.bits()
     }
 
     pub fn write_flags(&mut self, value: u8) {
-        self.flags = InterruptBits::from_bits_truncate(value);
+        self.flags = InterruptBits::from_bits_truncate(value & 0b0001_1111);
     }
 
     pub fn write_enable(&mut self, value: u8) {
         self.enable = InterruptBits::from_bits_truncate(value);
     }
 
-    // IRQ helpers.
+    // IRQ helpers
+
     pub fn request_vblank(&mut self) {
         self.flags.insert(InterruptBits::VBLANK);
     }

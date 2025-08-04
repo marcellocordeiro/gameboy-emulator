@@ -19,6 +19,7 @@ impl UndocumentedRegisters {
 
     pub fn with_device_model(device_model: DeviceModel) -> Self {
         Self {
+            cgb_mode: device_model.is_cgb(),
             device_model,
             ..Default::default()
         }

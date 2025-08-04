@@ -34,7 +34,7 @@ impl OamDma {
     /// Used to check whether normal R/W to the OAM should be blocked or not.
     ///
     /// After a DMA write (when Idle), the first byte transfer is delayed by 1 M-cycle.
-    /// However, because the emulator advances the DMA transfer before any reads or writes
+    /// However, because the emulator advances the DMA transfer before any reads or writes,
     /// we need an intermediate state between M == 1 and M == 2 that won't block the OAM.
     ///
     /// Restarting the OAM should keep the OAM blocked at all times, so we need
@@ -164,7 +164,7 @@ impl OamDma {
         if address < 0xE000 {
             address
         } else {
-            // Mapped to WRAM.
+            // Mapped to the WRAM
             address - 0x2000
         }
     }
@@ -191,7 +191,7 @@ mod tests {
         assert_eq!(oam_dma.status, Status::ActiveFirstStep { base_source: 0 });
         assert!(!oam_dma.is_active());
 
-        // Next read is expected to return a (source, destination)
+        // The next read is expected to return a (source, destination)
         assert_eq!(oam_dma.perform_dma(), Some((0, 0xFE00)));
         assert_eq!(
             oam_dma.status,

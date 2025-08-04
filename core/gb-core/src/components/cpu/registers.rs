@@ -15,7 +15,7 @@ pub struct Registers {
     pub pc: u16,
     pub sp: u16,
 
-    pub ime: ImeState, // Interrupt Master Enable (Write only).
+    pub ime: ImeState, // Interrupt Master Enable (write-only)
 }
 
 impl Registers {

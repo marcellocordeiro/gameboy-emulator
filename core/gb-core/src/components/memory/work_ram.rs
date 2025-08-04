@@ -6,7 +6,7 @@ const CGB_WRAM_BANKS: usize = 8;
 /// 4KiB each, 4096 (0x1000)
 const WRAM_BANK_SIZE: usize = 4 * ONE_KIB;
 
-// DMG: 8192 (0x2000)
+/// DMG: 8192 (0x2000)
 const DMG_WRAM_SIZE: usize = DMG_WRAM_BANKS * WRAM_BANK_SIZE;
 
 /// CGB: 32768 (0x8000)
@@ -14,7 +14,7 @@ const CGB_WRAM_SIZE: usize = CGB_WRAM_BANKS * WRAM_BANK_SIZE;
 
 pub struct WorkRam {
     data: Box<[u8]>,
-    svbk: u8, // (CGB) WRAM Bank Select.
+    svbk: u8, // (CGB) WRAM Bank Select
 
     cgb_mode: bool,
     device_model: DeviceModel,
@@ -35,8 +35,8 @@ impl WorkRam {
 
         Self {
             data: vec![0; size].into_boxed_slice(),
-            svbk: u8::default(),
-            cgb_mode: bool::default(),
+            svbk: 0,
+            cgb_mode: device_model.is_cgb(),
             device_model,
         }
     }
@@ -48,26 +48,26 @@ impl WorkRam {
     pub fn read(&self, address: u16) -> u8 {
         match address {
             0xC000..=0xCFFF => self.data[address as usize - 0xC000],
-            0xD000..=0xDFFF => self.data[address as usize - 0xC000 + self.bank_offset()], // Bank selection in CGB mode only.
+            0xD000..=0xDFFF => self.data[address as usize - 0xC000 + self.bank_offset()], // Bank selection in CGB mode only
 
-            // ECHO RAM.
+            // ECHO RAM
             0xE000..=0xEFFF => self.data[address as usize - 0xE000],
-            0xF000..=0xFDFF => self.data[address as usize - 0xE000 + self.bank_offset()], // Bank selection in CGB mode only.
+            0xF000..=0xFDFF => self.data[address as usize - 0xE000 + self.bank_offset()], // Bank selection in CGB mode only
 
-            _ => unreachable!("[work_ram.rs] Read out of bounds: {address:#06x}"),
+            _ => unreachable!("Read out of bounds: {address:#06x}"),
         }
     }
 
     pub fn write(&mut self, address: u16, value: u8) {
         match address {
             0xC000..=0xCFFF => self.data[address as usize - 0xC000] = value,
-            0xD000..=0xDFFF => self.data[address as usize - 0xC000 + self.bank_offset()] = value, // Bank selection in CGB mode only.
+            0xD000..=0xDFFF => self.data[address as usize - 0xC000 + self.bank_offset()] = value, // Bank selection in CGB mode only
 
-            // ECHO RAM.
+            // ECHO RAM
             0xE000..=0xEFFF => self.data[address as usize - 0xE000] = value,
-            0xF000..=0xFDFF => self.data[address as usize - 0xE000 + self.bank_offset()] = value, // Bank selection in CGB mode only.
+            0xF000..=0xFDFF => self.data[address as usize - 0xE000 + self.bank_offset()] = value, // Bank selection in CGB mode only
 
-            _ => unreachable!("[work_ram.rs] Write out of bounds: ({address:#06x}) = {value:#04x}"),
+            _ => unreachable!("Write out of bounds: ({address:#06x}) = {value:#04x}"),
         }
     }
 
@@ -138,8 +138,8 @@ mod tests {
         verify_banks(&mut wram);
     }
 
-    #[test]
     #[allow(clippy::identity_op)]
+    #[test]
     fn test_write_banks() {
         let mut wram = WorkRam::with_device_model(DeviceModel::Cgb);
         wram.set_cgb_mode(true);

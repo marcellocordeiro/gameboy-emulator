@@ -7,6 +7,7 @@ pub struct Color {
 
 impl Color {
     pub const CGB_SYSTEM_DEFAULT: Self = Self::WHITE_RGB555;
+    // TODO: use more accurate colors
     pub const DMG_PALETTE: [u8; 4] = [0xFF, 0xAA, 0x55, 0x00];
     pub const DMG_SYSTEM_DEFAULT: Self = Self::WHITE;
     pub const WHITE: Self = Self::new(0xFF, 0xFF, 0xFF);

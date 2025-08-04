@@ -1,7 +1,5 @@
 use crate::components::{cpu::Cpu, memory::MemoryInterface};
 
-// Completed, may need some refactoring.
-
 macro_rules! ld_r8_r8 {
     ($self:ident, $reg0:ident, $reg1:ident) => {
         $self.registers.$reg0 = $self.registers.$reg1
@@ -19,7 +17,7 @@ macro_rules! ld_r8_hl {
 
 impl Cpu {
     /// LD (BC),A
-    pub(super) fn opcode_0x02(&mut self, memory: &mut impl MemoryInterface) {
+    pub(super) fn opcode_0x02(&self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_bc();
         let value = self.registers.a;
 
@@ -49,7 +47,7 @@ impl Cpu {
     }
 
     /// LD (DE),A
-    pub(super) fn opcode_0x12(&mut self, memory: &mut impl MemoryInterface) {
+    pub(super) fn opcode_0x12(&self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_de();
         let value = self.registers.a;
 
@@ -145,7 +143,7 @@ impl Cpu {
 
     /// LD B,B
     pub(super) fn opcode_0x40(&self) {
-        // Self assignment.
+        // Self-assignment
     }
 
     /// LD B,C
@@ -190,7 +188,7 @@ impl Cpu {
 
     /// LD C,C
     pub(super) fn opcode_0x49(&self) {
-        // Self assignment.
+        // Self-assignment
     }
 
     /// LD C,D
@@ -235,7 +233,7 @@ impl Cpu {
 
     /// LD D,D
     pub(super) fn opcode_0x52(&self) {
-        // Self assignment.
+        // Self-assignment
     }
 
     /// LD D,E
@@ -280,7 +278,7 @@ impl Cpu {
 
     /// LD E,E
     pub(super) fn opcode_0x5b(&self) {
-        // Self assignment.
+        // Self-assignment
     }
 
     /// LD E,H
@@ -325,7 +323,7 @@ impl Cpu {
 
     /// LD H,H
     pub(super) fn opcode_0x64(&self) {
-        // Self assignment.
+        // Self-assignment
     }
 
     /// LD H,L
@@ -370,7 +368,7 @@ impl Cpu {
 
     /// LD L,L
     pub(super) fn opcode_0x6d(&self) {
-        // Self assignment.
+        // Self-assignment
     }
 
     /// LD L,(HL)
@@ -384,7 +382,7 @@ impl Cpu {
     }
 
     /// LD (HL),B
-    pub(super) fn opcode_0x70(&mut self, memory: &mut impl MemoryInterface) {
+    pub(super) fn opcode_0x70(&self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.b;
 
@@ -392,7 +390,7 @@ impl Cpu {
     }
 
     /// LD (HL),C
-    pub(super) fn opcode_0x71(&mut self, memory: &mut impl MemoryInterface) {
+    pub(super) fn opcode_0x71(&self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.c;
 
@@ -400,7 +398,7 @@ impl Cpu {
     }
 
     /// LD (HL),D
-    pub(super) fn opcode_0x72(&mut self, memory: &mut impl MemoryInterface) {
+    pub(super) fn opcode_0x72(&self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.d;
 
@@ -408,7 +406,7 @@ impl Cpu {
     }
 
     /// LD (HL),E
-    pub(super) fn opcode_0x73(&mut self, memory: &mut impl MemoryInterface) {
+    pub(super) fn opcode_0x73(&self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.e;
 
@@ -416,7 +414,7 @@ impl Cpu {
     }
 
     /// LD (HL),H
-    pub(super) fn opcode_0x74(&mut self, memory: &mut impl MemoryInterface) {
+    pub(super) fn opcode_0x74(&self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.h;
 
@@ -424,7 +422,7 @@ impl Cpu {
     }
 
     /// LD (HL),L
-    pub(super) fn opcode_0x75(&mut self, memory: &mut impl MemoryInterface) {
+    pub(super) fn opcode_0x75(&self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.l;
 
@@ -432,7 +430,7 @@ impl Cpu {
     }
 
     /// LD (HL),A
-    pub(super) fn opcode_0x77(&mut self, memory: &mut impl MemoryInterface) {
+    pub(super) fn opcode_0x77(&self, memory: &mut impl MemoryInterface) {
         let address = self.registers.get_hl();
         let value = self.registers.a;
 
@@ -476,7 +474,7 @@ impl Cpu {
 
     /// LD A,A
     pub(super) fn opcode_0x7f(&self) {
-        // Self assignment.
+        // Self-assignment
     }
 
     /// LD (FF00+u8),A
@@ -488,7 +486,7 @@ impl Cpu {
     }
 
     /// LD (FF00+C),A
-    pub(super) fn opcode_0xe2(&mut self, memory: &mut impl MemoryInterface) {
+    pub(super) fn opcode_0xe2(&self, memory: &mut impl MemoryInterface) {
         let address = 0xFF00 + (self.registers.c as u16);
         let value = self.registers.a;
 

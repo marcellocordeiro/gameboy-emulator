@@ -1,21 +1,6 @@
 use app::App;
-use clap::Parser;
+use cli::parse_args;
 use gb_core::constants::{DeviceModel, SCREEN_HEIGHT, SCREEN_WIDTH};
-
-#[derive(Debug, Parser)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    /// Set the device model to DMG
-    #[arg(short, long, default_value_t = false)]
-    dmg: bool,
-
-    /// Optional bootrom path
-    #[arg(short, long)]
-    bootrom: Option<String>,
-
-    /// Optional ROM path (will show the file picker if not provided)
-    rom: Option<String>,
-}
 
 fn main() -> Result<(), eframe::Error> {
     env_logger::builder()
@@ -23,7 +8,7 @@ fn main() -> Result<(), eframe::Error> {
         .format_timestamp(None)
         .init();
 
-    let args = Args::parse();
+    let args = parse_args();
 
     let device_model = if args.dmg {
         DeviceModel::Dmg
@@ -44,13 +29,21 @@ fn main() -> Result<(), eframe::Error> {
     eframe::run_native(
         "Game Boy",
         native_options,
-        Box::new(move |cc| Ok(Box::new(App::new(cc, device_model, bootrom_path, rom_path)))),
+        Box::new(move |cc| {
+            Ok(Box::new(App::try_new(
+                cc,
+                device_model,
+                bootrom_path,
+                rom_path,
+            )?))
+        }),
     )
 }
 
 mod app;
 mod audio;
 mod cartridge;
+mod cli;
 mod gui;
 mod key_mappings;
 mod utils;

@@ -2,7 +2,7 @@ use crate::components::cpu::registers::Flags;
 
 /// ADD
 ///
-/// Add to accumulator
+/// Add to the accumulator.
 #[must_use]
 pub fn add(f: &mut Flags, accumulator: u8, value: u8) -> u8 {
     let result = accumulator.wrapping_add(value);
@@ -20,7 +20,7 @@ pub fn add(f: &mut Flags, accumulator: u8, value: u8) -> u8 {
 
 /// ADC
 ///
-/// Add to accumulator with carry
+/// Add to the accumulator with carry.
 #[must_use]
 pub fn adc(f: &mut Flags, accumulator: u8, value: u8) -> u8 {
     let carry = f.contains(Flags::CARRY) as u8;
@@ -60,7 +60,7 @@ pub fn sub(f: &mut Flags, accumulator: u8, value: u8) -> u8 {
 
 /// SBC
 ///
-/// Sub from accumulator with carry
+/// Sub from accumulator with carry.
 #[must_use]
 pub fn sbc(f: &mut Flags, accumulator: u8, value: u8) -> u8 {
     let carry = f.contains(Flags::CARRY) as u8;
@@ -167,7 +167,7 @@ pub fn xor(f: &mut Flags, accumulator: u8, value: u8) -> u8 {
 
 /// CCF
 ///
-/// Complement carry flag
+/// Complement carry flag.
 pub fn ccf(f: &mut Flags) {
     f.set(Flags::N_ADD_SUB, false);
     f.set(Flags::HALF_CARRY, false);
@@ -176,7 +176,7 @@ pub fn ccf(f: &mut Flags) {
 
 /// SCF
 ///
-/// Set carry flag
+/// Set carry flag.
 pub fn scf(f: &mut Flags) {
     f.set(Flags::N_ADD_SUB, false);
     f.set(Flags::HALF_CARRY, false);
@@ -185,7 +185,7 @@ pub fn scf(f: &mut Flags) {
 
 /// CPL
 ///
-/// Complement accumulator
+/// Complement accumulator.
 #[must_use]
 pub fn cpl(f: &mut Flags, accumulator: u8) -> u8 {
     f.set(Flags::N_ADD_SUB, true);

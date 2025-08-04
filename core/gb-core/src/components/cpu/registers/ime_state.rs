@@ -70,7 +70,7 @@ mod tests {
     fn test_request() {
         let mut ime_state = ImeState::default();
 
-        // Shouldn't do anything.
+        // Shouldn't do anything
         ime_state.process_request();
 
         assert_eq!(ime_state, ImeState::Disabled);
@@ -82,7 +82,7 @@ mod tests {
         assert_eq!(ime_state, ImeState::Pending);
         assert!(!ime_state.is_enabled());
 
-        // Requesting again shouldn't do anything.
+        // Requesting again shouldn't do anything
         ime_state.request_enable();
 
         assert_eq!(ime_state, ImeState::Pending);

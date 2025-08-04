@@ -19,7 +19,6 @@ const DMG_VRAM_SIZE: usize = DMG_VRAM_BANKS * VRAM_BANK_SIZE; // DMG: 8192 (0x20
 const CGB_VRAM_SIZE: usize = CGB_VRAM_BANKS * VRAM_BANK_SIZE; // CGB: 16384 (0x4000)
 
 pub struct VideoRam {
-    // data: [u8; CGB_VRAM_SIZE],
     data: Box<[u8]>,
     vbk: u8,
 
@@ -38,14 +37,14 @@ impl VideoRam {
 
         Self {
             data: vec![0; size].into_boxed_slice(),
-            vbk: u8::default(),
-            cgb_mode: bool::default(),
+            vbk: 0,
+            cgb_mode: device_model.is_cgb(),
             device_model,
         }
     }
 
-    pub fn set_cgb_mode(&mut self, cgb_mode: bool) {
-        self.cgb_mode = cgb_mode;
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        self.cgb_mode = value;
     }
 
     pub fn draw_tile_data_0_into_frame(&self, frame: &mut TileDataFrameCgb) {

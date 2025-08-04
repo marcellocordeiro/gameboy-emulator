@@ -1,7 +1,5 @@
 use crate::components::cpu::{Cpu, alu, registers::Flags};
 
-// Completed, may need some refactoring.
-
 macro_rules! alu_op_a {
     ($self:ident, $F:ident) => {
         $self.registers.a = alu::$F(&mut $self.registers.f, $self.registers.a);

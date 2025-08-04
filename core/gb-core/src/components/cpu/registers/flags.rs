@@ -8,7 +8,7 @@ bitflags! {
         const HALF_CARRY = 1 << 5;
         const CARRY = 1 << 4;
 
-        // Bits 0-3 are unused.
+        // Bits 0-3 are unused
     }
 }
 

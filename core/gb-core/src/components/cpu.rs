@@ -11,9 +11,6 @@ use crate::{
 pub struct Cpu {
     registers: Registers,
     halt: bool,
-    pub cycles: i32,
-
-    cgb_mode: bool,
 
     device_model: DeviceModel,
 }
@@ -25,10 +22,6 @@ impl Cpu {
             device_model,
             ..Default::default()
         }
-    }
-
-    pub fn set_cgb_mode(&mut self, value: bool) {
-        self.cgb_mode = value;
     }
 
     #[must_use]
@@ -115,37 +108,26 @@ impl Cpu {
         self.registers.pc = address;
     }
 
-    fn notify_cycle(&mut self, memory: &impl MemoryInterface) {
-        self.cycles += if memory.speed_switch().double_speed() {
-            2
-        } else {
-            4
-        };
-    }
-
-    fn cycle_memory(&mut self, memory: &mut impl MemoryInterface) {
-        self.notify_cycle(memory);
+    fn cycle_memory(&self, memory: &mut impl MemoryInterface) {
         memory.cycle();
     }
 
-    fn read_byte(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u8 {
-        self.notify_cycle(memory);
+    fn read_byte(&self, memory: &mut impl MemoryInterface, address: u16) -> u8 {
         memory.read_cycle(address)
     }
 
-    fn write_byte(&mut self, memory: &mut impl MemoryInterface, address: u16, value: u8) {
-        self.notify_cycle(memory);
+    fn write_byte(&self, memory: &mut impl MemoryInterface, address: u16, value: u8) {
         memory.write_cycle(address, value);
     }
 
-    fn read_word(&mut self, memory: &mut impl MemoryInterface, address: u16) -> u16 {
+    fn read_word(&self, memory: &mut impl MemoryInterface, address: u16) -> u16 {
         let low = self.read_byte(memory, address) as u16;
         let high = self.read_byte(memory, address.wrapping_add(1)) as u16;
 
         (high << 8) | low
     }
 
-    fn write_word(&mut self, memory: &mut impl MemoryInterface, address: u16, value: u16) {
+    fn write_word(&self, memory: &mut impl MemoryInterface, address: u16, value: u16) {
         let low = value as u8;
         let high = (value >> 8) as u8;
 

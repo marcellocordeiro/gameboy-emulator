@@ -3,8 +3,6 @@ use crate::components::{
     memory::MemoryInterface,
 };
 
-// Completed.
-
 impl Cpu {
     /// JR i8
     pub(super) fn opcode_0x18(&mut self, memory: &mut impl MemoryInterface) {

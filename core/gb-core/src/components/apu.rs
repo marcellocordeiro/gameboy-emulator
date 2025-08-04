@@ -80,8 +80,8 @@ impl Default for Apu {
             left_panning: Channels::empty(),
             right_panning: Channels::empty(),
             audio_on: false,
-            device_model: DeviceModel::default(),
             cgb_mode: false,
+            device_model: DeviceModel::default(),
             double_speed: false,
             hpf_left: HighPassFilter::default(),
             hpf_right: HighPassFilter::default(),
@@ -106,6 +106,7 @@ impl Apu {
     #[must_use]
     pub fn with_device_model(device_model: DeviceModel) -> Self {
         Self {
+            cgb_mode: device_model.is_cgb(),
             device_model,
             ..Default::default()
         }

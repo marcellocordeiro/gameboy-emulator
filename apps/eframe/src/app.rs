@@ -4,6 +4,7 @@ use gb_core::{
     constants::{DeviceModel, EXTENSIONS, EXTENSIONS_DESCRIPTION},
     utils::button::Button,
 };
+use thiserror::Error;
 
 use crate::{
     audio::Audio,
@@ -11,6 +12,14 @@ use crate::{
     gui::Gui,
     key_mappings::EguiKeyMappings,
 };
+
+#[derive(Debug, Error)]
+pub enum Error {
+    #[error("No ROM selected")]
+    NoRomSelected,
+    #[error("Invalid path")]
+    InvalidPath,
+}
 
 pub struct App {
     gb: GameBoy,
@@ -21,12 +30,12 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(
+    pub fn try_new(
         cc: &eframe::CreationContext,
         device_model: DeviceModel,
         bootrom_path: Option<String>,
         rom_path: Option<String>,
-    ) -> Self {
+    ) -> Result<Self, Error> {
         // Maybe let the UI handle the errors?
         let rom_path = {
             if let Some(path) = rom_path {
@@ -35,7 +44,12 @@ impl App {
                 let builder =
                     rfd::FileDialog::new().add_filter(EXTENSIONS_DESCRIPTION, &EXTENSIONS);
 
-                builder.pick_file().unwrap().to_str().unwrap().to_owned()
+                builder
+                    .pick_file()
+                    .ok_or(Error::NoRomSelected)?
+                    .to_str()
+                    .ok_or(Error::InvalidPath)?
+                    .to_owned()
             }
         };
 
@@ -50,12 +64,12 @@ impl App {
 
         gb.add_audio_callback(audio.get_callback());
 
-        Self {
+        Ok(Self {
             gb,
             rom_path,
             _audio: audio,
             gui: Gui::new(&cc.egui_ctx),
-        }
+        })
     }
 
     fn handle_input(&mut self, egui_ctx: &egui::Context) {

@@ -2,7 +2,7 @@ use super::structs::{Cycle, Ram};
 use crate::{
     components::{
         apu::Apu,
-        memory::{MemoryInterface, interrupts::Interrupts, speed_switch::SpeedSwitch},
+        memory::{MemoryInterface, interrupts::Interrupts, key1::Key1},
     },
     utils::events::Events,
 };
@@ -15,7 +15,7 @@ pub struct TestMemory {
     pub bus_address: u16,
     pub bus_data: Option<u8>,
 
-    speed_switch: SpeedSwitch,
+    key1: Key1,
     interrupts: Interrupts,
 }
 
@@ -76,11 +76,11 @@ impl MemoryInterface for TestMemory {
         unimplemented!()
     }
 
-    fn speed_switch(&self) -> &SpeedSwitch {
-        &self.speed_switch
+    fn key1(&self) -> &Key1 {
+        &self.key1
     }
 
-    fn speed_switch_mut(&mut self) -> &mut SpeedSwitch {
+    fn key1_mut(&mut self) -> &mut Key1 {
         unimplemented!()
     }
 

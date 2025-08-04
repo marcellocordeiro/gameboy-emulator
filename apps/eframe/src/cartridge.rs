@@ -14,7 +14,7 @@ pub fn load_battery<P: AsRef<Path>>(gb: &mut GameBoy, rom_path: P) {
         let file = std::fs::read(path).unwrap();
         gb.load_battery(file);
     } else {
-        log::info!("No battery file found.");
+        log::info!("No battery file was found.");
     }
 }
 

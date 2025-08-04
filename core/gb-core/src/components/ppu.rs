@@ -75,35 +75,33 @@ impl Ppu {
 
     #[must_use]
     pub fn with_device_model(device_model: DeviceModel) -> Self {
-        let vram = VideoRam::with_device_model(device_model);
-
         Self {
             lcdc: LcdControl::default(),
             stat: LcdStatus::default(),
-            scy: u8::default(),
-            scx: u8::default(),
-            ly: u8::default(),
-            lyc: u8::default(),
-            bgp: u8::default(),
-            obp0: u8::default(),
-            obp1: u8::default(),
-            wy: u8::default(),
-            wx: u8::default(),
-            window_internal_counter: u8::default(),
-            bcps: u8::default(),
+            scy: 0,
+            scx: 0,
+            ly: 0,
+            lyc: 0,
+            bgp: 0,
+            obp0: 0,
+            obp1: 0,
+            wy: 0,
+            wx: 0,
+            window_internal_counter: 0,
+            bcps: 0,
             bg_cram: ColorRam::default(),
-            ocps: u8::default(),
+            ocps: 0,
             obj_cram: ColorRam::default(),
-            opri: bool::default(),
-            stat_irq: bool::default(),
-            vblank_irq: bool::default(),
-            vram,
+            opri: false,
+            stat_irq: false,
+            vblank_irq: false,
+            vram: VideoRam::with_device_model(device_model),
             oam: Oam::default(),
             oam_dma: OamDma::default(),
-            vram_dma: VramDma::default(),
+            vram_dma: VramDma::with_device_model(device_model),
             mode: StatusMode::default(),
             mode_remaining_dots: StatusMode::default().dots(),
-            cgb_mode: bool::default(),
+            cgb_mode: device_model.is_cgb(),
             device_model,
             screen: Screen::default(),
             internal_screen: Screen::default(),
@@ -112,6 +110,7 @@ impl Ppu {
 
     pub fn set_cgb_mode(&mut self, value: bool) {
         self.vram.set_cgb_mode(value);
+        self.vram_dma.set_cgb_mode(value);
 
         self.cgb_mode = value;
     }
@@ -184,7 +183,6 @@ impl Ppu {
 
     pub(crate) fn write_bcpd(&mut self, value: u8) {
         // TODO: lock after bootrom is finished?
-
         if !device_is_cgb!(self) {
             return;
         }

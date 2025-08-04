@@ -1,3 +1,5 @@
+use crate::{constants::DeviceModel, utils::macros::in_cgb_mode};
+
 #[derive(Debug, Default, PartialEq, Eq)]
 pub enum DmaMode {
     #[default]
@@ -21,9 +23,24 @@ pub struct VramDma {
     pub hdma5: u8,
 
     pub mode: DmaMode,
+
+    cgb_mode: bool,
+    device_model: DeviceModel,
 }
 
 impl VramDma {
+    pub fn with_device_model(device_model: DeviceModel) -> Self {
+        Self {
+            cgb_mode: device_model.is_cgb(),
+            device_model,
+            ..Default::default()
+        }
+    }
+
+    pub fn set_cgb_mode(&mut self, value: bool) {
+        self.cgb_mode = value;
+    }
+
     /// HDMA1 (source high)
     pub fn read_hdma1(&self) -> u8 {
         0xFF
@@ -46,6 +63,10 @@ impl VramDma {
 
     /// HDMA5 (length/mode/start)
     pub fn read_hdma5(&self) -> u8 {
+        if !in_cgb_mode!(self) {
+            return 0xFF;
+        }
+
         match self.mode {
             DmaMode::Idle | DmaMode::General => 0xFF,
 

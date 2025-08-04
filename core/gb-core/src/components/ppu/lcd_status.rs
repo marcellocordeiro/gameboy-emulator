@@ -14,6 +14,7 @@ pub enum StatusMode {
 impl StatusMode {
     /// Warning: using min length Drawing mode and max length H-Blank mode.
     /// Mode length extensions are not supported yet.
+    #[must_use]
     pub const fn dots(self) -> usize {
         match self {
             Self::OamScan => 80,
