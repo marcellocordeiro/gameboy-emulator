@@ -44,6 +44,7 @@ impl LicenseeCode {
         (self.old_code() == 0x01) || (self.old_code() == 0x33 && self.new_code() == Some("01"))
     }
 
+    #[must_use]
     fn new_bytes_to_string(bytes: [u8; 2]) -> String {
         String::from_utf8_lossy(&bytes)
             .chars()

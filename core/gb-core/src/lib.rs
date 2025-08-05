@@ -53,6 +53,12 @@ impl GameBoy {
     pub fn load(&mut self, bootrom: Option<Vec<u8>>, rom: Vec<u8>) -> Result<(), CartridgeError> {
         self.rom = Some(Arc::<Box<[u8]>>::from(rom.into_boxed_slice()));
 
+        #[cfg(not(feature = "bootrom"))]
+        {
+            self.bootrom = bootrom.map(|data| Arc::<Box<[u8]>>::from(data.into_boxed_slice()));
+        }
+
+        #[cfg(feature = "bootrom")]
         if let Some(bootrom) = bootrom {
             self.bootrom = Some(Arc::<Box<[u8]>>::from(bootrom.into_boxed_slice()));
         } else if cfg!(feature = "bootrom") {
