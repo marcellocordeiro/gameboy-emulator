@@ -17,12 +17,16 @@ jobs:
         working-directory: ./apps/eframe
     steps:
       - uses: actions/checkout@v4
+      - uses: cargo-bins/cargo-binstall@main
 
       - name: Update Rust toolchain
         run: rustup update
 
+      - name: Install `wasm32-unknown-unknown` target
+        run: rustup target add wasm32-unknown-unknown
+
       - name: Install trunk
-        run: cargo install --locked trunk
+        run: cargo binstall trunk --no-confirm
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
