@@ -16,7 +16,7 @@ fn test_cgb_acid2() {
     let rom = std::fs::read(path).unwrap();
 
     let mut gb = GameBoy::new(DeviceModel::Cgb);
-    gb.load(None, rom).unwrap();
+    gb.load(None, rom.into()).unwrap();
 
     run_until_break(&mut gb).unwrap();
     validate_screenshot(&gb, name).unwrap();

@@ -70,7 +70,7 @@ fn test_interrupt_time() {
     let rom = std::fs::read(path).unwrap();
 
     let mut gb = GameBoy::new(DeviceModel::Cgb);
-    gb.load(None, rom).unwrap();
+    gb.load(None, rom.into()).unwrap();
 
     for _ in 0..1000 {
         gb.run_frame();

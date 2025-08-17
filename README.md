@@ -56,18 +56,16 @@ boop
 ## Repository structure
 
 - [`apps`](apps): Frontends in different languages and frameworks
-  - [`eframe`](apps/eframe): App written in Rust using eframe
+  - [`eframe`](apps/eframe-web): App written in Rust using eframe. Targets native and web
   - [`libretro`](apps/libretro): libretro core written in Rust
   - [`sdl3`](apps/sdl3): App written in C++ using SDL3 and Dear ImGui
   - [`swift`](apps/swift)
     - [`GameBoy`](apps/swift/GameBoy): App written in Swift using SwiftUI
     - [`GameBoyCore`](apps/swift/GameBoyCore): Swift package wrapping `gb-core-c`
-  - [`web`](apps/web): Web app written in TypeScript using React
 - [`core`](core): Core modules
   - [`gb-core`](core/gb-core): Main core written in Rust
   - [`gb-core-c`](core/gb-core-c): Generates a C static library. Contains a C/C++ header file with
     the function declarations
-  - [`gb-core-wasm`](core/gb-core-wasm): Generates a WebAssembly module
   - [`gb-opcode-info`](core/gb-opcode-info): Contains opcode info for use in other modules
 - [`external`](external): External dependencies
 
@@ -95,23 +93,10 @@ rustup default stable
 rustup toolchain install nightly # For rustfmt
 ```
 
-### wasm-pack
+### Trunk
 
 Required to build the web app.
-
-```shell
-# Install wasm-pack from source
-cargo install wasm-pack
-
-# Arch
-sudo pacman -S wasm-pack
-
-# macOS
-brew install wasm-pack
-
-# npm
-npm install -g wasm-pack
-```
+For more information, check the [Trunk docs](https://trunkrs.dev/guide/installation).
 
 ### SDL3
 
@@ -135,7 +120,8 @@ brew install sdl3
 cargo build
 
 # Web app
-pnpm build # Implicitly builds the Rust dependencies
+cd apps/eframe
+trunk build
 ```
 
 ## Running
@@ -149,8 +135,8 @@ cargo run -- roms/rom.gb
 RUST_LOG=info cargo run -- roms/rom.gb
 
 # Web app
-pnpm install
-pnpm dev
+cd apps/eframe
+trunk serve
 ```
 
 ## Tests

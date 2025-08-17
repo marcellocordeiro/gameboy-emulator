@@ -1,6 +1,8 @@
 use egui::{Button, Context, Ui, Window};
 use gb_core::GameBoy;
 
+use crate::gui::Gui;
+
 #[derive(Debug, Default)]
 pub struct Control {
     opened: bool,
@@ -9,37 +11,33 @@ pub struct Control {
 }
 
 impl Control {
-    pub fn toggle(&mut self) {
-        self.opened = !self.opened;
-    }
-
-    pub fn draw_manual_control_button(&mut self, ui: &mut Ui) {
-        let text = if self.manual_control {
+    pub fn draw_manual_control_button(ctx: &mut Gui, ui: &mut Ui) {
+        let text = if ctx.control.manual_control {
             "Manual"
         } else {
             "Auto"
         };
 
         if ui.button(text).clicked() {
-            self.manual_control = !self.manual_control;
+            ctx.control.manual_control = !ctx.control.manual_control;
         }
     }
 
-    pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
+    pub fn draw_widget_toggle_button(ctx: &mut Gui, ui: &mut Ui) {
         if ui.button("Control").clicked() {
-            self.toggle();
+            ctx.control.opened = !ctx.control.opened;
         }
     }
 
-    pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
-        if !self.opened {
+    pub fn draw(ctx: &mut Gui, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
+        if !ctx.control.opened {
             return;
         }
 
         Window::new("Control")
-            .open(&mut self.opened)
+            .open(&mut ctx.control.opened)
             .show(egui_ctx, |ui| {
-                let enable_buttons = self.manual_control && gb_ctx.cartridge_inserted();
+                let enable_buttons = ctx.control.manual_control && gb_ctx.cartridge_inserted();
 
                 if ui
                     .add_enabled(enable_buttons, Button::new("Step"))

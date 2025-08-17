@@ -1,9 +1,9 @@
 use egui::{
-    CentralPanel,
     Color32,
     Context,
     Image,
     TextureOptions,
+    Ui,
     epaint::{ColorImage, TextureHandle},
 };
 use gb_core::{
@@ -11,7 +11,7 @@ use gb_core::{
     constants::{SCREEN_HEIGHT, SCREEN_PIXELS_SIZE, SCREEN_WIDTH, ScreenPixels},
 };
 
-use crate::utils::scaling::integer_scaling_size;
+use crate::{gui::Gui, utils::scaling::integer_scaling_size};
 
 pub struct ScreenArea {
     pixels: Box<ScreenPixels>,
@@ -39,15 +39,14 @@ impl ScreenArea {
         }
     }
 
-    pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
-        self.update_texture(gb_ctx);
+    pub fn draw(ctx: &mut Gui, ui: &mut Ui, gb_ctx: &GameBoy) {
+        ctx.screen_area.update_texture(gb_ctx);
 
-        CentralPanel::default().show(egui_ctx, |ui| {
-            ui.centered_and_justified(|ui| {
-                let size = integer_scaling_size(ui.available_size(), self.texture.size_vec2());
+        ui.centered_and_justified(|ui| {
+            let size =
+                integer_scaling_size(ui.available_size(), ctx.screen_area.texture.size_vec2());
 
-                ui.add(Image::from_texture(&self.texture).fit_to_exact_size(size));
-            });
+            ui.add(Image::from_texture(&ctx.screen_area.texture).fit_to_exact_size(size));
         });
     }
 

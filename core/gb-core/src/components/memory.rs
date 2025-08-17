@@ -102,15 +102,13 @@ impl MemoryInterface for Memory {
             0x0000..=0x3FFF => {
                 self.cartridge
                     .as_ref()
-                    .expect("Cartridge should be loaded")
-                    .read_rom_bank_0(address)
+                    .map_or(0xFF, |c| c.read_rom_bank_0(address))
             }
 
             0x4000..=0x7FFF => {
                 self.cartridge
                     .as_ref()
-                    .expect("Cartridge should be loaded")
-                    .read_rom_bank_x(address)
+                    .map_or(0xFF, |c| c.read_rom_bank_x(address))
             }
 
             0x8000..=0x9FFF => self.ppu.read_vram(address),
@@ -453,11 +451,7 @@ impl Memory {
         }
     }
 
-    pub(crate) fn load(
-        &mut self,
-        bootrom: Option<Arc<Box<[u8]>>>,
-        rom: Arc<Box<[u8]>>,
-    ) -> Result<(), Error> {
+    pub(crate) fn load(&mut self, bootrom: Option<Arc<[u8]>>, rom: Arc<[u8]>) -> Result<(), Error> {
         let cartridge = Cartridge::new(rom)?;
 
         if let Some(bootrom) = bootrom {

@@ -14,18 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./apps/web
+        working-directory: ./apps/eframe
     steps:
       - uses: actions/checkout@v4
 
       - name: Update Rust toolchain
         run: rustup update
 
-      - name: Install pnpm
-        run: npm install -g pnpm@latest
-
-      - name: Install wasm-pack
-        run: npm install -g wasm-pack@latest
+      - name: Install trunk
+        run: cargo install --locked trunk
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest

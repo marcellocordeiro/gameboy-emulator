@@ -15,7 +15,7 @@ where
     F: FnOnce(&mut GameBoy) -> Result<(), Error>,
 {
     let mut gb = GameBoy::new(device_model);
-    gb.load(None, rom.to_vec())?;
+    gb.load(None, rom.into())?;
 
     runner(&mut gb)?;
 

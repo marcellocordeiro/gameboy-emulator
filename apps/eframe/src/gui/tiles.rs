@@ -18,7 +18,7 @@ use gb_core::{
     },
 };
 
-use crate::utils::scaling::integer_scaling_size;
+use crate::{gui::Gui, utils::scaling::integer_scaling_size};
 
 pub struct Tiles {
     opened: bool,
@@ -53,33 +53,29 @@ impl Tiles {
         }
     }
 
-    pub fn toggle(&mut self) {
-        self.opened = !self.opened;
-    }
-
-    pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
+    pub fn draw_widget_toggle_button(ctx: &mut Gui, ui: &mut Ui) {
         if ui.button("Tiles").clicked() {
-            self.toggle();
+            ctx.tiles.opened = !ctx.tiles.opened;
         }
     }
 
-    pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
-        if !self.opened {
+    pub fn draw(ctx: &mut Gui, egui_ctx: &Context, gb_ctx: &GameBoy) {
+        if !ctx.tiles.opened {
             return;
         }
 
-        self.update_texture(gb_ctx);
+        ctx.tiles.update_texture(gb_ctx);
 
         Window::new("Tiles")
-            .open(&mut self.opened)
+            .open(&mut ctx.tiles.opened)
             .default_size(Self::DEFAULT_SIZE)
             .min_width(Self::DEFAULT_SIZE.x)
             .min_height(Self::DEFAULT_SIZE.y)
             .show(egui_ctx, |ui| {
-                let size = integer_scaling_size(ui.available_size(), self.texture.size_vec2());
+                let size = integer_scaling_size(ui.available_size(), ctx.tiles.texture.size_vec2());
 
                 ui.centered_and_justified(|ui| {
-                    ui.add(Image::from_texture(&self.texture).fit_to_exact_size(size));
+                    ui.add(Image::from_texture(&ctx.tiles.texture).fit_to_exact_size(size));
                 });
             });
     }

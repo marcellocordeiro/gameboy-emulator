@@ -83,7 +83,7 @@ impl RetroCore for Emulator {
             }
         };
 
-        let result = self.gb.load(None, rom);
+        let result = self.gb.load(None, rom.into());
 
         match result {
             Ok(()) => {

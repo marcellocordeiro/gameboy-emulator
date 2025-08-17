@@ -9,14 +9,13 @@ use cpal::{
     traits::{DeviceTrait, HostTrait, StreamTrait},
 };
 use gb_core::components::apu::{AUDIO_BUFFER_SIZE, AUDIO_SAMPLE_RATE, Callback, StereoSample};
-use log::{error, info};
 
-type Sender<T> = mpsc::SyncSender<T>;
-type Receiver<T> = mpsc::Receiver<T>;
+type Sender = mpsc::SyncSender<StereoSample>;
+type Receiver = mpsc::Receiver<StereoSample>;
 
 pub struct Audio {
     _stream: cpal::Stream,
-    sender: Sender<StereoSample>,
+    sender: Sender,
 }
 
 impl Audio {
@@ -34,14 +33,19 @@ impl Audio {
         let sender = self.sender.clone();
 
         Box::new(move |buffer| {
-            for sample in buffer {
-                sender.send(*sample).unwrap();
+            for chunk in buffer.chunks_exact(2) {
+                #[cfg(not(target_arch = "wasm32"))]
+                sender.send([chunk[0], chunk[1]]).unwrap();
+
+                // Bad
+                #[cfg(target_arch = "wasm32")]
+                sender.try_send([chunk[0], chunk[1]]).ok();
             }
         })
     }
 }
 
-fn stream_setup_for() -> (cpal::Stream, Sender<StereoSample>) {
+fn stream_setup_for() -> (cpal::Stream, Sender) {
     let (_host, device, config) = host_device_setup();
 
     let (stream, sender) = match config.sample_format() {
@@ -66,23 +70,21 @@ fn host_device_setup() -> (cpal::Host, cpal::Device, cpal::SupportedStreamConfig
     let host = cpal::default_host();
 
     let device = host.default_output_device().unwrap();
-    info!("Output device : {}", device.name().unwrap());
+    log::info!("Output device : {}", device.name().unwrap());
 
     let mut configs = device.supported_output_configs().unwrap();
+
     let config = configs
-        .next()
+        .find(|c| c.channels() == 2)
         .unwrap()
         .with_sample_rate(SampleRate(AUDIO_SAMPLE_RATE as u32));
 
-    info!("Output config : {config:?}");
+    log::info!("Output config : {config:?}");
 
     (host, device, config)
 }
 
-fn make_stream<T>(
-    device: &cpal::Device,
-    config: &cpal::StreamConfig,
-) -> (cpal::Stream, Sender<StereoSample>)
+fn make_stream<T>(device: &cpal::Device, config: &cpal::StreamConfig) -> (cpal::Stream, Sender)
 where
     T: SizedSample + FromSample<f32>,
 {
@@ -94,7 +96,7 @@ where
         .build_output_stream(
             config,
             move |output: &mut [T], _| process_frame(output, num_channels, &receiver),
-            |err| error!("Unable to build output sound stream: {err}"),
+            |err| log::error!("Unable to build output sound stream: {err}"),
             None,
         )
         .unwrap();
@@ -102,11 +104,8 @@ where
     (stream, sender)
 }
 
-fn process_frame<SampleType>(
-    output: &mut [SampleType],
-    num_channels: usize,
-    receiver: &Receiver<StereoSample>,
-) where
+fn process_frame<SampleType>(output: &mut [SampleType], num_channels: usize, receiver: &Receiver)
+where
     SampleType: Sample + FromSample<f32>,
 {
     for frame in output.chunks_mut(num_channels) {

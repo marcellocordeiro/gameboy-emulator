@@ -24,14 +24,11 @@ pub enum BootromError {
 
 #[derive(Default)]
 pub struct Bootrom {
-    data: Option<Arc<Box<[u8]>>>,
+    data: Option<Arc<[u8]>>,
 }
 
 impl Bootrom {
-    pub fn try_new(
-        device_model: DeviceModel,
-        bootrom: Arc<Box<[u8]>>,
-    ) -> Result<Self, BootromError> {
+    pub fn try_new(device_model: DeviceModel, bootrom: Arc<[u8]>) -> Result<Self, BootromError> {
         let is_valid = match device_model {
             DeviceModel::Dmg => bootrom.len() == DMG_BOOTROM_SIZE,
             DeviceModel::Cgb => bootrom.len() == CGB_BOOTROM_SIZE,

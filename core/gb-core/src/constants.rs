@@ -20,11 +20,14 @@ pub const TILES_PER_LINE: usize = 16;
 pub type ScreenPixels = [u8; SCREEN_PIXELS_SIZE];
 pub type TileDataFrameCgb = [u8; TILE_DATA_FRAME_SIZE_CGB];
 
-pub const EXTENSIONS_DESCRIPTION: &str = "Game Boy/Game Boy Color ROM";
-pub const EXTENSIONS: [&str; 2] = ["gb", "gbc"];
+pub const BOOTROM_EXTENSIONS_DESCRIPTION: &str = "Game Boy bootrom";
+pub const BOOTROM_EXTENSIONS: [&str; 2] = ["gb", "gbc"];
+
+pub const ROM_EXTENSIONS_DESCRIPTION: &str = "Game Boy/Game Boy Color ROM";
+pub const ROM_EXTENSIONS: [&str; 2] = ["gb", "gbc"];
 
 pub const BATTERY_EXTENSIONS_DESCRIPTION: &str = "Game Boy/Game Boy Color Battery";
-pub const BATTERY_EXTENSIONS: [&str; 1] = ["sav"];
+pub const BATTERY_EXTENSIONS: [&str; 1] = ["srm"];
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum DeviceModel {

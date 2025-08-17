@@ -1,30 +1,28 @@
 use egui::{Context, FontId, RichText, Ui, Window};
 use gb_core::{GameBoy, components::memory::MemoryInterface as _};
 
+use crate::gui::Gui;
+
 #[derive(Debug, Default)]
 pub struct State {
     opened: bool,
 }
 
 impl State {
-    pub fn toggle(&mut self) {
-        self.opened = !self.opened;
-    }
-
-    pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
+    pub fn draw_widget_toggle_button(ctx: &mut Gui, ui: &mut Ui) {
         if ui.button("State").clicked() {
-            self.toggle();
+            ctx.state.opened = !ctx.state.opened;
         }
     }
 
     #[allow(clippy::many_single_char_names)]
-    pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
-        if !self.opened {
+    pub fn draw(ctx: &mut Gui, egui_ctx: &Context, gb_ctx: &GameBoy) {
+        if !ctx.state.opened {
             return;
         }
 
         Window::new("State")
-            .open(&mut self.opened)
+            .open(&mut ctx.state.opened)
             .show(egui_ctx, |ui| {
                 let interrupts = gb_ctx.memory().interrupts();
                 let registers = gb_ctx.cpu().registers();

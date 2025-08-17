@@ -2,6 +2,7 @@ use egui::{Context, Ui, Window, epaint::Color32};
 use gb_core::{GameBoy, utils::color::Color};
 
 use super::components::color_rect::color_rect;
+use crate::gui::Gui;
 
 #[derive(Debug, Default)]
 pub struct Palettes {
@@ -9,23 +10,19 @@ pub struct Palettes {
 }
 
 impl Palettes {
-    pub fn toggle(&mut self) {
-        self.opened = !self.opened;
-    }
-
-    pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
+    pub fn draw_widget_toggle_button(ctx: &mut Gui, ui: &mut Ui) {
         if ui.button("Palettes").clicked() {
-            self.toggle();
+            ctx.palettes.opened = !ctx.palettes.opened;
         }
     }
 
-    pub fn draw(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
-        if !self.opened {
+    pub fn draw(ctx: &mut Gui, egui_ctx: &Context, gb_ctx: &GameBoy) {
+        if !ctx.palettes.opened {
             return;
         }
 
         Window::new("Palettes")
-            .open(&mut self.opened)
+            .open(&mut ctx.palettes.opened)
             .show(egui_ctx, |ui| {
                 let bg_palettes = &gb_ctx.memory().ppu.bg_cram;
                 let obj_palettes = &gb_ctx.memory().ppu.obj_cram;

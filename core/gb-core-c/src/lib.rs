@@ -1,3 +1,5 @@
+use std::ffi::{c_float, c_void};
+
 use button::Button;
 use gb_core::{
     GameBoy,
@@ -53,14 +55,14 @@ pub unsafe extern "C" fn gameboy_reset(gb_ptr: *mut GameBoy) {
 pub unsafe extern "C" fn gameboy_load(gb_ptr: *mut GameBoy, bootrom: Bootrom, rom: Rom) -> bool {
     let gb = unsafe { &mut *gb_ptr };
 
-    let rom = unsafe { rom.to_slice().map(<[u8]>::to_vec) };
-    let bootrom = unsafe { bootrom.to_slice().map(<[u8]>::to_vec) };
+    let rom = unsafe { rom.to_slice() };
+    let bootrom = unsafe { bootrom.to_slice() };
 
     let Some(rom) = rom else {
         return false;
     };
 
-    gb.load(bootrom, rom).unwrap();
+    gb.load(bootrom.map(Into::into), rom.into()).unwrap();
 
     true
 }
@@ -125,6 +127,23 @@ pub unsafe extern "C" fn gameboy_draw_into_frame_rgba8888(gb_ptr: *mut GameBoy, 
     };
 
     gb.draw_into_frame_rgba8888(slice);
+}
+
+/// # Safety
+///
+/// 1. The Game Boy core pointer cannot be null.
+/// 2. `userdata` should always be valid.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn gameboy_add_audio_callback(
+    gb_ptr: *mut GameBoy,
+    userdata: *mut c_void,
+    callback: extern "C" fn(*mut c_void, *const c_float, usize),
+) {
+    let gb = unsafe { &mut *gb_ptr };
+
+    gb.add_audio_callback(Box::new(move |buffer| {
+        callback(userdata, buffer.as_ptr(), buffer.len());
+    }));
 }
 
 pub mod button;

@@ -4,7 +4,7 @@ use super::MbcInterface;
 use crate::{components::cartridge::info::Info, constants::ONE_KIB};
 
 pub struct NoMbc {
-    rom: Arc<Box<[u8]>>,
+    rom: Arc<[u8]>,
     ram: Box<[u8]>,
 }
 

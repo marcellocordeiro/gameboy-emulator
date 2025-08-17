@@ -5,13 +5,13 @@ use info::Info;
 use mbc::{Mbc, MbcInterface};
 
 pub struct Cartridge {
-    pub rom: Arc<Box<[u8]>>,
+    pub rom: Arc<[u8]>,
     pub info: Info,
     pub mbc: Mbc,
 }
 
 impl Cartridge {
-    pub fn new(rom: Arc<Box<[u8]>>) -> Result<Self, CartridgeError> {
+    pub fn new(rom: Arc<[u8]>) -> Result<Self, CartridgeError> {
         let info = Info::new(rom.clone())?;
         let mbc = Mbc::new(&info);
 

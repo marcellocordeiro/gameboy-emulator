@@ -7,7 +7,7 @@ use crate::{
 };
 
 pub struct Mbc3 {
-    rom: Arc<Box<[u8]>>,
+    rom: Arc<[u8]>,
     ram: Box<[u8]>,
 
     ram_enable: bool,

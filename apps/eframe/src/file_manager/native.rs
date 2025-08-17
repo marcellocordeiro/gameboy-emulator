@@ -1,0 +1,35 @@
+use std::path::Path;
+
+use gb_core::{GameBoy, constants::BATTERY_EXTENSIONS};
+
+pub fn load_battery<P: AsRef<Path>>(gb: &mut GameBoy, rom_path: P) -> Result<(), std::io::Error> {
+    let rom_path = rom_path.as_ref();
+
+    let [extension] = BATTERY_EXTENSIONS;
+    let path = Path::new(rom_path).with_extension(extension);
+
+    if !path.try_exists()? {
+        log::info!("No battery file was found.");
+        return Ok(());
+    }
+
+    log::info!("Loading battery file from {}", path.display());
+    let file = std::fs::read(path)?;
+    gb.load_battery(file);
+
+    Ok(())
+}
+
+pub fn save_battery<P: AsRef<Path>>(gb: &GameBoy, rom_path: P) -> Result<(), std::io::Error> {
+    let Some(battery) = gb.get_battery() else {
+        return Ok(());
+    };
+
+    log::info!("Saving battery file...");
+
+    let rom_path = rom_path.as_ref();
+    let [extension] = BATTERY_EXTENSIONS;
+    let path = Path::new(rom_path).with_extension(extension);
+
+    std::fs::write(path, battery)
+}

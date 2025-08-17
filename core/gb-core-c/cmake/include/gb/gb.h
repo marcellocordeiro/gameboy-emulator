@@ -52,6 +52,7 @@ void gameboy_set_joypad_button(struct GameBoy* gb_ptr, enum Button button, bool 
 void gameboy_joypad_button_up(struct GameBoy* gb_ptr, enum Button button);
 void gameboy_joypad_button_down(struct GameBoy* gb_ptr, enum Button button);
 void gameboy_draw_into_frame_rgba8888(struct GameBoy* gb_ptr, uint8_t* frame);
+void gameboy_add_audio_callback(struct GameBoy* gb_ptr, void* userdata, void (*callback)(void*, const float*, size_t));
 #ifdef __cplusplus
 }
 #endif

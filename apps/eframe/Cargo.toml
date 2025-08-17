@@ -10,12 +10,27 @@ workspace = true
 bootrom = ["gb-core/bootrom"]
 
 [dependencies]
-clap = { workspace = true }
-cpal = { workspace = true }
-eframe = { workspace = true, features = ["wgpu", "wayland"] }
-egui = { workspace = true }
-env_logger = { workspace = true }
 gb-core = { workspace = true }
+
+cpal = { workspace = true }
+eframe = { workspace = true }
+egui = { workspace = true }
 log = { workspace = true }
 rfd = { workspace = true }
 thiserror = { workspace = true }
+wgpu = { workspace = true }
+ringbuf = { workspace = true }
+
+# Native
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+clap = { workspace = true }
+env_logger = { workspace = true }
+pollster = { workspace = true }
+
+# Web
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+console_error_panic_hook = { workspace = true }
+console_log = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+web-sys = { workspace = true }

@@ -12,6 +12,7 @@ format-cpp:
 
 lint *ARGS:
   cargo clippy --all-targets {{ARGS}}
+  cargo clippy -p gb-eframe --target wasm32-unknown-unknown {{ARGS}}
 
 fix *ARGS: (lint "--fix" ARGS) format
 
@@ -19,7 +20,6 @@ update:
   cargo upgrade -i
   cargo update
   vcpkg x-update-baseline
-  just ./apps/web/ update
 
 test *ARGS:
   cargo test {{ARGS}}

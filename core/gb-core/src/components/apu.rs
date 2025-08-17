@@ -8,11 +8,12 @@ use crate::{
 };
 
 pub const AUDIO_SAMPLE_RATE: usize = 44100;
-pub const AUDIO_BUFFER_SIZE: usize = 512;
+pub const AUDIO_BUFFER_SIZE: usize = 4096;
 const AUDIO_CYCLES_PER_SAMPLE: usize = CPU_CLOCK_RATE / AUDIO_SAMPLE_RATE; // 95
 
 pub type StereoSample = [f32; 2];
-pub type Callback = dyn Fn(&[StereoSample]);
+pub type AudioBuffer = [f32; AUDIO_BUFFER_SIZE];
+pub type Callback = dyn Fn(&[f32]);
 
 bitflags! {
     #[derive(Debug, Copy, Clone)]
@@ -56,7 +57,7 @@ pub struct Apu {
     hpf_left: HighPassFilter,
     hpf_right: HighPassFilter,
 
-    buffer: [StereoSample; AUDIO_BUFFER_SIZE],
+    buffer: AudioBuffer,
     buffer_position: usize,
     callback: Option<Box<Callback>>,
 
@@ -85,7 +86,7 @@ impl Default for Apu {
             double_speed: false,
             hpf_left: HighPassFilter::default(),
             hpf_right: HighPassFilter::default(),
-            buffer: [[0.0, 0.0]; AUDIO_BUFFER_SIZE],
+            buffer: [0.0; AUDIO_BUFFER_SIZE],
             buffer_position: 0,
             callback: None,
             ui_channel_overrides: Channels::all(),
@@ -410,18 +411,19 @@ impl Apu {
     }
 
     fn push_sample(&mut self) {
-        let mixed = self.mix();
+        let [left, right] = self.mix();
 
         // Implies audio is enabled. Otherwise, skip adding samples to the buffer.
         let Some(callback) = &self.callback else {
             return;
         };
 
-        self.buffer[self.buffer_position] = mixed;
-        self.buffer_position += 1;
+        self.buffer[self.buffer_position] = left;
+        self.buffer[self.buffer_position + 1] = right;
+        self.buffer_position += 2;
 
         if self.buffer_position >= AUDIO_BUFFER_SIZE {
-            callback(self.buffer.as_ref());
+            callback(&self.buffer[0..self.buffer_position]);
             self.buffer_position = 0;
         }
     }

@@ -8,8 +8,8 @@ pub struct GameBoy {
     cpu: Cpu,
     memory: Memory,
 
-    rom: Option<Arc<Box<[u8]>>>,
-    bootrom: Option<Arc<Box<[u8]>>>,
+    rom: Option<Arc<[u8]>>,
+    bootrom: Option<Arc<[u8]>>,
 
     pub device_model: DeviceModel,
 }
@@ -50,24 +50,30 @@ impl GameBoy {
         }
     }
 
-    pub fn load(&mut self, bootrom: Option<Vec<u8>>, rom: Vec<u8>) -> Result<(), CartridgeError> {
-        self.rom = Some(Arc::<Box<[u8]>>::from(rom.into_boxed_slice()));
+    pub fn load(
+        &mut self,
+        bootrom: Option<Arc<[u8]>>,
+        rom: Arc<[u8]>,
+    ) -> Result<(), CartridgeError> {
+        self.rom = Some(rom);
 
         #[cfg(not(feature = "bootrom"))]
         {
-            self.bootrom = bootrom.map(|data| Arc::<Box<[u8]>>::from(data.into_boxed_slice()));
+            self.bootrom = bootrom;
         }
 
         #[cfg(feature = "bootrom")]
         if let Some(bootrom) = bootrom {
-            self.bootrom = Some(Arc::<Box<[u8]>>::from(bootrom.into_boxed_slice()));
+            // Use the provided bootrom by the frontend
+            self.bootrom = Some(bootrom);
         } else if cfg!(feature = "bootrom") {
+            // Use the bundled bootrom
             let bootrom = match self.device_model {
-                DeviceModel::Dmg => include_bytes!("../../../roms/bootrom/dmg_boot.bin").to_vec(),
-                DeviceModel::Cgb => include_bytes!("../../../roms/bootrom/cgb_boot.bin").to_vec(),
+                DeviceModel::Dmg => include_bytes!("../../../roms/bootrom/dmg_boot.bin").as_slice(),
+                DeviceModel::Cgb => include_bytes!("../../../roms/bootrom/cgb_boot.bin").as_slice(),
             };
 
-            self.bootrom = Some(Arc::<Box<[u8]>>::from(bootrom.into_boxed_slice()));
+            self.bootrom = Some(bootrom.into());
         } else {
             self.bootrom = None;
         }

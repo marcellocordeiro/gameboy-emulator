@@ -11,7 +11,7 @@ use super::error::CartridgeError;
 use crate::constants::ONE_KIB;
 
 pub struct Info {
-    pub rom: Arc<Box<[u8]>>,
+    pub rom: Arc<[u8]>,
 
     // Header info
     pub title: Title,
@@ -25,7 +25,7 @@ pub struct Info {
 }
 
 impl Info {
-    pub fn new(rom: Arc<Box<[u8]>>) -> Result<Self, CartridgeError> {
+    pub fn new(rom: Arc<[u8]>) -> Result<Self, CartridgeError> {
         let header = header::from_rom(&rom)?;
 
         let title = Title::from_header(header)?;

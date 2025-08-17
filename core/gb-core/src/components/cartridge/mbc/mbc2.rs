@@ -4,7 +4,7 @@ use super::MbcInterface;
 use crate::components::cartridge::info::{Info, rom_banks::ROM_BANK_SIZE};
 
 pub struct Mbc2 {
-    rom: Arc<Box<[u8]>>,
+    rom: Arc<[u8]>,
     ram: Box<[u8; 512]>,
 
     rom_bank_mask: usize,
