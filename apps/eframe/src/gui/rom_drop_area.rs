@@ -47,7 +47,7 @@ impl RomDropArea {
             ui.painter().text(
                 rect.center(),
                 Align2::CENTER_CENTER,
-                "Drop the Game Bot ROM here",
+                "Drop the Game Boy ROM here",
                 TextStyle::Heading.resolve(&ctx.style()),
                 Color32::WHITE,
             );
