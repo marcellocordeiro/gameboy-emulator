@@ -57,16 +57,16 @@ impl GameBoy {
     ) -> Result<(), CartridgeError> {
         self.rom = Some(rom);
 
-        #[cfg(not(feature = "bootrom"))]
+        #[cfg(not(feature = "bundled-bootrom"))]
         {
             self.bootrom = bootrom;
         }
 
-        #[cfg(feature = "bootrom")]
+        #[cfg(feature = "bundled-bootrom")]
         if let Some(bootrom) = bootrom {
             // Use the provided bootrom by the frontend
             self.bootrom = Some(bootrom);
-        } else if cfg!(feature = "bootrom") {
+        } else if cfg!(feature = "bundled-bootrom") {
             // Use the bundled bootrom
             let bootrom = match self.device_model {
                 DeviceModel::Dmg => include_bytes!("../../../roms/bootrom/dmg_boot.bin").as_slice(),

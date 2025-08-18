@@ -1,3 +1,4 @@
+use eframe::Storage;
 use egui::ViewportCommand;
 use gb_core::{GameBoy, constants::DeviceModel, utils::button::Button};
 
@@ -31,13 +32,13 @@ impl App {
         };
 
         if let Some(rom_file) = &app.file_manager.rom {
-            app.load_from_file(rom_file.clone());
+            app.load_from_file(cc.storage, rom_file.clone());
         }
 
         app
     }
 
-    fn handle_events(&mut self, egui_ctx: &egui::Context) {
+    fn handle_events(&mut self, storage: Option<&dyn Storage>, egui_ctx: &egui::Context) {
         egui_ctx.input(|i| {
             use egui::Key;
 
@@ -62,17 +63,15 @@ impl App {
                     self.file_manager.bootrom = Some(file);
                 }
 
-                Event::RomSelected(file) => self.load_from_file(file),
+                Event::RomSelected(file) => self.load_from_file(storage, file),
             }
         }
     }
 
-    fn load_from_file(&mut self, file: FileInfo) {
+    fn load_from_file(&mut self, storage: Option<&dyn Storage>, file: FileInfo) {
         let bootrom = self.file_manager.bootrom.as_ref().map(|b| b.data.clone());
 
         let rom = file.data.clone();
-
-        self.file_manager.rom = Some(file);
 
         let audio = Audio::new();
 
@@ -80,22 +79,23 @@ impl App {
         self.audio = Some(audio);
 
         self.gb.load(bootrom, rom).unwrap();
-        self.file_manager.load_battery(&mut self.gb).unwrap();
+        FileManager::load_battery(&mut self.gb, storage, &file);
+        self.file_manager.rom = Some(file);
     }
 }
 
 impl eframe::App for App {
-    fn update(&mut self, egui_ctx: &egui::Context, _eframe_frame: &mut eframe::Frame) {
+    fn update(&mut self, egui_ctx: &egui::Context, eframe_frame: &mut eframe::Frame) {
         if !self.gui.control.manual_control && self.gb.cartridge_inserted() {
             self.gb.run_frame();
             egui_ctx.request_repaint();
         }
 
-        self.handle_events(egui_ctx);
+        self.handle_events(eframe_frame.storage(), egui_ctx);
         self.gui.render(egui_ctx, &mut self.gb);
     }
 
-    fn on_exit(&mut self) {
-        self.file_manager.save_battery(&self.gb).unwrap();
+    fn save(&mut self, storage: &mut dyn Storage) {
+        FileManager::save_battery(&self.gb, Some(storage), self.file_manager.rom.as_ref());
     }
 }

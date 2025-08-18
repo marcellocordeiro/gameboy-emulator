@@ -126,7 +126,7 @@ testcases_mooneye! {
 
 // Acceptance
 // Bootrom is unsupported
-#[cfg(not(feature = "bootrom"))]
+#[cfg(not(feature = "bundled-bootrom"))]
 testcases_mooneye! {
     boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb.gb");
     // boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb.gb");
@@ -156,7 +156,7 @@ testcases_mooneye! {
 
 // Misc
 // CGB only tests (requires bootrom).
-#[cfg(feature = "bootrom")]
+#[cfg(feature = "bundled-bootrom")]
 testcases_mooneye! {
     // boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb", cgb);
     boot_hwio_c("misc/boot_hwio-C.gb", cgb); // Why is this failing without the bootrom?

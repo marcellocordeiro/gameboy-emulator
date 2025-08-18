@@ -7,7 +7,7 @@ edition.workspace = true
 workspace = true
 
 [features]
-bootrom = []
+bundled-bootrom = []
 
 [dependencies]
 arrayvec = { workspace = true }

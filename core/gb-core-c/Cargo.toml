@@ -10,7 +10,7 @@ workspace = true
 crate-type = ["staticlib"]
 
 [features]
-bootrom = ["gb-core/bootrom"]
+bundled-bootrom = ["gb-core/bundled-bootrom"]
 
-[dependencies.gb-core]
-path = "../gb-core"
+[dependencies]
+gb-core = { workspace = true }
