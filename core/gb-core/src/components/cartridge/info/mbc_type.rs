@@ -1,4 +1,4 @@
-use super::{header::Header, ram_banks};
+use super::header::Header;
 use crate::components::cartridge::error::CartridgeError;
 
 pub const MBC_TYPE_ADDRESS: usize = 0x0147;
@@ -10,7 +10,6 @@ pub enum MbcType {
     Mbc2,
     // Mmm01,
     Mbc3,
-    Mbc30,
     Mbc5,
     // Mbc6,
     // Mbc7,
@@ -23,12 +22,11 @@ pub enum MbcType {
 impl MbcType {
     pub fn from_header(header: &Header) -> Result<Self, CartridgeError> {
         let cartridge_type_code = header[MBC_TYPE_ADDRESS];
-        let ram_banks = ram_banks::from_header(header)?;
 
-        Self::from_code_and_ram_banks(cartridge_type_code, ram_banks)
+        Self::from_code_and_ram_banks(cartridge_type_code)
     }
 
-    fn from_code_and_ram_banks(code: u8, ram_banks: usize) -> Result<Self, CartridgeError> {
+    fn from_code_and_ram_banks(code: u8) -> Result<Self, CartridgeError> {
         Ok(match code {
             // $00 ROM ONLY
             // $08 ROM+RAM
@@ -54,7 +52,6 @@ impl MbcType {
             // $11 MBC3
             // $12 MBC3+RAM
             // $13 MBC3+RAM+BATTERY
-            0x0F..=0x13 if ram_banks == 8 => Self::Mbc30, // 8 banks (64 KiB)
             0x0F..=0x13 => Self::Mbc3,
 
             // $19 MBC5
@@ -82,7 +79,7 @@ impl MbcType {
 
             // $FF HuC1+RAM+BATTERY
             // 0xFF => Self::Huc1,
-            code => return Err(CartridgeError::InvalidMbcCode { code }),
+            code => Err(CartridgeError::InvalidMbcCode { code })?,
         })
     }
 }
@@ -95,7 +92,6 @@ impl std::fmt::Display for MbcType {
             Self::Mbc2 => "MBC2",
             // Self::Mmm01 => "MMM01",
             Self::Mbc3 => "MBC3",
-            Self::Mbc30 => "MBC30",
             Self::Mbc5 => "MBC5",
             // Self::Mbc6 => "MBC6",
             // Self::Mbc7 => "MBC7",

@@ -77,10 +77,10 @@ impl MbcInterface for Mbc1 {
 
     fn load_battery(&mut self, file: Vec<u8>) {
         if self.ram.is_empty() {
-            log::warn!("This cartridge does not have a battery backed RAM.");
+            log::warn!("This cartridge does not have a battery backed RAM");
             return;
         } else if self.ram.len() != file.len() {
-            log::error!("Size mismatch.");
+            log::error!("Size mismatch");
             return;
         }
 
@@ -126,12 +126,7 @@ impl MbcInterface for Mbc1 {
             0x4000..=0x5FFF => self.bank_hi = value & 0b11,
             0x6000..=0x7FFF => self.mode = (value & 0b1) != 0,
 
-            _ => {
-                unreachable!(
-                    "[mbc1.rs] Invalid write: ({:#06x}) = {:#04x}",
-                    address, value
-                )
-            }
+            _ => unreachable!("Invalid write: ({address:#06x}) = {value:#04x}"),
         }
     }
 

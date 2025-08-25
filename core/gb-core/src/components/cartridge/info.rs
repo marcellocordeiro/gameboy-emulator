@@ -3,12 +3,13 @@ use std::sync::Arc;
 use cgb_flag::CgbFlag;
 use compatibility_palettes::CompatibilityPalettes;
 use extra_features::ExtraFeature;
+use itertools::Itertools;
 use licensee_code::LicenseeCode;
 use mbc_type::MbcType;
 use title::Title;
 
 use super::error::CartridgeError;
-use crate::constants::ONE_KIB;
+use crate::components::cartridge::info::rom_banks::ROM_BANK_SIZE;
 
 pub struct Info {
     pub rom: Arc<[u8]>,
@@ -28,36 +29,31 @@ impl Info {
     pub fn new(rom: Arc<[u8]>) -> Result<Self, CartridgeError> {
         let header = header::from_rom(&rom)?;
 
-        let title = Title::from_header(header)?;
-
+        let title = Title::from_header(header);
         let cgb_flag = CgbFlag::from_header(header);
-
-        let licensee_code = LicenseeCode::from_header(header)?;
-
+        let licensee_code = LicenseeCode::from_header(header);
         let rom_banks = rom_banks::from_header(header)?;
         let ram_banks = ram_banks::from_header(header)?;
         let mbc_type = MbcType::from_header(header)?;
-        let extra_features = ExtraFeature::from_header(header);
+        let extra_features = ExtraFeature::from_header(header)?;
         let sgb_flag = sgb_flag::from_header(header);
 
         // Print debug info. Maybe show this elsewhere?
-        log::info!("**Cartridge info**");
-        log::info!("Title: {}", title.as_string());
-        log::info!("Type: {mbc_type}");
+        log::info!(target: "cartridge", "**Cartridge info**");
+        log::info!(target: "cartridge", "Title: {title}");
+        log::info!(target: "cartridge", "MBC type: {mbc_type}");
         log::info!(
-            "Extra features: {}",
-            extra_features
-                .iter()
-                .map(ExtraFeature::to_string)
-                .collect::<Box<[String]>>()
-                .join("+")
+            target: "cartridge",
+            "Extra features: {extra_features}",
+            extra_features = extra_features.iter().format("+")
         );
-        log::info!("ROM banks: {rom_banks}");
-        log::info!("RAM banks: {ram_banks}");
-        log::info!("CGB flag: {cgb_flag}");
-        log::info!("SGB flag: {sgb_flag:?}");
-        log::info!("Old licensee code: {:#04X}", licensee_code.old_code());
+        log::info!(target: "cartridge", "ROM size: {rom_banks} banks");
+        log::info!(target: "cartridge", "RAM banks: {ram_banks} banks");
+        log::info!(target: "cartridge", "CGB flag: {cgb_flag}");
+        log::info!(target: "cartridge", "SGB flag: {sgb_flag}");
+        log::info!(target: "cartridge", "Old licensee code: {:#04X}", licensee_code.old_code());
         log::info!(
+            target: "cartridge",
             "New licensee code: {}",
             licensee_code.new_code().unwrap_or("--")
         );
@@ -79,6 +75,16 @@ impl Info {
     }
 
     fn validate(&self) {
+        let actual_rom_size = self.rom.len();
+        let expected_rom_size = self.rom_banks * ROM_BANK_SIZE;
+
+        if actual_rom_size != expected_rom_size {
+            log::warn!(
+                "ROM length = {actual_rom_size} KiB, with ROM banks = {rom_banks}. Expected {expected_rom_size} KiB",
+                rom_banks = self.rom_banks,
+            );
+        }
+
         // MBC2 always contains RAM, even when `ram_banks == 0`.
         if self.mbc_type != MbcType::Mbc2 {
             let has_ram = self.extra_features.contains(&ExtraFeature::Ram);
@@ -88,17 +94,10 @@ impl Info {
                 log::warn!("RAM banks = {} but has_ram = {}", self.ram_banks, has_ram);
             }
 
-            assert!(has_ram || !has_battery);
+            if has_battery && !has_ram {
+                log::warn!("Supports battery backed RAM but does not have RAM");
+            }
         }
-
-        assert_eq!(
-            self.rom.len(),
-            self.rom_banks * (16 * ONE_KIB),
-            "ROM length = {} KiB, with ROM banks = {}. Expected {} KiB.",
-            self.rom.len(),
-            self.rom.len() / ONE_KIB,
-            self.rom_banks * 16
-        );
     }
 
     #[must_use]

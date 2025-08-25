@@ -4,6 +4,7 @@ use crate::utils::button::Button;
 const JOYP_UNUSED_MASK: u8 = 0b1100_0000;
 const JOYP_BUTTONS_MASK: u8 = 0b0000_1111;
 
+#[derive(Default)]
 pub struct Joypad {
     joyp: u8,
     buttons: u8,
@@ -11,19 +12,12 @@ pub struct Joypad {
     pub(crate) irq: bool,
 }
 
-impl Default for Joypad {
-    fn default() -> Self {
-        Self {
-            joyp: 0b0000_1111,
-            buttons: 0x00,
-
-            irq: false,
-        }
-    }
-}
-
 impl Joypad {
     // 0xFF00
+
+    pub fn skip_bootrom(&mut self, is_cgb: bool) {
+        self.joyp = if is_cgb { 0xFF } else { 0b1111 };
+    }
 
     pub(crate) fn read(&self) -> u8 {
         self.joyp | JOYP_UNUSED_MASK
@@ -84,13 +78,16 @@ mod tests {
 
     #[test]
     fn test_initial_read() {
-        let joypad = Joypad::default();
+        let mut joypad = Joypad::default();
+        joypad.skip_bootrom(false);
+
         assert_eq!(joypad.read(), 0b1100_1111);
     }
 
     #[test]
     fn test_invalid_write() {
         let mut joypad = Joypad::default();
+        joypad.skip_bootrom(false);
 
         let initial_state = (joypad.joyp, joypad.buttons, joypad.irq);
 
@@ -104,6 +101,7 @@ mod tests {
     #[test]
     fn test_a_button_press() {
         let mut joypad = Joypad::default();
+        joypad.skip_bootrom(false);
 
         // All up
         assert_eq!(joypad.read(), 0b1100_1111);

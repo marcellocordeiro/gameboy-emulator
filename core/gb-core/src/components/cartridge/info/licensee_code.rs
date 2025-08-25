@@ -1,5 +1,4 @@
 use super::header::Header;
-use crate::components::cartridge::error::CartridgeError;
 
 const OLD_LICENSEE_CODE_ADDRESS: usize = 0x014B;
 
@@ -12,21 +11,21 @@ pub struct LicenseeCode {
 }
 
 impl LicenseeCode {
-    pub fn from_header(header: &Header) -> Result<Self, CartridgeError> {
+    #[must_use]
+    pub fn from_header(header: &Header) -> Self {
         let old_code = header[OLD_LICENSEE_CODE_ADDRESS];
 
         let new_code = if old_code == 0x33 {
-            let new_bytes: [u8; 2] = header
-                [NEW_LICENSEE_CODE_ADDRESS_BEGIN..=NEW_LICENSEE_CODE_ADDRESS_END]
+            let new_bytes = header[NEW_LICENSEE_CODE_ADDRESS_BEGIN..=NEW_LICENSEE_CODE_ADDRESS_END]
                 .try_into()
-                .map_err(|_err| CartridgeError::InvalidRom)?;
+                .unwrap();
 
-            Some(Self::new_bytes_to_string(new_bytes))
+            Some(Self::bytes_to_string(new_bytes))
         } else {
             None
         };
 
-        Ok(Self { old_code, new_code })
+        Self { old_code, new_code }
     }
 
     #[must_use]
@@ -45,8 +44,8 @@ impl LicenseeCode {
     }
 
     #[must_use]
-    fn new_bytes_to_string(bytes: [u8; 2]) -> String {
-        String::from_utf8_lossy(&bytes)
+    fn bytes_to_string(bytes: &[u8]) -> String {
+        String::from_utf8_lossy(bytes)
             .chars()
             .map(|c| if c.is_alphanumeric() { c } else { '?' })
             .collect()
@@ -62,14 +61,14 @@ mod tests {
     fn test_old_licensee_code() {
         // 0x01
         let header = generate_header(0x01, [0, 0]);
-        let licensee_code = LicenseeCode::from_header(&header).unwrap();
+        let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.old_code(), 0x01);
         assert!(licensee_code.is_nintendo());
 
         // 0x42 (not Nintendo)
         let header = generate_header(0x42, [0, 0]);
-        let licensee_code = LicenseeCode::from_header(&header).unwrap();
+        let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.old_code(), 0x42);
         assert!(!licensee_code.is_nintendo());
@@ -78,19 +77,19 @@ mod tests {
     #[test]
     fn test_new_licensee_code() {
         let header = generate_header(0x33, [b'0', b'1']);
-        let licensee_code = LicenseeCode::from_header(&header).unwrap();
+        let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.new_code(), Some("01"));
         assert!(licensee_code.is_nintendo());
 
         let header = generate_header(0x33, [b'4', b'2']);
-        let licensee_code = LicenseeCode::from_header(&header).unwrap();
+        let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.new_code(), Some("42"));
         assert!(!licensee_code.is_nintendo());
 
         let header = generate_header(0x33, [b'A', b'B']);
-        let licensee_code = LicenseeCode::from_header(&header).unwrap();
+        let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.new_code(), Some("AB"));
         assert!(!licensee_code.is_nintendo());
@@ -99,12 +98,12 @@ mod tests {
     #[test]
     fn test_invalid_new_licensee_code() {
         let header = generate_header(0x42, [1, 2]);
-        let licensee_code = LicenseeCode::from_header(&header).unwrap();
+        let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.new_code(), None);
 
         let header = generate_header(0x42, [1, b'2']);
-        let licensee_code = LicenseeCode::from_header(&header).unwrap();
+        let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.new_code(), None);
     }
@@ -112,12 +111,12 @@ mod tests {
     #[test]
     fn test_weird_new_licensee_code() {
         let header = generate_header(0x33, [1, 2]);
-        let licensee_code = LicenseeCode::from_header(&header).unwrap();
+        let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.new_code(), Some("??"));
 
         let header = generate_header(0x33, [1, b'2']);
-        let licensee_code = LicenseeCode::from_header(&header).unwrap();
+        let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.new_code(), Some("?2"));
     }

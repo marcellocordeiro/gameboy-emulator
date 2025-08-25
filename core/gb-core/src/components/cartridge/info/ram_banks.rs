@@ -15,22 +15,18 @@ pub const RAM_BANKS_CODE_ADDRESS: usize = 0x0149;
 ///
 /// Note: each bank is 8 KiB.
 pub fn from_header(header: &Header) -> Result<usize, CartridgeError> {
-    let code = header[RAM_BANKS_CODE_ADDRESS];
-
-    from_code(code)
+    from_code(header[RAM_BANKS_CODE_ADDRESS])
 }
 
 fn from_code(code: u8) -> Result<usize, CartridgeError> {
-    let result = match code {
+    Ok(match code {
         0x00 => 0,
-        0x01 => 1, // Unofficial.
+        0x01 => 1, // Unofficial
         0x02 => 1,
         0x03 => 4,
         0x04 => 16,
         0x05 => 8,
 
-        _ => return Err(CartridgeError::UnsupportedRamSize { code }),
-    };
-
-    Ok(result)
+        _ => Err(CartridgeError::UnsupportedRamSize { code })?,
+    })
 }

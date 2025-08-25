@@ -18,13 +18,11 @@ pub const ROM_BANKS_CODE_ADDRESS: usize = 0x0148;
 ///
 /// Note: each bank is 16 KiB.
 pub fn from_header(header: &Header) -> Result<usize, CartridgeError> {
-    let code = header[ROM_BANKS_CODE_ADDRESS];
-
-    from_code(code)
+    from_code(header[ROM_BANKS_CODE_ADDRESS])
 }
 
 fn from_code(code: u8) -> Result<usize, CartridgeError> {
-    let result = match code {
+    Ok(match code {
         0x00 => 2,   // 32 KiB
         0x01 => 4,   // 64 KiB
         0x02 => 8,   // 128 KiB
@@ -35,10 +33,8 @@ fn from_code(code: u8) -> Result<usize, CartridgeError> {
         0x07 => 256, // 4 MiB
         0x08 => 512, // 8 MiB
 
-        _ => return Err(CartridgeError::UnsupportedRomSize { code }),
-    };
-
-    Ok(result)
+        _ => Err(CartridgeError::UnsupportedRomSize { code })?,
+    })
 }
 
 #[cfg(test)]

@@ -23,7 +23,7 @@ pub struct Interrupts {
 
 impl Interrupts {
     pub fn skip_bootrom(&mut self) {
-        self.flags = InterruptBits::from_bits_truncate(0xE1);
+        self.write_flags(0xE1);
     }
 
     pub fn has_queued_irq(&self) -> bool {

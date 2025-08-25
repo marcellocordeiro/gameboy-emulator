@@ -12,9 +12,7 @@ pub enum CgbFlag {
 impl CgbFlag {
     #[must_use]
     pub fn from_header(header: &Header) -> Self {
-        let code = header[CGB_FLAG_ADDRESS];
-
-        Self::from_code(code)
+        Self::from_code(header[CGB_FLAG_ADDRESS])
     }
 
     #[must_use]

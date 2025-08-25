@@ -18,6 +18,9 @@ pub enum CartridgeError {
 
     #[error("Unsupported number of RAM banks (code = {code:#04X}).")]
     UnsupportedRamSize { code: u8 },
+
+    #[error("Unsupported extra features (code = {code:#04X}).")]
+    UnsupportedExtraFeatures { code: u8 },
 }
 
 #[cfg(test)]

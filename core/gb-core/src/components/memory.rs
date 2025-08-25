@@ -475,6 +475,7 @@ impl Memory {
         self.bootrom.unmap();
         self.apu.skip_bootrom();
         self.ppu.skip_bootrom(cartridge);
+        self.joypad.skip_bootrom(self.device_model.is_cgb());
         self.timer.skip_bootrom();
         self.interrupts.skip_bootrom();
     }

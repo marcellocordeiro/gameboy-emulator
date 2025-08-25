@@ -6,7 +6,7 @@ use crate::components::cartridge::info::title::Title;
 
 /// **First step**
 ///
-/// Used to obtain the index of the palette id.
+/// Used to get the index of the palette id.
 pub fn get_palette_id_index(title: &Title) -> Option<usize> {
     let title_checksum = title.checksum();
 

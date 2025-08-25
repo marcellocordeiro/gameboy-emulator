@@ -1,6 +1,6 @@
 use enum_dispatch::enum_dispatch;
 
-use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc5::Mbc5, mbc30::Mbc30, no_mbc::NoMbc};
+use self::{mbc1::Mbc1, mbc2::Mbc2, mbc3::Mbc3, mbc5::Mbc5, no_mbc::NoMbc};
 use super::info::{Info, mbc_type::MbcType};
 
 #[enum_dispatch]
@@ -23,7 +23,6 @@ pub enum Mbc {
     Mbc1,
     Mbc2,
     Mbc3,
-    Mbc30,
     Mbc5,
 }
 
@@ -34,7 +33,6 @@ impl Mbc {
             MbcType::Mbc1 => Mbc1::new(cartridge_info).into(),
             MbcType::Mbc2 => Mbc2::new(cartridge_info).into(),
             MbcType::Mbc3 => Mbc3::new(cartridge_info).into(),
-            MbcType::Mbc30 => Mbc30::new(cartridge_info).into(),
             MbcType::Mbc5 => Mbc5::new(cartridge_info).into(),
         }
     }
@@ -43,6 +41,5 @@ impl Mbc {
 mod mbc1;
 mod mbc2;
 mod mbc3;
-mod mbc30;
 mod mbc5;
 mod no_mbc;

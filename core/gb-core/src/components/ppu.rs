@@ -119,8 +119,11 @@ impl Ppu {
         self.lcdc = LcdControl::from_bits_truncate(0x91);
         self.bgp = 0xFC;
 
-        // Handle DMG palettes.
         if device_is_cgb!(self) {
+            self.bcps = 0b1000_1000;
+            self.ocps = 0b1001_0000;
+
+            // Handle DMG palettes
             if !cartridge.info.cgb_flag.has_cgb_support() {
                 self.opri = true;
 

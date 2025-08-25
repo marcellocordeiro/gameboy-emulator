@@ -13,6 +13,7 @@ bundled-bootrom = []
 arrayvec = { workspace = true }
 bitflags = { workspace = true }
 enum_dispatch = { workspace = true }
+itertools = { workspace = true }
 log = { workspace = true }
 paste = { workspace = true }
 thiserror = { workspace = true }

@@ -2,6 +2,7 @@
 name = "gb-eframe"
 version.workspace = true
 edition.workspace = true
+repository.workspace = true
 
 [lints]
 workspace = true
@@ -10,11 +11,10 @@ workspace = true
 bundled-bootrom = ["gb-core/bundled-bootrom"]
 
 [dependencies]
+cpal = { workspace = true, features = ["wasm-bindgen"] }
+eframe = { workspace = true, features = ["persistence", "wgpu", "wayland"] }
+egui = { workspace = true, features = ["default_fonts"] }
 gb-core = { workspace = true }
-
-cpal = { workspace = true }
-eframe = { workspace = true }
-egui = { workspace = true }
 log = { workspace = true }
 rfd = { workspace = true }
 wgpu = { workspace = true }

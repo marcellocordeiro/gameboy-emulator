@@ -1,4 +1,5 @@
 use super::{header::Header, mbc_type::MBC_TYPE_ADDRESS};
+use crate::components::cartridge::error::CartridgeError;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExtraFeature {
@@ -10,62 +11,84 @@ pub enum ExtraFeature {
 }
 
 impl ExtraFeature {
-    #[must_use]
-    pub fn from_header(header: &Header) -> Box<[Self]> {
+    pub fn from_header(header: &Header) -> Result<Box<[Self]>, CartridgeError> {
         let code = header[MBC_TYPE_ADDRESS];
 
-        Self::from_code(code)
+        Self::from_code(code).map(Into::into)
     }
 
-    fn from_code(code: u8) -> Box<[Self]> {
-        match code {
+    fn from_code(code: u8) -> Result<&'static [Self], CartridgeError> {
+        Ok(match code {
+            // $00 ROM ONLY
             // $08 ROM+RAM
             // $09 ROM+RAM+BATTERY
-            0x08 => vec![Self::Ram],
-            0x09 => vec![Self::Ram, Self::Battery],
+            0x00 => &[],
+            0x08 => &[Self::Ram],
+            0x09 => &[Self::Ram, Self::Battery],
 
+            // $01 MBC1
             // $02 MBC1+RAM
             // $03 MBC1+RAM+BATTERY
-            0x02 => vec![Self::Ram],
-            0x03 => vec![Self::Ram, Self::Battery],
+            0x01 => &[],
+            0x02 => &[Self::Ram],
+            0x03 => &[Self::Ram, Self::Battery],
 
+            // $05 MBC2
             // $06 MBC2+BATTERY (RAM is implied)
-            0x06 => vec![Self::Battery],
+            0x05 => &[],
+            0x06 => &[Self::Battery],
 
+            // $0B MMM01
             // $0C MMM01+RAM
             // $0D MMM01+RAM+BATTERY
-            0x0C => vec![Self::Ram],
-            0x0D => vec![Self::Ram, Self::Battery],
+            0x0B => &[],
+            0x0C => &[Self::Ram],
+            0x0D => &[Self::Ram, Self::Battery],
 
             // $0F MBC3+TIMER+BATTERY
             // $10 MBC3+TIMER+RAM+BATTERY
+            // $11 MBC3
             // $12 MBC3+RAM
             // $13 MBC3+RAM+BATTERY
-            0x0F => vec![Self::Timer, Self::Battery],
-            0x10 => vec![Self::Timer, Self::Ram, Self::Battery],
-            0x12 => vec![Self::Ram],
-            0x13 => vec![Self::Ram, Self::Battery],
+            0x0F => &[Self::Timer, Self::Battery],
+            0x10 => &[Self::Timer, Self::Ram, Self::Battery],
+            0x11 => &[],
+            0x12 => &[Self::Ram],
+            0x13 => &[Self::Ram, Self::Battery],
 
+            // $19 MBC5
             // $1A MBC5+RAM
             // $1B MBC5+RAM+BATTERY
             // $1C MBC5+RUMBLE
             // $1D MBC5+RUMBLE+RAM
             // $1E MBC5+RUMBLE+RAM+BATTERY
-            0x1A => vec![Self::Ram],
-            0x1B => vec![Self::Ram, Self::Battery],
-            0x1C => vec![Self::Rumble],
-            0x1D => vec![Self::Rumble, Self::Ram],
-            0x1E => vec![Self::Rumble, Self::Ram, Self::Battery],
+            0x19 => &[],
+            0x1A => &[Self::Ram],
+            0x1B => &[Self::Ram, Self::Battery],
+            0x1C => &[Self::Rumble],
+            0x1D => &[Self::Rumble, Self::Ram],
+            0x1E => &[Self::Rumble, Self::Ram, Self::Battery],
+
+            // $20 MBC6
+            0x20 => &[],
 
             // $22 MBC7+SENSOR+RUMBLE+RAM+BATTERY
-            0x22 => vec![Self::Sensor, Self::Rumble, Self::Ram, Self::Battery],
+            0x22 => &[Self::Sensor, Self::Rumble, Self::Ram, Self::Battery],
+
+            // $FC POCKET CAMERA
+            0xFC => &[],
+
+            // $FD BANDAI TAMA5
+            0xFD => &[],
+
+            // $FE HuC3
+            0xF3 => &[],
 
             // $FF HuC1+RAM+BATTERY
-            0xFF => vec![Self::Ram, Self::Battery],
+            0xFF => &[Self::Ram, Self::Battery],
 
-            _ => vec![],
-        }
-        .into_boxed_slice()
+            _ => Err(CartridgeError::UnsupportedExtraFeatures { code })?,
+        })
     }
 }
 

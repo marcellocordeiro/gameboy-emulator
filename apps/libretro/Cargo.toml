@@ -13,8 +13,7 @@ crate-type = ["cdylib"]
 bundled-bootrom = ["gb-core/bundled-bootrom"]
 
 [dependencies]
-gb-core = { workspace = true }
-
 env_logger = { workspace = true }
+gb-core = { workspace = true }
 libretro-rs = { workspace = true }
 log = { workspace = true }

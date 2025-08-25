@@ -145,7 +145,7 @@ testcases_mooneye! {
     // boot_div_cgb0("misc/boot_div-cgb0.gb"); // CGB0 is unsupported
 
     // boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb"); // CGB only. Tested separately
-    // boot_hwio_c("misc/boot_hwio-C.gb"); // CGB only. Tested separately
+    boot_hwio_c("misc/boot_hwio-C.gb", cgb); // CGB only
 
     // boot_regs_a("misc/boot_regs-A.gb"); // AGS is unsupported
 
@@ -156,11 +156,10 @@ testcases_mooneye! {
 
 // Misc
 // CGB only tests (requires bootrom).
-#[cfg(feature = "bundled-bootrom")]
-testcases_mooneye! {
-    // boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb", cgb);
-    boot_hwio_c("misc/boot_hwio-C.gb", cgb); // Why is this failing without the bootrom?
-}
+// #[cfg(feature = "bundled-bootrom")]
+// testcases_mooneye! {
+//     // boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb", cgb);
+// }
 
 // From: https://github.com/Gekkio/mooneye-test-suite
 //

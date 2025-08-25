@@ -44,7 +44,7 @@ impl MbcInterface for Mbc2 {
         self.ram = if let Ok(file) = file.try_into() {
             file
         } else {
-            log::error!("Error loading the battery backed RAM.");
+            log::error!("Error loading the battery backed RAM");
             return;
         }
     }

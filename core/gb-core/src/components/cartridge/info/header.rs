@@ -11,7 +11,6 @@ pub type Header = [u8; HEADER_SIZE];
 
 pub fn from_rom(rom: &[u8]) -> Result<&Header, CartridgeError> {
     rom.get(HEADER_START..=HEADER_END)
-        .ok_or(CartridgeError::InvalidRom)?
-        .try_into()
-        .map_err(|_| CartridgeError::InvalidRom)
+        .and_then(|slice| slice.try_into().ok())
+        .ok_or(CartridgeError::InvalidRom)
 }
