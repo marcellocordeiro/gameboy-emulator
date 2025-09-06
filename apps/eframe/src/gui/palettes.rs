@@ -34,8 +34,8 @@ impl Palettes {
                                 for color_id in 0..4 {
                                     let raw_color = bg_palettes.get_color_rgb555(palette_number, color_id);
 
-                                    let raw_pixel = Color::from_rgb555_u16_raw(raw_color);
-                                    let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
+                                    let raw_pixel = Color::from_rgb555(raw_color);
+                                    let pixel = Color::from_rgb555_accurate(raw_color);
 
                                     let rgb = Color32::from_rgb(pixel.red, pixel.green, pixel.blue);
                                     let tooltip = format!(
@@ -56,8 +56,8 @@ impl Palettes {
                                 for color_id in 0..4 {
                                     let raw_color = obj_palettes.get_color_rgb555(palette_number, color_id);
 
-                                    let raw_pixel = Color::from_rgb555_u16_raw(raw_color);
-                                    let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
+                                    let raw_pixel = Color::from_rgb555(raw_color);
+                                    let pixel = Color::from_rgb555_accurate(raw_color);
 
                                     let rgb = Color32::from_rgb(pixel.red, pixel.green, pixel.blue);
                                     let tooltip = format!(

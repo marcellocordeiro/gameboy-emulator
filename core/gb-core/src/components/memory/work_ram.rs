@@ -1,4 +1,4 @@
-use crate::{DeviceModel, constants::ONE_KIB, utils::macros::in_cgb_mode};
+use crate::{DeviceModel, constants::ONE_KIB, utils::macros::in_cgb_mode_or_bootrom};
 
 const DMG_WRAM_BANKS: usize = 2;
 const CGB_WRAM_BANKS: usize = 8;
@@ -16,6 +16,7 @@ pub struct WorkRam {
     data: Box<[u8]>,
     svbk: u8, // (CGB) WRAM Bank Select
 
+    locked_bootrom: bool,
     cgb_mode: bool,
     device_model: DeviceModel,
 }
@@ -23,9 +24,9 @@ pub struct WorkRam {
 impl WorkRam {
     // 0xC000 ~ 0xDFFF
 
-    // 0xC000 ~ 0xCFFF: bank 0.
-    // 0xD000 ~ 0xDFFF: Bank 1. In CGB mode, switchable bank 1~7.
-    // 0xE000 ~ 0xFDFF: ECHO RAM (prohibited area, but mirrors 0xC000 ~ 0xDDFF).
+    // 0xC000 ~ 0xCFFF: bank 0
+    // 0xD000 ~ 0xDFFF: Bank 1. In CGB mode, switchable bank 1~7
+    // 0xE000 ~ 0xFDFF: ECHO RAM (prohibited area, but mirrors 0xC000 ~ 0xDDFF)
 
     pub fn with_device_model(device_model: DeviceModel) -> Self {
         let size = match device_model {
@@ -36,6 +37,7 @@ impl WorkRam {
         Self {
             data: vec![0; size].into_boxed_slice(),
             svbk: 0,
+            locked_bootrom: false,
             cgb_mode: device_model.is_cgb(),
             device_model,
         }
@@ -43,6 +45,10 @@ impl WorkRam {
 
     pub fn set_cgb_mode(&mut self, value: bool) {
         self.cgb_mode = value;
+    }
+
+    pub fn handle_locked_bootrom(&mut self) {
+        self.locked_bootrom = true;
     }
 
     pub fn read(&self, address: u16) -> u8 {
@@ -71,27 +77,27 @@ impl WorkRam {
         }
     }
 
-    /// Warning: CGB model only.
+    /// Warning: CGB model only
     pub fn read_svbk(&self) -> u8 {
-        if !in_cgb_mode!(self) {
+        if !in_cgb_mode_or_bootrom!(self) {
             return 0xFF;
         }
 
-        0b1111_1000 | self.svbk
+        self.svbk | 0b1111_1000
     }
 
-    /// Warning: CGB model only.
+    /// Warning: CGB model only
     pub fn write_svbk(&mut self, value: u8) {
-        if !in_cgb_mode!(self) {
+        if !in_cgb_mode_or_bootrom!(self) {
             return;
         }
 
         self.svbk = value & 0b111;
     }
 
-    /// Warning: CGB model only.
+    /// Warning: CGB model only
     fn bank_offset(&self) -> usize {
-        if !in_cgb_mode!(self) {
+        if !in_cgb_mode_or_bootrom!(self) {
             return 0;
         }
 
@@ -103,6 +109,7 @@ impl WorkRam {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::utils::macros::in_cgb_mode;
 
     #[test]
     fn test_my_sanity_dmg() {

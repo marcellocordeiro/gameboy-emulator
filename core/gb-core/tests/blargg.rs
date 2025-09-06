@@ -16,11 +16,11 @@ testcases_blargg_serial! {
     cpu_instrs_09_op_r_r("cpu_instrs/individual/09-op r,r.gb");
     cpu_instrs_10_bit_ops("cpu_instrs/individual/10-bit ops.gb");
     cpu_instrs_11_op_a_hl("cpu_instrs/individual/11-op a,(hl).gb");
-    // cpu_instrs_all("cpu_instrs/cpu_instrs.gb"); // Very slow.
+    // cpu_instrs_all("cpu_instrs/cpu_instrs.gb"); // Very slow
 
     instr_timing("instr_timing/instr_timing.gb");
 
-    // mem_timing("mem_timing/mem_timing.gb"); // TODO: no programmatic way of stopping.
+    // mem_timing("mem_timing/mem_timing.gb"); // TODO: no programmatic way of stopping
 }
 
 testcases_blargg_memory! {

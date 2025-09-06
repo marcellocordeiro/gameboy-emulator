@@ -39,7 +39,7 @@ impl GameBoy {
             return;
         };
 
-        self.memory.load(self.bootrom.clone(), rom.clone()).unwrap();
+        self.memory.load(rom.clone(), self.bootrom.clone()).unwrap();
 
         if self.bootrom.is_none() {
             self.cpu.skip_bootrom();
@@ -57,25 +57,27 @@ impl GameBoy {
     ) -> Result<(), CartridgeError> {
         self.rom = Some(rom);
 
+        #[cfg(feature = "bundled-bootrom")]
+        {
+            // Use the provided bootrom by the frontend
+            self.bootrom = bootrom.or_else(|| {
+                // Or use the bundled bootrom if the feature is enabled
+                let bootrom = match self.device_model {
+                    DeviceModel::Dmg => {
+                        include_bytes!("../../../roms/bootrom/dmg_boot.bin").as_slice()
+                    }
+                    DeviceModel::Cgb => {
+                        include_bytes!("../../../roms/bootrom/cgb_boot.bin").as_slice()
+                    }
+                };
+
+                Some(bootrom.into())
+            });
+        }
+
         #[cfg(not(feature = "bundled-bootrom"))]
         {
             self.bootrom = bootrom;
-        }
-
-        #[cfg(feature = "bundled-bootrom")]
-        if let Some(bootrom) = bootrom {
-            // Use the provided bootrom by the frontend
-            self.bootrom = Some(bootrom);
-        } else if cfg!(feature = "bundled-bootrom") {
-            // Use the bundled bootrom
-            let bootrom = match self.device_model {
-                DeviceModel::Dmg => include_bytes!("../../../roms/bootrom/dmg_boot.bin").as_slice(),
-                DeviceModel::Cgb => include_bytes!("../../../roms/bootrom/cgb_boot.bin").as_slice(),
-            };
-
-            self.bootrom = Some(bootrom.into());
-        } else {
-            self.bootrom = None;
         }
 
         self.reset();

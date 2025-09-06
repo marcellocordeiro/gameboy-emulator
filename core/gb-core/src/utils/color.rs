@@ -1,22 +1,52 @@
+#[repr(C)]
 #[derive(Debug, Default, Clone, Copy)]
 pub struct Color {
-    pub red: u8,
-    pub green: u8,
+    pub alpha: u8,
     pub blue: u8,
+    pub green: u8,
+    pub red: u8,
 }
 
 impl Color {
     pub const CGB_SYSTEM_DEFAULT: Self = Self::WHITE_RGB555;
-    // TODO: use more accurate colors
-    pub const DMG_PALETTE: [u8; 4] = [0xFF, 0xAA, 0x55, 0x00];
-    pub const DMG_SYSTEM_DEFAULT: Self = Self::WHITE;
+    pub const DMG_GREEN_PALETTE: [Self; 4] = [
+        Self::from_u32(0x9A9E3F),
+        Self::from_u32(0x496B22),
+        Self::from_u32(0x0E450B),
+        Self::from_u32(0x1B2A09),
+    ];
+    pub const DMG_GREY_PALETTE: [Self; 4] = [
+        Self::from_u8(0xFF),
+        Self::from_u8(0xAA),
+        Self::from_u8(0x55),
+        Self::from_u8(0x00),
+    ];
+    pub const DMG_SYSTEM_DEFAULT: Self = Self::DMG_GREEN_PALETTE[0];
     pub const WHITE: Self = Self::new(0xFF, 0xFF, 0xFF);
-    pub const WHITE_RGB555: Self =
-        Self::from_rgb555_u16_to_rgba8888((0x7F << 10) | (0x7F << 5) | 0x7F);
+    pub const WHITE_RGB555: Self = Self::from_rgb555_accurate((0x7F << 10) | (0x7F << 5) | 0x7F);
 
     #[must_use]
     pub const fn new(red: u8, green: u8, blue: u8) -> Self {
-        Self { red, green, blue }
+        Self {
+            alpha: 0xFF,
+            blue,
+            green,
+            red,
+        }
+    }
+
+    #[must_use]
+    pub const fn from_u8(value: u8) -> Self {
+        Self::new(value, value, value)
+    }
+
+    #[must_use]
+    pub const fn from_u32(value: u32) -> Self {
+        let red = (value >> 16) as u8;
+        let green = (value >> 8) as u8;
+        let blue = value as u8;
+
+        Self::new(red, green, blue)
     }
 
     #[must_use]
@@ -26,13 +56,12 @@ impl Color {
 
     #[must_use]
     pub const fn from_dmg_color_id(color_id: u8) -> Self {
-        let color = Self::DMG_PALETTE[(color_id & 0b11) as usize];
+        Self::DMG_GREEN_PALETTE[(color_id & 0b11) as usize]
+    }
 
-        let red = color;
-        let green = color;
-        let blue = color;
-
-        Self::new(red, green, blue)
+    #[must_use]
+    pub const fn from_dmg_grey_color_id(color_id: u8) -> Self {
+        Self::DMG_GREY_PALETTE[(color_id & 0b11) as usize]
     }
 
     #[must_use]
@@ -43,16 +72,16 @@ impl Color {
     }
 
     #[must_use]
-    pub const fn from_rgb555_u16_raw(value: u16) -> Self {
-        let red = value & 0b1_1111;
-        let green = (value >> 5) & 0b1_1111;
-        let blue = (value >> 10) & 0b1_1111;
+    pub const fn from_rgb555(value: u16) -> Self {
+        let red = (value & 0b1_1111) as u8;
+        let green = ((value >> 5) & 0b1_1111) as u8;
+        let blue = ((value >> 10) & 0b1_1111) as u8;
 
-        Self::new(red as u8, green as u8, blue as u8)
+        Self::new(red, green, blue)
     }
 
     #[must_use]
-    pub const fn from_rgb555_u16_to_rgba8888(value: u16) -> Self {
+    pub const fn from_rgb555_accurate(value: u16) -> Self {
         let raw_red = value & 0b1_1111;
         let raw_green = (value >> 5) & 0b1_1111;
         let raw_blue = (value >> 10) & 0b1_1111;

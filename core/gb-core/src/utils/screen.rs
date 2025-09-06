@@ -27,7 +27,7 @@ impl Screen {
             frame[i * 4] = pixel.red;
             frame[(i * 4) + 1] = pixel.green;
             frame[(i * 4) + 2] = pixel.blue;
-            frame[(i * 4) + 3] = 0xFF;
+            frame[(i * 4) + 3] = pixel.alpha;
         }
     }
 
@@ -36,7 +36,7 @@ impl Screen {
             frame[i * 4] = pixel.blue;
             frame[(i * 4) + 1] = pixel.green;
             frame[(i * 4) + 2] = pixel.red;
-            frame[(i * 4) + 3] = 0xFF;
+            frame[(i * 4) + 3] = pixel.alpha;
         }
     }
 }

@@ -125,11 +125,11 @@ testcases_mooneye! {
 }
 
 // Acceptance
-// Bootrom is unsupported
+// Bootrom is unsupported (the timer isn't accurate enough yet)
 #[cfg(not(feature = "bundled-bootrom"))]
 testcases_mooneye! {
-    boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb.gb");
-    // boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb.gb");
+    boot_div_dmg_abc_mgb("acceptance/boot_div-dmgABCmgb.gb", dmg);
+    boot_hwio_dmg_abc_mgb("acceptance/boot_hwio-dmgABCmgb.gb", dmg);
 }
 
 // TODO: compare screenshots
@@ -141,25 +141,17 @@ testcases_mooneye! {
 // Misc
 testcases_mooneye! {
     // boot_div_a("misc/boot_div-A.gb"); // AGS is unsupported
-
     // boot_div_cgb0("misc/boot_div-cgb0.gb"); // CGB0 is unsupported
 
-    // boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb"); // CGB only. Tested separately
-    boot_hwio_c("misc/boot_hwio-C.gb", cgb); // CGB only
+    // boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb", cgb);
+    boot_hwio_c("misc/boot_hwio-C.gb", cgb);
 
     // boot_regs_a("misc/boot_regs-A.gb"); // AGS is unsupported
 
-    boot_regs_cgb("misc/boot_regs-cgb.gb", cgb); // CGB only
-    // bits_unused_hwio_c("misc/bits/unused_hwio-C.gb");  // TODO: why is this failing?
-    // ppu_vblank_stat_intr_c("misc/ppu/vblank_stat_intr-C.gb");
+    boot_regs_cgb("misc/boot_regs-cgb.gb", cgb);
+    bits_unused_hwio_c("misc/bits/unused_hwio-C.gb", cgb);
+    // ppu_vblank_stat_intr_c("misc/ppu/vblank_stat_intr-C.gb", cgb);
 }
-
-// Misc
-// CGB only tests (requires bootrom).
-// #[cfg(feature = "bundled-bootrom")]
-// testcases_mooneye! {
-//     // boot_div_cgb_abcde("misc/boot_div-cgbABCDE.gb", cgb);
-// }
 
 // From: https://github.com/Gekkio/mooneye-test-suite
 //

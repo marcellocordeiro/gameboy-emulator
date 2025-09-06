@@ -148,7 +148,7 @@ impl Ppu {
                     priority[i as usize] = Priority::Background;
                 }
 
-                let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
+                let pixel = Color::from_rgb555_accurate(raw_color);
                 screen_line[i as usize] = pixel;
             } else {
                 let color_index = Color::apply_dmg_palette(color_id, self.bgp);
@@ -160,7 +160,7 @@ impl Ppu {
                     Priority::Background
                 };
 
-                let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
+                let pixel = Color::from_rgb555_accurate(raw_color);
                 screen_line[i as usize] = pixel;
             }
         }
@@ -262,7 +262,7 @@ impl Ppu {
                         .obj_cram
                         .get_color_rgb555(sprite.flags.palette_number, color_id);
 
-                    let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
+                    let pixel = Color::from_rgb555_accurate(raw_color);
 
                     screen_line[mapped_x] = pixel;
                 } else {
@@ -273,7 +273,7 @@ impl Ppu {
                     let color_index = Color::apply_dmg_palette(color_id, selected_palette);
                     let raw_color = self.obj_cram.get_color_rgb555(0, color_index);
 
-                    let pixel = Color::from_rgb555_u16_to_rgba8888(raw_color);
+                    let pixel = Color::from_rgb555_accurate(raw_color);
 
                     screen_line[mapped_x] = pixel;
                 }

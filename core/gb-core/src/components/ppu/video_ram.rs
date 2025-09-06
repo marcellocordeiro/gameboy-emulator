@@ -47,25 +47,6 @@ impl VideoRam {
         self.cgb_mode = value;
     }
 
-    pub fn draw_tile_data_0_into_frame(&self, frame: &mut TileDataFrameCgb) {
-        const TILE_DATA_0_START: usize = 0;
-        const TILE_DATA_0_END: usize = 0x97FF - 0x8000;
-
-        let range = TILE_DATA_0_START..=TILE_DATA_0_END;
-
-        self.draw_tile_data_range_into_frame(range, frame, 0);
-    }
-
-    /// Warning: CGB model only.
-    pub fn draw_tile_data_1_into_frame(&self, frame: &mut TileDataFrameCgb) {
-        const TILE_DATA_1_START: usize = VRAM_BANK_SIZE;
-        const TILE_DATA_1_END: usize = (0x97FF - 0x8000) + VRAM_BANK_SIZE;
-
-        let range = TILE_DATA_1_START..=TILE_DATA_1_END;
-
-        self.draw_tile_data_range_into_frame(range, frame, TILE_DATA_FRAME_WIDTH_CGB / 2);
-    }
-
     pub fn read(&self, address: u16) -> u8 {
         self.data[address as usize - 0x8000 + self.bank_offset()]
     }
@@ -74,7 +55,7 @@ impl VideoRam {
         self.data[address as usize - 0x8000]
     }
 
-    /// Warning: CGB model only.
+    /// Warning: CGB model only
     pub fn read_bank_1(&self, address: u16) -> u8 {
         self.data[address as usize - 0x8000 + VRAM_BANK_SIZE]
     }
@@ -83,7 +64,7 @@ impl VideoRam {
         self.data[address as usize - 0x8000 + self.bank_offset()] = value;
     }
 
-    /// Warning: CGB model only.
+    /// Warning: CGB model only
     pub fn read_vbk(&self) -> u8 {
         if !device_is_cgb!(self) {
             return 0xFF;
@@ -92,7 +73,7 @@ impl VideoRam {
         0b1111_1110 | self.vbk
     }
 
-    /// Warning: CGB model only.
+    /// Warning: CGB model only
     pub fn write_vbk(&mut self, value: u8) {
         if !in_cgb_mode!(self) {
             return;
@@ -107,6 +88,25 @@ impl VideoRam {
         }
 
         VRAM_BANK_SIZE * (self.vbk as usize)
+    }
+
+    pub fn draw_tile_data_0_into_frame(&self, frame: &mut TileDataFrameCgb) {
+        const TILE_DATA_0_START: usize = 0;
+        const TILE_DATA_0_END: usize = 0x97FF - 0x8000;
+
+        let range = TILE_DATA_0_START..=TILE_DATA_0_END;
+
+        self.draw_tile_data_range_into_frame(range, frame, 0);
+    }
+
+    /// Warning: CGB model only
+    pub fn draw_tile_data_1_into_frame(&self, frame: &mut TileDataFrameCgb) {
+        const TILE_DATA_1_START: usize = VRAM_BANK_SIZE;
+        const TILE_DATA_1_END: usize = (0x97FF - 0x8000) + VRAM_BANK_SIZE;
+
+        let range = TILE_DATA_1_START..=TILE_DATA_1_END;
+
+        self.draw_tile_data_range_into_frame(range, frame, TILE_DATA_FRAME_WIDTH_CGB / 2);
     }
 
     fn draw_tile_data_range_into_frame(
@@ -137,7 +137,7 @@ impl VideoRam {
                         (hi << 1) | lo
                     };
 
-                    let pixel = Color::from_dmg_color_id(color_id);
+                    let pixel = Color::from_dmg_grey_color_id(color_id);
 
                     let mapped_address = {
                         let mapped_x = tile_base_x + bit;

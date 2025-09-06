@@ -64,7 +64,9 @@ impl Cpu {
             }
 
             return;
-        } else if interrupts_are_enabled && memory.interrupts().has_queued_irq() {
+        }
+
+        if interrupts_are_enabled && memory.interrupts().has_queued_irq() {
             self.handle_interrupts(memory);
             return;
         }

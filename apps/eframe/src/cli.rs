@@ -11,7 +11,7 @@ pub struct Cli {
     #[arg(short, long)]
     pub bootrom: Option<String>,
 
-    /// Optional ROM path (will show the file picker if not provided)
+    /// Optional ROM path
     pub rom: Option<String>,
 }
 

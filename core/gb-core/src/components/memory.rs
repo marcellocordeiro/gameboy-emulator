@@ -29,10 +29,10 @@ use crate::{
 
 #[derive(Debug, Error)]
 pub enum Error {
-    #[error("Failed to load the bootrom: {0}.")]
+    #[error("Unable to load the bootrom: {0}.")]
     BootromError(#[from] BootromError),
 
-    #[error("Failed to load the cartridge: {0}.")]
+    #[error("Unable to load the cartridge: {0}.")]
     CartridgeError(#[from] CartridgeError),
 }
 
@@ -123,12 +123,14 @@ impl MemoryInterface for Memory {
             0xC000..=0xFDFF => self.wram.read(address),
             0xFE00..=0xFE9F => self.ppu.read_oam(address),
 
-            0xFEA0..=0xFEFF => unreachable!("Accessing prohibited area: {:#06x}", address),
+            0xFEA0..=0xFEFF => unreachable!("Accessing prohibited area: {address:#06x}"),
 
-            // I/O registers.
+            // I/O registers
             0xFF00 => self.joypad.read(),
 
-            0xFF01..=0xFF02 => self.serial.read(address),
+            0xFF01 => self.serial.read_sb(),
+            0xFF02 => self.serial.read_sc(),
+
             0xFF04..=0xFF07 => self.timer.read(address),
 
             0xFF0F => self.interrupts.read_flags(),
@@ -189,22 +191,24 @@ impl MemoryInterface for Memory {
 
             0xFFFF => self.interrupts.read_enable(),
 
-            0xFF03 => 0xFF,          // Unused
-            0xFF08..=0xFF0E => 0xFF, // Unused
-            0xFF15 => 0xFF,          // Unused
-            0xFF1F => 0xFF,          // Unused
-            0xFF27..=0xFF2F => 0xFF, // Unused
-            0xFF4E => 0xFF,          // Unused
-            0xFF57..=0xFF67 => 0xFF, // Unused
-            0xFF6D..=0xFF6F => 0xFF, // Unused
-            0xFF71 => 0xFF,          // Unused
-            0xFF78..=0xFF7F => 0xFF, // Unused
+            // Unused
+            0xFF03
+            | 0xFF08..=0xFF0E
+            | 0xFF15
+            | 0xFF1F
+            | 0xFF27..=0xFF2F
+            | 0xFF4E
+            | 0xFF57..=0xFF67
+            | 0xFF6D..=0xFF6F
+            | 0xFF71
+            | 0xFF78..=0xFF7F => 0xFF,
         }
     }
 
     fn write(&mut self, address: u16, value: u8) {
         match address {
-            0x0000..=0x00FF if self.bootrom.mapped() => {}
+            0x0000..=0x00FF if self.bootrom.mapped() => (),
+            0x0200..=0x08FF if self.bootrom.mapped() && device_is_cgb!(self) => (),
 
             0x0000..=0x7FFF => {
                 self.cartridge
@@ -230,7 +234,9 @@ impl MemoryInterface for Memory {
             // I/O registers
             0xFF00 => self.joypad.write(value),
 
-            0xFF01 | 0xFF02 => self.serial.write(address, value),
+            0xFF01 => self.serial.write_sb(value),
+            0xFF02 => self.serial.write_sc(value),
+
             0xFF04..=0xFF07 => self.timer.write(address, value),
 
             0xFF0F => self.interrupts.write_flags(value),
@@ -253,7 +259,11 @@ impl MemoryInterface for Memory {
             0xFF4A => self.ppu.write_wy(value),
             0xFF4B => self.ppu.write_wx(value),
 
-            0xFF4C => self.key0.write(value), // (CGB) KEY0: CGB mode
+            // (CGB) KEY0: CGB mode
+            0xFF4C => {
+                self.key0.write(value);
+                self.set_cgb_mode(self.key0.cgb_mode);
+            }
 
             0xFF4D => self.key1.write(value), // (CGB) KEY1: Prepare speed switch
 
@@ -291,16 +301,17 @@ impl MemoryInterface for Memory {
 
             0xFFFF => self.interrupts.write_enable(value),
 
-            0xFF03 => (),          // Unused
-            0xFF08..=0xFF0E => (), // Unused
-            0xFF15 => (),          // Unused
-            0xFF1F => (),          // Unused
-            0xFF27..=0xFF2F => (), // Unused
-            0xFF4E => (),          // Unused
-            0xFF57..=0xFF67 => (), // Unused
-            0xFF6D..=0xFF6F => (), // Unused
-            0xFF71 => (),          // Unused
-            0xFF78..=0xFF7F => (), // Unused
+            // Unused
+            0xFF03
+            | 0xFF08..=0xFF0E
+            | 0xFF15
+            | 0xFF1F
+            | 0xFF27..=0xFF2F
+            | 0xFF4E
+            | 0xFF57..=0xFF67
+            | 0xFF6D..=0xFF6F
+            | 0xFF71
+            | 0xFF78..=0xFF7F => (),
         }
     }
 
@@ -367,7 +378,7 @@ impl Memory {
             ppu: Ppu::with_device_model(device_model),
             apu: Apu::with_device_model(device_model),
             joypad: Joypad::default(),
-            serial: Serial::default(),
+            serial: Serial::with_device_model(device_model),
             timer: Timer::default(),
             key1: Key1::with_device_model(device_model),
             interrupts: Interrupts::default(),
@@ -379,6 +390,10 @@ impl Memory {
     }
 
     pub fn set_cgb_mode(&mut self, value: bool) {
+        if value == self.cgb_mode {
+            return;
+        }
+
         assert!(device_is_cgb!(self));
 
         self.wram.set_cgb_mode(value);
@@ -386,6 +401,7 @@ impl Memory {
         self.key1.set_cgb_mode(value);
         self.undocumented_registers.set_cgb_mode(value);
         self.apu.set_cgb_mode(value);
+        self.serial.set_cgb_mode(value);
 
         self.cgb_mode = value;
     }
@@ -401,10 +417,9 @@ impl Memory {
 
         if lock {
             self.bootrom.unmap();
-
-            if device_is_cgb!(self) {
-                self.set_cgb_mode(self.key0.cgb_mode);
-            }
+            self.key0.handle_locked_bootrom();
+            self.ppu.handle_locked_bootrom();
+            self.wram.handle_locked_bootrom();
         }
     }
 
@@ -451,7 +466,7 @@ impl Memory {
         }
     }
 
-    pub(crate) fn load(&mut self, bootrom: Option<Arc<[u8]>>, rom: Arc<[u8]>) -> Result<(), Error> {
+    pub(crate) fn load(&mut self, rom: Arc<[u8]>, bootrom: Option<Arc<[u8]>>) -> Result<(), Error> {
         let cartridge = Cartridge::new(rom)?;
 
         if let Some(bootrom) = bootrom {
@@ -473,6 +488,10 @@ impl Memory {
         }
 
         self.bootrom.unmap();
+        self.key0.handle_locked_bootrom();
+        self.ppu.handle_locked_bootrom();
+        self.wram.handle_locked_bootrom();
+
         self.apu.skip_bootrom();
         self.ppu.skip_bootrom(cartridge);
         self.joypad.skip_bootrom(self.device_model.is_cgb());

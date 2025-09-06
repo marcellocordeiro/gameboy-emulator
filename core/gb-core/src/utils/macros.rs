@@ -26,8 +26,7 @@ macro_rules! device_is_cgb {
 macro_rules! in_cgb_mode {
     ($self:ident) => {
         if $self.cgb_mode {
-            // #[cfg(test)]
-            assert!(crate::utils::macros::device_is_cgb!($self));
+            debug_assert!(crate::utils::macros::device_is_cgb!($self));
             true
         } else {
             false
@@ -35,6 +34,17 @@ macro_rules! in_cgb_mode {
     };
 }
 
+macro_rules! in_cgb_mode_or_bootrom {
+    ($self:ident) => {
+        if !crate::utils::macros::device_is_cgb!($self) {
+            false
+        } else {
+            $self.cgb_mode || !$self.locked_bootrom
+        }
+    };
+}
+
 pub(crate) use device_is_cgb;
 pub(crate) use in_cgb_mode;
+pub(crate) use in_cgb_mode_or_bootrom;
 pub(crate) use pure_read_write_methods_u8;

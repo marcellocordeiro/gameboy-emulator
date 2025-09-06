@@ -44,7 +44,7 @@ impl std::fmt::Display for ImeState {
             Self::Pending => "~",
         };
 
-        write!(f, "{str}")
+        write!(f, "IME: {str}")
     }
 }
 

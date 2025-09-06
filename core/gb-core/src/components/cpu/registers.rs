@@ -82,38 +82,53 @@ impl Registers {
 
 impl std::fmt::Display for Registers {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let af_line = format!(
+        // AF
+        writeln!(
+            f,
             "AF: {:#06X}, A: {:#04X} | F: {:#04X}",
             self.get_af(),
             self.a,
             self.f.bits()
-        );
+        )?;
 
-        let bc_line = format!(
+        // BC
+        writeln!(
+            f,
             "BC: {:#06X}, B: {:#04X} | C: {:#04X}",
             self.get_bc(),
             self.b,
             self.c
-        );
+        )?;
 
-        let de_line = format!(
+        // DE
+        writeln!(
+            f,
             "DE: {:#06X}, D: {:#04X} | E: {:#04X}",
             self.get_de(),
             self.d,
             self.e
-        );
+        )?;
 
-        let hl_line = format!(
+        // HL
+        writeln!(
+            f,
             "HL: {:#06X}, H: {:#04X} | L: {:#04X}",
             self.get_hl(),
             self.h,
             self.l
-        );
+        )?;
 
-        let pc_line = format!("PC: {:#06X}", self.pc);
-        let sp_line = format!("SP: {:#06X}", self.sp);
+        writeln!(f)?;
 
-        let flags_line = format!(
+        // PC, SP
+        writeln!(f, "PC: {:#06X}", self.pc)?;
+        writeln!(f, "SP: {:#06X}", self.sp)?;
+
+        writeln!(f)?;
+
+        // Flags
+        writeln!(
+            f,
             "Flags: Z: {} | N: {} | H: {} | C: {}",
             if self.f.contains(Flags::ZERO) {
                 "☑"
@@ -135,12 +150,14 @@ impl std::fmt::Display for Registers {
             } else {
                 "☐"
             }
-        );
+        )?;
 
-        write!(
-            f,
-            "{af_line}\n{bc_line}\n{de_line}\n{hl_line}\n\n{pc_line}\n{sp_line}\n\n{flags_line}"
-        )
+        writeln!(f)?;
+
+        // IME
+        write!(f, "{}", self.ime)?;
+
+        Ok(())
     }
 }
 

@@ -24,7 +24,7 @@ impl Joypad {
     }
 
     pub(crate) fn write(&mut self, value: u8) {
-        // Only bits 4 and 5 are writable.
+        // Only bits 4 and 5 are writable
         self.joyp &= !JOYP_SELECTION_MASK;
         self.joyp |= value & JOYP_SELECTION_MASK;
 
