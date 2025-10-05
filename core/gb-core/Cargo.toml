@@ -17,6 +17,7 @@ itertools = { workspace = true }
 log = { workspace = true }
 paste = { workspace = true }
 thiserror = { workspace = true }
+tracing = { workspace = true }
 
 [dev-dependencies]
 image = { workspace = true, features = ["png"] }
