@@ -64,7 +64,10 @@ fn main() {
 
     eframe::WebLogger::init(log::LevelFilter::Info).ok();
 
-    let web_options = eframe::WebOptions::default();
+    let web_options = eframe::WebOptions {
+        max_fps: Some(60),
+        ..Default::default()
+    };
 
     wasm_bindgen_futures::spawn_local(async {
         let document = web_sys::window()
