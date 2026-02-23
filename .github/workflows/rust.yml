@@ -18,7 +18,9 @@ jobs:
           submodules: true
 
       - name: Install development dependencies for cpal
-        run: sudo apt-get install libasound2-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install libasound2-dev
 
       - name: Update Rust toolchain
         run: rustup update
