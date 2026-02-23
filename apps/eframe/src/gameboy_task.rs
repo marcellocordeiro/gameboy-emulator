@@ -38,11 +38,7 @@ impl GameBoyTask {
             let mut next_frame = Instant::now();
 
             loop {
-                {
-                    if !*running.lock().unwrap() {
-                        continue;
-                    }
-
+                if *running.lock().unwrap() {
                     let mut gb = gb.write().unwrap();
 
                     if gb.cartridge_inserted() {
