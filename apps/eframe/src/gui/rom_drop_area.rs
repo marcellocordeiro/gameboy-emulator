@@ -34,14 +34,19 @@ impl RomDropArea {
         });
 
         if let Some(file_name) = file_name {
-            ui.painter()
-                .rect_filled(rect, 0.0, Color32::from_black_alpha(192));
+            let fill = if ui.visuals().dark_mode {
+                Color32::from_black_alpha(192)
+            } else {
+                Color32::from_white_alpha(192)
+            };
+
+            ui.painter().rect_filled(rect, 0.0, fill);
             ui.painter().text(
                 rect.center(),
                 Align2::CENTER_CENTER,
                 file_name,
                 TextStyle::Heading.resolve(&ctx.style()),
-                Color32::WHITE,
+                ui.visuals().text_color(),
             );
         } else {
             ui.painter().text(
@@ -49,7 +54,7 @@ impl RomDropArea {
                 Align2::CENTER_CENTER,
                 "Drop the Game Boy ROM here",
                 TextStyle::Heading.resolve(&ctx.style()),
-                Color32::WHITE,
+                ui.visuals().text_color(),
             );
         }
     }
