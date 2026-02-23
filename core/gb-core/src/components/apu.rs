@@ -13,7 +13,7 @@ const AUDIO_CYCLES_PER_SAMPLE: usize = CPU_CLOCK_RATE / AUDIO_SAMPLE_RATE; // 95
 
 pub type StereoSample = [f32; 2];
 pub type AudioBuffer = [f32; AUDIO_BUFFER_SIZE];
-pub type Callback = dyn Fn(&[f32]);
+pub type Callback = dyn Fn(&[f32]) + Send + Sync;
 
 bitflags! {
     #[derive(Debug, Copy, Clone)]

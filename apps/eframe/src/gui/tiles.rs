@@ -30,8 +30,8 @@ pub struct Tiles {
 impl Tiles {
     #[allow(clippy::cast_precision_loss)]
     const DEFAULT_SIZE: Vec2 = Vec2 {
-        x: (TILE_DATA_FRAME_WIDTH_CGB * 2) as f32,
-        y: (TILE_DATA_FRAME_HEIGHT * 2 + 6) as f32, // TODO: don't rely on this.
+        x: TILE_DATA_FRAME_WIDTH_CGB as f32,
+        y: TILE_DATA_FRAME_HEIGHT as f32,
     };
     const FILTER: TextureOptions = TextureOptions::NEAREST;
 
@@ -40,7 +40,7 @@ impl Tiles {
         let texture = {
             let image = ColorImage::new(
                 [TILE_DATA_FRAME_WIDTH_CGB, TILE_DATA_FRAME_HEIGHT],
-                vec![Color32::BLACK; pixels.len() / 4],
+                vec![Color32::BLACK; TILE_DATA_FRAME_SIZE_CGB / 4],
             );
 
             egui_ctx.load_texture("tiles", image, Self::FILTER)
@@ -68,9 +68,8 @@ impl Tiles {
 
         Window::new("Tiles")
             .open(&mut ctx.tiles.opened)
+            .min_size(Self::DEFAULT_SIZE)
             .default_size(Self::DEFAULT_SIZE)
-            .min_width(Self::DEFAULT_SIZE.x)
-            .min_height(Self::DEFAULT_SIZE.y)
             .show(egui_ctx, |ui| {
                 let size = integer_scaling_size(ui.available_size(), ctx.tiles.texture.size_vec2());
 

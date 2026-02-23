@@ -1,5 +1,5 @@
 use egui::{Context, Ui, Window, epaint::Color32};
-use gb_core::{GameBoy, utils::color::Color};
+use gb_core::{GameBoy, components::ppu::color_ram::ColorRam, utils::color::Color};
 
 use super::components::color_rect::color_rect;
 use crate::gui::Gui;
@@ -28,48 +28,33 @@ impl Palettes {
                 let obj_palettes = &gb_ctx.memory().ppu.obj_cram;
 
                 ui.horizontal(|ui| {
-                    ui.vertical(|ui| {
-                        for palette_number in 0..8 {
-                            ui.horizontal(|ui| {
-                                for color_id in 0..4 {
-                                    let raw_color = bg_palettes.get_color_rgb555(palette_number, color_id);
-
-                                    let raw_pixel = Color::from_rgb555(raw_color);
-                                    let pixel = Color::from_rgb555_accurate(raw_color);
-
-                                    let rgb = Color32::from_rgb(pixel.red, pixel.green, pixel.blue);
-                                    let tooltip = format!(
-                                        "RGB555: {raw_color:#06x}\n\nR: {:#04x}\nG: {:#04x}\nB: {:#04x}", raw_pixel.red, raw_pixel.green, raw_pixel.blue
-                                    );
-
-                                    color_rect(ui, rgb).on_hover_text(tooltip);
-                                }
-                            });
-                        }
-                    });
-
+                    Self::draw_ram(ui, bg_palettes);
                     ui.separator();
-
-                    ui.vertical(|ui| {
-                        for palette_number in 0..8 {
-                            ui.horizontal(|ui| {
-                                for color_id in 0..4 {
-                                    let raw_color = obj_palettes.get_color_rgb555(palette_number, color_id);
-
-                                    let raw_pixel = Color::from_rgb555(raw_color);
-                                    let pixel = Color::from_rgb555_accurate(raw_color);
-
-                                    let rgb = Color32::from_rgb(pixel.red, pixel.green, pixel.blue);
-                                    let tooltip = format!(
-                                        "RGB555: {raw_color:#06x}\n\nR: {:#04x}\nG: {:#04x}\nB: {:#04x}", raw_pixel.red, raw_pixel.green, raw_pixel.blue
-                                    );
-
-                                    color_rect(ui, rgb).on_hover_text(tooltip);
-                                }
-                            });
-                        }
-                    });
+                    Self::draw_ram(ui, obj_palettes);
                 });
             });
+    }
+
+    fn draw_ram(ui: &mut Ui, color_ram: &ColorRam) {
+        ui.vertical(|ui| {
+            for palette_number in 0..8 {
+                ui.horizontal(|ui| {
+                    for color_id in 0..4 {
+                        let raw_color = color_ram.get_color_rgb555(palette_number, color_id);
+
+                        let raw_pixel = Color::from_rgb555(raw_color);
+                        let pixel = Color::from_rgb555_accurate(raw_color);
+
+                        let rgb = Color32::from_rgb(pixel.red, pixel.green, pixel.blue);
+                        let tooltip = format!(
+                            "RGB555: {raw_color:#06x}\n\nR: {:#04x}\nG: {:#04x}\nB: {:#04x}",
+                            raw_pixel.red, raw_pixel.green, raw_pixel.blue
+                        );
+
+                        color_rect(ui, rgb).on_hover_text(tooltip);
+                    }
+                });
+            }
+        });
     }
 }

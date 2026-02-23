@@ -3,7 +3,8 @@ use gb_core::constants::DeviceModel;
 use crate::app::App;
 
 #[cfg(not(target_arch = "wasm32"))]
-fn main() -> eframe::Result {
+#[tokio::main]
+async fn main() -> eframe::Result {
     use std::path::PathBuf;
 
     use cli::parse_args;
@@ -111,6 +112,8 @@ mod audio;
 #[cfg(not(target_arch = "wasm32"))]
 mod cli;
 mod file_manager;
+mod gameboy_task;
 mod gui;
 mod key_mappings;
+mod sys;
 mod utils;

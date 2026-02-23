@@ -24,7 +24,7 @@ impl Ppu {
         let screen_line = {
             let line_offset = SCREEN_WIDTH * (self.ly as usize);
 
-            &mut self.internal_screen.screen[line_offset..(line_offset + SCREEN_WIDTH)]
+            &mut self.internal_screen.pixels[line_offset..(line_offset + SCREEN_WIDTH)]
         };
 
         let should_render_win = self.lcdc.get_win_enable() && self.wy <= self.ly;
@@ -174,7 +174,7 @@ impl Ppu {
         let screen_line = {
             let line_offset = SCREEN_WIDTH * (self.ly as usize);
 
-            &mut self.internal_screen.screen[line_offset..(line_offset + SCREEN_WIDTH)]
+            &mut self.internal_screen.pixels[line_offset..(line_offset + SCREEN_WIDTH)]
         };
 
         let obj_height = if self.lcdc.get_obj_size() { 16 } else { 8 };

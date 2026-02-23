@@ -2,7 +2,7 @@ use std::sync::{Arc, mpsc};
 
 use components::{cartridge::error::CartridgeError, cpu::Cpu, memory::Memory};
 use constants::{DeviceModel, ScreenPixels};
-use utils::button::Button;
+use utils::{button::Button, screen::Screen};
 
 pub struct GameBoy {
     cpu: Cpu,
@@ -141,6 +141,11 @@ impl GameBoy {
 
     pub fn joypad_button_up(&mut self, key: Button) {
         self.memory.joypad.joypad_button_up(key);
+    }
+
+    #[must_use]
+    pub fn screen(&self) -> &Screen {
+        self.memory.ppu.screen()
     }
 
     pub fn draw_into_frame_rgba8888(&self, frame: &mut ScreenPixels) {

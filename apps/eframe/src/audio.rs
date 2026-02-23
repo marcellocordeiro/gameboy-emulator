@@ -4,8 +4,8 @@ use cpal::{
     FromSample,
     I24,
     Sample,
-    SampleRate,
     SizedSample,
+    U24,
     traits::{DeviceTrait, HostTrait, StreamTrait},
 };
 use gb_core::components::apu::{AUDIO_BUFFER_SIZE, AUDIO_SAMPLE_RATE, Callback, StereoSample};
@@ -35,11 +35,11 @@ impl Audio {
         Box::new(move |buffer| {
             for chunk in buffer.chunks_exact(2) {
                 #[cfg(not(target_arch = "wasm32"))]
-                sender.send([chunk[0], chunk[1]]).unwrap();
+                let _ = sender.send([chunk[0], chunk[1]]);
 
                 // Bad
                 #[cfg(target_arch = "wasm32")]
-                sender.try_send([chunk[0], chunk[1]]).ok();
+                let _ = sender.try_send([chunk[0], chunk[1]]);
             }
         })
     }
@@ -56,6 +56,7 @@ fn stream_setup_for() -> (cpal::Stream, Sender) {
         cpal::SampleFormat::I64 => make_stream::<i64>(&device, &config.into()),
         cpal::SampleFormat::U8 => make_stream::<u8>(&device, &config.into()),
         cpal::SampleFormat::U16 => make_stream::<u16>(&device, &config.into()),
+        cpal::SampleFormat::U24 => make_stream::<U24>(&device, &config.into()),
         cpal::SampleFormat::U32 => make_stream::<u32>(&device, &config.into()),
         cpal::SampleFormat::U64 => make_stream::<u64>(&device, &config.into()),
         cpal::SampleFormat::F32 => make_stream::<f32>(&device, &config.into()),
@@ -70,14 +71,14 @@ fn host_device_setup() -> (cpal::Host, cpal::Device, cpal::SupportedStreamConfig
     let host = cpal::default_host();
 
     let device = host.default_output_device().unwrap();
-    log::info!("Output device : {}", device.name().unwrap());
+    log::info!("Output device : {}", device.id().unwrap());
 
     let mut configs = device.supported_output_configs().unwrap();
 
     let config = configs
         .find(|c| c.channels() == 2)
         .unwrap()
-        .with_sample_rate(SampleRate(AUDIO_SAMPLE_RATE as u32));
+        .with_sample_rate(AUDIO_SAMPLE_RATE as u32);
 
     log::info!("Output config : {config:?}");
 

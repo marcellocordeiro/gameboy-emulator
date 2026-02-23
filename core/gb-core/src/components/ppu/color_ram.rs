@@ -13,6 +13,7 @@ impl Default for ColorRam {
 }
 
 impl ColorRam {
+    #[must_use]
     pub fn read(&self, address: u8) -> u8 {
         self.data[address as usize]
     }
@@ -21,6 +22,7 @@ impl ColorRam {
         self.data[address as usize] = value;
     }
 
+    #[must_use]
     pub fn get_color_rgb555(&self, palette_number: u8, color_id: u8) -> u16 {
         let palette_address = palette_number * 8;
         let color_index = color_id * 2;

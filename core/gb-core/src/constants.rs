@@ -13,11 +13,13 @@ pub const TILE_DATA_FRAME_WIDTH_DMG: usize = 128;
 pub const TILE_DATA_FRAME_WIDTH_CGB: usize = TILE_DATA_FRAME_WIDTH_DMG * 2;
 
 pub const TILE_DATA_FRAME_HEIGHT: usize = 192;
-pub const TILE_DATA_FRAME_SIZE_CGB: usize =
-    TILE_DATA_FRAME_WIDTH_CGB * TILE_DATA_FRAME_HEIGHT * size_of::<u32>();
+pub const TILE_DATA_FRAME_SIZE_DMG: usize =
+    TILE_DATA_FRAME_WIDTH_DMG * TILE_DATA_FRAME_HEIGHT * size_of::<u32>();
+pub const TILE_DATA_FRAME_SIZE_CGB: usize = TILE_DATA_FRAME_SIZE_DMG * 2;
 pub const TILES_PER_LINE: usize = 16;
 
 pub type ScreenPixels = [u8; SCREEN_PIXELS_SIZE];
+pub type TileDataFrame = [u8; TILE_DATA_FRAME_SIZE_DMG];
 pub type TileDataFrameCgb = [u8; TILE_DATA_FRAME_SIZE_CGB];
 
 pub const BOOTROM_EXTENSIONS_DESCRIPTION: &str = "Game Boy bootrom";

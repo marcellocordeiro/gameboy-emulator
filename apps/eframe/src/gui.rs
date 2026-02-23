@@ -1,4 +1,8 @@
-use std::sync::mpsc::{Receiver, Sender};
+use std::sync::{
+    Arc,
+    Mutex,
+    mpsc::{Receiver, Sender},
+};
 
 use egui::{CentralPanel, Context, MenuBar, TopBottomPanel, ViewportCommand};
 use gb_core::GameBoy;
@@ -35,14 +39,14 @@ pub struct Gui {
 }
 
 impl Gui {
-    pub fn new(egui_ctx: &Context) -> Self {
+    pub fn new(egui_ctx: &Context, running: Arc<Mutex<bool>>) -> Self {
         let (event_sender, event_receiver) = std::sync::mpsc::channel();
 
         Self {
             event_receiver,
             event_sender,
             audio: Audio::default(),
-            control: Control::default(),
+            control: Control::new(running),
             palettes: Palettes::default(),
             state: State::default(),
             tiles: Tiles::new(egui_ctx),
@@ -97,7 +101,8 @@ impl Gui {
     fn render_main_area(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
         CentralPanel::default().show(egui_ctx, |ui| {
             if gb_ctx.cartridge_inserted() {
-                ScreenArea::draw(self, ui, gb_ctx);
+                ScreenArea::update(self, gb_ctx);
+                ScreenArea::draw(self, ui);
             } else {
                 RomDropArea::draw(self, egui_ctx, ui);
             }

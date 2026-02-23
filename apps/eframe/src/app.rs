@@ -1,3 +1,5 @@
+use std::sync::{Arc, RwLock};
+
 use eframe::Storage;
 use egui::ViewportCommand;
 use gb_core::{GameBoy, constants::DeviceModel, utils::button::Button};
@@ -5,12 +7,13 @@ use gb_core::{GameBoy, constants::DeviceModel, utils::button::Button};
 use crate::{
     audio::Audio,
     file_manager::{FileInfo, FileManager},
+    gameboy_task::GameBoyTask,
     gui::{Event, Gui},
     key_mappings::EguiKeyMappings,
 };
 
 pub struct App {
-    gb: GameBoy,
+    gb_task: GameBoyTask,
     file_manager: FileManager,
 
     audio: Option<Audio>,
@@ -24,11 +27,14 @@ impl App {
         device_model: DeviceModel,
         file_manager: Option<FileManager>,
     ) -> Self {
+        let gb_task = GameBoyTask::new(Arc::new(RwLock::new(GameBoy::new(device_model))));
+        let running = gb_task.running.clone();
+
         let mut app = Self {
-            gb: GameBoy::new(device_model),
+            gb_task,
             file_manager: file_manager.unwrap_or_default(),
             audio: None,
-            gui: Gui::new(&cc.egui_ctx),
+            gui: Gui::new(&cc.egui_ctx, running),
         };
 
         if let Some(rom_file) = &app.file_manager.rom {
@@ -46,13 +52,14 @@ impl App {
                 egui_ctx.send_viewport_cmd(ViewportCommand::Close);
             }
 
+            let mut gb = self.gb_task.gb.write().unwrap();
             for button in Button::ALL_CASES {
                 let key = button.mapped_to();
 
                 if i.key_pressed(key) {
-                    self.gb.joypad_button_down(button);
+                    gb.joypad_button_down(button);
                 } else if i.key_released(key) || !i.key_down(key) {
-                    self.gb.joypad_button_up(button);
+                    gb.joypad_button_up(button);
                 }
             }
         });
@@ -75,27 +82,33 @@ impl App {
 
         let audio = Audio::new();
 
-        self.gb.add_audio_callback(audio.get_callback());
-        self.audio = Some(audio);
+        let mut gb = self.gb_task.gb.write().unwrap();
 
-        self.gb.load(bootrom, rom).unwrap();
-        FileManager::load_battery(&mut self.gb, storage, &file);
+        gb.add_audio_callback(audio.get_callback());
+        gb.load(bootrom, rom).unwrap();
+        FileManager::load_battery(&mut gb, storage, &file);
+        drop(gb);
+
+        self.audio = Some(audio);
         self.file_manager.rom = Some(file);
     }
 }
 
 impl eframe::App for App {
     fn update(&mut self, egui_ctx: &egui::Context, eframe_frame: &mut eframe::Frame) {
-        if !self.gui.control.manual_control && self.gb.cartridge_inserted() {
-            self.gb.run_frame();
-            egui_ctx.request_repaint();
-        }
-
         self.handle_events(eframe_frame.storage(), egui_ctx);
-        self.gui.render(egui_ctx, &mut self.gb);
+
+        self.gui
+            .render(egui_ctx, &mut self.gb_task.gb.write().unwrap());
+
+        egui_ctx.request_repaint();
     }
 
     fn save(&mut self, storage: &mut dyn Storage) {
-        FileManager::save_battery(&self.gb, Some(storage), self.file_manager.rom.as_ref());
+        FileManager::save_battery(
+            &self.gb_task.gb.read().unwrap(),
+            Some(storage),
+            self.file_manager.rom.as_ref(),
+        );
     }
 }

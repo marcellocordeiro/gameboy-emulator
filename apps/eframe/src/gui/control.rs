@@ -1,4 +1,6 @@
-use egui::{Button, Context, Ui, Window};
+use std::sync::{Arc, Mutex};
+
+use egui::{Context, Ui, Window};
 use gb_core::GameBoy;
 
 use crate::gui::Gui;
@@ -6,20 +8,24 @@ use crate::gui::Gui;
 #[derive(Debug, Default)]
 pub struct Control {
     opened: bool,
-
-    pub manual_control: bool,
+    running: Arc<Mutex<bool>>,
 }
 
 impl Control {
-    pub fn draw_manual_control_button(ctx: &mut Gui, ui: &mut Ui) {
-        let text = if ctx.control.manual_control {
-            "Manual"
-        } else {
-            "Auto"
-        };
+    pub fn new(running: Arc<Mutex<bool>>) -> Self {
+        Self {
+            opened: false,
+            running,
+        }
+    }
+
+    pub fn draw_manual_control_button(ctx: &Gui, ui: &mut Ui) {
+        let mut running = ctx.control.running.lock().unwrap();
+
+        let text = if *running { "Auto" } else { "Manual" };
 
         if ui.button(text).clicked() {
-            ctx.control.manual_control = !ctx.control.manual_control;
+            *running = !*running;
         }
     }
 
@@ -37,23 +43,18 @@ impl Control {
         Window::new("Control")
             .open(&mut ctx.control.opened)
             .show(egui_ctx, |ui| {
-                let enable_buttons = ctx.control.manual_control && gb_ctx.cartridge_inserted();
+                let enable_buttons =
+                    *ctx.control.running.lock().unwrap() && gb_ctx.cartridge_inserted();
 
-                if ui
-                    .add_enabled(enable_buttons, Button::new("Step"))
-                    .clicked()
-                {
-                    gb_ctx.step();
-                    egui_ctx.request_repaint();
-                }
+                ui.add_enabled_ui(enable_buttons, |ui| {
+                    if ui.button("Step").clicked() {
+                        gb_ctx.step();
+                    }
 
-                if ui
-                    .add_enabled(enable_buttons, Button::new("Run frame"))
-                    .clicked()
-                {
-                    gb_ctx.run_frame();
-                    egui_ctx.request_repaint();
-                }
+                    if ui.button("Run frame").clicked() {
+                        gb_ctx.run_frame();
+                    }
+                });
             });
     }
 }

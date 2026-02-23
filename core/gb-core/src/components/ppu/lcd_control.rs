@@ -123,9 +123,9 @@ impl Ppu {
             self.ly = 0;
 
             if device_is_cgb!(self) {
-                self.internal_screen.screen.fill(Color::CGB_SYSTEM_DEFAULT);
+                self.internal_screen.pixels.fill(Color::CGB_SYSTEM_DEFAULT);
             } else {
-                self.internal_screen.screen.fill(Color::DMG_SYSTEM_DEFAULT);
+                self.internal_screen.pixels.fill(Color::DMG_SYSTEM_DEFAULT);
             }
         }
 

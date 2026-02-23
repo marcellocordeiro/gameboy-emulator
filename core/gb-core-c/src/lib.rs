@@ -129,6 +129,16 @@ pub unsafe extern "C" fn gameboy_draw_into_frame_rgba8888(gb_ptr: *mut GameBoy, 
     gb.draw_into_frame_rgba8888(slice);
 }
 
+#[derive(Copy, Clone)]
+struct Userdata(*mut c_void);
+unsafe impl Send for Userdata {}
+unsafe impl Sync for Userdata {}
+
+#[derive(Copy, Clone)]
+struct Callback(extern "C" fn(*mut c_void, *const c_float, usize));
+unsafe impl Send for Callback {}
+unsafe impl Sync for Callback {}
+
 /// # Safety
 ///
 /// 1. The Game Boy core pointer cannot be null.
@@ -141,7 +151,12 @@ pub unsafe extern "C" fn gameboy_add_audio_callback(
 ) {
     let gb = unsafe { &mut *gb_ptr };
 
+    let userdata = Userdata(userdata);
+    let callback = Callback(callback);
+
     gb.add_audio_callback(Box::new(move |buffer| {
+        let callback = { callback.0 };
+        let userdata = { userdata }.0;
         callback(userdata, buffer.as_ptr(), buffer.len());
     }));
 }

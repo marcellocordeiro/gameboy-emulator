@@ -393,7 +393,7 @@ impl Ppu {
     }
 }
 
-mod color_ram;
+pub mod color_ram;
 mod draw_line_cgb;
 mod draw_line_dmg;
 mod lcd_control;

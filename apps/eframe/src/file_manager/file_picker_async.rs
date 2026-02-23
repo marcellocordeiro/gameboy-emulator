@@ -30,7 +30,7 @@ pub fn file_picker_async(file_type: FileType, sender: Sender<Event>) {
         .add_filter(extensions_description, extensions)
         .pick_file();
 
-    execute(async move {
+    crate::sys::thread::spawn(async move {
         let file_handle = task.await;
 
         let Some(file_handle) = file_handle else {
@@ -60,15 +60,4 @@ pub fn file_picker_async(file_type: FileType, sender: Sender<Event>) {
             }
         }
     });
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-fn execute<F: Future<Output = ()> + Send + 'static>(f: F) {
-    use pollster::FutureExt as _;
-    std::thread::spawn(move || f.block_on());
-}
-
-#[cfg(target_arch = "wasm32")]
-fn execute<F: Future<Output = ()> + 'static>(f: F) {
-    wasm_bindgen_futures::spawn_local(f);
 }
