@@ -13,14 +13,14 @@ bundled-bootrom = ["gb-core/bundled-bootrom"]
 [dependencies]
 cfg-if = { workspace = true }
 cpal = { workspace = true, features = ["wasm-bindgen"] }
-crossbeam = { workspace = true }
+#crossbeam = { workspace = true }
 eframe = { workspace = true, features = ["persistence", "wgpu", "wayland"] }
-egui = { workspace = true, features = ["bytemuck", "default_fonts"] }
+egui = { workspace = true, features = ["default_fonts"] }
 gb-core = { workspace = true }
 log = { workspace = true }
 rfd = { workspace = true }
-tracing = { workspace = true }
-tracing-subscriber = { workspace = true }
+#tracing = { workspace = true }
+#tracing-subscriber = { workspace = true }
 wgpu = { workspace = true }
 
 # Native
@@ -28,12 +28,12 @@ wgpu = { workspace = true }
 clap = { workspace = true }
 env_logger = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
-tokio-util = { workspace = true }
 
 # Web
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-tracing-web = { workspace = true }
+#tracing-web = { workspace = true }
 wasm-bindgen-futures = { workspace = true }
-wasmtimer = { workspace = true }
 web-sys = { workspace = true }
 web-time = { workspace = true }
+tokio = { workspace = true }
+tokio_with_wasm = { workspace = true, features = ["full"] }

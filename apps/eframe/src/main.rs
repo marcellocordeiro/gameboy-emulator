@@ -1,3 +1,5 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 use gb_core::constants::DeviceModel;
 
 use crate::app::App;

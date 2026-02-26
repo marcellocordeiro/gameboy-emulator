@@ -1,0 +1,13 @@
+# Documentation: https://github.com/casey/just
+# Cheat sheet: https://cheatography.com/linux-china/cheat-sheets/justfile/
+
+# List all available scripts
+[private]
+default:
+  @just --list --unsorted
+
+build-wasm:
+  trunk build
+
+serve-wasm:
+  trunk serve
