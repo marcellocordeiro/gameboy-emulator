@@ -1,4 +1,4 @@
-use egui::{Context, Modal, Ui};
+use egui::Modal;
 
 #[derive(Debug, Default)]
 pub struct About {
@@ -6,18 +6,18 @@ pub struct About {
 }
 
 impl About {
-    pub fn draw_widget_toggle_button(&mut self, ui: &mut Ui) {
+    pub fn draw_widget_toggle_button(&mut self, ui: &mut egui::Ui) {
         if ui.button("About").clicked() {
             self.opened = !self.opened;
         }
     }
 
-    pub fn draw(&mut self, egui_ctx: &Context) {
+    pub fn draw(&mut self, ui: &egui::Ui) {
         if !self.opened {
             return;
         }
 
-        let modal = Modal::new("about".into()).show(egui_ctx, |ui| {
+        let modal = Modal::new("about".into()).show(ui, |ui| {
             ui.heading("About");
             ui.label("About.");
 

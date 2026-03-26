@@ -1,4 +1,4 @@
-use egui::{Context, Ui, Window};
+use egui::Window;
 use gb_core::{
     GameBoy,
     components::{apu::Channels, memory::MemoryInterface},
@@ -12,20 +12,20 @@ pub struct Audio {
 }
 
 impl Audio {
-    pub fn draw_widget_toggle_button(ctx: &mut Gui, ui: &mut Ui) {
+    pub fn draw_widget_toggle_button(ctx: &mut Gui, ui: &mut egui::Ui) {
         if ui.button("Audio").clicked() {
             ctx.audio.opened = !ctx.audio.opened;
         }
     }
 
-    pub fn draw(ctx: &mut Gui, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
+    pub fn draw(ctx: &mut Gui, ui: &egui::Ui, gb_ctx: &mut GameBoy) {
         if !ctx.audio.opened {
             return;
         }
 
         Window::new("Audio")
             .open(&mut ctx.audio.opened)
-            .show(egui_ctx, |ui| {
+            .show(ui, |ui| {
                 let apu = gb_ctx.memory_mut().apu_mut();
                 let channels = &mut apu.ui_channel_overrides;
 

@@ -1,4 +1,4 @@
-use egui::{Context, Ui, Window, epaint::Color32};
+use egui::{Window, epaint::Color32};
 use gb_core::{GameBoy, components::ppu::color_ram::ColorRam, utils::color::Color};
 
 use super::components::color_rect::color_rect;
@@ -10,20 +10,20 @@ pub struct Palettes {
 }
 
 impl Palettes {
-    pub fn draw_widget_toggle_button(ctx: &mut Gui, ui: &mut Ui) {
+    pub fn draw_widget_toggle_button(ctx: &mut Gui, ui: &mut egui::Ui) {
         if ui.button("Palettes").clicked() {
             ctx.palettes.opened = !ctx.palettes.opened;
         }
     }
 
-    pub fn draw(ctx: &mut Gui, egui_ctx: &Context, gb_ctx: &GameBoy) {
+    pub fn draw(ctx: &mut Gui, ui: &egui::Ui, gb_ctx: &GameBoy) {
         if !ctx.palettes.opened {
             return;
         }
 
         Window::new("Palettes")
             .open(&mut ctx.palettes.opened)
-            .show(egui_ctx, |ui| {
+            .show(ui, |ui| {
                 let bg_palettes = &gb_ctx.memory().ppu.bg_cram;
                 let obj_palettes = &gb_ctx.memory().ppu.obj_cram;
 
@@ -35,7 +35,7 @@ impl Palettes {
             });
     }
 
-    fn draw_ram(ui: &mut Ui, color_ram: &ColorRam) {
+    fn draw_ram(ui: &mut egui::Ui, color_ram: &ColorRam) {
         ui.vertical(|ui| {
             for palette_number in 0..8 {
                 ui.horizontal(|ui| {

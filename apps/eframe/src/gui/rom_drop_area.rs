@@ -1,4 +1,4 @@
-use egui::{Align2, Color32, Context, DroppedFile, Sense, TextStyle, Ui};
+use egui::{Align2, Color32, DroppedFile, Sense, TextStyle};
 use gb_core::constants::ROM_EXTENSIONS;
 
 use crate::{
@@ -9,19 +9,19 @@ use crate::{
 pub struct RomDropArea;
 
 impl RomDropArea {
-    pub fn draw(ctx: &Gui, egui_ctx: &Context, ui: &mut Ui) {
-        Self::drop_zone(egui_ctx, ui);
+    pub fn draw(ctx: &Gui, ui: &mut egui::Ui) {
+        Self::drop_zone(ui);
 
-        egui_ctx.input(|i| {
+        ui.input(|i| {
             Self::handle_dropped_files(ctx, &i.raw.dropped_files);
         });
     }
 
-    fn drop_zone(ctx: &Context, ui: &mut Ui) {
-        let rect = ctx.available_rect();
+    fn drop_zone(ui: &mut egui::Ui) {
+        let rect = ui.content_rect();
         let _ = ui.allocate_rect(rect, Sense::empty());
 
-        let file_name = ctx.input(|i| {
+        let file_name = ui.input(|i| {
             let path = i.raw.hovered_files.first()?.clone().path?;
 
             let extension = path.extension()?.to_str()?;
@@ -45,7 +45,7 @@ impl RomDropArea {
                 rect.center(),
                 Align2::CENTER_CENTER,
                 file_name,
-                TextStyle::Heading.resolve(&ctx.style()),
+                TextStyle::Heading.resolve(ui.style()),
                 ui.visuals().text_color(),
             );
         } else {
@@ -53,7 +53,7 @@ impl RomDropArea {
                 rect.center(),
                 Align2::CENTER_CENTER,
                 "Drop the Game Boy ROM here",
-                TextStyle::Heading.resolve(&ctx.style()),
+                TextStyle::Heading.resolve(ui.style()),
                 ui.visuals().text_color(),
             );
         }

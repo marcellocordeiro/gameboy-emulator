@@ -1,8 +1,6 @@
 use egui::{
     Color32,
-    Context,
     TextureOptions,
-    Ui,
     epaint::{ColorImage, TextureHandle},
 };
 use gb_core::{
@@ -20,7 +18,7 @@ pub struct ScreenArea {
 impl ScreenArea {
     const FILTER: TextureOptions = TextureOptions::NEAREST;
 
-    pub fn new(egui_ctx: &Context) -> Self {
+    pub fn new(egui_ctx: &egui::Context) -> Self {
         let image = ColorImage::new(
             [SCREEN_WIDTH, SCREEN_HEIGHT],
             vec![Color32::BLACK; SCREEN_PIXELS_SIZE / 4],
@@ -31,7 +29,7 @@ impl ScreenArea {
         Self { image, texture }
     }
 
-    pub fn draw(ctx: &Gui, ui: &mut Ui) {
+    pub fn draw(ctx: &Gui, ui: &mut egui::Ui) {
         ui.centered_and_justified(|ui| {
             let size =
                 integer_scaling_size(ui.available_size(), ctx.screen_area.texture.size_vec2());

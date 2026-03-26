@@ -4,7 +4,7 @@ use std::sync::{
     mpsc::{Receiver, Sender},
 };
 
-use egui::{CentralPanel, Context, MenuBar, TopBottomPanel, ViewportCommand};
+use egui::{CentralPanel, MenuBar, Panel, ViewportCommand};
 use gb_core::GameBoy;
 
 use self::{
@@ -39,7 +39,7 @@ pub struct Gui {
 }
 
 impl Gui {
-    pub fn new(egui_ctx: &Context, running: Arc<Mutex<bool>>) -> Self {
+    pub fn new(egui_ctx: &egui::Context, running: Arc<Mutex<bool>>) -> Self {
         let (event_sender, event_receiver) = std::sync::mpsc::channel();
 
         Self {
@@ -56,13 +56,13 @@ impl Gui {
         }
     }
 
-    pub fn render(&mut self, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
-        self.render_ui(egui_ctx, gb_ctx);
-        self.render_main_area(egui_ctx, gb_ctx);
+    pub fn render(&mut self, ui: &mut egui::Ui, gb_ctx: &mut GameBoy) {
+        self.render_ui(ui, gb_ctx);
+        self.render_main_area(ui, gb_ctx);
     }
 
-    fn render_ui(&mut self, egui_ctx: &Context, gb_ctx: &mut GameBoy) {
-        TopBottomPanel::top("top_panel").show(egui_ctx, |ui| {
+    fn render_ui(&mut self, ui: &mut egui::Ui, gb_ctx: &mut GameBoy) {
+        Panel::top("top_panel").show_inside(ui, |ui| {
             MenuBar::new().ui(ui, |ui| {
                 ui.menu_button("File", |ui| {
                     if ui.button("Load ROM").clicked() {
@@ -78,7 +78,7 @@ impl Gui {
                     }
 
                     if ui.button("Quit").clicked() {
-                        egui_ctx.send_viewport_cmd(ViewportCommand::Close);
+                        ui.send_viewport_cmd(ViewportCommand::Close);
                     }
                 });
 
@@ -91,20 +91,20 @@ impl Gui {
             });
         });
 
-        Control::draw(self, egui_ctx, gb_ctx);
-        State::draw(self, egui_ctx, gb_ctx);
-        Tiles::draw(self, egui_ctx, gb_ctx);
-        Palettes::draw(self, egui_ctx, gb_ctx);
-        Audio::draw(self, egui_ctx, gb_ctx);
+        Control::draw(self, ui, gb_ctx);
+        State::draw(self, ui, gb_ctx);
+        Tiles::draw(self, ui, gb_ctx);
+        Palettes::draw(self, ui, gb_ctx);
+        Audio::draw(self, ui, gb_ctx);
     }
 
-    fn render_main_area(&mut self, egui_ctx: &Context, gb_ctx: &GameBoy) {
-        CentralPanel::default().show(egui_ctx, |ui| {
+    fn render_main_area(&mut self, ui: &mut egui::Ui, gb_ctx: &GameBoy) {
+        CentralPanel::default().show_inside(ui, |ui| {
             if gb_ctx.cartridge_inserted() {
                 ScreenArea::update(self, gb_ctx);
                 ScreenArea::draw(self, ui);
             } else {
-                RomDropArea::draw(self, egui_ctx, ui);
+                RomDropArea::draw(self, ui);
             }
         });
     }

@@ -1,9 +1,7 @@
 use egui::{
     Color32,
-    Context,
     Image,
     TextureOptions,
-    Ui,
     Window,
     epaint::{ColorImage, TextureHandle, Vec2},
 };
@@ -35,7 +33,7 @@ impl Tiles {
     };
     const FILTER: TextureOptions = TextureOptions::NEAREST;
 
-    pub fn new(egui_ctx: &Context) -> Self {
+    pub fn new(egui_ctx: &egui::Context) -> Self {
         let pixels = vec![0; TILE_DATA_FRAME_SIZE_CGB].into_boxed_slice();
         let texture = {
             let image = ColorImage::new(
@@ -53,13 +51,13 @@ impl Tiles {
         }
     }
 
-    pub fn draw_widget_toggle_button(ctx: &mut Gui, ui: &mut Ui) {
+    pub fn draw_widget_toggle_button(ctx: &mut Gui, ui: &mut egui::Ui) {
         if ui.button("Tiles").clicked() {
             ctx.tiles.opened = !ctx.tiles.opened;
         }
     }
 
-    pub fn draw(ctx: &mut Gui, egui_ctx: &Context, gb_ctx: &GameBoy) {
+    pub fn draw(ctx: &mut Gui, ui: &egui::Ui, gb_ctx: &GameBoy) {
         if !ctx.tiles.opened {
             return;
         }
@@ -70,7 +68,7 @@ impl Tiles {
             .open(&mut ctx.tiles.opened)
             .min_size(Self::DEFAULT_SIZE)
             .default_size(Self::DEFAULT_SIZE)
-            .show(egui_ctx, |ui| {
+            .show(ui, |ui| {
                 let size = integer_scaling_size(ui.available_size(), ctx.tiles.texture.size_vec2());
 
                 ui.centered_and_justified(|ui| {

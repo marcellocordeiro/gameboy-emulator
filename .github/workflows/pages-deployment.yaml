@@ -1,0 +1,38 @@
+name: Pages Production Deployment
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    name: Deploy to Cloudflare Pages
+    steps:
+      - uses: actions/checkout@v6
+      - uses: cargo-bins/cargo-binstall@main
+
+      - name: Update Rust toolchain
+        run: rustup update
+
+      - name: Install wasm32-unknown-unknown target
+        run: rustup target add wasm32-unknown-unknown
+
+      - name: Install trunk
+        run: cargo binstall trunk --no-confirm
+
+      - name: Build
+        run: |
+          cd ./apps/eframe
+          trunk build
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ./apps/eframe/dist --project-name=gameboy-emulator
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

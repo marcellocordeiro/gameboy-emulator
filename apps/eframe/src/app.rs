@@ -44,12 +44,12 @@ impl App {
         app
     }
 
-    fn handle_events(&mut self, storage: Option<&dyn Storage>, egui_ctx: &egui::Context) {
-        egui_ctx.input(|i| {
+    fn handle_events(&mut self, storage: Option<&dyn Storage>, ui: &egui::Context) {
+        ui.input(|i| {
             use egui::Key;
 
             if i.key_pressed(Key::Escape) {
-                egui_ctx.send_viewport_cmd(ViewportCommand::Close);
+                ui.send_viewport_cmd(ViewportCommand::Close);
             }
 
             let mut gb = self.gb_task.gb.write().unwrap();
@@ -95,13 +95,12 @@ impl App {
 }
 
 impl eframe::App for App {
-    fn update(&mut self, egui_ctx: &egui::Context, eframe_frame: &mut eframe::Frame) {
-        self.handle_events(eframe_frame.storage(), egui_ctx);
+    fn ui(&mut self, ui: &mut egui::Ui, eframe_frame: &mut eframe::Frame) {
+        self.handle_events(eframe_frame.storage(), ui);
 
-        self.gui
-            .render(egui_ctx, &mut self.gb_task.gb.write().unwrap());
+        self.gui.render(ui, &mut self.gb_task.gb.write().unwrap());
 
-        egui_ctx.request_repaint();
+        ui.request_repaint();
     }
 
     fn save(&mut self, storage: &mut dyn Storage) {
