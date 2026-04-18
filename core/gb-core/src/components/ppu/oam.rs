@@ -38,7 +38,7 @@ impl Oam {
         self.update_sprite_buffer(ly, obj_height);
 
         // Increasing priority by the x coordinate.
-        self.sprite_buffer.sort_by(|a, b| a.x.cmp(&b.x));
+        self.sprite_buffer.sort_by_key(|a| a.x);
 
         &self.sprite_buffer
     }

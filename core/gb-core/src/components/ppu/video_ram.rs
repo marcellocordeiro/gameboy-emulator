@@ -1,5 +1,3 @@
-use std::ops::RangeInclusive;
-
 use super::{Ppu, lcd_status::StatusMode};
 use crate::{
     DeviceModel,
@@ -91,34 +89,38 @@ impl VideoRam {
     }
 
     pub fn draw_tile_data_0_into_frame(&self, frame: &mut TileDataFrameCgb) {
+        const TILE_SIZE: usize = 16;
         const TILE_DATA_0_START: usize = 0;
         const TILE_DATA_0_END: usize = 0x97FF - 0x8000;
 
         let range = TILE_DATA_0_START..=TILE_DATA_0_END;
+        let tile_data_chunks = self.data[range].chunks_exact(TILE_SIZE);
 
-        self.draw_tile_data_range_into_frame(range, frame, 0);
+        self.draw_tile_data_range_into_frame(tile_data_chunks, frame, 0);
     }
 
     /// Warning: CGB model only
     pub fn draw_tile_data_1_into_frame(&self, frame: &mut TileDataFrameCgb) {
+        const TILE_SIZE: usize = 16;
         const TILE_DATA_1_START: usize = VRAM_BANK_SIZE;
         const TILE_DATA_1_END: usize = (0x97FF - 0x8000) + VRAM_BANK_SIZE;
 
         let range = TILE_DATA_1_START..=TILE_DATA_1_END;
+        let tile_data_chunks = self.data[range].chunks_exact(TILE_SIZE);
 
-        self.draw_tile_data_range_into_frame(range, frame, TILE_DATA_FRAME_WIDTH_CGB / 2);
+        self.draw_tile_data_range_into_frame(
+            tile_data_chunks,
+            frame,
+            TILE_DATA_FRAME_WIDTH_CGB / 2,
+        );
     }
 
     fn draw_tile_data_range_into_frame(
         &self,
-        range: RangeInclusive<usize>,
+        tile_data_chunks: std::slice::ChunksExact<u8>,
         frame: &mut TileDataFrameCgb,
         frame_column_offset: usize,
     ) {
-        const TILE_SIZE: usize = 16;
-
-        let tile_data_chunks = self.data[range].chunks_exact(TILE_SIZE);
-
         for (tile_index, tile) in tile_data_chunks.into_iter().enumerate() {
             let tile_base_x = (tile_index % TILES_PER_LINE) * 8;
             let tile_base_y = (tile_index / TILES_PER_LINE) * 8;

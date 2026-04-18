@@ -11,7 +11,6 @@ workspace = true
 bundled-bootrom = ["gb-core/bundled-bootrom"]
 
 [dependencies]
-cfg-if = { workspace = true }
 cpal = { workspace = true, features = ["wasm-bindgen"] }
 #crossbeam = { workspace = true }
 eframe = { workspace = true, features = ["persistence", "wgpu", "wayland"] }
