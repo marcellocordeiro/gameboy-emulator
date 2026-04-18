@@ -14,9 +14,9 @@ async fn main() -> eframe::Result {
 
     use crate::file_manager::{FileInfo, FileManager};
 
-    env_logger::builder()
-        .filter_level(log::LevelFilter::Info)
-        .format_timestamp(None)
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::INFO)
+        .without_time()
         .init();
 
     let args = parse_args();

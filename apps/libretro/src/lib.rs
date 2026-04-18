@@ -17,6 +17,7 @@ use libretro_rs::{
     libretro_core,
     sys::RETRO_MEMORY_SAVE_RAM,
 };
+use tracing::error;
 
 struct Emulator {
     gb: GameBoy,
@@ -26,7 +27,7 @@ struct Emulator {
 
 impl RetroCore for Emulator {
     fn init(_env: &RetroEnvironment) -> Self {
-        env_logger::init();
+        tracing_subscriber::fmt::init();
 
         Self {
             gb: GameBoy::new(DeviceModel::Cgb),
@@ -75,7 +76,7 @@ impl RetroCore for Emulator {
                 match result {
                     Ok(rom) => rom,
                     Err(err) => {
-                        log::error!("{err}");
+                        error!("{err}");
 
                         return RetroLoadGameResult::Failure;
                     }

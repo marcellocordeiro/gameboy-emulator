@@ -1,3 +1,5 @@
+use tracing::info;
+
 use crate::{constants::DeviceModel, utils::macros::device_is_cgb};
 
 pub struct Key0 {
@@ -17,7 +19,7 @@ impl Key0 {
     }
 
     pub fn set_cgb_mode(&mut self, value: bool) {
-        log::info!("CGB mode: ({})", if value { "enabled" } else { "disabled" });
+        info!("CGB mode: ({})", if value { "enabled" } else { "disabled" });
 
         self.cgb_mode = value;
     }

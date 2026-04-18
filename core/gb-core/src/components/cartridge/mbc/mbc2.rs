@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use tracing::error;
+
 use super::MbcInterface;
 use crate::components::cartridge::info::{Info, rom_banks::ROM_BANK_SIZE};
 
@@ -44,7 +46,7 @@ impl MbcInterface for Mbc2 {
         self.ram = if let Ok(file) = file.try_into() {
             file
         } else {
-            log::error!("Error loading the battery backed RAM");
+            error!("Error loading the battery backed RAM");
             return;
         }
     }

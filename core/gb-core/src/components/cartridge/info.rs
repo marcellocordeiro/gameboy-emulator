@@ -7,6 +7,7 @@ use itertools::Itertools;
 use licensee_code::LicenseeCode;
 use mbc_type::MbcType;
 use title::Title;
+use tracing::{info, warn};
 
 use super::error::CartridgeError;
 use crate::components::cartridge::info::rom_banks::ROM_BANK_SIZE;
@@ -39,20 +40,20 @@ impl Info {
         let sgb_flag = sgb_flag::from_header(header);
 
         // Print debug info. Maybe show this elsewhere?
-        log::info!(target: "cartridge", "**Cartridge info**");
-        log::info!(target: "cartridge", "Title: {title}");
-        log::info!(target: "cartridge", "MBC type: {mbc_type}");
-        log::info!(
+        info!(target: "cartridge", "**Cartridge info**");
+        info!(target: "cartridge", "Title: {title}");
+        info!(target: "cartridge", "MBC type: {mbc_type}");
+        info!(
             target: "cartridge",
             "Extra features: {extra_features}",
             extra_features = extra_features.iter().format("+")
         );
-        log::info!(target: "cartridge", "ROM size: {rom_banks} banks");
-        log::info!(target: "cartridge", "RAM banks: {ram_banks} banks");
-        log::info!(target: "cartridge", "CGB flag: {cgb_flag}");
-        log::info!(target: "cartridge", "SGB flag: {sgb_flag}");
-        log::info!(target: "cartridge", "Old licensee code: {:#04X}", licensee_code.old_code());
-        log::info!(
+        info!(target: "cartridge", "ROM size: {rom_banks} banks");
+        info!(target: "cartridge", "RAM banks: {ram_banks} banks");
+        info!(target: "cartridge", "CGB flag: {cgb_flag}");
+        info!(target: "cartridge", "SGB flag: {sgb_flag}");
+        info!(target: "cartridge", "Old licensee code: {:#04X}", licensee_code.old_code());
+        info!(
             target: "cartridge",
             "New licensee code: {}",
             licensee_code.new_code().unwrap_or("--")
@@ -79,7 +80,7 @@ impl Info {
         let expected_rom_size = self.rom_banks * ROM_BANK_SIZE;
 
         if actual_rom_size != expected_rom_size {
-            log::warn!(
+            warn!(
                 "ROM length = {actual_rom_size} KiB, with ROM banks = {rom_banks}. Expected {expected_rom_size} KiB",
                 rom_banks = self.rom_banks,
             );
@@ -91,11 +92,11 @@ impl Info {
             let has_battery = self.extra_features.contains(&ExtraFeature::Battery);
 
             if (self.ram_banks > 0) != has_ram {
-                log::warn!("RAM banks = {} but has_ram = {}", self.ram_banks, has_ram);
+                warn!("RAM banks = {} but has_ram = {}", self.ram_banks, has_ram);
             }
 
             if has_battery && !has_ram {
-                log::warn!("Supports battery backed RAM but does not have RAM");
+                warn!("Supports battery backed RAM but does not have RAM");
             }
         }
     }

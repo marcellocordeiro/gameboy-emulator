@@ -9,6 +9,7 @@ use cpal::{
     traits::{DeviceTrait, HostTrait, StreamTrait},
 };
 use gb_core::components::apu::{AUDIO_BUFFER_SIZE, AUDIO_SAMPLE_RATE, Callback, StereoSample};
+use tracing::{error, info};
 
 type Sender = mpsc::SyncSender<StereoSample>;
 type Receiver = mpsc::Receiver<StereoSample>;
@@ -71,7 +72,7 @@ fn host_device_setup() -> (cpal::Host, cpal::Device, cpal::SupportedStreamConfig
     let host = cpal::default_host();
 
     let device = host.default_output_device().unwrap();
-    log::info!("Output device : {}", device.id().unwrap());
+    info!("Output device : {}", device.id().unwrap());
 
     let mut configs = device.supported_output_configs().unwrap();
 
@@ -80,7 +81,7 @@ fn host_device_setup() -> (cpal::Host, cpal::Device, cpal::SupportedStreamConfig
         .unwrap()
         .with_sample_rate(AUDIO_SAMPLE_RATE as u32);
 
-    log::info!("Output config : {config:?}");
+    info!("Output config : {config:?}");
 
     (host, device, config)
 }
@@ -97,7 +98,7 @@ where
         .build_output_stream(
             config,
             move |output: &mut [T], _| process_frame(output, num_channels, &receiver),
-            |err| log::error!("Unable to build output sound stream: {err}"),
+            |err| error!("Unable to build output sound stream: {err}"),
             None,
         )
         .unwrap();

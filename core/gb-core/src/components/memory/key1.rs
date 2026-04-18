@@ -1,3 +1,5 @@
+use tracing::info;
+
 use crate::{DeviceModel, utils::macros::in_cgb_mode};
 
 #[derive(Debug, Default)]
@@ -40,7 +42,7 @@ impl Key1 {
         if self.armed {
             self.double_speed = !self.double_speed;
             self.armed = false;
-            log::info!(
+            info!(
                 "Speed switch processed (double speed: {})",
                 self.double_speed
             );

@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use tracing::{error, info};
+
 use super::MbcInterface;
 use crate::{
     components::cartridge::info::{Info, ram_banks::RAM_BANK_SIZE, rom_banks::ROM_BANK_SIZE},
@@ -34,7 +36,7 @@ impl Mbc3 {
         let is_mbc30 = rom_banks > 128 || ram_banks > 4;
 
         if is_mbc30 {
-            log::info!("MBC30 variant");
+            info!("MBC30 variant");
         }
 
         Self {
@@ -67,10 +69,10 @@ impl MbcInterface for Mbc3 {
 
     fn load_battery(&mut self, file: Vec<u8>) {
         if self.ram.is_empty() {
-            log::error!("This cartridge does not have a battery backed RAM");
+            error!("This cartridge does not have a battery backed RAM");
             return;
         } else if self.ram.len() != file.len() {
-            log::error!("Size mismatch");
+            error!("Size mismatch");
             return;
         }
 
