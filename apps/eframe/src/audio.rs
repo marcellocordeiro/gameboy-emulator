@@ -1,10 +1,16 @@
 use std::sync::mpsc;
 
 use cpal::{
+    Device,
     FromSample,
+    Host,
     I24,
     Sample,
+    SampleFormat,
     SizedSample,
+    Stream,
+    StreamConfig,
+    SupportedStreamConfig,
     U24,
     traits::{DeviceTrait, HostTrait, StreamTrait},
 };
@@ -15,7 +21,7 @@ type Sender = mpsc::SyncSender<StereoSample>;
 type Receiver = mpsc::Receiver<StereoSample>;
 
 pub struct Audio {
-    _stream: cpal::Stream,
+    _stream: Stream,
     sender: Sender,
 }
 
@@ -46,29 +52,29 @@ impl Audio {
     }
 }
 
-fn stream_setup_for() -> (cpal::Stream, Sender) {
+fn stream_setup_for() -> (Stream, Sender) {
     let (_host, device, config) = host_device_setup();
 
     let (stream, sender) = match config.sample_format() {
-        cpal::SampleFormat::I8 => make_stream::<i8>(&device, &config.into()),
-        cpal::SampleFormat::I16 => make_stream::<i16>(&device, &config.into()),
-        cpal::SampleFormat::I24 => make_stream::<I24>(&device, &config.into()),
-        cpal::SampleFormat::I32 => make_stream::<i32>(&device, &config.into()),
-        cpal::SampleFormat::I64 => make_stream::<i64>(&device, &config.into()),
-        cpal::SampleFormat::U8 => make_stream::<u8>(&device, &config.into()),
-        cpal::SampleFormat::U16 => make_stream::<u16>(&device, &config.into()),
-        cpal::SampleFormat::U24 => make_stream::<U24>(&device, &config.into()),
-        cpal::SampleFormat::U32 => make_stream::<u32>(&device, &config.into()),
-        cpal::SampleFormat::U64 => make_stream::<u64>(&device, &config.into()),
-        cpal::SampleFormat::F32 => make_stream::<f32>(&device, &config.into()),
-        cpal::SampleFormat::F64 => make_stream::<f64>(&device, &config.into()),
+        SampleFormat::I8 => make_stream::<i8>(&device, config.into()),
+        SampleFormat::I16 => make_stream::<i16>(&device, config.into()),
+        SampleFormat::I24 => make_stream::<I24>(&device, config.into()),
+        SampleFormat::I32 => make_stream::<i32>(&device, config.into()),
+        SampleFormat::I64 => make_stream::<i64>(&device, config.into()),
+        SampleFormat::U8 => make_stream::<u8>(&device, config.into()),
+        SampleFormat::U16 => make_stream::<u16>(&device, config.into()),
+        SampleFormat::U24 => make_stream::<U24>(&device, config.into()),
+        SampleFormat::U32 => make_stream::<u32>(&device, config.into()),
+        SampleFormat::U64 => make_stream::<u64>(&device, config.into()),
+        SampleFormat::F32 => make_stream::<f32>(&device, config.into()),
+        SampleFormat::F64 => make_stream::<f64>(&device, config.into()),
         sample_format => panic!("Unsupported sample format '{sample_format}'"),
     };
 
     (stream, sender)
 }
 
-fn host_device_setup() -> (cpal::Host, cpal::Device, cpal::SupportedStreamConfig) {
+fn host_device_setup() -> (Host, Device, SupportedStreamConfig) {
     let host = cpal::default_host();
 
     let device = host.default_output_device().unwrap();
@@ -86,7 +92,7 @@ fn host_device_setup() -> (cpal::Host, cpal::Device, cpal::SupportedStreamConfig
     (host, device, config)
 }
 
-fn make_stream<T>(device: &cpal::Device, config: &cpal::StreamConfig) -> (cpal::Stream, Sender)
+fn make_stream<T>(device: &Device, config: StreamConfig) -> (Stream, Sender)
 where
     T: SizedSample + FromSample<f32>,
 {
