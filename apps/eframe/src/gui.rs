@@ -62,7 +62,7 @@ impl Gui {
     }
 
     fn render_ui(&mut self, ui: &mut egui::Ui, gb_ctx: &mut GameBoy) {
-        Panel::top("top_panel").show_inside(ui, |ui| {
+        Panel::top("top_panel").show(ui, |ui| {
             MenuBar::new().ui(ui, |ui| {
                 ui.menu_button("File", |ui| {
                     if ui.button("Load ROM").clicked() {
@@ -99,7 +99,7 @@ impl Gui {
     }
 
     fn render_main_area(&mut self, ui: &mut egui::Ui, gb_ctx: &GameBoy) {
-        CentralPanel::default().show_inside(ui, |ui| {
+        CentralPanel::default().show(ui, |ui| {
             if gb_ctx.cartridge_inserted() {
                 ScreenArea::update(self, gb_ctx);
                 ScreenArea::draw(self, ui);

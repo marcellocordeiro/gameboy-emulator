@@ -102,7 +102,7 @@ where
 
     let stream = device
         .build_output_stream(
-            config,
+            &config,
             move |output: &mut [T], _| process_frame(output, num_channels, &receiver),
             |err| error!("Unable to build output sound stream: {err}"),
             None,
