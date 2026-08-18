@@ -40,16 +40,15 @@ pub fn file_picker_async(file_type: FileType, sender: Sender<Event>) {
         let data = file_handle.read().await.into();
 
         #[cfg(not(target_arch = "wasm32"))]
-        let file_info = {
-            let path = file_handle.path().to_path_buf();
-            FileInfo { data, path }
-        };
+        let path = file_handle.path().to_path_buf();
 
         #[cfg(target_arch = "wasm32")]
-        let file_info = {
+        let path = {
             let name = file_handle.file_name();
-            FileInfo { data, name }
+            std::path::PathBuf::from(name)
         };
+
+        let file_info = FileInfo { data, path };
 
         match file_type {
             FileType::Bootrom => {

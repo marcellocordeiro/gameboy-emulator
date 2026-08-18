@@ -80,12 +80,12 @@ fn host_device_setup() -> (Host, Device, SupportedStreamConfig) {
     let device = host.default_output_device().unwrap();
     info!("Output device : {}", device.id().unwrap());
 
-    let mut configs = device.supported_output_configs().unwrap();
-
-    let config = configs
-        .find(|c| c.channels() == 2)
+    let config = device
+        .supported_output_configs()
         .unwrap()
-        .with_sample_rate(AUDIO_SAMPLE_RATE as u32);
+        .filter(|r| r.channels() == 2)
+        .find_map(|r| r.try_with_sample_rate(AUDIO_SAMPLE_RATE as u32))
+        .expect("device does not support 44.1 kHz");
 
     info!("Output config : {config:?}");
 
@@ -102,7 +102,7 @@ where
 
     let stream = device
         .build_output_stream(
-            &config,
+            config,
             move |output: &mut [T], _| process_frame(output, num_channels, &receiver),
             |err| error!("Unable to build output sound stream: {err}"),
             None,

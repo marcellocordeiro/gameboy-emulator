@@ -4,7 +4,7 @@ use gb_core::GameBoy;
 use crate::file_manager::FileInfo;
 
 pub fn load_battery(gb: &mut GameBoy, storage: &dyn Storage, file_info: &FileInfo) {
-    let key = &file_info.name;
+    let key = file_info.path.file_name().unwrap().to_str().unwrap();
     let value = storage.get_string(key);
 
     if let Some(value) = value {
@@ -15,9 +15,9 @@ pub fn load_battery(gb: &mut GameBoy, storage: &dyn Storage, file_info: &FileInf
 
 pub fn save_battery(gb: &GameBoy, storage: &mut dyn Storage, file_info: &FileInfo) {
     if let Some(battery) = gb.get_battery() {
-        let key = file_info.name.clone();
+        let key = file_info.path.file_name().unwrap().to_str().unwrap();
         let value = String::from_utf8_lossy(battery).to_string();
 
-        storage.set_string(&key, value);
+        storage.set_string(key, value);
     }
 }

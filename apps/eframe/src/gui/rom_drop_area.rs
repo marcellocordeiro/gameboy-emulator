@@ -1,9 +1,13 @@
+use std::{ffi::OsStr, sync::Arc};
+
 use egui::{Align2, Color32, DroppedFile, Sense, TextStyle};
 use gb_core::constants::ROM_EXTENSIONS;
+use tracing::info;
 
 use crate::{
     file_manager::FileInfo,
     gui::{Event, Gui},
+    sys::thread::spawn,
 };
 
 pub struct RomDropArea;
@@ -59,36 +63,38 @@ impl RomDropArea {
         }
     }
 
-    fn handle_dropped_files(ctx: &Gui, dropped_files: &[DroppedFile]) {
-        let file_info = Self::first_valid_dropped_file(dropped_files);
+    fn handle_dropped_files(
+        ctx: &Gui,
+        dropped_files: &[Arc<dyn DroppedFile + Send + Sync + 'static>],
+    ) {
+        let Some(file) = dropped_files.first().cloned() else {
+            return;
+        };
 
-        if let Some(file) = file_info {
-            ctx.event_sender.send(Event::RomSelected(file)).unwrap();
-        }
-    }
+        let path = file.path().to_path_buf();
+        let Some(extension) = path.extension().and_then(OsStr::to_str) else {
+            info!("Unable to extract the file extension (no extension?)");
+            return;
+        };
 
-    fn first_valid_dropped_file(dropped_files: &[DroppedFile]) -> Option<FileInfo> {
-        let file = dropped_files.first()?;
-
-        #[cfg(not(target_arch = "wasm32"))]
-        {
-            let path = file.path.clone()?;
-            let extension = path.extension()?.to_str()?;
-
-            if !path.is_file() && ROM_EXTENSIONS.contains(&extension) {
-                None
-            } else {
-                let data = std::fs::read(&path).unwrap().into();
-                Some(FileInfo { data, path })
-            }
+        if !ROM_EXTENSIONS.contains(&extension) {
+            info!("Path {path:?} with extension {extension:?} is not one of: {ROM_EXTENSIONS:?}");
+            return;
         }
 
-        #[cfg(target_arch = "wasm32")]
-        {
-            let name = file.name.clone();
-            let data = file.bytes.clone()?;
+        let event_sender = ctx.event_sender.clone();
 
-            Some(FileInfo { data, name })
-        }
+        spawn(async move {
+            #[cfg(not(target_arch = "wasm32"))]
+            let data = file.bytes().unwrap();
+
+            #[cfg(target_arch = "wasm32")]
+            let data = file.bytes_async().await.unwrap();
+
+            let data = std::sync::Arc::from(data);
+            let file_info = FileInfo { data, path };
+
+            event_sender.send(Event::RomSelected(file_info)).unwrap();
+        });
     }
 }

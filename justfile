@@ -35,9 +35,10 @@ lint *ARGS:
 fix *ARGS: (lint "--fix" ARGS) format
 
 # Update all project dependencies (cargo and vcpkg)
+# Requires cargo-edit
 [group("maintenance")]
 update:
-  cargo upgrade -i --exclude wgpu
+  cargo upgrade -i --exclude wgpu # From cargo-edit
   cargo update
   vcpkg x-update-baseline
 

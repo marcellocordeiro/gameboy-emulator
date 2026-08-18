@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: |
           cd ./apps/eframe
-          trunk build
+          trunk build --release
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3

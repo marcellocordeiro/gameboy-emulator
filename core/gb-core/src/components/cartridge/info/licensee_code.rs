@@ -76,19 +76,19 @@ mod tests {
 
     #[test]
     fn test_new_licensee_code() {
-        let header = generate_header(0x33, [b'0', b'1']);
+        let header = generate_header(0x33, *b"01");
         let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.new_code(), Some("01"));
         assert!(licensee_code.is_nintendo());
 
-        let header = generate_header(0x33, [b'4', b'2']);
+        let header = generate_header(0x33, *b"42");
         let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.new_code(), Some("42"));
         assert!(!licensee_code.is_nintendo());
 
-        let header = generate_header(0x33, [b'A', b'B']);
+        let header = generate_header(0x33, *b"AB");
         let licensee_code = LicenseeCode::from_header(&header);
 
         assert_eq!(licensee_code.new_code(), Some("AB"));

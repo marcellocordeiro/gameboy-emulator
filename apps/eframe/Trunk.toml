@@ -1,4 +1,5 @@
+"$schema" = "./Trunk.schema.json"
+
 [build]
-release = true
 minify = "on_release"
 no_sri = true
