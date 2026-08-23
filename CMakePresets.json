@@ -108,6 +108,11 @@
       }
     },
     {
+      "name": "macos-arm64-clang",
+      "description": "",
+      "inherits": ["base", "arm64", "clang", "macos"]
+    },
+    {
       "name": "macos-x64-clang",
       "description": "",
       "inherits": ["base", "x64", "clang", "macos"]
@@ -142,6 +147,16 @@
     {
       "name": "windows-x64-clang-cl-release",
       "configurePreset": "windows-x64-clang-cl",
+      "configuration": "Release"
+    },
+    {
+      "name": "macos-arm64-clang-debug",
+      "configurePreset": "macos-arm64-clang",
+      "configuration": "Debug"
+    },
+    {
+      "name": "macos-arm64-clang-release",
+      "configurePreset": "macos-arm64-clang",
       "configuration": "Release"
     },
     {

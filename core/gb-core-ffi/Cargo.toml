@@ -1,5 +1,5 @@
 [package]
-name = "gb-core-c"
+name = "gb-core-ffi"
 version.workspace = true
 edition.workspace = true
 

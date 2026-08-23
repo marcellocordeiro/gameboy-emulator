@@ -58,7 +58,9 @@ impl Oam {
     fn update_sprite_buffer(&mut self, ly: u8, obj_height: u8) {
         self.sprite_buffer = self
             .data
-            .chunks_exact(4)
+            .as_chunks::<4>()
+            .0
+            .iter()
             .filter_map(|chunk| {
                 let y = chunk[0].wrapping_sub(16);
                 let x = chunk[1].wrapping_sub(8);

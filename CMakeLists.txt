@@ -17,4 +17,4 @@ set(GIT_SHA
 )
 
 add_subdirectory(apps/sdl3)
-add_subdirectory(core/gb-core-c/cmake)
+add_subdirectory(core/gb-core-ffi/cmake)

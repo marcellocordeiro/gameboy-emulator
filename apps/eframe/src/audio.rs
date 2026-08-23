@@ -40,13 +40,15 @@ impl Audio {
         let sender = self.sender.clone();
 
         Box::new(move |buffer| {
-            for chunk in buffer.chunks_exact(2) {
+            let (chunks, _) = buffer.as_chunks::<2>();
+
+            for chunk in chunks.iter().copied() {
                 #[cfg(not(target_arch = "wasm32"))]
-                let _ = sender.send([chunk[0], chunk[1]]);
+                let _ = sender.send(chunk);
 
                 // Bad
                 #[cfg(target_arch = "wasm32")]
-                let _ = sender.try_send([chunk[0], chunk[1]]);
+                let _ = sender.try_send(chunk);
             }
         })
     }

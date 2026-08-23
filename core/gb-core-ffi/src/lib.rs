@@ -2,10 +2,12 @@ use std::ffi::{c_float, c_void};
 
 use button::Button;
 use gb_core::{
-    GameBoy,
+    GameBoy as GameBoyInternal,
     constants::{DeviceModel, SCREEN_HEIGHT, SCREEN_WIDTH, ScreenPixels},
 };
 use types::{Bootrom, Rom, ToSlice as _};
+
+pub struct GameBoy(GameBoyInternal);
 
 #[unsafe(no_mangle)]
 pub extern "C" fn gameboy_new(is_cgb: bool) -> *mut GameBoy {
@@ -15,9 +17,9 @@ pub extern "C" fn gameboy_new(is_cgb: bool) -> *mut GameBoy {
         DeviceModel::Dmg
     };
 
-    let gb = GameBoy::new(device_model);
+    let gb = GameBoyInternal::new(device_model);
 
-    Box::into_raw(Box::new(gb))
+    Box::into_raw(Box::new(GameBoy(gb)))
 }
 
 /// # Safety
@@ -40,7 +42,7 @@ pub unsafe extern "C" fn gameboy_destroy(gb_ptr: *mut GameBoy) {
 /// The Game Boy core pointer cannot be null.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn gameboy_reset(gb_ptr: *mut GameBoy) {
-    let gb = unsafe { &mut *gb_ptr };
+    let gb = &mut unsafe { &mut *gb_ptr }.0;
 
     gb.reset();
 }
@@ -53,7 +55,7 @@ pub unsafe extern "C" fn gameboy_reset(gb_ptr: *mut GameBoy) {
 /// 4. The bootrom is optional, but if provided, its allocated size has to be equal to `bootrom.size`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn gameboy_load(gb_ptr: *mut GameBoy, bootrom: Bootrom, rom: Rom) -> bool {
-    let gb = unsafe { &mut *gb_ptr };
+    let gb = &mut unsafe { &mut *gb_ptr }.0;
 
     let rom = unsafe { rom.to_slice() };
     let bootrom = unsafe { bootrom.to_slice() };
@@ -62,9 +64,7 @@ pub unsafe extern "C" fn gameboy_load(gb_ptr: *mut GameBoy, bootrom: Bootrom, ro
         return false;
     };
 
-    gb.load(bootrom.map(Into::into), rom.into()).unwrap();
-
-    true
+    gb.load(bootrom.map(Into::into), rom.into()).is_ok()
 }
 
 /// # Safety
@@ -72,7 +72,7 @@ pub unsafe extern "C" fn gameboy_load(gb_ptr: *mut GameBoy, bootrom: Bootrom, ro
 /// The Game Boy core pointer cannot be null.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn gameboy_run_frame(gb_ptr: *mut GameBoy) {
-    let gb = unsafe { &mut *gb_ptr };
+    let gb = &mut unsafe { &mut *gb_ptr }.0;
 
     gb.run_frame();
 }
@@ -86,7 +86,7 @@ pub unsafe extern "C" fn gameboy_set_joypad_button(
     button: Button,
     value: bool,
 ) {
-    let gb = unsafe { &mut *gb_ptr };
+    let gb = &mut unsafe { &mut *gb_ptr }.0;
 
     gb.set_joypad_button(button.into(), value);
 }
@@ -96,7 +96,7 @@ pub unsafe extern "C" fn gameboy_set_joypad_button(
 /// The Game Boy core pointer cannot be null.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn gameboy_joypad_button_up(gb_ptr: *mut GameBoy, button: Button) {
-    let gb = unsafe { &mut *gb_ptr };
+    let gb = &mut unsafe { &mut *gb_ptr }.0;
 
     gb.joypad_button_up(button.into());
 }
@@ -106,7 +106,7 @@ pub unsafe extern "C" fn gameboy_joypad_button_up(gb_ptr: *mut GameBoy, button: 
 /// The Game Boy core pointer cannot be null.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn gameboy_joypad_button_down(gb_ptr: *mut GameBoy, button: Button) {
-    let gb = unsafe { &mut *gb_ptr };
+    let gb = &mut unsafe { &mut *gb_ptr }.0;
 
     gb.joypad_button_down(button.into());
 }
@@ -118,7 +118,7 @@ pub unsafe extern "C" fn gameboy_joypad_button_down(gb_ptr: *mut GameBoy, button
 /// 3. The allocated size for the frame has to be equal to `SCREEN_WIDTH * SCREEN_HEIGHT * 4`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn gameboy_draw_into_frame_rgba8888(gb_ptr: *mut GameBoy, frame: *mut u8) {
-    let gb = unsafe { &mut *gb_ptr };
+    let gb = &mut unsafe { &mut *gb_ptr }.0;
 
     let slice: &mut ScreenPixels = unsafe {
         std::slice::from_raw_parts_mut(frame, SCREEN_WIDTH * SCREEN_HEIGHT * 4)
@@ -149,7 +149,7 @@ pub unsafe extern "C" fn gameboy_add_audio_callback(
     userdata: *mut c_void,
     callback: extern "C" fn(*mut c_void, *const c_float, usize),
 ) {
-    let gb = unsafe { &mut *gb_ptr };
+    let gb = &mut unsafe { &mut *gb_ptr }.0;
 
     let userdata = Userdata(userdata);
     let callback = Callback(callback);

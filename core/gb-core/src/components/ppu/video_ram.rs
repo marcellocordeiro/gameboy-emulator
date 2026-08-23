@@ -94,7 +94,7 @@ impl VideoRam {
         const TILE_DATA_0_END: usize = 0x97FF - 0x8000;
 
         let range = TILE_DATA_0_START..=TILE_DATA_0_END;
-        let tile_data_chunks = self.data[range].chunks_exact(TILE_SIZE);
+        let (tile_data_chunks, _) = self.data[range].as_chunks::<TILE_SIZE>();
 
         self.draw_tile_data_range_into_frame(tile_data_chunks, frame, 0);
     }
@@ -106,7 +106,7 @@ impl VideoRam {
         const TILE_DATA_1_END: usize = (0x97FF - 0x8000) + VRAM_BANK_SIZE;
 
         let range = TILE_DATA_1_START..=TILE_DATA_1_END;
-        let tile_data_chunks = self.data[range].chunks_exact(TILE_SIZE);
+        let (tile_data_chunks, _) = self.data[range].as_chunks::<TILE_SIZE>();
 
         self.draw_tile_data_range_into_frame(
             tile_data_chunks,
@@ -117,20 +117,17 @@ impl VideoRam {
 
     fn draw_tile_data_range_into_frame(
         &self,
-        tile_data_chunks: std::slice::ChunksExact<u8>,
+        tile_data_chunks: &[[u8; 16]],
         frame: &mut TileDataFrameCgb,
         frame_column_offset: usize,
     ) {
-        for (tile_index, tile) in tile_data_chunks.into_iter().enumerate() {
+        for (tile_index, tile) in tile_data_chunks.iter().enumerate() {
             let tile_base_x = (tile_index % TILES_PER_LINE) * 8;
             let tile_base_y = (tile_index / TILES_PER_LINE) * 8;
 
-            let tile_data_lo_hi_chunks = tile.chunks_exact(2);
+            let (tile_data_lo_hi_chunks, _) = tile.as_chunks::<2>();
 
-            for (byte_line, tile_data_lo_hi) in tile_data_lo_hi_chunks.into_iter().enumerate() {
-                let data_lo = tile_data_lo_hi[0];
-                let data_hi = tile_data_lo_hi[1];
-
+            for (byte_line, [data_lo, data_hi]) in tile_data_lo_hi_chunks.iter().enumerate() {
                 for bit in 0..=7 {
                     let color_id = {
                         let lo = ((data_lo << bit) >> 7) & 0b1;
@@ -198,11 +195,11 @@ mod tests {
         let mut vram = VideoRam::with_device_model(DeviceModel::Cgb);
         vram.set_cgb_mode(true);
 
-        let chunks = vram.data.chunks_exact_mut(VRAM_BANK_SIZE);
+        let (chunks, _) = vram.data.as_chunks_mut::<VRAM_BANK_SIZE>();
 
         assert_eq!(chunks.len(), CGB_VRAM_BANKS); // 2 banks
 
-        for (bank, chunk) in chunks.enumerate() {
+        for (bank, chunk) in chunks.iter_mut().enumerate() {
             let chunk_iter = chunk.iter_mut();
 
             assert_eq!(chunk_iter.len(), VRAM_BANK_SIZE);

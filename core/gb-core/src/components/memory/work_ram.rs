@@ -128,11 +128,11 @@ mod tests {
         let mut wram = WorkRam::with_device_model(DeviceModel::Cgb);
         wram.set_cgb_mode(true);
 
-        let chunks = wram.data.chunks_exact_mut(WRAM_BANK_SIZE);
+        let (chunks, _) = wram.data.as_chunks_mut::<WRAM_BANK_SIZE>();
 
         assert_eq!(chunks.len(), CGB_WRAM_BANKS); // 8 banks
 
-        for (bank, chunk) in chunks.enumerate() {
+        for (bank, chunk) in chunks.iter_mut().enumerate() {
             let chunk_iter = chunk.iter_mut();
 
             assert_eq!(chunk_iter.len(), WRAM_BANK_SIZE);
