@@ -32,15 +32,13 @@ async fn main() -> eframe::Result {
     let [bootrom, rom] = [bootrom_path, rom_path]
         .map(|path| path.map(PathBuf::from))
         .map(|path| {
-            if let Some(path) = path {
+            path.map(|path| {
                 let data = std::fs::read(&path).unwrap();
-                Some(FileInfo {
+                FileInfo {
                     data: data.into(),
                     path,
-                })
-            } else {
-                None
-            }
+                }
+            })
         });
 
     let file_manager = FileManager { bootrom, rom };
