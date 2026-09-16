@@ -1,6 +1,6 @@
 import Testing
 
-import GameBoyCore
+@testable import GameBoyCore
 
 @Test
 func itBuilds() {

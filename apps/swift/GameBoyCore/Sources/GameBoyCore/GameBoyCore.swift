@@ -1,4 +1,4 @@
-import CGameBoyCore
+import GameBoyCoreFFI
 import Foundation
 
 public final class GameBoy {
@@ -19,8 +19,8 @@ public final class GameBoy {
         let bootromPointer = bootrom?.withUnsafeBufferPointer { $0.baseAddress }
         let romPointer = rom.withUnsafeBufferPointer { $0.baseAddress }
 
-        let gbBootrom = Bootrom(data: bootromPointer, size: bootrom?.count ?? 0)
-        let gbRom = Rom(data: romPointer, size: rom.count)
+        let gbBootrom = Buffer(data: bootromPointer, size: bootrom?.count ?? 0)
+        let gbRom = Buffer(data: romPointer, size: rom.count)
 
         gameboy_load(gb, gbBootrom, gbRom)
     }

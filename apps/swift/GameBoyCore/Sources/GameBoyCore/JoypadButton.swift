@@ -1,4 +1,4 @@
-import CGameBoyCore
+import GameBoyCoreFFI
 
 public enum JoypadButton: Int, CaseIterable {
     case a = 0

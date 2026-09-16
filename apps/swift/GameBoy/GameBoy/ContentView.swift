@@ -1,3 +1,10 @@
+//
+//  ContentView.swift
+//  GameBoy
+//
+//  Created by Marcello Cordeiro on 14/09/2026.
+//
+
 import GameBoyCore
 import SwiftUI
 import UniformTypeIdentifiers
@@ -43,6 +50,9 @@ struct ContentView: View {
         ) { result in
             switch result {
             case let .success(success):
+                let gotAccess = success.startAccessingSecurityScopedResource()
+                if !gotAccess { return }
+                
                 romPath = success
 
                 do {

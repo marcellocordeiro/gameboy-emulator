@@ -1,6 +1,0 @@
-module CGameBoyCore {
-    header "gb.h"
-    export *
-
-    link "gb_core_c"
-}

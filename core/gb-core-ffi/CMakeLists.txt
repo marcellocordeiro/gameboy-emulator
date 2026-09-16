@@ -3,7 +3,7 @@ set(HEADERS
 )
 
 corrosion_import_crate(
-  MANIFEST_PATH "../Cargo.toml"
+  MANIFEST_PATH "Cargo.toml"
   CRATES gb-core-ffi
 )
 

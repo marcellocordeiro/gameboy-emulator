@@ -1,3 +1,10 @@
+//
+//  GameBoyContext.swift
+//  GameBoy
+//
+//  Created by Marcello Cordeiro on 14/09/2026.
+//
+
 import Combine
 import CoreGraphics
 import Foundation

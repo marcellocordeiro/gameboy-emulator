@@ -1,3 +1,10 @@
+//
+//  KeyboardContext.swift
+//  GameBoy
+//
+//  Created by Marcello Cordeiro on 14/09/2026.
+//
+
 import Foundation
 import GameBoyCore
 import GameController

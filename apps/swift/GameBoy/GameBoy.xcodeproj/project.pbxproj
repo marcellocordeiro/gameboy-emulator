@@ -3,20 +3,20 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 100;
+	objectVersion = 110;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		ADB441DD2DCE385D00268EB0 /* GameBoyCore in Frameworks */ = {isa = PBXBuildFile; productRef = ADB441DC2DCE385D00268EB0 /* GameBoyCore */; };
+		AD712A7A30589FD70065ED11 /* GameBoyCore in Frameworks */ = {isa = PBXBuildFile; productRef = AD712A7930589FD70065ED11 /* GameBoyCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		ADB441AF2DCE375C00268EB0 /* GameBoy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameBoy.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		ADB441DE2DCE392C00268EB0 /* Configuration.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration.xcconfig; sourceTree = "<group>"; };
+		AD712A7B3058AF070065ED11 /* Configuration.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration.xcconfig; sourceTree = "<group>"; };
+		ADD119933058976F0092BCB9 /* GameBoy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameBoy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		ADB441B12DCE375C00268EB0 /* GameBoy */ = {
+		ADD119953058976F0092BCB9 /* GameBoy */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = GameBoy;
 			sourceTree = "<group>";
@@ -24,28 +24,36 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		ADB441AC2DCE375C00268EB0 /* Frameworks */ = {
+		ADD119903058976F0092BCB9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
-				ADB441DD2DCE385D00268EB0 /* GameBoyCore in Frameworks */,
+				AD712A7A30589FD70065ED11 /* GameBoyCore in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		ADB441A62DCE375C00268EB0 = {
+		AD712A7030589BAE0065ED11 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				ADB441DE2DCE392C00268EB0 /* Configuration.xcconfig */,
-				ADB441B12DCE375C00268EB0 /* GameBoy */,
-				ADB441B02DCE375C00268EB0 /* Products */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		ADD1198A3058976F0092BCB9 = {
+			isa = PBXGroup;
+			children = (
+				AD712A7B3058AF070065ED11 /* Configuration.xcconfig */,
+				ADD119953058976F0092BCB9 /* GameBoy */,
+				AD712A7030589BAE0065ED11 /* Frameworks */,
+				ADD119943058976F0092BCB9 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		ADB441B02DCE375C00268EB0 /* Products */ = {
+		ADD119943058976F0092BCB9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				ADB441AF2DCE375C00268EB0 /* GameBoy.app */,
+				ADD119933058976F0092BCB9 /* GameBoy.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -53,63 +61,63 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		ADB441AE2DCE375C00268EB0 /* GameBoy */ = {
+		ADD119923058976F0092BCB9 /* GameBoy */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = ADB441BB2DCE375F00268EB0 /* Build configuration list for PBXNativeTarget "GameBoy" */;
+			buildConfigurationList = ADD119B23058976F0092BCB9 /* Build configuration list for PBXNativeTarget "GameBoy" */;
 			buildPhases = (
-				ADB441AB2DCE375C00268EB0 /* Sources */,
-				ADB441AC2DCE375C00268EB0 /* Frameworks */,
-				ADB441AD2DCE375C00268EB0 /* Resources */,
+				ADD1198F3058976F0092BCB9 /* Sources */,
+				ADD119903058976F0092BCB9 /* Frameworks */,
+				ADD119913058976F0092BCB9 /* Resources */,
 			);
 			buildRules = (
 			);
 			fileSystemSynchronizedGroups = (
-				ADB441B12DCE375C00268EB0 /* GameBoy */,
+				ADD119953058976F0092BCB9 /* GameBoy */,
 			);
 			name = GameBoy;
 			packageProductDependencies = (
-				ADB441DC2DCE385D00268EB0 /* GameBoyCore */,
+				AD712A7930589FD70065ED11 /* GameBoyCore */,
 			);
 			productName = GameBoy;
-			productReference = ADB441AF2DCE375C00268EB0 /* GameBoy.app */;
+			productReference = ADD119933058976F0092BCB9 /* GameBoy.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		ADB441A72DCE375C00268EB0 /* Project object */ = {
+		ADD1198B3058976F0092BCB9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1630;
-				LastUpgradeCheck = 2660;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
 				TargetAttributes = {
-					ADB441AE2DCE375C00268EB0 = {
-						CreatedOnToolsVersion = 16.3;
+					ADD119923058976F0092BCB9 = {
+						CreatedOnToolsVersion = 27.0;
 					};
 				};
 			};
-			buildConfigurationList = ADB441AA2DCE375C00268EB0 /* Build configuration list for PBXProject "GameBoy" */;
+			buildConfigurationList = ADD1198E3058976F0092BCB9 /* Build configuration list for PBXProject "GameBoy" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = ADB441A62DCE375C00268EB0;
+			mainGroup = ADD1198A3058976F0092BCB9;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 100;
-			productRefGroup = ADB441B02DCE375C00268EB0 /* Products */;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = ADD119943058976F0092BCB9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				ADB441AE2DCE375C00268EB0 /* GameBoy */,
+				ADD119923058976F0092BCB9 /* GameBoy */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		ADB441AD2DCE375C00268EB0 /* Resources */ = {
+		ADD119913058976F0092BCB9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -117,7 +125,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		ADB441AB2DCE375C00268EB0 /* Sources */ = {
+		ADD1198F3058976F0092BCB9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
 			);
@@ -125,8 +133,9 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		ADB441B92DCE375F00268EB0 /* Debug configuration for PBXProject "GameBoy" */ = {
+		ADD119B03058976F0092BCB9 /* Debug configuration for PBXProject "GameBoy" */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AD712A7B3058AF070065ED11 /* Configuration.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -179,7 +188,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -190,8 +199,9 @@
 			};
 			name = Debug;
 		};
-		ADB441BA2DCE375F00268EB0 /* Release configuration for PBXProject "GameBoy" */ = {
+		ADD119B13058976F0092BCB9 /* Release configuration for PBXProject "GameBoy" */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AD712A7B3058AF070065ED11 /* Configuration.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -238,7 +248,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -247,18 +257,28 @@
 			};
 			name = Release;
 		};
-		ADB441BC2DCE375F00268EB0 /* Debug configuration for PBXNativeTarget "GameBoy" */ = {
+		ADD119B33058976F0092BCB9 /* Debug configuration for PBXNativeTarget "GameBoy" */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = ADB441DE2DCE392C00268EB0 /* Configuration.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = GameBoy/GameBoy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -268,23 +288,38 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.GameBoy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 6.0;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		ADB441BD2DCE375F00268EB0 /* Release configuration for PBXNativeTarget "GameBoy" */ = {
+		ADD119B43058976F0092BCB9 /* Release configuration for PBXNativeTarget "GameBoy" */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = ADB441DE2DCE392C00268EB0 /* Configuration.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = GameBoy/GameBoy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -294,38 +329,44 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.GameBoy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 6.0;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		ADB441AA2DCE375C00268EB0 /* Build configuration list for PBXProject "GameBoy" */ = {
+		ADD1198E3058976F0092BCB9 /* Build configuration list for PBXProject "GameBoy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				ADB441B92DCE375F00268EB0 /* Debug configuration for PBXProject "GameBoy" */,
-				ADB441BA2DCE375F00268EB0 /* Release configuration for PBXProject "GameBoy" */,
+				ADD119B03058976F0092BCB9 /* Debug configuration for PBXProject "GameBoy" */,
+				ADD119B13058976F0092BCB9 /* Release configuration for PBXProject "GameBoy" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		ADB441BB2DCE375F00268EB0 /* Build configuration list for PBXNativeTarget "GameBoy" */ = {
+		ADD119B23058976F0092BCB9 /* Build configuration list for PBXNativeTarget "GameBoy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				ADB441BC2DCE375F00268EB0 /* Debug configuration for PBXNativeTarget "GameBoy" */,
-				ADB441BD2DCE375F00268EB0 /* Release configuration for PBXNativeTarget "GameBoy" */,
+				ADD119B33058976F0092BCB9 /* Debug configuration for PBXNativeTarget "GameBoy" */,
+				ADD119B43058976F0092BCB9 /* Release configuration for PBXNativeTarget "GameBoy" */,
 			);
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		ADB441DC2DCE385D00268EB0 /* GameBoyCore */ = {
+		AD712A7930589FD70065ED11 /* GameBoyCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = GameBoyCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = ADB441A72DCE375C00268EB0 /* Project object */;
+	rootObject = ADD1198B3058976F0092BCB9 /* Project object */;
+	validationLevel = 1;
 }

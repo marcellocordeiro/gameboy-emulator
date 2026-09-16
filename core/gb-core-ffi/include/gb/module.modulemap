@@ -1,0 +1,4 @@
+module GameBoyCoreFFI {
+    header "gb.h"
+    export *
+}

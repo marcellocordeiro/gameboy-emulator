@@ -5,7 +5,7 @@ use gb_core::{
     GameBoy as GameBoyInternal,
     constants::{DeviceModel, SCREEN_HEIGHT, SCREEN_WIDTH, ScreenPixels},
 };
-use types::{Bootrom, Rom, ToSlice as _};
+use types::Buffer;
 
 pub struct GameBoy(GameBoyInternal);
 
@@ -54,7 +54,7 @@ pub unsafe extern "C" fn gameboy_reset(gb_ptr: *mut GameBoy) {
 /// 3. The allocated size for the ROM has to be equal to `rom.size`.
 /// 4. The bootrom is optional, but if provided, its allocated size has to be equal to `bootrom.size`.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn gameboy_load(gb_ptr: *mut GameBoy, bootrom: Bootrom, rom: Rom) -> bool {
+pub unsafe extern "C" fn gameboy_load(gb_ptr: *mut GameBoy, bootrom: Buffer, rom: Buffer) -> bool {
     let gb = &mut unsafe { &mut *gb_ptr }.0;
 
     let rom = unsafe { rom.to_slice() };

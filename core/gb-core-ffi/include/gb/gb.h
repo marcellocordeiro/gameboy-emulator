@@ -33,12 +33,7 @@ enum Button {
 
 struct GameBoy;
 
-struct Bootrom {
-  const uint8_t* data;
-  size_t size;
-};
-
-struct Rom {
+struct Buffer {
   const uint8_t* data;
   size_t size;
 };
@@ -46,7 +41,7 @@ struct Rom {
 struct GameBoy* gameboy_new(bool is_cgb);
 void gameboy_destroy(struct GameBoy* gb_ptr);
 void gameboy_reset(struct GameBoy* gb_ptr);
-bool gameboy_load(struct GameBoy* gb_ptr, struct Bootrom bootrom, struct Rom rom);
+bool gameboy_load(struct GameBoy* gb_ptr, struct Buffer bootrom, struct Buffer rom);
 void gameboy_run_frame(struct GameBoy* gb_ptr);
 void gameboy_set_joypad_button(struct GameBoy* gb_ptr, enum Button button, bool value);
 void gameboy_joypad_button_up(struct GameBoy* gb_ptr, enum Button button);
