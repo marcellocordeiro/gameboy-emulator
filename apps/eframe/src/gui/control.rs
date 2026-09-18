@@ -44,7 +44,7 @@ impl Control {
             .open(&mut ctx.control.opened)
             .show(ui, |ui| {
                 let enable_buttons =
-                    *ctx.control.running.lock().unwrap() && gb_ctx.cartridge_inserted();
+                    !*ctx.control.running.lock().unwrap() && gb_ctx.cartridge_inserted();
 
                 ui.add_enabled_ui(enable_buttons, |ui| {
                     if ui.button("Step").clicked() {
