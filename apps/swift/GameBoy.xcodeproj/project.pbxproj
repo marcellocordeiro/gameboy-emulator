@@ -12,6 +12,7 @@
 
 /* Begin PBXFileReference section */
 		AD712A7B3058AF070065ED11 /* Configuration.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration.xcconfig; sourceTree = "<group>"; };
+		AD8B8D52305EF03F00083B66 /* swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = swift; path = "../../bindings/swift"; sourceTree = "<group>"; };
 		ADD119933058976F0092BCB9 /* GameBoy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameBoy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -33,19 +34,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		AD712A7030589BAE0065ED11 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		ADD1198A3058976F0092BCB9 = {
 			isa = PBXGroup;
 			children = (
 				AD712A7B3058AF070065ED11 /* Configuration.xcconfig */,
+				AD8B8D52305EF03F00083B66 /* swift */,
 				ADD119953058976F0092BCB9 /* GameBoy */,
-				AD712A7030589BAE0065ED11 /* Frameworks */,
 				ADD119943058976F0092BCB9 /* Products */,
 			);
 			sourceTree = "<group>";

@@ -1,33 +1,34 @@
 // swift-tools-version: 6.4
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
+import Foundation
 import PackageDescription
 
 let package = Package(
-    name: "GameBoyCore",
+    name: "GameBoy",
     platforms: [
         .macOS(.v27),
     ],
-    products: [
-        .library(name: "GameBoyCore", targets: ["GameBoyCore"]),
+    dependencies: [
+        .package(name: "GameBoyCore", path: "../../bindings/swift"),
     ],
     targets: [
-        .target(
-            name: "GameBoyCore",
-            dependencies: ["GameBoyCoreFFI"],
+        .executableTarget(
+            name: "GameBoy",
+            dependencies: [
+                .product(name: "GameBoyCore", package: "GameBoyCore"),
+                "CSDL3",
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("InternalImportsByDefault"),
                 .enableUpcomingFeature("MemberImportVisibility"),
                 .enableUpcomingFeature("ExistentialAny"),
             ],
         ),
-        .testTarget(
-            name: "GameBoyCoreTests",
-            dependencies: ["GameBoyCore"],
-        ),
-        .binaryTarget(
-            name: "GameBoyCoreFFI",
-            path: "Frameworks/GameBoyCoreFFI.xcframework",
+        .systemLibrary(
+            name: "CSDL3",
+            pkgConfig: "sdl3",
+            // providers: [.brew(["sdl3"])]
         ),
     ],
 )

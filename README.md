@@ -59,12 +59,12 @@ boop
   - [`eframe`](apps/eframe-web): App written in Rust using eframe. Targets native and web
   - [`libretro`](apps/libretro): libretro core written in Rust
   - [`sdl3`](apps/sdl3): App written in C++ using SDL3 and Dear ImGui
-  - [`swift`](apps/swift)
-    - [`GameBoy`](apps/swift/GameBoy): App written in Swift using SwiftUI
-    - [`GameBoyCore`](apps/swift/GameBoyCore): Swift package wrapping `gb-core-ffi`
+  - [`swift`](apps/swift): App written in Swift using SwiftUI
+- [`bindings`](bindings): Bindings for other languages
+  - [`ffi`](bindings/ffi): Generates a C static library. Contains a C/C++ header file with the function declarations
+  - [`swift`](bindings/swift): Swift package wrapping `gb-core-ffi`
 - [`core`](core): Core modules
   - [`gb-core`](core/gb-core): Main core written in Rust
-  - [`gb-core-ffi`](core/gb-core-ffi): Generates a C static library. Contains a C/C++ header file with the function declarations
   - [`gb-opcode-info`](core/gb-opcode-info): Contains opcode info for use in other modules
 - [`external`](external): External dependencies
 

@@ -6,8 +6,8 @@ use std::{
 
 const CRATE_NAME: &str = "gb-core-ffi";
 const LIB_NAME: &str = "libgb_core_ffi.a";
-const XCFRAMEWORK_PATH: &str = "apps/swift/GameBoyCore/Frameworks/GameBoyCoreFFI.xcframework";
-const HEADERS_DIR: &str = "core/gb-core-ffi/include/gb";
+const XCFRAMEWORK_PATH: &str = "bindings/swift/Frameworks/GameBoyCoreFFI.xcframework";
+const HEADERS_DIR: &str = "bindings/ffi/include/gb";
 
 // Run `rustup target add aarch64-apple-darwin aarch64-apple-ios aarch64-apple-ios-sim` before running this script.
 const MACOS_TARGET: &str = "aarch64-apple-darwin";

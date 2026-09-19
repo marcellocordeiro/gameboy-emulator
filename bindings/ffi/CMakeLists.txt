@@ -19,6 +19,8 @@ target_sources(gb_core_ffi
 set_project_options(gb_core_ffi)
 set_compiler_warnings(gb_core_ffi)
 
+corrosion_install(TARGETS gb_core_ffi EXPORT RustLibTargets)
+
 # Doesn't work properly with corrosion yet
 install(
   TARGETS gb_core_ffi
