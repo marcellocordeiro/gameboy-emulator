@@ -43,7 +43,7 @@ async fn main() -> eframe::Result {
 
     let file_manager = FileManager { bootrom, rom };
 
-    #[allow(clippy::cast_precision_loss)]
+    #[expect(clippy::cast_precision_loss)]
     let initial_window_size = egui::vec2((SCREEN_WIDTH * 5) as f32, (SCREEN_HEIGHT * 5) as f32);
 
     let native_options = eframe::NativeOptions {

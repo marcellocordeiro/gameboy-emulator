@@ -98,7 +98,7 @@ impl RetroCore for Emulator {
         }
     }
 
-    #[allow(clippy::as_ptr_cast_mut)]
+    #[expect(clippy::as_ptr_cast_mut)]
     fn get_memory_data(&mut self, _env: &RetroEnvironment, id: u32) -> *mut () {
         match id {
             // This is horrible. Maybe try to find a better way.

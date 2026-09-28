@@ -25,7 +25,7 @@ bitflags! {
     }
 }
 
-#[allow(clippy::struct_excessive_bools)]
+#[expect(clippy::struct_excessive_bools)]
 pub struct Apu {
     prev_system_div: u8,
     internal_cycles: usize,

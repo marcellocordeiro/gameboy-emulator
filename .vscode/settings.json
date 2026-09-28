@@ -1,4 +1,5 @@
 {
+    // "rust-analyzer.cargo.target": "wasm32-unknown-unknown",
     "C_Cpp.codeAnalysis.exclude": {
         "**/build": true,
         "**/external": true,

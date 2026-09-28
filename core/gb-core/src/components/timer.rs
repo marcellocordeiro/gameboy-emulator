@@ -237,7 +237,7 @@ mod tests {
 
     #[test]
     #[ignore = "TODO: rewrite this"]
-    #[allow(clippy::cognitive_complexity)]
+    #[expect(clippy::cognitive_complexity)]
     fn test_overflow() {
         let mut timer = Timer::default();
 

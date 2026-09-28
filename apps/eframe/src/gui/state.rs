@@ -15,7 +15,6 @@ impl State {
         }
     }
 
-    #[allow(clippy::many_single_char_names)]
     pub fn draw(ctx: &mut Gui, ui: &egui::Ui, gb_ctx: &GameBoy) {
         if !ctx.state.opened {
             return;

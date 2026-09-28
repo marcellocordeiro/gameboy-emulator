@@ -12,7 +12,7 @@
 
 /* Begin PBXFileReference section */
 		AD712A7B3058AF070065ED11 /* Configuration.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration.xcconfig; sourceTree = "<group>"; };
-		AD8B8D52305EF03F00083B66 /* swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = swift; path = "../../bindings/swift"; sourceTree = "<group>"; };
+		AD8B8D52305EF03F00083B66 /* swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = swift; path = ../../bindings/swift; sourceTree = "<group>"; };
 		ADD119933058976F0092BCB9 /* GameBoy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameBoy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 

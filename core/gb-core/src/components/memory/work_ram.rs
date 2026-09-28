@@ -145,7 +145,7 @@ mod tests {
         verify_banks(&mut wram);
     }
 
-    #[allow(clippy::identity_op)]
+    #[expect(clippy::identity_op)]
     #[test]
     fn test_write_banks() {
         let mut wram = WorkRam::with_device_model(DeviceModel::Cgb);
@@ -193,7 +193,7 @@ mod tests {
         verify_banks(&mut wram);
     }
 
-    #[allow(clippy::identity_op)]
+    #[expect(clippy::identity_op)]
     fn verify_banks(wram: &mut WorkRam) {
         assert!(in_cgb_mode!(wram));
 

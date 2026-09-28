@@ -233,7 +233,7 @@ mod tests {
         verify_banks(&mut vram);
     }
 
-    #[allow(clippy::identity_op)]
+    #[expect(clippy::identity_op)]
     fn verify_banks(vram: &mut VideoRam) {
         assert!(in_cgb_mode!(vram));
 

@@ -26,7 +26,7 @@ pub struct Tiles {
 }
 
 impl Tiles {
-    #[allow(clippy::cast_precision_loss)]
+    #[expect(clippy::cast_precision_loss)]
     const DEFAULT_SIZE: Vec2 = Vec2 {
         x: TILE_DATA_FRAME_WIDTH_CGB as f32,
         y: TILE_DATA_FRAME_HEIGHT as f32,

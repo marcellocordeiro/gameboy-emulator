@@ -17,7 +17,7 @@ use crate::{
     },
 };
 
-#[allow(clippy::struct_excessive_bools)]
+#[expect(clippy::struct_excessive_bools)]
 pub struct Ppu {
     // Registers
     lcdc: LcdControl,

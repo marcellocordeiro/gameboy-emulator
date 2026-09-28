@@ -1,4 +1,4 @@
-#[allow(clippy::struct_excessive_bools)]
+#[expect(clippy::struct_excessive_bools)]
 #[derive(Debug, Default)]
 pub struct SpriteObjectFlags {
     pub bg_priority: bool,

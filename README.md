@@ -17,7 +17,7 @@ You're responsible for dumping your own binaries.
   - [Setup](#setup)
     - [TL;DR](#tldr)
     - [Rust](#rust)
-    - [wasm-pack](#wasm-pack)
+    - [Trunk](#trunk)
     - [SDL3](#sdl3)
   - [Building](#building)
   - [Running](#running)
@@ -56,7 +56,7 @@ boop
 ## Repository structure
 
 - [`apps`](apps): Frontends in different languages and frameworks
-  - [`eframe`](apps/eframe-web): App written in Rust using eframe. Targets native and web
+  - [`eframe`](apps/eframe): App written in Rust using eframe. Targets native and web
   - [`libretro`](apps/libretro): libretro core written in Rust
   - [`sdl3`](apps/sdl3): App written in C++ using SDL3 and Dear ImGui
   - [`swift`](apps/swift): App written in Swift using SwiftUI

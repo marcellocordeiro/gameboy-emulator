@@ -29,7 +29,7 @@ enum PaletteLookupKind {
 
 use PaletteLookupKind::{Normal, Raw};
 
-#[allow(clippy::erasing_op)]
+#[expect(clippy::erasing_op)]
 const PALETTE_COMBINATIONS: [PaletteLookupKind; 51] = [
     Normal(4, 4, 29),
     Normal(18, 18, 18),

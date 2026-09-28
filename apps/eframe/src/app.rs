@@ -6,7 +6,7 @@ use gb_core::{GameBoy, constants::DeviceModel, utils::button::Button};
 
 use crate::{
     audio::Audio,
-    file_manager::{FileInfo, FileManager},
+    file_manager::{BatteryStorage as _, FileInfo, FileManager},
     gameboy_task::GameBoyTask,
     gui::{Event, Gui},
     key_mappings::EguiKeyMappings,
@@ -79,18 +79,22 @@ impl App {
         let bootrom = self.file_manager.bootrom.as_ref().map(|b| b.data.clone());
 
         let rom = file.data.clone();
+        let battery = FileManager::load_battery(storage, &file).unwrap();
 
         let audio = Audio::new();
+
+        self.file_manager.rom = Some(file);
 
         let mut gb = self.gb_task.gb.write().unwrap();
 
         gb.add_audio_callback(audio.get_callback());
-        gb.load(bootrom, rom).unwrap();
-        FileManager::load_battery(&mut gb, storage, &file);
-        drop(gb);
-
         self.audio = Some(audio);
-        self.file_manager.rom = Some(file);
+
+        gb.load(bootrom, rom).unwrap();
+
+        if let Some(battery) = battery {
+            gb.load_battery(battery);
+        }
     }
 }
 
@@ -108,6 +112,6 @@ impl eframe::App for App {
             &self.gb_task.gb.read().unwrap(),
             Some(storage),
             self.file_manager.rom.as_ref(),
-        );
+        ).unwrap();
     }
 }

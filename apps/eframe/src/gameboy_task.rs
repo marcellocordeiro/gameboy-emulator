@@ -28,7 +28,7 @@ impl GameBoyTask {
         let gb = self.gb.clone();
         let running = self.running.clone();
 
-        #[allow(clippy::cast_precision_loss)]
+        #[expect(clippy::cast_precision_loss)]
         let frame_time = Duration::from_secs_f64(
             (CPU_APPROX_M_CYCLES_PER_FRAME as f64) / (CPU_CLOCK_RATE as f64),
         );

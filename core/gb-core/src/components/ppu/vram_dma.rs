@@ -120,7 +120,7 @@ impl VramDma {
         }
     }
 
-    #[allow(clippy::manual_range_contains)]
+    #[expect(clippy::manual_range_contains)]
     /// `0b1111_1111_2222_XXXX`
     pub fn source(&self) -> u16 {
         let source = ((self.hdma1 as u16) << 8) | (self.hdma2 as u16);
