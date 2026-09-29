@@ -28,7 +28,8 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Image(gbContext.texture, scale: 0.25, label: Text("Frame"))
+            Image(gbContext.image, scale: 0.25, label: Text("Frame"))
+                .interpolation(.none) // Remove bilinear filter
 
             ButtonsView(
                 keyboardContext: .init(gbContext: gbContext),

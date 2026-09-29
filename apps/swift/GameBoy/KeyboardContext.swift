@@ -11,12 +11,9 @@ import GameController
 
 @MainActor
 @Observable
-class KeyboardContext: Sendable {
+final class KeyboardContext: Sendable {
     let gbContext: GameBoyContext
     var buttonsState = JoypadButton.allCases.map { _ in false }
-
-    private var keyboard: GCKeyboard?
-    private var input: GCKeyboardInput?
 
     init(
         gbContext: GameBoyContext
@@ -34,23 +31,22 @@ class KeyboardContext: Sendable {
 
             let keyboard = notification.object as! GCKeyboard
             let input = keyboard.keyboardInput!
-
-            MainActor.assumeIsolated {
-                self.keyboard = keyboard
-                self.input = input
-
-                self.setUp(input: input)
-            }
+            
+            self.setUp(input: input)
         }
     }
 
+    nonisolated
     func setUp(input: GCKeyboardInput) {
         for button in JoypadButton.allCases {
             let mappedTo = button.mappedToGCKeyCode
 
             input.button(forKeyCode: mappedTo)?.pressedChangedHandler = { _, _, isPressed in
-                self.buttonsState[button.rawValue] = isPressed
-                self.gbContext.setButton(button: button, value: isPressed)
+                // The notification block is guaranteed to run in the main queue, so we can safely assume this is correct. In case anything changes we'll get an immediate crash due to Swift's dynamic checking
+                MainActor.assumeIsolated {
+                    self.buttonsState[button.rawValue] = isPressed
+                    self.gbContext.setButton(button: button, value: isPressed)
+                }
             }
         }
     }

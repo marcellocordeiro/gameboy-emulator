@@ -15,10 +15,19 @@ final class GameBoyContext {
     @ObservationIgnored
     let gb = GameBoy()
 
-    var frame = [UInt8](repeating: 0, count: Int(GameBoy.width * GameBoy.height) * 4)
+    @ObservationIgnored
+    var frame: [UInt8]
+    var image: CGImage
 
     @ObservationIgnored
     private var timer: (any Cancellable)?
+    
+    init() {
+        let frame = [UInt8](repeating: 0, count: Int(GameBoy.width * GameBoy.height) * 4)
+        
+        self.frame = frame
+        self.image = Self.bytesToImage(bytes: frame)
+    }
 
     func load(_ url: URL) throws {
         let rom = try [UInt8](Data(contentsOf: url))
@@ -42,27 +51,25 @@ final class GameBoyContext {
     }
 
     func draw() {
-        var frame = [UInt8](repeating: 0, count: Int(GameBoy.width * GameBoy.height) * 4)
         gb.draw(frame: &frame)
-
-        self.frame = frame
+        image = Self.bytesToImage(bytes: frame)
     }
-
-    var texture: CGImage {
-        let bytesPerRow = GameBoy.width * 4
-
-        let rgbaData = CFDataCreate(nil, frame, frame.count)!
-        let provider = CGDataProvider(data: rgbaData)!
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
+    
+    private static func bytesToImage(bytes: [UInt8]) -> CGImage {
+        let width = GameBoy.width
+        let height = GameBoy.height
+        let bytesPerRow = width * 4
+        let space = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue)
+        let provider = CGDataProvider(data: Data(bytes) as CFData)!
 
         return CGImage(
-            width: GameBoy.width,
-            height: GameBoy.height,
+            width: width,
+            height: height,
             bitsPerComponent: 8,
             bitsPerPixel: 32,
             bytesPerRow: bytesPerRow,
-            space: colorSpace,
+            space: space,
             bitmapInfo: bitmapInfo,
             provider: provider,
             decode: nil,

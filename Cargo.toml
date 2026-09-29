@@ -6,7 +6,6 @@ members = [
   "bindings/ffi",
   "core/gb-core",
   "core/gb-opcode-info",
-  "core/xtask",
 ]
 default-members = ["apps/eframe"]
 

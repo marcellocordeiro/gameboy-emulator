@@ -1,6 +1,6 @@
 import GameBoyCoreFFI
 
-public enum JoypadButton: Int, CaseIterable {
+public enum JoypadButton: Int, CaseIterable, Sendable {
     case a = 0
     case b = 1
     case select = 2
