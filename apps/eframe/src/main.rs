@@ -53,7 +53,7 @@ async fn main() -> eframe::Result {
     };
 
     eframe::run_native(
-        "Game Boy",
+        "gameboy-emulator",
         native_options,
         Box::new(move |cc| Ok(Box::new(App::new(cc, device_model, Some(file_manager))))),
     )

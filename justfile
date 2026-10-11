@@ -4,31 +4,31 @@
 # List all available scripts
 [private]
 default:
-  @just --list --unsorted
+    @just --list --unsorted
 
 # Init submodules. Warning: may discard changes
 [group("configuration")]
 init-submodules:
-  git submodule update --init --recursive
+    git submodule update --init --recursive
 
 # Format all crates in the workspace
 [group("maintenance")]
 format *ARGS:
-  cargo +nightly fmt --all {{ARGS}}
+    cargo +nightly fmt --all {{ ARGS }}
 
 # Format C/C++ source files and headers
-[unix]
 [group("maintenance")]
+[unix]
 format-cpp:
-  #!/usr/bin/env zsh
-  clang-format -i ./apps/**/**.{cpp,hpp}
-  clang-format -i ./core/**/**.h
+    #!/usr/bin/env zsh
+    clang-format -i ./apps/**/**.{cpp,hpp}
+    clang-format -i ./core/**/**.h
 
 # Lint all crates in the workspace
 [group("maintenance")]
 lint *ARGS:
-  cargo clippy --all-targets {{ARGS}}
-  cargo clippy -p gb-eframe --target wasm32-unknown-unknown {{ARGS}}
+    cargo clippy --all-targets {{ ARGS }}
+    cargo clippy -p gb-eframe --target wasm32-unknown-unknown {{ ARGS }}
 
 # Lint and fix all crates in the workspace, then format
 [group("maintenance")]
@@ -38,21 +38,21 @@ fix *ARGS: (lint "--fix" ARGS) format
 # Requires cargo-edit
 [group("maintenance")]
 update:
-  cargo upgrade -i --exclude wgpu # From cargo-edit
-  cargo update
-  vcpkg x-update-baseline
+    cargo upgrade -i --exclude wgpu # From cargo-edit
+    cargo update
+    vcpkg x-update-baseline
 
 # Run the eframe app
 [group("development")]
 run *ARGS:
-  cargo run -p gb-eframe -- {{ARGS}}
+    cargo run -p gb-eframe -- {{ ARGS }}
 
 # Run the eframe app with the bundled bootrom
 [group("development")]
 run-with-bootrom *ARGS:
-  cargo run -p gb-eframe --features bundled-bootrom -- {{ARGS}}
+    cargo run -p gb-eframe --features bundled-bootrom -- {{ ARGS }}
 
 # Run tests for all crates in the workspace
 [group("development")]
 test *ARGS:
-  cargo test {{ARGS}}
+    cargo test {{ ARGS }}
