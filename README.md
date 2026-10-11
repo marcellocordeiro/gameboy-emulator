@@ -51,7 +51,9 @@ You're responsible for dumping your own binaries.
 
 ## Screenshots
 
-boop
+![The Legend of Zelda - Oracle of Ages](/../screenshots/docs/screenshots/The%20Legend%20of%20Zelda%20-%20Oracle%20of%20Ages.png)
+![Pokémon Crystal](/../screenshots/docs/screenshots/Pokémon%20Crystal.png)
+![Tiles and palettes](/../screenshots/docs/screenshots/Tiles%20and%20palettes.png)
 
 ## Repository structure
 
