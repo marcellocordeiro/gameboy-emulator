@@ -16,7 +16,7 @@ use self::{
 };
 use crate::{
     file_manager::{FileInfo, FileType, file_picker_async},
-    gui::{audio::Audio, rom_drop_area::RomDropArea},
+    gui::{audio::Audio, browser_first_click::BrowserFirstClick, rom_drop_area::RomDropArea},
 };
 
 pub enum Event {
@@ -34,6 +34,8 @@ pub struct Gui {
     pub state: State,
     pub tiles: Tiles,
     pub screen_area: ScreenArea,
+
+    browser_first_click: BrowserFirstClick,
     //pub error: Option<Box<dyn Error>>,
     //pub message: Option<String>,
 }
@@ -51,6 +53,8 @@ impl Gui {
             state: State::default(),
             tiles: Tiles::new(egui_ctx),
             screen_area: ScreenArea::new(egui_ctx),
+
+            browser_first_click: BrowserFirstClick::default(),
             //error: None,
             //message: None,
         }
@@ -96,6 +100,10 @@ impl Gui {
         Tiles::draw(self, ui, gb_ctx);
         Palettes::draw(self, ui, gb_ctx);
         Audio::draw(self, ui, gb_ctx);
+
+        if cfg!(target_arch = "wasm32") {
+            BrowserFirstClick::draw(self, ui);
+        }
     }
 
     fn render_main_area(&mut self, ui: &mut egui::Ui, gb_ctx: &GameBoy) {
@@ -111,6 +119,7 @@ impl Gui {
 }
 
 mod audio;
+mod browser_first_click;
 mod components;
 mod control;
 mod palettes;
