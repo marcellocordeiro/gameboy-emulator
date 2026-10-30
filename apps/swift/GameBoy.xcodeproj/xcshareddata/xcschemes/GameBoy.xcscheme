@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "2700"
+   LastUpgradeVersion = "2720"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ADD119923058976F0092BCB9"
+               BlueprintIdentifier = "ADB482B4309503250065AED5"
                BuildableName = "GameBoy.app"
                ReferencedContainer = "container:GameBoy.xcodeproj">
             </BuildableReference>
@@ -30,21 +30,19 @@
       shouldAutocreateTestPlan = "YES">
       <Testables>
          <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ADD1199F3058976F0092BCB9"
+               BlueprintIdentifier = "ADB482C1309503260065AED5"
                BuildableName = "GameBoyTests.xctest"
                ReferencedContainer = "container:GameBoy.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ADD119A93058976F0092BCB9"
+               BlueprintIdentifier = "ADB482CB309503260065AED5"
                BuildableName = "GameBoyUITests.xctest"
                ReferencedContainer = "container:GameBoy.xcodeproj">
             </BuildableReference>
@@ -66,7 +64,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ADD119923058976F0092BCB9"
+            BlueprintIdentifier = "ADB482B4309503250065AED5"
             BuildableName = "GameBoy.app"
             ReferencedContainer = "container:GameBoy.xcodeproj">
          </BuildableReference>
@@ -82,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ADD119923058976F0092BCB9"
+            BlueprintIdentifier = "ADB482B4309503250065AED5"
             BuildableName = "GameBoy.app"
             ReferencedContainer = "container:GameBoy.xcodeproj">
          </BuildableReference>

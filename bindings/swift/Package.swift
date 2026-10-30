@@ -17,9 +17,12 @@ let package = Package(
             name: "GameBoyCore",
             dependencies: ["GameBoyCoreFFI"],
             swiftSettings: [
+                .enableUpcomingFeature("ExistentialAny"),
                 .enableUpcomingFeature("InternalImportsByDefault"),
                 .enableUpcomingFeature("MemberImportVisibility"),
-                .enableUpcomingFeature("ExistentialAny"),
+                .enableUpcomingFeature("InferIsolatedConformances"),
+                .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+                .enableUpcomingFeature("ImmutableWeakCaptures"),
             ],
         ),
         .testTarget(
