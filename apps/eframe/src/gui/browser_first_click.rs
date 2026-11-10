@@ -1,4 +1,4 @@
-use egui::{Button, Id, Key, Modal, RichText, Vec2};
+use egui::{Button, Id, Key, Modal, RichText};
 
 use crate::gui::Gui;
 
@@ -23,21 +23,16 @@ impl BrowserFirstClick {
             ui.set_width(340.0);
 
             ui.vertical_centered(|ui| {
-                ui.label(RichText::new("Would you kindly…").size(24.0).strong());
-
-                ui.add_space(10.0);
-
                 ui.label(
                     RichText::new(
-                        "...confirm so we're able to play audio? This is required by the browser laws.",
+                        "Would you kindly tap the OK button so we're able to play audio? This is required by current browser laws.",
                     )
                     .size(14.0)
                 );
 
-                ui.add_space(20.0);
+                ui.add_space(10.0);
 
-                let button = Button::new(RichText::new("OK").size(16.0).strong())
-                    .min_size(Vec2::new(180.0, 38.0));
+                let button = Button::new(RichText::new("OK").size(16.0));
 
                 let response = ui.add(button);
                 response.request_focus();
